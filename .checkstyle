@@ -4,7 +4,7 @@
   <local-check-config name="TFP Checkstyle" location="checkstyle.xml" type="project" description="Custom checkstyle rules for the TFP Context project">
     <additional-data name="protect-config-file" value="false"/>
   </local-check-config>
-  <fileset name="all" enabled="true" check-config-name="Google Checks" local="false">
+  <fileset name="all" enabled="true" check-config-name="TFP Checkstyle" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
 </fileset-config>
