@@ -16,12 +16,12 @@ package main.java.nl.tudelft.contextproject;
  */
 public class ContextTFP {
 
-	/**
-	 * The main class of the project. Calling this method will start the program.
-	 * @param args Environment arguments for the main method.
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+    /**
+     * The main class of the project. Calling this method will start the program.
+     * @param args Environment arguments for the main method.
+     */
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 }
