@@ -34,6 +34,26 @@ public class CameraTest {
         assertEquals(65, cam.getSettings().getZoom());
         assertTrue(testOb.wasCalled());
     }
+    
+    /**
+     * Tests whether setSettings method actually keeps to bounds. 
+     * Also tests if observer is actually called.
+     */
+    @Test
+    public void testSetSettingsBounds() {
+        Camera cam = new Camera(new CameraSettings(65, 65, 65));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.setSettings(new CameraSettings(-65, -65, -65));
+        assertEquals(0, cam.getSettings().getPan());
+        assertEquals(0, cam.getSettings().getTilt());
+        assertEquals(0, cam.getSettings().getZoom());
+        assertTrue(testOb.wasCalled());
+        cam.setSettings(new CameraSettings(656565, 656565, 656565));
+        assertEquals(CameraSettings.PAN_LIMIT_HIGH, cam.getSettings().getPan());
+        assertEquals(CameraSettings.TILT_LIMIT_HIGH, cam.getSettings().getTilt());
+        assertEquals(CameraSettings.ZOOM_LIMIT_HIGH, cam.getSettings().getZoom());
+    }
 
     /**
      * Tests pan method. Also tests if observer
@@ -41,12 +61,28 @@ public class CameraTest {
      */
     @Test
     public void testPan() {
+        Camera cam = new Camera(new CameraSettings(1965, 0, 0));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.pan(-65);
+        assertEquals(1900, cam.getSettings().getPan());
+        assertTrue(testOb.wasCalled());
+    }
+    
+    /**
+     * Tests whether pan method actually keeps to bounds.
+     * Also tests if observer is actually called.
+     */
+    @Test
+    public void testPanBounds() {
         Camera cam = new Camera();
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
-        cam.pan(65);
-        assertEquals(65, cam.getSettings().getPan());
+        cam.pan(-65);
+        assertEquals(0, cam.getSettings().getPan());
         assertTrue(testOb.wasCalled());
+        cam.pan(656565);
+        assertEquals(CameraSettings.PAN_LIMIT_HIGH, cam.getSettings().getPan());
     }
 
     /**
@@ -55,12 +91,28 @@ public class CameraTest {
      */
     @Test
     public void testTilt() {
+        Camera cam = new Camera(new CameraSettings(0, 1965, 0));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.tilt(-65);
+        assertEquals(1900, cam.getSettings().getTilt());
+        assertTrue(testOb.wasCalled());
+    }
+    
+    /**
+     * Tests whether tilt method actually keeps to bounds.
+     * Also tests if observer is actually called.
+     */
+    @Test
+    public void testTiltBounds() {
         Camera cam = new Camera();
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
-        cam.tilt(65);
-        assertEquals(65, cam.getSettings().getTilt());
+        cam.tilt(-65);
+        assertEquals(0, cam.getSettings().getTilt());
         assertTrue(testOb.wasCalled());
+        cam.tilt(656565);
+        assertEquals(CameraSettings.TILT_LIMIT_HIGH, cam.getSettings().getTilt());
     }
 
     /**
@@ -69,12 +121,28 @@ public class CameraTest {
      */
     @Test
     public void testZoom() {
+        Camera cam = new Camera(new CameraSettings(0, 0, 65));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.zoom(-42);
+        assertEquals(23, cam.getSettings().getZoom());
+        assertTrue(testOb.wasCalled());
+    }
+    
+    /**
+     * Tests whether zoom method actually keeps to bounds.
+     * Also tests if observer is actually called.
+     */
+    @Test
+    public void testZoomBounds() {
         Camera cam = new Camera();
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
-        cam.zoom(65);
-        assertEquals(65, cam.getSettings().getZoom());
+        cam.zoom(-65);
+        assertEquals(0, cam.getSettings().getZoom());
         assertTrue(testOb.wasCalled());
+        cam.zoom(656565);
+        assertEquals(CameraSettings.ZOOM_LIMIT_HIGH, cam.getSettings().getZoom());
     }
 
 }
