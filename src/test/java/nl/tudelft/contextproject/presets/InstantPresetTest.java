@@ -18,7 +18,7 @@ public class InstantPresetTest {
         assertEquals(65, cam.getSettings().getPan());
         assertEquals(65, cam.getSettings().getTilt());
         assertEquals(65, cam.getSettings().getZoom());
-        assertEquals(65, cam.getSettings().getFocus());
+        assertEquals(1365, cam.getSettings().getFocus());
     }
 
 }
