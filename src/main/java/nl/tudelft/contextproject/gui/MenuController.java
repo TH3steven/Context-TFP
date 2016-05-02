@@ -8,6 +8,11 @@ import main.java.nl.tudelft.contextproject.ContextTFP;
 
 import java.io.IOException;
 
+/**
+ * Controller class for the main menu.
+ * 
+ * @author Steven Meijer
+ */
 public class MenuController {
     
     @FXML private Button btnCreateScript;
