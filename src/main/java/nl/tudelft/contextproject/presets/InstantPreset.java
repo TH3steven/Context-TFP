@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.presets;
+package main.java.nl.tudelft.contextproject.presets;
 
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;

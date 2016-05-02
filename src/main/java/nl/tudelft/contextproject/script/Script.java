@@ -3,7 +3,7 @@ package main.java.nl.tudelft.contextproject.script;
 import java.util.Iterator;
 import java.util.List;
 
-import main.java.nl.tudelft.presets.Preset;
+import main.java.nl.tudelft.contextproject.presets.Preset;
 
 /**
  * Class to represent a script of presets.
