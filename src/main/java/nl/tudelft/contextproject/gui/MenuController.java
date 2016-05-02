@@ -16,11 +16,15 @@ import java.io.IOException;
 public class MenuController {
     
     @FXML private Button btnCreateScript;
+    @FXML private Button preview;
     
     @FXML
     private void initialize() {
         btnCreateScript.setOnAction((event) -> {
             CreateScriptController.show();
+        });
+        preview.setOnAction((event) -> {
+            PreviewController.show();
         });
     }
     
