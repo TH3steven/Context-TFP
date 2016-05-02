@@ -12,12 +12,13 @@ public class InstantPresetTest {
 
     @Test
     public void testApply() {
-        Camera cam = new Camera(new CameraSettings(1, 33, 7));
-        Preset p = new InstantPreset(cam, new CameraSettings(65, 65, 65));
+        Camera cam = new Camera(new CameraSettings(1, 33, 7, 10));
+        Preset p = new InstantPreset(cam, new CameraSettings(65, 65, 65, 65));
         p.apply();
         assertEquals(65, cam.getSettings().getPan());
         assertEquals(65, cam.getSettings().getTilt());
         assertEquals(65, cam.getSettings().getZoom());
+        assertEquals(65, cam.getSettings().getFocus());
     }
 
 }

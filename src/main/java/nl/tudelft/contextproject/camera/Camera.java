@@ -86,5 +86,19 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+
+    /**
+     * Zooms the camera a certain focus. Cannot focus past
+     * the focus limits.
+     *
+     * @param offset The offset to focus the camera.
+     */
+    public void focus(int offset) {
+        camSet.focus(offset);
+        setChanged();
+        notifyObservers();
+    }
+
+
     
 }

@@ -14,7 +14,7 @@ import java.util.Observer;
  * Class to test the Camera class. More tests should be
  * added.
  * 
- * @author Bart van Oort
+ * @author Team Free Pizza
  *
  */
 public class CameraTest {
@@ -28,10 +28,11 @@ public class CameraTest {
         Camera cam = new Camera();
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
-        cam.setSettings(new CameraSettings(65, 65, 65));
+        cam.setSettings(new CameraSettings(65, 65, 65, 65));
         assertEquals(65, cam.getSettings().getPan());
         assertEquals(65, cam.getSettings().getTilt());
         assertEquals(65, cam.getSettings().getZoom());
+        assertEquals(1365, cam.getSettings().getFocus());
         assertTrue(testOb.wasCalled());
     }
     
@@ -41,18 +42,20 @@ public class CameraTest {
      */
     @Test
     public void testSetSettingsBounds() {
-        Camera cam = new Camera(new CameraSettings(65, 65, 65));
+        Camera cam = new Camera(new CameraSettings(65, 65, 65, 65));
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
-        cam.setSettings(new CameraSettings(-65, -65, -65));
+        cam.setSettings(new CameraSettings(-65, -65, -65, -65));
         assertEquals(0, cam.getSettings().getPan());
         assertEquals(0, cam.getSettings().getTilt());
         assertEquals(0, cam.getSettings().getZoom());
+        assertEquals(1365, cam.getSettings().getFocus());
         assertTrue(testOb.wasCalled());
-        cam.setSettings(new CameraSettings(656565, 656565, 656565));
+        cam.setSettings(new CameraSettings(656565, 656565, 656565, 656565));
         assertEquals(CameraSettings.PAN_LIMIT_HIGH, cam.getSettings().getPan());
         assertEquals(CameraSettings.TILT_LIMIT_HIGH, cam.getSettings().getTilt());
         assertEquals(CameraSettings.ZOOM_LIMIT_HIGH, cam.getSettings().getZoom());
+        assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
     }
 
     /**
@@ -61,7 +64,7 @@ public class CameraTest {
      */
     @Test
     public void testPan() {
-        Camera cam = new Camera(new CameraSettings(1965, 0, 0));
+        Camera cam = new Camera(new CameraSettings(1965, 0, 0, 0));
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
         cam.pan(-65);
@@ -91,7 +94,7 @@ public class CameraTest {
      */
     @Test
     public void testTilt() {
-        Camera cam = new Camera(new CameraSettings(0, 1965, 0));
+        Camera cam = new Camera(new CameraSettings(0, 1965, 0, 0));
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
         cam.tilt(-65);
@@ -121,7 +124,7 @@ public class CameraTest {
      */
     @Test
     public void testZoom() {
-        Camera cam = new Camera(new CameraSettings(0, 0, 65));
+        Camera cam = new Camera(new CameraSettings(0, 0, 65, 0));
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
         cam.zoom(-42);
@@ -144,6 +147,38 @@ public class CameraTest {
         cam.zoom(656565);
         assertEquals(CameraSettings.ZOOM_LIMIT_HIGH, cam.getSettings().getZoom());
     }
+
+    /**
+     * Tests zoom method. Also tests if observer
+     * is actually called.
+     */
+    @Test
+    public void testFocus() {
+        Camera cam = new Camera(new CameraSettings(0, 0, 0, 1610));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.focus(-42);
+        assertEquals(1568, cam.getSettings().getFocus());
+        assertTrue(testOb.wasCalled());
+    }
+
+    /**
+     * Test whether focus actually keeps to bounds.
+     * Also tests if observer is actually called.
+     */
+    @Test
+    public void testFocusBounds() {
+        Camera cam = new Camera();
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.focus(-65);
+        assertEquals(1365, cam.getSettings().getFocus());
+        assertTrue(testOb.wasCalled());
+        cam.focus(656565);
+        assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
+    }
+
+
 
 }
 
