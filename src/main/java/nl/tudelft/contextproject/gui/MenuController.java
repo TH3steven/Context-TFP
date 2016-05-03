@@ -9,21 +9,23 @@ import main.java.nl.tudelft.contextproject.ContextTFP;
 import java.io.IOException;
 
 /**
- * Controller class for the main menu.
+ * Controller class for the main menu. This class controls the actions to be taken
+ * when one of the menu buttons is clicked.
  * 
  * @author Steven Meijer
  */
 public class MenuController {
     
     @FXML private Button btnCreateScript;
-    @FXML private Button preview;
+    @FXML private Button btnLoadScript;
+    @FXML private Button btnPreview;
     
     @FXML
     private void initialize() {
         btnCreateScript.setOnAction((event) -> {
             CreateScriptController.show();
         });
-        preview.setOnAction((event) -> {
+        btnPreview.setOnAction((event) -> {
             PreviewController.show();
         });
     }

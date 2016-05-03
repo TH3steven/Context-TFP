@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.AnchorPane;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 
@@ -19,18 +20,12 @@ import java.io.IOException;
  */
 public class CreateScriptController {
 
-    @FXML
-    private Button btnAddEvent;
-    @FXML
-    private Button btnBack;
-    @FXML
-    private ChoiceBox<Integer> cbCameraNr;
-    @FXML
-    private TextArea txtNewEvent;
-    @FXML
-    private TextArea txtEvents;
-    @FXML
-    private TextField txtTimestamp;
+    @FXML private Button btnAddEvent;
+    @FXML private Button btnBack;
+    @FXML private ChoiceBox<Integer> cbCameraNr;
+    @FXML private TextArea txtEvents;
+    @FXML private TextArea txtNewEvent;
+    @FXML private TextField txtTimestamp;
 
     @FXML
     private void initialize() {
@@ -40,41 +35,44 @@ public class CreateScriptController {
         cbCameraNr.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8));
 
         btnBack.setOnAction((event) -> {
-                MenuController.show();
-            });
+            MenuController.show();
+        });
+        
+        //txtTimestamp.setTextFormatter(new TextFormatter());
 
         btnAddEvent.setOnAction((event) -> {
 
-            // TODO Put in database
-                Boolean errors = false;
-                if (txtTimestamp.getText().isEmpty()) {
-                    txtTimestamp.setStyle("-fx-border-color: red;");
-                    errors = true;
-                } else {
-                    txtTimestamp.setStyle("");
-                }
+            Boolean errors = false;
 
-                if (txtNewEvent.getText().isEmpty()) {
-                    txtNewEvent.setStyle("-fx-border-color: red;");
-                    errors = true;
-                } else {
-                    txtNewEvent.setStyle("");
-                }
+            if (txtTimestamp.getText().isEmpty()) {
+                txtTimestamp.setStyle("-fx-border-color: red;");
+                errors = true;
+            } else {
+                txtTimestamp.setStyle("");
+            }
 
-                if (cbCameraNr.getSelectionModel().getSelectedItem() == null) {
-                    cbCameraNr.setStyle("-fx-border-color: red;");
-                    errors = true;
-                } else {
-                    cbCameraNr.setStyle("");
-                }
+            if (txtNewEvent.getText().isEmpty()) {
+                txtNewEvent.setStyle("-fx-border-color: red;");
+                errors = true;
+            } else {
+                txtNewEvent.setStyle("");
+            }
 
-                if (!errors) {
-                    txtEvents.appendText(txtTimestamp.getText() + " [Camera: "
-                            + cbCameraNr.getSelectionModel().getSelectedItem() + "] - " + txtNewEvent.getText() + "\n");
-                    txtNewEvent.clear();
-                    txtTimestamp.clear();
-                }
-            });
+            if (cbCameraNr.getSelectionModel().getSelectedItem() == null) {
+                cbCameraNr.setStyle("-fx-border-color: red;");
+                errors = true;
+            } else {
+                cbCameraNr.setStyle("");
+            }
+
+            if (!errors) {
+                // TODO Put in database
+                txtEvents.appendText(txtTimestamp.getText() + " [Camera: "
+                        + cbCameraNr.getSelectionModel().getSelectedItem() + "] - " + txtNewEvent.getText() + "\n");
+                txtNewEvent.clear();
+                txtTimestamp.clear();
+            }
+        });
     }
 
     /**
