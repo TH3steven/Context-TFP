@@ -1,6 +1,7 @@
 package test.java.nl.tudelft.contextproject.presets;
 
 import static org.junit.Assert.assertEquals;
+
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
@@ -8,8 +9,14 @@ import main.java.nl.tudelft.contextproject.presets.Preset;
 
 import org.junit.Test;
 
+/**
+ * Class to test preset InstantPreset.
+ */
 public class InstantPresetTest {
 
+    /**
+     * Tests the only important method in this preset: {@link InstantPreset#apply()}.
+     */
     @Test
     public void testApply() {
         Camera cam = new Camera(new CameraSettings(1, 33, 7, 10));
