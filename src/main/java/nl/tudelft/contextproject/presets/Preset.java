@@ -8,37 +8,27 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
  * Extend this class to create different presets, with different
  * functionalities, such as application over time.
  * 
+ * {@link #applyTo(Camera)} should be implemented to apply the
+ * preset to the camera, in its respective way.
+ * 
  * @author Bart van Oort
  * @since 0.2
  */
 public abstract class Preset {
 
     private String name;
-    private Camera camera;
     private CameraSettings toSet;
     
     /**
-     * Creates a Preset object with an empty name with 
-     * camera cam and to set camera settings toSet.
+     * Creates a Preset object with to set camera settings toSet.
      * 
-     * @param cam Camera
      * @param toSet Camera settings to set when applied.
      */
-    protected Preset(Camera cam, CameraSettings toSet) {
+    protected Preset(CameraSettings toSet) {
         name = "";
-        camera = cam;
         this.toSet = toSet;
     }
     
-    /**
-     * Returns the camera the preset should be applied to.
-     * "MOOMM!! GET THE CAMERAAA!!"
-     * 
-     * @return the camera the preset is to be applied to.
-     */
-    public Camera getCamera() {
-        return camera;
-    }
     
     /**
      * Returns the settings the camera should be set to.
@@ -50,6 +40,7 @@ public abstract class Preset {
     
     /**
      * Applies the preset to the camera.
+     * @param cam Camera the preset should be applied to.
      */
-    public abstract void apply();
+    public abstract void applyTo(Camera cam);
 }

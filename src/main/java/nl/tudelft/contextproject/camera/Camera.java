@@ -11,6 +11,9 @@ import java.util.Observable;
  */
 public class Camera extends Observable {
     
+    private static int numCams = 0;
+    
+    private int num;
     private CameraSettings camSet;
     
     /**
@@ -19,6 +22,7 @@ public class Camera extends Observable {
      */
     public Camera() {
         camSet = new CameraSettings();
+        num = numCams++;
     }
     
     /**
@@ -29,6 +33,15 @@ public class Camera extends Observable {
      */
     public Camera(CameraSettings init) {
         camSet = init;
+        num = numCams++;
+    }
+    
+    /**
+     * Gets the camera number assigned to the camera.
+     * @return Camera number assigned to camera.
+     */
+    public int getNumber() {
+        return num;
     }
     
     /**
@@ -99,7 +112,7 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
-    /***
+    /**
      * This is still to be implemented but should be responsible for the taking
      * of shots by a camera.
      */

@@ -40,6 +40,14 @@ public class Timeline {
     public Camera getCamera() {
         return camera;
     }
+    
+    /**
+     * Sets the camera this Timeline applies to.
+     * @param cam Camera this Timeline applies to.
+     */
+    public void setCamera(Camera cam) {
+        camera = cam;
+    }
 
     /**
      * This method is used to add shots to a Timeline.

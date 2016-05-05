@@ -5,7 +5,7 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 
 /**
  * Class to represent an instant camera preset.
- * When {@link #apply()} is called, this sets the specified camera
+ * When {@link #applyTo(Camera)} is called, this sets the specified camera
  * settings instantly to the camera.
  * 
  * @author Bart van Oort
@@ -14,22 +14,21 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 public class InstantPreset extends Preset {
     
     /**
-     * Creates an InstantPreset object with an empty name with 
-     * camera cam and to set camera settings toSet.
+     * Creates an InstantPreset object with to set camera settings toSet.
      * 
      * @param cam Camera
      * @param toSet Camera settings to set when applied.
      */
-    public InstantPreset(Camera cam, CameraSettings toSet) {
-        super(cam, toSet);
+    public InstantPreset(CameraSettings toSet) {
+        super(toSet);
     }
 
     /**
      * Applies the specified camera settings instantly.
      */
     @Override
-    public void apply() {
-       getCamera().setSettings(getToSet());
+    public void applyTo(Camera cam) {
+        cam.setSettings(getToSet());
     }
 
 }

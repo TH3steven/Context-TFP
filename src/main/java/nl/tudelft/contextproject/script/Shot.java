@@ -81,6 +81,6 @@ public class Shot {
      * Makes use of {@link Camera#takeShot()}
      */
     public void execute() {
-        this.camera.takeShot();
+        preset.applyTo(camera);
     }
 }

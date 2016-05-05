@@ -15,13 +15,13 @@ import org.junit.Test;
 public class InstantPresetTest {
 
     /**
-     * Tests the only important method in this preset: {@link InstantPreset#apply()}.
+     * Tests the only important method in this preset: {@link InstantPreset#applyTo(Camera)}.
      */
     @Test
     public void testApply() {
         Camera cam = new Camera(new CameraSettings(1, 33, 7, 10));
-        Preset p = new InstantPreset(cam, new CameraSettings(65, 65, 65, 65));
-        p.apply();
+        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65));
+        p.applyTo(cam);
         assertEquals(65, cam.getSettings().getPan());
         assertEquals(65, cam.getSettings().getTilt());
         assertEquals(65, cam.getSettings().getZoom());
