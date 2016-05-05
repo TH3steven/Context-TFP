@@ -99,6 +99,12 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
+    /***
+     * This is still to be implemented but should be responsible for the taking
+     * of shots by a camera.
+     */
+    public void takeShot() {
 
+    }
     
 }

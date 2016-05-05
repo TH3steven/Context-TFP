@@ -12,7 +12,7 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
  * @since 0.2
  */
 public abstract class Preset {
-    
+
     private String name;
     private Camera camera;
     private CameraSettings toSet;

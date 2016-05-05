@@ -130,4 +130,5 @@ public class CameraSettings {
         focus = (focus + offset < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
                 (focus + offset > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : focus + offset;
     }
+
 }
