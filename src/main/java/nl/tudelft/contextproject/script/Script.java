@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import main.java.nl.tudelft.contextproject.presets.Preset;
 
 /**
  * Class to represent a script of presets.
@@ -44,7 +43,35 @@ public class Script implements Iterator<Shot> {
         timelines = new HashMap<Integer, Timeline>();
         initTimelines();
     }
-    
+
+    /**
+     * Gets all the shots in our script.
+     * @return the shots present in our scripts.
+     */
+    public List<Shot> getShots() {
+        return shots;
+    }
+
+    /**
+     * Returns the timeline for a specific Camera.
+     * @param camNum is the camera number of the timeline to be returned.
+     * @return the timeline for the camera number camNum.
+     */
+    public Timeline getTimeline(int camNum) {
+        return timelines.get(camNum);
+    }
+
+    /**
+     * Checks if the list of shots is empty.
+     * @return true if the list of shots is actually empty.
+     */
+    public boolean isEmpty() {
+        return shots.size() == 0;
+    }
+
+    /**
+     * Initializes the hashmap containing the timelines per camera.
+     */
     private void initTimelines() {
         for (Shot s : shots) {
             if (timelines.containsKey(s.getCamera().getNumber())) {

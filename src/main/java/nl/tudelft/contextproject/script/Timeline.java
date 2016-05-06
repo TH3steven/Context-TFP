@@ -8,7 +8,7 @@ import java.util.List;
 /** 
  * Class to represent a timeline of shots for a single camera.
  * 
- * @author Tabe Etta Takang Kajikaw
+ * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class Timeline {
@@ -30,7 +30,9 @@ public class Timeline {
      * @param shot1 is the list of shots.
      */
     public Timeline(Camera cam, List<Shot> shot1) {
+
         this.shots = shot1;
+        this.camera = cam;
     }
     
     /**
@@ -55,6 +57,14 @@ public class Timeline {
      */
     public void addShot(Shot shot) {
         shots.add(shot);
+    }
+
+    /**
+     * Gets all the shots in our timeline
+     * @return the shots int our timeline.
+     */
+    public List<Shot> getShots() {
+        return shots;
     }
 
     /**

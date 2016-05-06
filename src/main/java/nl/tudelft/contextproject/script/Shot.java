@@ -6,7 +6,7 @@ import main.java.nl.tudelft.contextproject.presets.Preset;
 /**
  * Class to represent a shot to be taken by a Camera.
  *
- * @author Tabe Etta Takang Kajikaw
+ * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class Shot {
