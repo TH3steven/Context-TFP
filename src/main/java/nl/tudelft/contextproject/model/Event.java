@@ -9,20 +9,44 @@ import javafx.beans.property.SimpleStringProperty;
  * @author Steven Meijer
  */
 public final class Event {
-    private SimpleStringProperty shot;
-    private SimpleStringProperty camera;
-    private SimpleStringProperty preset;
+
+    private int camera;
+    private int id;
+    private int preset;
     private SimpleStringProperty event;
-    
-    public Event(String shot, String camera, String preset, String event) {
+    private SimpleStringProperty shot;
+
+    /**
+     * Constructor for creating a new Event.
+     * 
+     * @param shot The shot identifier
+     * @param camera The camera number
+     * @param preset The preset number to use with the shot
+     * @param event A description of the event at the current shot
+     */
+    public Event(int id, String shot, int camera, int preset, String event) {
+        this.id = id;
         this.shot = new SimpleStringProperty(shot);
-        this.camera = new SimpleStringProperty(camera);
-        this.preset = new SimpleStringProperty(preset);
+        this.camera = camera;
+        this.preset = preset;
         this.event = new SimpleStringProperty(event);
     }
 
     /**
-     * 
+     * @return The id of the event.
+     */
+    public int getId() {
+        return this.id;
+    }
+    
+    /**
+     * @param id The id to set.
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    /**
      * @return The shot.
      */
     public String getShot() {
@@ -30,7 +54,6 @@ public final class Event {
     }
 
     /**
-     * 
      * @param shot The shot to set.
      */
     public void setShot(String shot) {
@@ -38,39 +61,34 @@ public final class Event {
     }
 
     /**
-     * 
      * @return The camera # to be used.
      */
-    public String getCamera() {
-        return camera.get();
+    public int getCamera() {
+        return this.camera;
     }
 
     /**
-     * 
      * @param camera The camera # to set.
      */
-    public void setCamera(String camera) {
-        this.camera.set(camera);
+    public void setCamera(int camera) {
+        this.camera = camera;
     }
 
     /**
-     * 
      * @return The preset # to be used.
      */
-    public String getPreset() {
-        return preset.get();
+    public int getPreset() {
+        return this.preset;
     }
 
     /**
-     * 
      * @param preset The preset # to set.
      */
-    public void setPreset(String preset) {
-        this.preset.set(preset);
+    public void setPreset(int preset) {
+        this.preset = preset;
     }
 
     /**
-     * 
      * @return The description of the event.
      */
     public String getEvent() {
@@ -78,7 +96,6 @@ public final class Event {
     }
 
     /**
-     * 
      * @param event The description of the event to set.
      */
     public void setEvent(String event) {

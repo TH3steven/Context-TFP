@@ -2,37 +2,30 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.CreateScriptController">
    <children>
-      <Button layoutX="666.0" layoutY="340.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="120.0" text="Add Event" />
-      <TextField layoutX="14.0" layoutY="340.0" prefHeight="25.0" prefWidth="65.0" />
-      <TextArea layoutX="14.0" layoutY="427.0" prefHeight="92.0" prefWidth="725.0" wrapText="true">
-         <font>
-            <Font size="20.0" />
-         </font></TextArea>
-      <Label layoutX="12.0" layoutY="404.0" text="Events:" />
-      <Button layoutX="686.0" layoutY="526.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Save" />
-      <ChoiceBox layoutX="89.0" layoutY="340.0" prefHeight="25.0" prefWidth="54.0" />
-      <Button fx:id="btnBack" layoutX="16.0" layoutY="526.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="160.0" text="Cancel and return to menu" />
-      <ChoiceBox layoutX="153.0" layoutY="340.0" prefHeight="25.0" prefWidth="54.0" />
-      <TextField layoutX="217.0" layoutY="340.0" prefHeight="25.0" prefWidth="347.0" promptText="Enter the description of the event" />
-      <TableView fx:id="tableEvents" editable="true" layoutX="15.0" layoutY="14.0" prefHeight="200.0" prefWidth="770.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
+      <Button fx:id="btnAdd" layoutX="666.0" layoutY="465.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Add Event" AnchorPane.rightAnchor="15.0" />
+      <TextField fx:id="addShot" layoutX="15.0" layoutY="465.0" prefHeight="25.0" prefWidth="70.0" />
+      <Button layoutX="686.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Save" AnchorPane.rightAnchor="15.0" />
+      <ChoiceBox fx:id="addCamera" layoutX="95.0" layoutY="465.0" prefHeight="25.0" prefWidth="40.0" />
+      <Button fx:id="btnBack" layoutX="16.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Cancel and return to menu" AnchorPane.leftAnchor="15.0" />
+      <ChoiceBox fx:id="addPreset" layoutX="155.0" layoutY="465.0" prefHeight="25.0" prefWidth="40.0" />
+      <TextField fx:id="addDescription" layoutX="208.0" layoutY="465.0" maxWidth="5000.0" minWidth="440.0" prefHeight="25.0" promptText="Enter the description of the shot" />
+      <TableView fx:id="tableEvents" editable="true" layoutX="15.0" layoutY="14.0" prefHeight="440.0" prefWidth="770.0" AnchorPane.bottomAnchor="121.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
         <columns>
-          <TableColumn fx:id="tShot" prefWidth="65.0" text="Shot" />
-          <TableColumn fx:id="tCamera" prefWidth="74.0" text="Camera #" />
-            <TableColumn fx:id="tPreset" prefWidth="86.0" sortable="false" text="Preset #" />
-            <TableColumn fx:id="tEvent" prefWidth="307.0" sortable="false" text="Event" />
-            <TableColumn prefWidth="66.0" sortable="false" text="Column X" />
-            <TableColumn prefWidth="59.0" sortable="false" text="Column X" />
-            <TableColumn fx:id="tAdd" prefWidth="112.0" sortable="false" text="Column X" />
+            <TableColumn fx:id="tID" maxWidth="60.0" minWidth="30.0" prefWidth="-1.0" resizable="false" sortable="false" text="ID" />
+          <TableColumn fx:id="tShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" text="Shot" />
+          <TableColumn fx:id="tCamera" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" text="Camera #" />
+            <TableColumn fx:id="tPreset" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset #" />
+            <TableColumn fx:id="tEvent" minWidth="300.0" prefWidth="-1.0" sortable="false" text="Event" />
+            <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Up" />
+            <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Down" />
+            <TableColumn fx:id="tAdd" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" sortable="false" text="Edit" />
         </columns>
       </TableView>
    </children>

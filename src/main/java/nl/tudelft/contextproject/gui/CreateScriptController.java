@@ -1,20 +1,20 @@
 package main.java.nl.tudelft.contextproject.gui;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.Callback;
+
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.model.Event;
 
@@ -27,43 +27,75 @@ import java.io.IOException;
  */
 public class CreateScriptController {
 
+    @FXML private Button btnAdd;
     @FXML private Button btnBack;
 
+    @FXML private ChoiceBox<Integer> addCamera;
+    @FXML private ChoiceBox<Integer> addPreset;
+
     @FXML private TableView<Event> tableEvents;
-    @FXML private TableColumn<Event, String> tShot;
-    @FXML private TableColumn<Event, String> tCamera;
-    @FXML private TableColumn<Event, String> tPreset;
-    @FXML private TableColumn<Event, String> tEvent;
     @FXML private TableColumn<Event, String> tAdd;
+    @FXML private TableColumn<Event, Integer> tCamera;
+    @FXML private TableColumn<Event, String> tEvent;
+    @FXML private TableColumn<Event, Integer> tID;
+    @FXML private TableColumn<Event, Integer> tPreset;
+    @FXML private TableColumn<Event, String> tShot;
+
+    @FXML private TextField addShot;
+    @FXML private TextField addDescription;
 
     @FXML
     private void initialize() {
 
-        btnBack.setOnAction((event) -> {
-            MenuController.show();
-        });
-
-        final ObservableList<Event> data =
-                FXCollections.observableArrayList(
-                        new Event("Jacob", "1", "2", "kaas"),
-                        new Event("Kaas", "2", "5", "is lekker")
-                );
-        
-        tableEvents.setItems(data);
+        //TEMP
+        addCamera.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8));
+        addPreset.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8));
 
         tShot.setCellValueFactory(
                 new PropertyValueFactory<Event, String>("shot"));
 
         tCamera.setCellValueFactory(
-                new PropertyValueFactory<Event, String>("camera"));
+                new PropertyValueFactory<Event, Integer>("camera"));
 
         tPreset.setCellValueFactory(
-                new PropertyValueFactory<Event, String>("preset"));
+                new PropertyValueFactory<Event, Integer>("preset"));
 
         tEvent.setCellValueFactory(
                 new PropertyValueFactory<Event, String>("event"));
+        
+        //Disallow horizontal scrolling
+        tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        //..
+        setActions();
+    }
+
+    private void setActions() {
+
+        final ObservableList<Event> data = FXCollections.observableArrayList();
+        tableEvents.setItems(data);
+        
+        btnAdd.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override public void handle(ActionEvent e) {
+                data.add(new Event(
+                        tableEvents.getItems().size() + 1,
+                        addShot.getText(),
+                        addCamera.getSelectionModel().getSelectedItem(),
+                        addPreset.getSelectionModel().getSelectedItem(),
+                        addDescription.getText()
+                        ));
+
+                addShot.clear();
+                addCamera.getSelectionModel().clearSelection();
+                addPreset.getSelectionModel().clearSelection();
+                addDescription.clear();
+            }
+        });
+
+        btnBack.setOnAction((event) -> {
+            MenuController.show();
+        });
+
 
     }
 
