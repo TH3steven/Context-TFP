@@ -177,9 +177,6 @@ public class CameraTest {
         cam.focus(656565);
         assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
     }
-
-
-
 }
 
 /**

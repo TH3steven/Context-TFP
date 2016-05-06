@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-
 /**
  * Class to represent a script of presets.
  * Implements the Iterator interface so it can apply
