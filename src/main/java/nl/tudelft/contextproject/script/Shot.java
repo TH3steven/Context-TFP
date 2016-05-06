@@ -10,10 +10,10 @@ import main.java.nl.tudelft.contextproject.presets.Preset;
  * @since 0.2
  */
 public class Shot {
+    
     private int number;
     private Camera camera;
     private Preset preset;
-
 
     /**
      * Creates a shot instance with each shot having a number,
@@ -77,7 +77,7 @@ public class Shot {
     }
 
     /**
-     * This method is used to tell a particular camera to take a shot.
+     * Used to tell a particular camera to take a shot.
      * Makes use of {@link Camera#takeShot()}
      */
     public void execute() {
