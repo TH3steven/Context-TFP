@@ -16,9 +16,7 @@ Custom checkstyle rules for the TFP Context project
       <property name="allowSamelineMultipleAnnotations" value="true"/>
     </module>
     <module name="AnnotationUseStyle">
-      <property name="severity" value="ignore"/>
       <property name="closingParens" value="always"/>
-      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
     <module name="PackageAnnotation"/>
     <module name="AvoidNestedBlocks">
