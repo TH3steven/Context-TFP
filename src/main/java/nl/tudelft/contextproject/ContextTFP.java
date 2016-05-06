@@ -11,9 +11,9 @@ package main.java.nl.tudelft.contextproject;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import main.java.nl.tudelft.contextproject.gui.MenuController;
 
 import java.io.IOException;
 
@@ -30,16 +30,16 @@ import java.io.IOException;
  */
 public class ContextTFP extends Application {
 
-    private static BorderPane rootLayout;
     private Stage primaryStage;
+    private BorderPane rootLayout;
 
-    @Override
+    @Override()
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("TFP Camera Control");
 
         initRootLayout();
-        MenuController.show();
+        showMenuOverview();
     }
 
     /**
@@ -60,6 +60,21 @@ public class ContextTFP extends Application {
     }
 
     /**
+     * Shows the menu overview inside the root layout.
+     */
+    public void showMenuOverview() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(ContextTFP.class.getResource("view/MenuOverview.fxml"));
+            AnchorPane menuOverview = (AnchorPane) loader.load();
+
+            rootLayout.setCenter(menuOverview);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * The main class of the project. Calling this method will start the program.
      * 
      * @param args Environment arguments for the main method.
@@ -74,10 +89,6 @@ public class ContextTFP extends Application {
      * @return The main stage
      */
     public Stage getPrimaryStage() {
-        return this.primaryStage;
-    }
-    
-    public static BorderPane getRootLayout() {
-        return rootLayout;
+        return primaryStage;
     }
 }
