@@ -30,7 +30,6 @@ public class Timeline {
      * @param shot1 is the list of shots.
      */
     public Timeline(Camera cam, List<Shot> shot1) {
-
         this.shots = shot1;
         this.camera = cam;
     }
