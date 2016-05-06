@@ -3,6 +3,7 @@ package main.java.nl.tudelft.contextproject.gui;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 
@@ -15,11 +16,15 @@ import java.io.IOException;
  * @author Steven Meijer
  */
 public class MenuController {
-    
+
     @FXML private Button btnCreateScript;
     @FXML private Button btnLoadScript;
     @FXML private Button btnPreview;
-    
+    @FXML private Button btnPresets;
+    @FXML private Button btnApply;
+    @FXML private TextField numberOfCameras;
+    private int numberCameras;
+
     @FXML
     private void initialize() {
         btnCreateScript.setOnAction((event) -> {
@@ -28,8 +33,31 @@ public class MenuController {
         btnPreview.setOnAction((event) -> {
             PreviewController.show();
         });
+        btnPresets.setOnAction((event) -> {
+            PresetController.show();
+        });
+        btnApply.setOnAction((event) -> {
+            boolean exception = false;
+            if(!numberOfCameras.getText().isEmpty()) {
+                try {
+                    Integer.parseInt(numberOfCameras.getText());
+                    
+                } catch(NumberFormatException e) {
+                    exception = true;
+                }            
+            } else {
+                exception = true;
+            }
+            
+            if(exception) {
+                numberOfCameras.setStyle("-fx-border-color: red;");
+            } else {
+               numberOfCameras.setStyle("");
+               System.out.println(numberOfCameras.getText());
+            } 
+        });
     }
-    
+
     /**
      * Shows this view.
      */
