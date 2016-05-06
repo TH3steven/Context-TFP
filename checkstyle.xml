@@ -16,7 +16,7 @@ Custom checkstyle rules for the TFP Context project
       <property name="allowSamelineMultipleAnnotations" value="true"/>
     </module>
     <module name="AnnotationUseStyle">
-      <property name="closingParens" value="always"/>
+      <property name="closingParens" value="never"/>
     </module>
     <module name="PackageAnnotation"/>
     <module name="AvoidNestedBlocks">
