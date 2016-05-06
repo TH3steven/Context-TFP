@@ -16,7 +16,6 @@ public class InstantPreset extends Preset {
     /**
      * Creates an InstantPreset object with to set camera settings toSet.
      * 
-     * @param cam Camera
      * @param toSet Camera settings to set when applied.
      */
     public InstantPreset(CameraSettings toSet) {

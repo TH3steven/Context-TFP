@@ -34,8 +34,7 @@ public class Script implements Iterator<Shot> {
     /**
      * Creates a script that starts from the beginning
      * with specified shots.
-     * @param shots The actual script of the different shots in 
-     * order of appearance.
+     * @param shots The actual script of the different shots in order of appearance.
      */
     public Script(List<Shot> shots) {
         this.shots = shots;
@@ -76,8 +75,7 @@ public class Script implements Iterator<Shot> {
         for (Shot s : shots) {
             if (timelines.containsKey(s.getCamera().getNumber())) {
                 timelines.get(s.getCamera().getNumber()).addShot(s);
-            }
-            else {
+            } else {
                 Timeline t = new Timeline();
                 t.setCamera(s.getCamera());
                 t.addShot(s);

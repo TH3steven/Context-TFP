@@ -1,20 +1,23 @@
 package test.java.nl.tudelft.contextproject.script;
 
+import static org.junit.Assert.assertEquals;
+
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Shot;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 /**
- *Class to test Shot Class. Test will be expanded with time.
+ * Class to test Shot Class. Test will be expanded with time.
  *
  * @author  Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class ShotTest {
+    
     /**
      * Test the constructor of the shot class.
      * Also tests if setters work properly.
@@ -41,7 +44,7 @@ public class ShotTest {
     /**
      * Test the execute method.
      * This tests if the preset settings are applied to a camera
-     * aftert the call of the execute method.
+     * after the call to the execute method.
      */
     @Test
     public void testExecute() {

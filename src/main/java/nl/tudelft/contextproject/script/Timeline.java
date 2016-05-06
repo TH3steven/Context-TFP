@@ -72,7 +72,7 @@ public class Timeline {
      * For all the shots present in our list of shots, it calls the execute method on
      * every shot. The execute method is defined in the class Shot.
      * 
-     * Not really sure what this method should do though...
+     * <p>Not really sure what this method should do though...
      */
     public void executeScript() {
         for (Shot shot1 : shots) {

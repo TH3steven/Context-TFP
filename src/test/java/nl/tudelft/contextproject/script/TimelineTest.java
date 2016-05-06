@@ -1,5 +1,8 @@
 package test.java.nl.tudelft.contextproject.script;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
@@ -7,6 +10,7 @@ import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Shot;
 import main.java.nl.tudelft.contextproject.script.Timeline;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,13 +19,13 @@ import java.util.List;
 /**
  * Class to test the Timeline Class.Test cases will be expanded
  * with time.
- * @author  Etta Tabe Takang Kajikaw
+ * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class TimelineTest {
 
     /**
-     *Test the constructor of the timeline class.
+     * Test the constructor of the Timeline class.
      * Also tests addition of shots.
      */
     @Test

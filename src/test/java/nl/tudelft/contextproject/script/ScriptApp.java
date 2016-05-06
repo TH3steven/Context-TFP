@@ -10,8 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ScriptApp {
+/**
+ * Demo application for how a script works.
+ * @author Bart van Oort
+ *
+ */
+public final class ScriptApp {
+    
+    private ScriptApp() {
+        throw new UnsupportedOperationException();
+    }
 
+    /**
+     * Demo application for how a script works.
+     * Run and press enter to run through the script.
+     * @param args Application arguments. Not used.
+     */
     public static void main(String[] args) {
         List<Shot> shots = new ArrayList<Shot>();
         Camera cam0 = new Camera();
@@ -24,7 +38,7 @@ public class ScriptApp {
         
         Scanner sc = new Scanner(System.in);
         while (script.hasNext()) {
-            sc.next();
+            sc.nextLine();
             Shot s = script.next();
             CameraSettings cs = s.getCamera().getSettings();
             System.out.println("Camera " + s.getCamera().getNumber() + " set to preset: " + cs.getPan() 

@@ -1,23 +1,26 @@
 package test.java.nl.tudelft.contextproject.script;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;
-import static org.junit.Assert.*;
 
-import main.java.nl.tudelft.contextproject.script.Timeline;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Class to test Script class. Test suit will be expanded
+ * Class to test Script class. Test suite will be expanded
  * with time.
  *
  * @author Etta Tabe Takang Kajikaw
@@ -35,8 +38,7 @@ public class ScriptTest {
     public void testScript() {
         Camera cam0 = new Camera();
         Camera cam1 = new Camera();
-        Camera cam2 = new Camera();
-;       Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
         Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5));
         Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3));
         Shot shot1 = new Shot(1, cam0, pres);
@@ -77,8 +79,6 @@ public class ScriptTest {
         Script script2 = new Script(los2);
         assertFalse(script2.hasNext());
         assertTrue(script1.hasNext());
-        los1.clear();
-        assertFalse(script1.hasNext());
     }
 
     /**
@@ -94,7 +94,6 @@ public class ScriptTest {
         List<Shot> los2 = new ArrayList<>();
         List<Shot> los1 = new ArrayList<>();
         los1.add(shot1);
-        los2.isEmpty();
         Script script1 = new Script(los1);
         Script script2 = new Script(los2);
         assertEquals(script1.next(), shot1);

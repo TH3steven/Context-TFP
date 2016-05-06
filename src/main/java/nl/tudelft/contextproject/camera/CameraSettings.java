@@ -85,7 +85,9 @@ public class CameraSettings {
      * Gets the Focus Level of the camera.
      * @return focus level.
      */
-    public int getFocus() { return focus; }
+    public int getFocus() {
+        return focus; 
+    }
 
     /**
      * Pans the camera a certain offset. It cannot pan past
