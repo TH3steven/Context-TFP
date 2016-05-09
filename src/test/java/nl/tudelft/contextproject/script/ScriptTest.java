@@ -38,9 +38,9 @@ public class ScriptTest {
     public void testScript() {
         Camera cam0 = new Camera();
         Camera cam1 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5));
-        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
+        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
         Shot shot1 = new Shot(1, cam0, pres);
         Shot shot2 = new Shot(2, cam1, pres2);
         Shot shot3 = new Shot(3, cam0, pres3);
@@ -70,7 +70,7 @@ public class ScriptTest {
     @Test
     public void testHasNext() {
         Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         List<Shot> los2 = new ArrayList<>();
         List<Shot> los1 = new ArrayList<>();
@@ -89,7 +89,7 @@ public class ScriptTest {
     @Test
     public  void testNext() throws NoSuchElementException {
         Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         List<Shot> los2 = new ArrayList<>();
         List<Shot> los1 = new ArrayList<>();

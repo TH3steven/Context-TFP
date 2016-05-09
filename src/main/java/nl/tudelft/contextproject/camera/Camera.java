@@ -1,5 +1,8 @@
 package main.java.nl.tudelft.contextproject.camera;
 
+import main.java.nl.tudelft.contextproject.presets.Preset;
+
+import java.util.HashMap;
 import java.util.Observable;
 
 /**
@@ -15,6 +18,7 @@ public class Camera extends Observable {
     
     private int num;
     private CameraSettings camSet;
+    private HashMap<Integer, Preset> presets;
     
     /**
      * Creates a Camera object with initial camera settings
@@ -23,6 +27,7 @@ public class Camera extends Observable {
     public Camera() {
         camSet = new CameraSettings();
         num = numCams++;
+        presets = new HashMap<Integer, Preset>();
     }
     
     /**
@@ -34,6 +39,7 @@ public class Camera extends Observable {
     public Camera(CameraSettings init) {
         camSet = init;
         num = numCams++;
+        presets = new HashMap<Integer, Preset>();
     }
     
     /**
@@ -111,7 +117,47 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
-
+    
+    /**
+     * Adds a preset to the camera, if there is not already
+     * a preset with the same id. Returns true if successful.
+     * @param p The preset to add to this camera.
+     * @return True if the preset was added, otherwise false.
+     */
+    public boolean addPreset(Preset p) {
+        if (presets.get(p.getId()) == null) {
+            presets.put(p.getId(), p);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Adds a preset, overwriting if it already exists.
+     * @param p The preset to add.
+     */
+    public void overwritePreset(Preset p) {
+        presets.put(p.getId(), p);
+    }
+    
+    /**
+     * Returns the preset with the specified id.
+     * Returns null if the preset doesn't exist.
+     * @param id The id of the preset to get.
+     * @return The requested preset.
+     */
+    public Preset getPreset(int id) {
+        return presets.get(id);
+    }
+    
+    /**
+     * Returns the amount of presets currently registered.
+     * @return Amount of presets.
+     */
+    public int getPresetAmount() {
+        return presets.size();
+    }
+    
     /**
      * This is still to be implemented but should be responsible for the taking
      * of shots by a camera.

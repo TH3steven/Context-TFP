@@ -26,8 +26,8 @@ public class ShotTest {
     public  void testShot() {
         Camera cam0 = new Camera();
         Camera cam1 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 2, 3, 4));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 2, 3, 4), 2);
         Shot shot1 = new Shot(1, cam0, pres);
         Shot shot2 = new Shot(0, null, null);
         assertEquals(shot1.getCamera(), cam0);
@@ -49,7 +49,7 @@ public class ShotTest {
     @Test
     public void testExecute() {
         Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         shot1.execute();
         assertEquals(cam0.getSettings().getFocus(), 1365);

@@ -33,7 +33,7 @@ public class TimelineTest {
         Camera cam0 = new Camera();
         Camera cam1 = new Camera();
         Camera cam2 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         Shot shot2 = new Shot(2, cam1, pres);
         List<Shot> los = new ArrayList<>();
@@ -60,7 +60,7 @@ public class TimelineTest {
     public void testAddShot() {
         List<Shot> los = new ArrayList<>();
         Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2));
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         Shot shot2 = new Shot(2, cam0, pres);
         Timeline timeline1 = new Timeline(cam0, los);
