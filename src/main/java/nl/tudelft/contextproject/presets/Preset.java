@@ -1,5 +1,7 @@
 package main.java.nl.tudelft.contextproject.presets;
 
+import java.io.File;
+
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 
@@ -19,6 +21,7 @@ public abstract class Preset {
     private String name;
     private CameraSettings toSet;
     private int id;
+    private String imageLocation;
     
     /**
      * Creates a Preset object with to set camera settings toSet.
@@ -46,6 +49,22 @@ public abstract class Preset {
      */
     public CameraSettings getToSet() {
         return toSet;
+    }
+    
+    /**
+     * Sets the location of the preview image of the preset.
+     * @param loc Location of the preview image.
+     */
+    public void setImageLocation(String loc) {
+        imageLocation = loc;
+    }
+    
+    /**
+     * Returns the location of the preview image.
+     * @return Location of the preview image.
+     */
+    public String getImage() {
+        return imageLocation;
     }
     
     /**
