@@ -89,7 +89,6 @@ public class PreviewController {
         presetFour.setImageLocation("main/resources/test4.jpg");
         presetFive.setImageLocation("main/resources/test5.jpg");
         presetSix.setImageLocation("main/resources/test6.jpg");
-
         
         Shot shotOne = new Shot(1, dummyCamera, presetOne);
         Shot shotTwo = new Shot(2, dummyCamera, presetTwo);
@@ -236,6 +235,31 @@ public class PreviewController {
      * @param shot - The shot to be showed
      */
     public void showShot(Shot shot) {
+        int check = checkShots();
+        switch (check) {
+            case 0: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shot.getPreset().getImage()));
+                    viewTwo.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+                    viewThree.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
+                    viewFour.setImage(new Image(shots.get(shot.getNumber() + 2).getPreset().getImage()));
+                    break;
+            case 1: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+                    viewTwo.setImage(new Image(shot.getPreset().getImage()));
+                    viewThree.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+                    viewFour.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
+                    break;
+            case 2: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
+                    viewTwo.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+                    viewThree.setImage(new Image(shot.getPreset().getImage()));
+                    viewFour.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+            case 3: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shots.get(shot.getNumber() - 4).getPreset().getImage()));
+                    viewTwo.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
+                    viewThree.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+                    viewFour.setImage(new Image(shot.getPreset().getImage()));
+        }
         if (checkShots() == 0) {
             actualCam.setImage(new Image(shot.getPreset().getImage()));
             viewOne.setImage(new Image(shot.getPreset().getImage()));
