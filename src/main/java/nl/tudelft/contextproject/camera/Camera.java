@@ -2,7 +2,7 @@ package main.java.nl.tudelft.contextproject.camera;
 
 import main.java.nl.tudelft.contextproject.presets.Preset;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Observable;
 
 /**
@@ -18,7 +18,7 @@ public class Camera extends Observable {
     
     private int num;
     private CameraSettings camSet;
-    private Hashtable<Integer, Preset> presets;
+    private HashMap<Integer, Preset> presets;
     
     /**
      * Creates a Camera object with initial camera settings
@@ -27,7 +27,7 @@ public class Camera extends Observable {
     public Camera() {
         camSet = new CameraSettings();
         num = numCams++;
-        presets = new Hashtable<Integer, Preset>();
+        presets = new HashMap<Integer, Preset>();
     }
     
     /**
@@ -39,7 +39,7 @@ public class Camera extends Observable {
     public Camera(CameraSettings init) {
         camSet = init;
         num = numCams++;
-        presets = new Hashtable<Integer, Preset>();
+        presets = new HashMap<Integer, Preset>();
     }
     
     /**
