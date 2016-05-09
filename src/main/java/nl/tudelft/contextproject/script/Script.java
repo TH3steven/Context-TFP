@@ -61,18 +61,6 @@ public class Script implements Iterator<Shot> {
     public Timeline getTimeline(int camNum) {
         return timelines.get(camNum);
     }
-    
-    /**
-     * Returns the camera object associated with the number specified.
-     * @param camNum number of the camera to get.
-     * @return the camera object associated with the number specified.
-     */
-    public Camera getCamera(int camNum) {
-        if (timelines.containsKey(camNum)) {
-            return timelines.get(camNum).getCamera();
-        }
-        return null;
-    }
 
     /**
      * Checks if the list of shots is empty.
