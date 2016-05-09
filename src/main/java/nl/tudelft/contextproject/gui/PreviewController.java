@@ -9,8 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,7 +17,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.model.Shot;
+import main.java.nl.tudelft.contextproject.camera.Camera;
+import main.java.nl.tudelft.contextproject.camera.CameraSettings;
+import main.java.nl.tudelft.contextproject.presets.InstantPreset;
+import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,26 +31,27 @@ import java.util.ArrayList;
  * @author Tim Yue
  */
 public class PreviewController {
-    @FXML HBox shotBox;
-    @FXML ImageView actualCam;
-    @FXML ImageView viewOne;
-    @FXML ImageView viewTwo;
-    @FXML ImageView viewThree;
-    @FXML ImageView viewFour;
-    @FXML Button play;
-    @FXML Button stop;
-    @FXML Button back;
-    @FXML ChoiceBox<Shot> cb;
-    @FXML TextField duration;
-    @FXML Rectangle highlight1;
-    @FXML Rectangle highlight2;
-    @FXML Rectangle highlight3;
-    @FXML Rectangle highlight4;
+    @FXML private HBox shotBox;
+    @FXML private ImageView actualCam;
+    @FXML private ImageView viewOne;
+    @FXML private ImageView viewTwo;
+    @FXML private ImageView viewThree;
+    @FXML private ImageView viewFour;
+    @FXML private Button play;
+    @FXML private Button stop;
+    @FXML private Button back;
+    @FXML private ChoiceBox<Shot> cb;
+    @FXML private TextField duration;
+    @FXML private Rectangle highlight1;
+    @FXML private Rectangle highlight2;
+    @FXML private Rectangle highlight3;
+    @FXML private Rectangle highlight4;
+    
     private int currentShot;
     private Timeline timeline;
     private ArrayList<Shot> shots;
     private ArrayList<ImageView> views;
-    
+
     @FXML
     private void initialize() {
         actualCam.setImage(new Image("main/resources/placeholder_picture.jpg"));
@@ -59,16 +61,42 @@ public class PreviewController {
         Image imgFour = new Image("main/resources/test4.jpg");
         Image imgFive = new Image("main/resources/test5.jpg");
         Image imgSix = new Image("main/resources/test6.jpg");
+        
         viewOne.setImage(imgOne);
         viewTwo.setImage(imgTwo);
         viewThree.setImage(imgThree);
         viewFour.setImage(imgFour);
-        Shot shotOne = new Shot(1, imgOne);
-        Shot shotTwo = new Shot(2, imgTwo);
-        Shot shotThree = new Shot(3, imgThree);
-        Shot shotFour = new Shot(4, imgFour);
-        Shot shotFive = new Shot(5, imgFive);
-        Shot shotSix = new Shot(6, imgSix);
+        
+        views = new ArrayList();
+        views.add(viewOne);
+        views.add(viewTwo);
+        views.add(viewThree);
+        views.add(viewFour);
+        
+        CameraSettings dummySettings = new CameraSettings();
+        Camera dummyCamera = new Camera();
+        
+        InstantPreset presetOne = new InstantPreset(dummySettings, 1);
+        InstantPreset presetTwo = new InstantPreset(dummySettings, 2);
+        InstantPreset presetThree = new InstantPreset(dummySettings, 3);
+        InstantPreset presetFour = new InstantPreset(dummySettings, 4);
+        InstantPreset presetFive = new InstantPreset(dummySettings, 5);
+        InstantPreset presetSix = new InstantPreset(dummySettings, 6);
+        
+        presetOne.setImageLocation("main/resources/placeholder_picture.jpg");
+        presetTwo.setImageLocation("main/resources/test2.jpg");
+        presetThree.setImageLocation("main/resources/test3.jpg");
+        presetFour.setImageLocation("main/resources/test4.jpg");
+        presetFive.setImageLocation("main/resources/test5.jpg");
+        presetSix.setImageLocation("main/resources/test6.jpg");
+        
+        Shot shotOne = new Shot(1, dummyCamera, presetOne);
+        Shot shotTwo = new Shot(2, dummyCamera, presetTwo);
+        Shot shotThree = new Shot(3, dummyCamera, presetThree);
+        Shot shotFour = new Shot(4, dummyCamera, presetFour);
+        Shot shotFive = new Shot(5, dummyCamera, presetFive);
+        Shot shotSix = new Shot(6, dummyCamera, presetSix);
+        
         shots = new ArrayList();
         shots.add(shotOne);
         shots.add(shotTwo);
@@ -76,63 +104,68 @@ public class PreviewController {
         shots.add(shotFour);
         shots.add(shotFive);
         shots.add(shotSix);
-        views = new ArrayList();
-        views.add(viewOne);
-        views.add(viewTwo);
-        views.add(viewThree);
-        views.add(viewFour);
+        
         currentShot = 1;
         addTextLimiter(duration, 2);
         highlight2.setOpacity(0);
         highlight3.setOpacity(0);
         highlight4.setOpacity(0);
+        
         timeline = new Timeline(new KeyFrame(Duration.millis(2000), ae -> nextImage()));
+        
         play.setOnAction((event) -> {
-                timeline.play();
-            });
+            timeline.play();
+        });
+        
         stop.setOnAction((event) -> {
-                timeline.stop();
-            });
+            timeline.stop();
+        });
+        
         back.setOnAction((event) -> {
-                timeline.stop();
-                MenuController.show();
-            });
+            timeline.stop();
+            MenuController.show();
+        });
+        
         viewOne.setOnMouseClicked((event) -> {
-                actualCam.setImage(viewOne.getImage());
-                currentShot = 1;
-                highlight1.setOpacity(1);
-                highlight2.setOpacity(0);
-                highlight3.setOpacity(0);
-                highlight4.setOpacity(0);
-                timeline.stop();
-            });
+            actualCam.setImage(viewOne.getImage());
+            currentShot = 1;
+            highlight1.setOpacity(1);
+            highlight2.setOpacity(0);
+            highlight3.setOpacity(0);
+            highlight4.setOpacity(0);
+            timeline.stop();
+        });
+        
         viewTwo.setOnMouseClicked((event) -> {
-                actualCam.setImage(viewTwo.getImage());
-                currentShot = 2;
-                highlight1.setOpacity(0);
-                highlight2.setOpacity(1);
-                highlight3.setOpacity(0);
-                highlight4.setOpacity(0);
-                timeline.stop();
-            });
+            actualCam.setImage(viewTwo.getImage());
+            currentShot = 2;
+            highlight1.setOpacity(0);
+            highlight2.setOpacity(1);
+            highlight3.setOpacity(0);
+            highlight4.setOpacity(0);
+            timeline.stop();
+        });
+        
         viewThree.setOnMouseClicked((event) -> {
-                actualCam.setImage(viewThree.getImage());
-                currentShot = 3;
-                highlight1.setOpacity(0);
-                highlight2.setOpacity(0);
-                highlight3.setOpacity(1);
-                highlight4.setOpacity(0);
-                timeline.stop();
-            });
+            actualCam.setImage(viewThree.getImage());
+            currentShot = 3;
+            highlight1.setOpacity(0);
+            highlight2.setOpacity(0);
+            highlight3.setOpacity(1);
+            highlight4.setOpacity(0);
+            timeline.stop();
+        });
+        
         viewFour.setOnMouseClicked((event) -> {
-                actualCam.setImage(viewFour.getImage());
-                currentShot = 4;
-                highlight1.setOpacity(0);
-                highlight2.setOpacity(0);
-                highlight3.setOpacity(0);
-                highlight4.setOpacity(1);
-                timeline.stop();
-            });
+            actualCam.setImage(viewFour.getImage());
+            currentShot = 4;
+            highlight1.setOpacity(0);
+            highlight2.setOpacity(0);
+            highlight3.setOpacity(0);
+            highlight4.setOpacity(1);
+            timeline.stop();
+        });
+        
         cb.setItems(FXCollections.observableArrayList(shotOne, shotTwo, shotThree, shotFour, shotFive, shotSix));
     }
 
@@ -150,7 +183,7 @@ public class PreviewController {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * shows the next image on the actual camera screen.
      */
@@ -161,7 +194,7 @@ public class PreviewController {
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(5000), ae -> nextImage()));
         timeline.playFromStart();
     }
-    
+
     /**
      * Add limiter on text field of maxLength characters.
      * @param tf - textfield to be limited
@@ -179,6 +212,10 @@ public class PreviewController {
         });
     }
     
+    /**
+     * Checks which shot in the shotlist is being viewed.
+     * @return - the shotNumber in the shotlist
+     */
     public int checkShots() {
         if (currentShot <= shots.size() - 3) {
             return 0;
@@ -193,33 +230,62 @@ public class PreviewController {
         }
     }
     
+    /**
+     * Shows the shot that is selected.
+     * @param shot - The shot to be showed
+     */
     public void showShot(Shot shot) {
+        int check = checkShots();
+        switch (check) {
+            case 0: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shot.getPreset().getImage()));
+                    viewTwo.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+                    viewThree.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
+                    viewFour.setImage(new Image(shots.get(shot.getNumber() + 2).getPreset().getImage()));
+                    break;
+            case 1: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+                    viewTwo.setImage(new Image(shot.getPreset().getImage()));
+                    viewThree.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+                    viewFour.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
+                    break;
+            case 2: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
+                    viewTwo.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+                    viewThree.setImage(new Image(shot.getPreset().getImage()));
+                    viewFour.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+            case 3: actualCam.setImage(new Image(shot.getPreset().getImage()));
+                    viewOne.setImage(new Image(shots.get(shot.getNumber() - 4).getPreset().getImage()));
+                    viewTwo.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
+                    viewThree.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+                    viewFour.setImage(new Image(shot.getPreset().getImage()));
+        }
         if (checkShots() == 0) {
-            actualCam.setImage(shot.getImage());
-            viewOne.setImage(shot.getImage());
-            viewTwo.setImage(shots.get(shot.getNum()).getImage());
-            viewThree.setImage(shots.get(shot.getNum() + 1).getImage());
-            viewFour.setImage(shots.get(shot.getNum() + 2).getImage());
+            actualCam.setImage(new Image(shot.getPreset().getImage()));
+            viewOne.setImage(new Image(shot.getPreset().getImage()));
+            viewTwo.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+            viewThree.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
+            viewFour.setImage(new Image(shots.get(shot.getNumber() + 2).getPreset().getImage()));
         } else if (checkShots() == 1) {
-            actualCam.setImage(shot.getImage());
-            viewOne.setImage(shots.get(shot.getNum() - 2).getImage());
-            viewTwo.setImage(shot.getImage());
-            viewThree.setImage(shots.get(shot.getNum()).getImage());
-            viewFour.setImage(shots.get(shot.getNum() + 1).getImage());
+            actualCam.setImage(new Image(shot.getPreset().getImage()));
+            viewOne.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+            viewTwo.setImage(new Image(shot.getPreset().getImage()));
+            viewThree.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
+            viewFour.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
         } else if (checkShots() == 2) {
-            actualCam.setImage(shot.getImage());
-            viewOne.setImage(shots.get(shot.getNum() - 3).getImage());
-            viewTwo.setImage(shots.get(shot.getNum() - 2).getImage());
-            viewThree.setImage(shot.getImage());
-            viewFour.setImage(shots.get(shot.getNum()).getImage());
+            actualCam.setImage(new Image(shot.getPreset().getImage()));
+            viewOne.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
+            viewTwo.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+            viewThree.setImage(new Image(shot.getPreset().getImage()));
+            viewFour.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
         } else if (checkShots() == 3) {
-            actualCam.setImage(shot.getImage());
-            viewOne.setImage(shots.get(shot.getNum() - 4).getImage());
-            viewTwo.setImage(shots.get(shot.getNum() - 3).getImage());
-            viewThree.setImage(shots.get(shot.getNum() - 2).getImage());
-            viewFour.setImage(shot.getImage());
+            actualCam.setImage(new Image(shot.getPreset().getImage()));
+            viewOne.setImage(new Image(shots.get(shot.getNumber() - 4).getPreset().getImage()));
+            viewTwo.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
+            viewThree.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
+            viewFour.setImage(new Image(shot.getPreset().getImage()));
         }
     }
-    
-    
+
+
 }
