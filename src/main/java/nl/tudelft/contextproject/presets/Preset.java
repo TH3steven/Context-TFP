@@ -1,7 +1,5 @@
 package main.java.nl.tudelft.contextproject.presets;
 
-import java.io.File;
-
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 
