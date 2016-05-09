@@ -2,6 +2,7 @@ package main.java.nl.tudelft.contextproject.script;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -80,6 +81,24 @@ public class Script implements Iterator<Shot> {
                 t.addShot(s);
                 timelines.put(s.getCamera().getNumber(), t);
             }
+        }
+    }
+    
+    /**
+     * Adds a shot to the Script, also adds it to the timelines.
+     * If the shot is associated to a camera that does not have
+     * a timeline associated with it in the script, it will create
+     * a new timeline for it.
+     * @param s shot to be added.
+     */
+    public void addShot(Shot s) {
+        shots.add(s);
+        if (timelines.containsKey(s.getCamera().getNumber())) {
+            timelines.get(s.getCamera().getNumber()).addShot(s);
+        } else {
+            Timeline t = new Timeline(s.getCamera(), new LinkedList<Shot>());
+            t.addShot(s);
+            timelines.put(s.getCamera().getNumber(), t);
         }
     }
 

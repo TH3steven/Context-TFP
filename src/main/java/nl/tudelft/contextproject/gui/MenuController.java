@@ -23,7 +23,6 @@ public class MenuController {
     @FXML private Button btnPresets;
     @FXML private Button btnApply;
     @FXML private TextField numberOfCameras;
-    private int numberCameras;
 
     @FXML
     private void initialize() {
@@ -38,22 +37,22 @@ public class MenuController {
         });
         btnApply.setOnAction((event) -> {
             boolean exception = false;
-            if(!numberOfCameras.getText().isEmpty()) {
+            if (!numberOfCameras.getText().isEmpty()) {
                 try {
                     Integer.parseInt(numberOfCameras.getText());
                     
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     exception = true;
                 }            
             } else {
                 exception = true;
             }
             
-            if(exception) {
+            if (exception) {
                 numberOfCameras.setStyle("-fx-border-color: red;");
             } else {
-               numberOfCameras.setStyle("");
-               System.out.println(numberOfCameras.getText());
+                numberOfCameras.setStyle("");
+                System.out.println(numberOfCameras.getText());
             } 
         });
     }

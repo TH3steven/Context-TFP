@@ -14,6 +14,7 @@ import java.util.Observable;
  */
 public class Camera extends Observable {
     
+    private static final HashMap<Integer, Camera> CAMERAS = new HashMap<Integer, Camera>();
     private static int numCams = 0;
     
     private int num;
@@ -28,6 +29,7 @@ public class Camera extends Observable {
         camSet = new CameraSettings();
         num = numCams++;
         presets = new HashMap<Integer, Preset>();
+        CAMERAS.put(num, this);
     }
     
     /**
@@ -40,6 +42,18 @@ public class Camera extends Observable {
         camSet = init;
         num = numCams++;
         presets = new HashMap<Integer, Preset>();
+        CAMERAS.put(num, this);
+    }
+    
+    /**
+     * Returns the camera with a specific number, or null if it
+     * does not yet exist.
+     * @param camNum number of the camera to get
+     * @return the camera with the associated number, or null if
+     *      it does not exist.
+     */
+    public static Camera getCamera(int camNum) {
+        return CAMERAS.get(camNum);
     }
     
     /**
@@ -69,6 +83,14 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+    
+    /**
+     * Get the total amount of cameras connected to the system.
+     * @return The number of cameras.
+     */
+    public static int getCameraAmount() {
+        return numCams;
+    } 
     
     /**
      * Pans the camera a certain offset. Cannot pan past

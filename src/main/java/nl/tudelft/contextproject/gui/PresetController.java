@@ -1,7 +1,5 @@
 package main.java.nl.tudelft.contextproject.gui;
 
-import java.io.IOException;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +9,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+
 import main.java.nl.tudelft.contextproject.ContextTFP;
+
+import java.io.IOException;
 
 public class PresetController {
     
