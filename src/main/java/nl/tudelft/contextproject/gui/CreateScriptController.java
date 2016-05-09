@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
+
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
@@ -34,13 +35,13 @@ import java.util.List;
 public class CreateScriptController {
 
     Script script;
-    
+
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
 
     @FXML private ChoiceBox<Integer> addCamera;
     @FXML private ChoiceBox<Integer> addPreset;
-    
+
     @FXML private TableView<Shot> tableEvents;
     @FXML private TableColumn<Shot, String> tAdd;
     @FXML private TableColumn<Shot, Integer> tCamera;
@@ -56,8 +57,12 @@ public class CreateScriptController {
     private void initialize() {
 
         //TEMP
-        new Camera();
-        
+        Camera c = new Camera();
+        c.addPreset(new InstantPreset(new CameraSettings(), 0));
+        c.addPreset(new InstantPreset(new CameraSettings(), 1));
+        c.addPreset(new InstantPreset(new CameraSettings(), 2));
+        //
+
         script = new Script(new ArrayList<Shot>());
 
         List<Integer> cameraList = new ArrayList<Integer>();
@@ -90,12 +95,15 @@ public class CreateScriptController {
 
         tCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> c) {
-                return new ReadOnlyObjectWrapper<Integer>(c.getValue().getCamera().getNumber());
+                return new ReadOnlyObjectWrapper<Integer>(c.getValue().getCamera().getNumber() + 1);
             }
         });
 
-        tPreset.setCellValueFactory(
-                new PropertyValueFactory<Shot, Integer>("preset"));
+        tPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
+            public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> p) {
+                return new ReadOnlyObjectWrapper<Integer>(p.getValue().getPreset().getId() + 1);
+            }
+        });
 
         tDescription.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("description"));
@@ -133,18 +141,17 @@ public class CreateScriptController {
             System.out.println(tableEvents.getItems().size() + 1);
 
             if (!emptyField) {
-//                script.getTimeline(addCamera.getSelectionModel().getSelectedItem()).addShot(new Shot(
-//                        
-//                        
-//                        ));
-                
-                data.add(new Shot(
+                Shot newShot = new Shot(
                         tableEvents.getItems().size() + 1,
                         addShot.getText(),
-                        new Camera(), //TODO Add actual camera
-                        new InstantPreset(new CameraSettings(), 0), //TODO Add actual preset
+                        Camera.getCamera(addCamera.getSelectionModel().getSelectedItem() - 1),
+                        Camera.getCamera(addCamera.getSelectionModel().getSelectedItem() - 1)
+                            .getPreset(addPreset.getSelectionModel().getSelectedItem() - 1),
                         addDescription.getText()
-                        ));
+                        );
+
+                script.addShot(newShot);
+                data.add(newShot);
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
