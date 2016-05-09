@@ -71,6 +71,14 @@ public class Camera extends Observable {
     }
     
     /**
+     * Get the total amount of cameras connected to the system.
+     * @return The number of cameras.
+     */
+    public static int getCameraAmount() {
+        return numCams;
+    } 
+    
+    /**
      * Pans the camera a certain offset. Cannot pan past
      * the pan limits.
      * 
