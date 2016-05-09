@@ -18,17 +18,27 @@ public abstract class Preset {
 
     private String name;
     private CameraSettings toSet;
+    private int id;
     
     /**
      * Creates a Preset object with to set camera settings toSet.
      * 
      * @param toSet Camera settings to set when applied.
+     * @param identifier The identifier of this preset.
      */
-    protected Preset(CameraSettings toSet) {
-        name = "";
+    protected Preset(CameraSettings toSet, int identifier) {
+        this.name = "";
         this.toSet = toSet;
+        this.id = identifier;
     }
     
+    /**
+     * Returns the identifier of this preset.
+     * @return The identifier of this preset.
+     */
+    public int getId() {
+        return id;
+    }
     
     /**
      * Returns the settings the camera should be set to.

@@ -20,7 +20,7 @@ public class InstantPresetTest {
     @Test
     public void testApply() {
         Camera cam = new Camera(new CameraSettings(1, 33, 7, 10));
-        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65));
+        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65), 1);
         p.applyTo(cam);
         assertEquals(65, cam.getSettings().getPan());
         assertEquals(65, cam.getSettings().getTilt());

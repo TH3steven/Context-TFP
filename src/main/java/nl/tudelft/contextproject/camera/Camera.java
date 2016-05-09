@@ -1,5 +1,8 @@
 package main.java.nl.tudelft.contextproject.camera;
 
+import main.java.nl.tudelft.contextproject.presets.Preset;
+
+import java.util.Hashtable;
 import java.util.Observable;
 
 /**
@@ -15,6 +18,7 @@ public class Camera extends Observable {
     
     private int num;
     private CameraSettings camSet;
+    private Hashtable<Integer, Preset> presets;
     
     /**
      * Creates a Camera object with initial camera settings
@@ -23,6 +27,7 @@ public class Camera extends Observable {
     public Camera() {
         camSet = new CameraSettings();
         num = numCams++;
+        presets = new Hashtable<Integer, Preset>();
     }
     
     /**
@@ -34,6 +39,7 @@ public class Camera extends Observable {
     public Camera(CameraSettings init) {
         camSet = init;
         num = numCams++;
+        presets = new Hashtable<Integer, Preset>();
     }
     
     /**
@@ -110,6 +116,38 @@ public class Camera extends Observable {
         camSet.focus(offset);
         setChanged();
         notifyObservers();
+    }
+    
+    /**
+     * Adds a preset to the camera, if there is not already
+     * a preset with the same id. Returns true if successful.
+     * @param p The preset to add to this camera.
+     * @return True if the preset was added, otherwise false.
+     */
+    public boolean addPreset(Preset p) {
+        if (presets.get(p.getId()) == null) {
+            presets.put(p.getId(), p);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Adds a preset, overwriting if it already exists.
+     * @param p The preset to add.
+     */
+    public void overwritePreset(Preset p) {
+        presets.put(p.getId(), p);
+    }
+    
+    /**
+     * Returns the preset with the specified id.
+     * Returns null if the preset doesn't exist.
+     * @param id The id of the preset to get.
+     * @return The requested preset.
+     */
+    public Preset getPreset(int id) {
+        return presets.get(id);
     }
 
     /**

@@ -17,9 +17,10 @@ public class InstantPreset extends Preset {
      * Creates an InstantPreset object with to set camera settings toSet.
      * 
      * @param toSet Camera settings to set when applied.
+     * @param identifier The identifier of this preset.
      */
-    public InstantPreset(CameraSettings toSet) {
-        super(toSet);
+    public InstantPreset(CameraSettings toSet, int id) {
+        super(toSet, id);
     }
 
     /**
