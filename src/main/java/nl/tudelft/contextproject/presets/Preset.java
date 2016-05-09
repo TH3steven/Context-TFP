@@ -16,7 +16,7 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
  */
 public abstract class Preset {
 
-    private String name;
+    private String description;
     private CameraSettings toSet;
     private int id;
     private String imageLocation;
@@ -28,7 +28,7 @@ public abstract class Preset {
      * @param identifier The identifier of this preset.
      */
     protected Preset(CameraSettings toSet, int identifier) {
-        this.name = "";
+        this.description = "";
         this.toSet = toSet;
         this.id = identifier;
     }
@@ -54,7 +54,7 @@ public abstract class Preset {
      * @param loc Location of the preview image.
      */
     public void setImageLocation(String loc) {
-        imageLocation = loc;
+        this.imageLocation = loc;
     }
     
     /**
@@ -62,7 +62,23 @@ public abstract class Preset {
      * @return Location of the preview image.
      */
     public String getImage() {
-        return imageLocation;
+        return this.imageLocation;
+    }
+    
+    /**
+     * Sets the description of the preset.
+     * @param desc The description of the preset.
+     */
+    public void setDescription(String desc) {
+        this.description = desc;
+    }
+    
+    /**
+     * Returns the description of the preset.
+     * @return The description of the preset.
+     */
+    public String getDescription() {
+        return this.description;
     }
     
     /**
