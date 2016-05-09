@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
-
 /**
  * Class to represent a script of presets.
  * Implements the Iterator interface so it can apply
