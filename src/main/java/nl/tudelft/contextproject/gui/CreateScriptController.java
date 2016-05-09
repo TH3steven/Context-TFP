@@ -138,8 +138,6 @@ public class CreateScriptController {
                 addPreset.setStyle("");
             }
 
-            System.out.println(tableEvents.getItems().size() + 1);
-
             if (!emptyField) {
                 Shot newShot = new Shot(
                         tableEvents.getItems().size() + 1,
