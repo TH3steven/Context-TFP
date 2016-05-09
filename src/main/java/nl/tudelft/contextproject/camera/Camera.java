@@ -149,7 +149,15 @@ public class Camera extends Observable {
     public Preset getPreset(int id) {
         return presets.get(id);
     }
-
+    
+    /**
+     * Returns the amount of presets currently registered.
+     * @return Amount of presets.
+     */
+    public int getPresetAmount() {
+        return presets.size();
+    }
+    
     /**
      * This is still to be implemented but should be responsible for the taking
      * of shots by a camera.
