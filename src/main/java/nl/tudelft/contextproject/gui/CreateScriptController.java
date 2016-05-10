@@ -1,6 +1,7 @@
 package main.java.nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -58,6 +59,7 @@ public class CreateScriptController {
 
         //TEMP
         Camera c = new Camera();
+        new Camera();
         c.addPreset(new InstantPreset(new CameraSettings(), 0));
         c.addPreset(new InstantPreset(new CameraSettings(), 1));
         c.addPreset(new InstantPreset(new CameraSettings(), 2));
@@ -72,12 +74,27 @@ public class CreateScriptController {
             cameraList.add(i + 1);
         }
 
-        for (int i = 0; i < 3; ++i) {
-            presetList.add(i + 1);
-        }
-
+        addCamera.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> obs, Integer oldV, Integer newV) {
+                presetList.clear();
+                
+                if (newV != null) {
+                    addPreset.setDisable(false);
+                    for (int i = 0; i < Camera.
+                            getCamera(addCamera.getSelectionModel().getSelectedItem() - 1).getPresetAmount(); ++i) {
+                        presetList.add(i + 1);
+                    }
+                    
+                    addPreset.setItems(FXCollections.observableArrayList(presetList));
+                } else {
+                    addPreset.setDisable(true);
+                }
+            }
+        });
+        
+        addPreset.setDisable(true);
         addCamera.setItems(FXCollections.observableArrayList(cameraList));
-        addPreset.setItems(FXCollections.observableArrayList(presetList));
 
         //Disallow horizontal scrolling
         tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -112,6 +129,7 @@ public class CreateScriptController {
     private void setActions() {
 
         final ObservableList<Shot> data = FXCollections.observableArrayList();
+
         tableEvents.setItems(data);
 
         btnAdd.setOnAction((event) -> {
