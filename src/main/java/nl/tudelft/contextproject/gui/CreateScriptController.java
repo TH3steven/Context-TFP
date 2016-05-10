@@ -14,6 +14,8 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
@@ -75,10 +77,16 @@ public class CreateScriptController {
         initCamera();
         initPreset();
 
-        //Disallow horizontal scrolling
+        // Disallow horizontal scrolling.
         tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Allows the user to press ENTER to add a shot.
+        btnAdd.setDefaultButton(true); 
     }
 
+    /**
+     * Fills the choicebox for selecting a camera.
+     */
     private void initCamera() {
         List<Integer> cameraList = new ArrayList<Integer>();
 
@@ -89,6 +97,10 @@ public class CreateScriptController {
         addCamera.setItems(FXCollections.observableArrayList(cameraList));
     }
 
+    /**
+     * Fills the choicebox for selecting a preset, given the selection
+     * of a certain camera.
+     */
     private void initPreset() {
         List<Integer> presetList = new ArrayList<Integer>();
 
@@ -115,6 +127,10 @@ public class CreateScriptController {
         addPreset.setDisable(true);
     }
 
+    /**
+     * Sets the factories of the table columns, aka where they should
+     * get their value from.
+     */
     private void setFactories() {
         tID.setCellValueFactory(
                 new PropertyValueFactory<Shot, Integer>("number"));
@@ -138,6 +154,9 @@ public class CreateScriptController {
                 new PropertyValueFactory<Shot, String>("description"));
     }
 
+    /**
+     * Sets the actions to be taken when a button is pressed.
+     */
     private void setActions() {
         final ObservableList<Shot> data = FXCollections.observableArrayList();
 
@@ -173,7 +192,7 @@ public class CreateScriptController {
                         addShot.getText(),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                            .getPreset(addPreset.getSelectionModel().getSelectedItem()),
+                            .getPreset(addPreset.getSelectionModel().getSelectedIndex()),
                         addDescription.getText()
                         );
 
