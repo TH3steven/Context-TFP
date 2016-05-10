@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class CreateScriptController {
 
-    Script script;
+    private Script script;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
@@ -54,8 +54,10 @@ public class CreateScriptController {
     @FXML private TextField addShot;
     @FXML private TextField addDescription;
 
-    @FXML
-    private void initialize() {
+    /**
+     * Initialize method used by JavaFX.
+     */
+    @FXML private void initialize() {
 
         //TEMP
         Camera c = new Camera();
@@ -67,40 +69,50 @@ public class CreateScriptController {
 
         script = new Script(new ArrayList<Shot>());
 
+        setFactories();
+        setActions();
+
+        initCamera();
+        initPreset();
+
+        //Disallow horizontal scrolling
+        tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    private void initCamera() {
         List<Integer> cameraList = new ArrayList<Integer>();
-        List<Integer> presetList = new ArrayList<Integer>();
 
         for (int i = 0; i < Camera.getCameraAmount(); ++i) {
             cameraList.add(i + 1);
         }
 
+        addCamera.setItems(FXCollections.observableArrayList(cameraList));
+    }
+
+    private void initPreset() {
+        List<Integer> presetList = new ArrayList<Integer>();
+
         addCamera.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> obs, Integer oldV, Integer newV) {
                 presetList.clear();
-                
+
                 if (newV != null) {
                     addPreset.setDisable(false);
+
                     for (int i = 0; i < Camera.
-                            getCamera(addCamera.getSelectionModel().getSelectedItem() - 1).getPresetAmount(); ++i) {
+                            getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
                         presetList.add(i + 1);
                     }
-                    
+
                     addPreset.setItems(FXCollections.observableArrayList(presetList));
                 } else {
                     addPreset.setDisable(true);
                 }
             }
         });
-        
+
         addPreset.setDisable(true);
-        addCamera.setItems(FXCollections.observableArrayList(cameraList));
-
-        //Disallow horizontal scrolling
-        tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        setFactories();
-        setActions();
     }
 
     private void setFactories() {
@@ -127,7 +139,6 @@ public class CreateScriptController {
     }
 
     private void setActions() {
-
         final ObservableList<Shot> data = FXCollections.observableArrayList();
 
         tableEvents.setItems(data);
@@ -160,9 +171,9 @@ public class CreateScriptController {
                 Shot newShot = new Shot(
                         tableEvents.getItems().size() + 1,
                         addShot.getText(),
-                        Camera.getCamera(addCamera.getSelectionModel().getSelectedItem() - 1),
-                        Camera.getCamera(addCamera.getSelectionModel().getSelectedItem() - 1)
-                            .getPreset(addPreset.getSelectionModel().getSelectedItem() - 1),
+                        Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
+                        Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
+                            .getPreset(addPreset.getSelectionModel().getSelectedItem()),
                         addDescription.getText()
                         );
 
