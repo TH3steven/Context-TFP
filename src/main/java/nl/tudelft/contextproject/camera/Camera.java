@@ -65,6 +65,11 @@ public class Camera extends Observable {
         return CAMERAS.values();
     }
     
+    public static void clearAllCameras() {
+        CAMERAS.clear();
+        numCams = 0;
+    }
+    
     /**
      * Gets the camera number assigned to the camera.
      * @return Camera number assigned to camera.

@@ -32,6 +32,9 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = description;
+        if (cam != null) {
+            cam.addPreset(pres);
+        }
     }
 
     /**
@@ -43,10 +46,13 @@ public class Shot {
      */
     public Shot(int num, Camera cam, Preset pres) {
         this.number = num;
-        this.shotId = null;
+        this.shotId = "";
         this.camera = cam;
         this.preset = pres;
-        this.description = null;
+        this.description = "";
+        if (cam != null) {
+            cam.addPreset(pres);
+        }
     }
 
     /**

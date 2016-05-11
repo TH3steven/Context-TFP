@@ -7,12 +7,18 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 
+import org.junit.After;
 import org.junit.Test;
 
 /**
  * Class to test preset InstantPreset.
  */
 public class InstantPresetTest {
+    
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
+    }
 
     /**
      * Tests the only important method in this preset: {@link InstantPreset#applyTo(Camera)}.

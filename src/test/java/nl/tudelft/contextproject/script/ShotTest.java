@@ -8,6 +8,7 @@ import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -17,6 +18,11 @@ import org.junit.Test;
  * @since 0.2
  */
 public class ShotTest {
+    
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
+    }
     
     /**
      * Test the constructor of the shot class.

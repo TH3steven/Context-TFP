@@ -13,6 +13,7 @@ import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
+import org.junit.After;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -28,6 +29,11 @@ import java.util.NoSuchElementException;
  */
 public class ScriptTest {
 
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
+    }
+    
     /**
      * Test the script constructor to find the shots
      * available in the script.
