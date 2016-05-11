@@ -21,7 +21,6 @@ import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
@@ -42,12 +41,12 @@ public class CreateScriptController {
     @FXML private ChoiceBox<Integer> addPreset;
 
     @FXML private TableView<Shot> tableEvents;
-    @FXML private TableColumn<Shot, String> tAdd;
-    @FXML private TableColumn<Shot, Integer> tCamera;
-    @FXML private TableColumn<Shot, String> tDescription;
-    @FXML private TableColumn<Shot, Integer> tID;
-    @FXML private TableColumn<Shot, Integer> tPreset;
-    @FXML private TableColumn<Shot, String> tShot;
+    @FXML private TableColumn<Shot, String> columnAdd;
+    @FXML private TableColumn<Shot, Integer> columnCamera;
+    @FXML private TableColumn<Shot, String> columnDescription;
+    @FXML private TableColumn<Shot, Integer> columnID;
+    @FXML private TableColumn<Shot, Integer> columnPreset;
+    @FXML private TableColumn<Shot, String> columnShot;
 
     @FXML private TextField addShot;
     @FXML private TextField addDescription;
@@ -126,25 +125,25 @@ public class CreateScriptController {
      * get their value from.
      */
     private void setFactories() {
-        tID.setCellValueFactory(
+        columnID.setCellValueFactory(
                 new PropertyValueFactory<Shot, Integer>("number"));
 
-        tShot.setCellValueFactory(
+        columnShot.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("shotId"));
 
-        tCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
+        columnCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> c) {
                 return new ReadOnlyObjectWrapper<Integer>(c.getValue().getCamera().getNumber() + 1);
             }
         });
 
-        tPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
+        columnPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> p) {
                 return new ReadOnlyObjectWrapper<Integer>(p.getValue().getPreset().getId() + 1);
             }
         });
 
-        tDescription.setCellValueFactory(
+        columnDescription.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("description"));
     }
 
