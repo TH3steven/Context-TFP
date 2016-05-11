@@ -15,11 +15,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import main.java.nl.tudelft.contextproject.ContextTFP;
+import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PresetController {
     
@@ -36,7 +39,19 @@ public class PresetController {
     
     @FXML
     private void initialize() {
-        cameraSelecter.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8));
+
+        //TEMP
+        Camera c = new Camera();
+        c.addPreset(new InstantPreset(new CameraSettings(), 0));
+        c.addPreset(new InstantPreset(new CameraSettings(), 1));
+        c.addPreset(new InstantPreset(new CameraSettings(), 2));
+        //
+        
+        List<Integer> cameraList = new ArrayList<Integer>();
+        for (int i = 0; i < Camera.getCameraAmount(); i++) {
+            cameraList.add(i + 1);
+        }
+        cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
         cameraView.setImage(new Image("main/resources/placeholder_picture.jpg"));
 
         setFactories();
@@ -56,8 +71,8 @@ public class PresetController {
         tableView.setItems(data);
         
         btnBack.setOnAction((event) -> {
-            MenuController.show();
-        });
+                MenuController.show();
+            });
         
         //TODO: Add newly created preset to camera.
         btnSave.setOnAction((event) -> {
@@ -66,7 +81,7 @@ public class PresetController {
                 id = Integer.parseInt(presetID.getText());
                 presetID.setStyle("");
                 data.add(new InstantPreset(
-                        new CameraSettings(1,1,1,2000),
+                        new CameraSettings(1, 1, 1, 2000),
                         id,
                         description.getText()));
             } catch (Exception e) {
