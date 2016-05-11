@@ -60,7 +60,6 @@ public class PresetController {
         cameraView.setImage(new Image("main/resources/placeholder_picture.jpg"));
         
         setFactories();
-        tableView.getSortOrder().add(presetColumn);
         setActions();
     }
 
@@ -73,17 +72,6 @@ public class PresetController {
     }
 
     private void setActions() {
-        
-//        SortedList<Preset> sortedList = new SortedList<>( data, 
-//                (Preset p1, Preset p2) -> {
-//                  if( p1.getId() < p2.getId() ) {
-//                      return -1;
-//                  } else if( p1.getId() > p2.getId() ) {
-//                      return 1;
-//                  } else {
-//                      return 0;
-//                  }
-//              });
         tableView.setItems(data);
 
         btnBack.setOnAction((event) -> {
@@ -155,15 +143,15 @@ public class PresetController {
     private void removePreset(int id) {
         int position = -1;
         
-        for(int i = 0; i < data.size(); i++) {
+        for (int i = 0; i < data.size(); i++) {
             Preset p = data.get(i);
-            if(p.getId() == id) {
+            if (p.getId() == id) {
                 position = i;
                 break;
             }
         }
         
-        if(position != -1) {
+        if (position != -1) {
             data.remove(position);
         }
     }
