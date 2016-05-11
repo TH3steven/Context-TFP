@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * Class to test the Timeline Class.Test cases will be expanded
  * with time.
- * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class TimelineTest {

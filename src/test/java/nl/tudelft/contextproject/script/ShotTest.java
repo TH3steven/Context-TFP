@@ -13,8 +13,6 @@ import org.junit.Test;
 
 /**
  * Class to test Shot Class. Test will be expanded with time.
- *
- * @author  Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class ShotTest {
@@ -36,6 +34,11 @@ public class ShotTest {
         Preset pres2 = new InstantPreset(new CameraSettings(1, 2, 3, 4), 2);
         Shot shot1 = new Shot(1, cam0, pres);
         Shot shot2 = new Shot(0, null, null);
+        Shot shot3 = new Shot(2, "2!", cam1, pres, "cover main podium");
+        assertEquals(shot3.getDescription(), "cover main podium");
+        assertEquals(shot3.getShotId(), "2!");
+        assertEquals(shot3.getCamera(), cam1);
+        assertEquals(shot3.getPreset(), pres);
         assertEquals(shot1.getCamera(), cam0);
         assertEquals(shot1.getNumber(), 1);
         assertEquals(shot1.getPreset(), pres);

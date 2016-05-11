@@ -12,8 +12,6 @@ import java.util.Scanner;
 
 /**
  * Demo application for how a script works.
- * @author Bart van Oort
- *
  */
 public final class ScriptApp {
     

@@ -4,6 +4,7 @@ import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Script;
+import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import javax.xml.stream.XMLStreamException;
 /**
  * Utility class for saving a script to an XML file.
  * The location this file is to be saved to is stored in the private
- * variable {@link saveLocation}, which can be set using {@link #setSaveLocation}.
+ * variable {@link #saveLocation}, which can be set using {@link #setSaveLocation}.
  * 
  * @since 0.3
  */
@@ -54,7 +55,7 @@ public final class SaveScript {
     
     /**
      * Sets the location of the save file this class saves to.
-     * Also creates a new instance of {@link writer} so it may save to the
+     * Also creates a new instance of {@link #writer} so it may save to the
      * new save location when {@link #save(Script)} is called.
      * @param s the new location of the save file this class should save to.
      */
@@ -132,10 +133,18 @@ public final class SaveScript {
      */
     private static void generateShotsSection(Script script) throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "shots"));
-        //TODO: Add shots
+        for (Shot shot1 : script.getShots()) {
+            generateShotXML(shot1);
+        }
         writer.add(eventFactory.createEndElement("", "", "shots"));
     }
-    
+
+    /**
+     * Generates and adds to the {@link #writer} the section of XML that
+     * represents the specified camera.
+     * @param cam The camera specified for which its XML should be added to the writer.
+     * @throws XMLStreamException Thrown from {@link #writer}
+     */
     private static void generateCameraXML(Camera cam) throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "camera"));
         writer.add(eventFactory.createAttribute("id", cam.getNumber() + ""));
@@ -147,7 +156,13 @@ public final class SaveScript {
         writer.add(eventFactory.createEndElement("", "", "presets"));
         writer.add(eventFactory.createEndElement("", "", "camera"));
     }
-    
+
+    /**
+     * Generates and adds to the {@link #writer} the section of XML that
+     * represents the specified camera settings .
+     * @param camSet The camera settings specified for which its XML should be added to the writer.
+     * @throws XMLStreamException Thrown from {@link #writer}
+     */
     private static void generateCameraSettingsXML(CameraSettings camSet) throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "cameraSettings"));
         writer.add(eventFactory.createAttribute("pan", camSet.getPan() + ""));
@@ -156,7 +171,13 @@ public final class SaveScript {
         writer.add(eventFactory.createAttribute("focus", camSet.getFocus() + ""));
         writer.add(eventFactory.createEndElement("", "", "cameraSettings"));
     }
-    
+
+    /**
+     * Generates and adds to the {@link #writer} the section of XML that
+     * represents the specified preset.
+     * @param preset The preset specified for which its XML should be added to the writer.
+     * @throws XMLStreamException Thrown from {@link #writer}
+     */
     private static void generatePresetXML(Preset preset) throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "preset"));
         writer.add(eventFactory.createAttribute("type", preset.getClass().getSimpleName()));
@@ -171,5 +192,29 @@ public final class SaveScript {
         writer.add(eventFactory.createEndElement("", "", "imgLoc"));
         generateCameraSettingsXML(preset.getToSet());
         writer.add(eventFactory.createEndElement("", "", "preset"));
+    }
+
+    /**
+     * Generates and adds to the {@link #writer} the section of XML that
+     * represents the specified shot.
+     * @param shot The shot specified for which its XML should be added to the writer.
+     * @throws XMLStreamException Thrown from {@link #writer}
+     */
+    private static void generateShotXML(Shot shot) throws XMLStreamException {
+        writer.add(eventFactory.createStartElement("", "", "shot"));
+        writer.add(eventFactory.createAttribute("Number", shot.getNumber() + ""));
+        writer.add(eventFactory.createStartElement("", "", "shotId"));
+        writer.add(eventFactory.createCharacters(shot.getShotId()));
+        writer.add(eventFactory.createEndElement("", "", "shotId"));
+        writer.add(eventFactory.createStartElement("", "", "description"));
+        writer.add(eventFactory.createCharacters(shot.getDescription()));
+        writer.add(eventFactory.createEndElement("", "", "description"));
+        writer.add(eventFactory.createStartElement("", "", "cameraId"));
+        writer.add(eventFactory.createCharacters(shot.getCamera().getNumber() + ""));
+        writer.add(eventFactory.createEndElement("", "", "cameraId"));
+        writer.add(eventFactory.createStartElement("", "", "presetId"));
+        writer.add(eventFactory.createCharacters(shot.getPreset().getId() + ""));
+        writer.add(eventFactory.createEndElement("", "", "presetId"));
+        writer.add(eventFactory.createEndElement("", "", "shot"));
     }
 }

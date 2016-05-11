@@ -57,7 +57,7 @@ public class Shot {
 
     /**
      * Used to tell a particular camera to take a shot.
-     * Makes use of {@link Camera#takeShot()}
+     * Makes use of {@link Preset#applyTo(Camera)}
      */
     public void execute() {
         preset.applyTo(camera);

@@ -15,9 +15,6 @@ import java.util.Observer;
 /**
  * Class to test the Camera class. More tests should be
  * added.
- * 
- * @author Team Free Pizza
- *
  */
 public class CameraTest {
     
