@@ -2,6 +2,7 @@ package main.java.nl.tudelft.contextproject.camera;
 
 import main.java.nl.tudelft.contextproject.presets.Preset;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -54,6 +55,14 @@ public class Camera extends Observable {
      */
     public static Camera getCamera(int camNum) {
         return CAMERAS.get(camNum);
+    }
+    
+    /**
+     * Returns all cameras currently made.
+     * @return a collection of all cameras currently specified.
+     */
+    public static Collection<Camera> getAllCameras() {
+        return CAMERAS.values();
     }
     
     /**
@@ -173,7 +182,7 @@ public class Camera extends Observable {
     }
     
     /**
-     * Returns the amount of presets currently registered.
+     * Returns the amount of presets currently registered to this camera.
      * @return Amount of presets.
      */
     public int getPresetAmount() {
@@ -181,11 +190,11 @@ public class Camera extends Observable {
     }
     
     /**
-     * This is still to be implemented but should be responsible for the taking
-     * of shots by a camera.
+     * Returns the list of presets currently registered to this camera.
+     * @return the list of presets registered to this camera.
      */
-    public void takeShot() {
-
+    public Collection<Preset> getAllPresets() {
+        return presets.values();
     }
     
 }

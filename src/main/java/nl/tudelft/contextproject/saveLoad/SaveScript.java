@@ -1,10 +1,13 @@
 package main.java.nl.tudelft.contextproject.saveLoad;
 
 import main.java.nl.tudelft.contextproject.camera.Camera;
+import main.java.nl.tudelft.contextproject.camera.CameraSettings;
+import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Script;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -109,7 +112,9 @@ public final class SaveScript {
      */
     private static void generateCamerasSection() throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "cameras"));
-        //TODO: Add individual cameras
+        for (Camera cam : Camera.getAllCameras()) {
+            generateCameraXML(cam);
+        }
         writer.add(eventFactory.createEndElement("", "", "cameras"));
     }
     
@@ -129,5 +134,42 @@ public final class SaveScript {
         writer.add(eventFactory.createStartElement("", "", "shots"));
         //TODO: Add shots
         writer.add(eventFactory.createEndElement("", "", "shots"));
+    }
+    
+    private static void generateCameraXML(Camera cam) throws XMLStreamException {
+        writer.add(eventFactory.createStartElement("", "", "camera"));
+        writer.add(eventFactory.createAttribute("id", cam.getNumber() + ""));
+        generateCameraSettingsXML(cam.getSettings());
+        writer.add(eventFactory.createStartElement("", "", "presets"));
+        for (Preset p : cam.getAllPresets()) {
+            generatePresetXML(p);
+        }
+        writer.add(eventFactory.createEndElement("", "", "presets"));
+        writer.add(eventFactory.createEndElement("", "", "camera"));
+    }
+    
+    private static void generateCameraSettingsXML(CameraSettings camSet) throws XMLStreamException {
+        writer.add(eventFactory.createStartElement("", "", "cameraSettings"));
+        writer.add(eventFactory.createAttribute("pan", camSet.getPan() + ""));
+        writer.add(eventFactory.createAttribute("tilt", camSet.getTilt() + ""));
+        writer.add(eventFactory.createAttribute("zoom", camSet.getZoom() + ""));
+        writer.add(eventFactory.createAttribute("focus", camSet.getFocus() + ""));
+        writer.add(eventFactory.createEndElement("", "", "cameraSettings"));
+    }
+    
+    private static void generatePresetXML(Preset preset) throws XMLStreamException {
+        writer.add(eventFactory.createStartElement("", "", "preset"));
+        writer.add(eventFactory.createAttribute("type", preset.getClass().getSimpleName()));
+        writer.add(eventFactory.createStartElement("", "", "id"));
+        writer.add(eventFactory.createCharacters(preset.getId() + ""));
+        writer.add(eventFactory.createEndElement("", "", "id"));
+        writer.add(eventFactory.createStartElement("", "", "description"));
+        writer.add(eventFactory.createCharacters(preset.getDescription()));
+        writer.add(eventFactory.createEndElement("", "", "description"));
+        writer.add(eventFactory.createStartElement("", "", "imgLoc"));
+        writer.add(eventFactory.createCharacters(preset.getImage()));
+        writer.add(eventFactory.createEndElement("", "", "imgLoc"));
+        generateCameraSettingsXML(preset.getToSet());
+        writer.add(eventFactory.createEndElement("", "", "preset"));
     }
 }
