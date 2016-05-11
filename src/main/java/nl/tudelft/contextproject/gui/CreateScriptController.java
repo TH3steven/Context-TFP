@@ -29,8 +29,10 @@ import java.util.List;
 
 /**
  * Controller class for the script creation screen.
+ * This class is responsible for the functions of the create script screen, to
+ * allow for easy creation and saving of a new script.
  * 
- * @author Steven Meijer
+ * @since 0.2
  */
 public class CreateScriptController {
 

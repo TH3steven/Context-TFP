@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This is the main file for the contextproject of Team Free Pizza.
+ * This is the main file for the Multi-Media Contextproject of Team Free Pizza.
  * The main purpose of this project is to allow PolyCast Productions B.V. to
  * easily control their cameras and to improve their digital environment.
  * 
@@ -44,6 +44,7 @@ public class ContextTFP extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("TFP Camera Control");
 
+        // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
         
         initRootLayout();
@@ -94,6 +95,11 @@ public class ContextTFP extends Application {
         return script;
     }
     
+    /**
+     * Sets the active script used by the application.
+     * 
+     * @param script The script to be used.
+     */
     public void setScript(Script script) {
         ContextTFP.script = script;
     }
