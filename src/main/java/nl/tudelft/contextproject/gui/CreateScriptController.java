@@ -14,8 +14,6 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
@@ -36,8 +34,6 @@ import java.util.List;
  * @author Steven Meijer
  */
 public class CreateScriptController {
-
-    private Script script;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
@@ -68,8 +64,6 @@ public class CreateScriptController {
         c.addPreset(new InstantPreset(new CameraSettings(), 1));
         c.addPreset(new InstantPreset(new CameraSettings(), 2));
         //
-
-        script = new Script(new ArrayList<Shot>());
 
         setFactories();
         setActions();
@@ -196,7 +190,7 @@ public class CreateScriptController {
                         addDescription.getText()
                         );
 
-                script.addShot(newShot);
+                ContextTFP.getScript().addShot(newShot);
                 data.add(newShot);
 
                 addShot.clear();
