@@ -6,3 +6,8 @@ jdk:
 script: 
   - mvn clean test
   - mvn site
+  
+  addons:
+    apt:
+      packages:
+        - oracle-java8-installer
