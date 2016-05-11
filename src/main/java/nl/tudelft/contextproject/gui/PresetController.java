@@ -2,9 +2,9 @@ package main.java.nl.tudelft.contextproject.gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -15,10 +15,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
@@ -42,6 +38,7 @@ public class PresetController {
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
     @FXML private TableColumn<Preset, String> descColumn;
+    private ObservableList<Preset> data = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
@@ -50,7 +47,7 @@ public class PresetController {
         Camera c = new Camera();
         Camera c2 = new Camera();
         c.addPreset(new InstantPreset(new CameraSettings(), 1, "wow"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 2, "nice"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 5, "nice"));
         c.addPreset(new InstantPreset(new CameraSettings(), 3, "awesome"));
         c2.addPreset(new InstantPreset(new CameraSettings(), 1, "huh"));
         //
@@ -61,8 +58,9 @@ public class PresetController {
         }
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
         cameraView.setImage(new Image("main/resources/placeholder_picture.jpg"));
-
+        
         setFactories();
+        tableView.getSortOrder().add(presetColumn);
         setActions();
     }
 
@@ -75,35 +73,30 @@ public class PresetController {
     }
 
     private void setActions() {
-        final ObservableList<Preset> data = FXCollections.observableArrayList();
+        
+//        SortedList<Preset> sortedList = new SortedList<>( data, 
+//                (Preset p1, Preset p2) -> {
+//                  if( p1.getId() < p2.getId() ) {
+//                      return -1;
+//                  } else if( p1.getId() > p2.getId() ) {
+//                      return 1;
+//                  } else {
+//                      return 0;
+//                  }
+//              });
         tableView.setItems(data);
 
         btnBack.setOnAction((event) -> {
             MenuController.show();
         });
 
+        //TODO: Save camera settings with the preset
         btnSave.setOnAction((event) -> {
             int id = -1;
             try {
                 id = Integer.parseInt(presetID.getText());
                 presetID.setStyle("");
-                Preset newPreset = new InstantPreset(
-                        new CameraSettings(1, 1, 1, 2000),
-                        id,
-                        description.getText());
-                Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
-                if (overwrite.isSelected()) {
-                    cam.overwritePreset(newPreset);
-                    data.add(newPreset);
-                } else {
-                    if (cam.addPreset(newPreset)) {
-                        data.add(newPreset);
-
-                    } else {
-                        //TODO: Show error message
-                    }
-                }
-
+                addPreset(id);
             } catch (Exception e) {
                 presetID.setStyle("-fx-border-color: red;");
             }
@@ -132,6 +125,46 @@ public class PresetController {
             ContextTFP.getRootLayout().setCenter(createScriptView);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void addPreset(int id) {
+        Preset newPreset = new InstantPreset(
+                new CameraSettings(1, 1, 1, 2000),
+                id,
+                description.getText());
+        Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+        if (overwrite.isSelected()) {
+            cam.overwritePreset(newPreset);
+            int newId = newPreset.getId();
+            removePreset(newId);  
+            data.add(newPreset);
+            tableView.getSortOrder().clear();
+            tableView.getSortOrder().add(presetColumn);
+        } else {
+            if (cam.addPreset(newPreset)) {
+                data.add(newPreset);
+                tableView.getSortOrder().clear();
+                tableView.getSortOrder().add(presetColumn);
+            } else {
+                //TODO: Show error message
+            }
+        }
+    }
+    
+    private void removePreset(int id) {
+        int position = -1;
+        
+        for(int i = 0; i < data.size(); i++) {
+            Preset p = data.get(i);
+            if(p.getId() == id) {
+                position = i;
+                break;
+            }
+        }
+        
+        if(position != -1) {
+            data.remove(position);
         }
     }
 }
