@@ -13,8 +13,6 @@ import org.junit.Test;
 
 /**
  * Class to test Shot Class. Test will be expanded with time.
- *
- * @author  Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class ShotTest {

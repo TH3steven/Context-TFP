@@ -24,7 +24,6 @@ import java.util.NoSuchElementException;
  * Class to test Script class. Test suite will be expanded
  * with time.
  *
- * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class ScriptTest {
