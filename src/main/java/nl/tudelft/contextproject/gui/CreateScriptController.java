@@ -7,7 +7,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -26,6 +29,7 @@ import main.java.nl.tudelft.contextproject.script.Shot;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller class for the script creation screen.
@@ -74,7 +78,7 @@ public class CreateScriptController {
 
         // Disallow horizontal scrolling.
         tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        
+
         // Allows the user to press ENTER to add a shot.
         btnAdd.setDefaultButton(true); 
     }
@@ -202,6 +206,20 @@ public class CreateScriptController {
         });
 
         btnBack.setOnAction((event) -> {
+            if (!tableEvents.getItems().isEmpty()) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirm quitting");
+                alert.setHeaderText("Exiting will erase made changes");
+                alert.setContentText("Are you sure you want to quit? Any unsaved changes "
+                        + "will not be saved");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                
+                if (result.get() == ButtonType.CANCEL) {
+                    return;
+                }
+            }
+
             MenuController.show();
         });
     }
