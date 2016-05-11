@@ -13,9 +13,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import main.java.nl.tudelft.contextproject.gui.MenuController;
+import main.java.nl.tudelft.contextproject.script.Script;
+import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This is the main file for the contextproject of Team Free Pizza.
@@ -31,6 +35,8 @@ import java.io.IOException;
 public class ContextTFP extends Application {
 
     private static BorderPane rootLayout;
+    private static Script script;
+
     private Stage primaryStage;
 
     @Override
@@ -38,6 +44,8 @@ public class ContextTFP extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("TFP Camera Control");
 
+        script = new Script(new ArrayList<Shot>());
+        
         initRootLayout();
         MenuController.show();
     }
@@ -74,9 +82,27 @@ public class ContextTFP extends Application {
      * @return The main stage
      */
     public Stage getPrimaryStage() {
-        return this.primaryStage;
+        return primaryStage;
+    }
+
+    /**
+     * Get the active script used by the application.
+     * 
+     * @return The script.
+     */
+    public static Script getScript() {
+        return script;
     }
     
+    public void setScript(Script script) {
+        ContextTFP.script = script;
+    }
+
+    /**
+     * Retrieves the root layout of the application.
+     * 
+     * @return The root layout
+     */
     public static BorderPane getRootLayout() {
         return rootLayout;
     }

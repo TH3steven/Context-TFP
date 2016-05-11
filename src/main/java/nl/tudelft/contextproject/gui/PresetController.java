@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -14,6 +15,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
@@ -22,10 +27,11 @@ import main.java.nl.tudelft.contextproject.presets.Preset;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PresetController {
-    
+
     @FXML private ChoiceBox<Integer> cameraSelecter;
     @FXML private TextField presetID;
     @FXML private TextField description;
@@ -36,17 +42,19 @@ public class PresetController {
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
     @FXML private TableColumn<Preset, String> descColumn;
-    
+
     @FXML
     private void initialize() {
 
         //TEMP
         Camera c = new Camera();
-        c.addPreset(new InstantPreset(new CameraSettings(), 0));
-        c.addPreset(new InstantPreset(new CameraSettings(), 1));
-        c.addPreset(new InstantPreset(new CameraSettings(), 2));
+        Camera c2 = new Camera();
+        c.addPreset(new InstantPreset(new CameraSettings(), 1, "wow"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 2, "nice"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 3, "awesome"));
+        c2.addPreset(new InstantPreset(new CameraSettings(), 1, "huh"));
         //
-        
+
         List<Integer> cameraList = new ArrayList<Integer>();
         for (int i = 0; i < Camera.getCameraAmount(); i++) {
             cameraList.add(i + 1);
@@ -57,37 +65,59 @@ public class PresetController {
         setFactories();
         setActions();
     }
-    
+
     private void setFactories() {
         presetColumn.setCellValueFactory(
                 new PropertyValueFactory<Preset, Integer>("id"));
-        
+
         descColumn.setCellValueFactory(
                 new PropertyValueFactory<Preset, String>("description"));
     }
-    
+
     private void setActions() {
         final ObservableList<Preset> data = FXCollections.observableArrayList();
         tableView.setItems(data);
-        
+
         btnBack.setOnAction((event) -> {
-                MenuController.show();
-            });
-        
-        //TODO: Add newly created preset to camera.
+            MenuController.show();
+        });
+
         btnSave.setOnAction((event) -> {
             int id = -1;
             try {
                 id = Integer.parseInt(presetID.getText());
                 presetID.setStyle("");
-                data.add(new InstantPreset(
+                Preset newPreset = new InstantPreset(
                         new CameraSettings(1, 1, 1, 2000),
                         id,
-                        description.getText()));
+                        description.getText());
+                Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                if (overwrite.isSelected()) {
+                    cam.overwritePreset(newPreset);
+                    data.add(newPreset);
+                } else {
+                    if (cam.addPreset(newPreset)) {
+                        data.add(newPreset);
+
+                    } else {
+                        //TODO: Show error message
+                    }
+                }
+
             } catch (Exception e) {
                 presetID.setStyle("-fx-border-color: red;");
             }
-        });        
+        });
+
+        //TODO: Update current view of camera
+        cameraSelecter.setOnAction((event) -> {
+            Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+            HashMap<Integer, Preset> presets = cam.getPresets();
+            data.clear();
+            for (Preset p : presets.values()) {
+                data.add(p);
+            }
+        });
     }
 
     /**

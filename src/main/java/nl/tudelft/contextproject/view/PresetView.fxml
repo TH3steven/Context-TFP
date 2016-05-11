@@ -19,7 +19,7 @@
       <TableView fx:id="tableView" layoutX="457.0" layoutY="22.0" minHeight="519.0" minWidth="315.0" AnchorPane.bottomAnchor="34.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="22.0">
         <columns>
           <TableColumn fx:id="presetColumn" prefWidth="45.0" text="Preset" />
-          <TableColumn fx:id="descColumn" prefWidth="279.0" text="Description" />
+          <TableColumn fx:id="descColumn" minWidth="279.0" prefWidth="-1.0" text="Description" />
         </columns>
       </TableView>
       <Label layoutX="32.0" layoutY="360.0" text="Preset ID:" AnchorPane.bottomAnchor="198.0" />
