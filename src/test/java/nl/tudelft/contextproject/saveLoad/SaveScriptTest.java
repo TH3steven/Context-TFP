@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
+import main.java.nl.tudelft.contextproject.saveLoad.LoadScript;
 import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
 import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;

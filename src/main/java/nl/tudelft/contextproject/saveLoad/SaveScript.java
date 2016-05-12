@@ -180,7 +180,7 @@ public final class SaveScript {
      */
     private static void generatePresetXML(Preset preset) throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "preset"));
-        writer.add(eventFactory.createAttribute("type", preset.getClass().getSimpleName()));
+        writer.add(eventFactory.createAttribute("type", preset.getClass().getName()));
         writer.add(eventFactory.createStartElement("", "", "id"));
         writer.add(eventFactory.createCharacters(preset.getId() + ""));
         writer.add(eventFactory.createEndElement("", "", "id"));

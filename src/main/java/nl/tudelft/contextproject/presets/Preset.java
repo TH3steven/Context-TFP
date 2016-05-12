@@ -10,8 +10,6 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
  * 
  * {@link #applyTo(Camera)} should be implemented to apply the
  * preset to the camera, in its respective way.
- * 
- * @author Bart van Oort
  * @since 0.2
  */
 public abstract class Preset {
