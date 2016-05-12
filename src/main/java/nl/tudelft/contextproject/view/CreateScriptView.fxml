@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.CreateScriptController">
    <children>
@@ -25,8 +26,9 @@
             <TableColumn fx:id="columnDescription" minWidth="300.0" prefWidth="-1.0" sortable="false" text="Event" />
             <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Up" />
             <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Down" />
-            <TableColumn fx:id="columnAdd" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" sortable="false" text="Edit" />
+            <TableColumn fx:id="columnAction" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Remove" />
         </columns>
       </TableView>
+      <HBox fx:id="paneEdit" layoutX="300.0" layoutY="515.0" prefHeight="50.0" prefWidth="200.0" />
    </children>
 </AnchorPane>
