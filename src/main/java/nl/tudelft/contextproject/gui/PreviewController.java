@@ -178,7 +178,7 @@ public class PreviewController {
         }
 
         play.setOnAction((event) -> {
-            timeline.playFromStart();;
+            timeline.playFromStart();
         });
 
         stop.setOnAction((event) -> {
