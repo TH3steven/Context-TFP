@@ -33,7 +33,7 @@ public final class SaveScript {
     /**
      * XMLEventWriter that writes everything away to an XML file.
      */
-    private static XMLEventWriter writer = createWriter();
+    private static XMLEventWriter writer;
     private static XMLEventFactory eventFactory = XMLEventFactory.newFactory();
     
     private static final Object MUTEX = new Object();
@@ -62,7 +62,6 @@ public final class SaveScript {
     public static void setSaveLocation(String s) {
         synchronized (MUTEX) {
             saveLocation = s;
-            writer = createWriter();
         }
     }
     
@@ -75,9 +74,12 @@ public final class SaveScript {
      */
     public static void save(Script script) throws XMLStreamException {
         synchronized (MUTEX) {
+            writer = createWriter();
             writer.add(eventFactory.createStartDocument());
+            writer.add(eventFactory.createStartElement("", "", "script"));
             generateCamerasSection();
             generateShotsSection(script);
+            writer.add(eventFactory.createEndElement("", "", "script"));
             writer.add(eventFactory.createEndDocument());
             writer.flush();
             writer.close();
@@ -202,7 +204,7 @@ public final class SaveScript {
      */
     private static void generateShotXML(Shot shot) throws XMLStreamException {
         writer.add(eventFactory.createStartElement("", "", "shot"));
-        writer.add(eventFactory.createAttribute("Number", shot.getNumber() + ""));
+        writer.add(eventFactory.createAttribute("number", shot.getNumber() + ""));
         writer.add(eventFactory.createStartElement("", "", "shotId"));
         writer.add(eventFactory.createCharacters(shot.getShotId()));
         writer.add(eventFactory.createEndElement("", "", "shotId"));

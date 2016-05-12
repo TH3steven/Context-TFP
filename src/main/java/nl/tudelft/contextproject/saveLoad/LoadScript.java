@@ -9,8 +9,8 @@ import main.java.nl.tudelft.contextproject.script.Shot;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.namespace.QName;
@@ -70,19 +70,21 @@ public final class LoadScript {
      */
     public static Script load() throws XMLStreamException {
         synchronized (MUTEX) {
+            Camera.clearAllCameras();
+            List<Shot> shots = new LinkedList<Shot>();
             reader = createReader();
             while (reader.hasNext()) {
                 XMLEvent event = reader.nextEvent();
                 if (event.isStartElement()) {
                     StartElement start = event.asStartElement();
-                    if (start.getName().getLocalPart() == "cameras") {
+                    if ("cameras".equals(start.getName().getLocalPart())) {
                         loadCameras();
-                    } else if (start.getName().getLocalPart() == "shots") {
-                        loadShots();
+                    } else if ("shots".equals(start.getName().getLocalPart())) {
+                        shots = loadShots();
                     }
                 }
             }
-            return new Script(new LinkedList<Shot>()); //TODO: Implement this method
+            return new Script(shots);
         }
     }
 
@@ -107,7 +109,7 @@ public final class LoadScript {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
-                if (start.getName().getLocalPart() == "camera") {
+                if ("camera".equals(start.getName().getLocalPart())) {
                     loadCamera();
                 } else {
                     throw new XMLStreamException("Unexpected start tag in cameras section: "
@@ -115,7 +117,7 @@ public final class LoadScript {
                 }
             } else if (event.isEndElement()) {
                 EndElement end = event.asEndElement();
-                if (end.getName().getLocalPart() == "cameras") {
+                if ("cameras".equals(end.getName().getLocalPart())) {
                     return;
                 } else {
                     throw new XMLStreamException("Unexpected end tag in cameras section: "
@@ -126,16 +128,21 @@ public final class LoadScript {
     }
 
     private static void loadCamera() throws XMLStreamException {
-        Camera cam;
+        Camera cam = new Camera();
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
-                if (start.getName().getLocalPart() == "cameraSettings") {
-                    new Camera(loadCameraSettings(start));
-                } else if (start.getName().getLocalPart() == "presets") {
-                    cam = new Camera();
+                if ("cameraSettings".equals(start.getName().getLocalPart())) {
+                    cam.setSettings(loadCameraSettings(start));
+                } else if ("presets".equals(start.getName().getLocalPart())) {
                     loadPresets(cam);
+                }
+            }
+            if (event.isEndElement()) {
+                EndElement end = event.asEndElement();
+                if ("camera".equals(end.getName().getLocalPart())) {
+                    return;
                 }
             }
         }
@@ -156,24 +163,19 @@ public final class LoadScript {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
-                if (start.getName().getLocalPart() == "preset") {
-                    System.out.println("type" + cam.getPreset(Integer.parseInt(start.getAttributeByName(new QName("id")).getValue())).getClass().getSimpleName());
-                } else if (start.getName().getLocalPart() == "id") {
-                    System.out.println("PresetId is:" + cam.getPreset(Integer.parseInt(start.getAttributeByName(new QName("id")).getValue())));
-                } else if (start.getName().getLocalPart() == "description") {
-                    System.out.println("description is:" + cam.getPreset(Integer.parseInt(start.getAttributeByName(new QName("id")).getValue())));
-                } else if (start.getName().getLocalPart() == "imgLoc") {
-                    System.out.println("imageLoc is:" + cam.getPreset(Integer.parseInt(start.getAttributeByName(new QName("id")).getValue())).getImage());
-                } else if (start.getName().getLocalPart() == "cameraSettings") {
-                    cam = new Camera(loadCameraSettings(start));
+                if ("preset".equals(start.getName().getLocalPart())) {
+                    cam.addPreset(loadPreset(start));
+                }
+            } else if (event.isEndElement()) {
+                EndElement end = event.asEndElement();
+                if ("presets".equals(end.getName().getLocalPart())) {
+                    break;
                 }
             }
         }
     }
 
-    private static Preset loadPreset(StartElement presetStart) throws XMLStreamException, NoSuchMethodException, ClassNotFoundException {
-        Class<?> c = Class.forName(presetStart.getAttributeByName(new QName("type")).getValue());
-        Constructor<?> constructor = c.getConstructor(CameraSettings.class, Integer.class);
+    private static Preset loadPreset(StartElement presetStart) throws XMLStreamException {
         int id = -1;
         String description = "";
         String imgLoc = "";
@@ -182,30 +184,30 @@ public final class LoadScript {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
-                if (start.getName().getLocalPart() == "id") {
+                if ("id".equals(start.getName().getLocalPart())) {
                     XMLEvent idEvent = reader.nextEvent();
                     if (idEvent.isCharacters()) {
                         id = Integer.parseInt(idEvent.asCharacters().getData());
                     } else {
                         throw new XMLStreamException("Preset ID not preset.");
                     }
-                } else if (start.getName().getLocalPart() == "description") {
+                } else if ("description".equals(start.getName().getLocalPart())) {
                     XMLEvent descEvent = reader.nextEvent();
                     if (descEvent.isCharacters()) {
                         description = descEvent.asCharacters().getData();
                     }
-                } else if (start.getName().getLocalPart() == "imgLoc") {
+                } else if ("imgLoc".equals(start.getName().getLocalPart())) {
                     XMLEvent imgLocEvent = reader.nextEvent();
                     if (imgLocEvent.isCharacters()) {
                         imgLoc = imgLocEvent.asCharacters().getData();
                     }
-                } else if (start.getName().getLocalPart() == "cameraSettings") {
+                } else if ("cameraSettings".equals(start.getName().getLocalPart())) {
                     toSet.set(loadCameraSettings(start));
                 }
             }
             if (event.isEndElement()) {
                 EndElement end = event.asEndElement();
-                if (end.getName().getLocalPart() == "preset") {
+                if ("preset".equals(end.getName().getLocalPart())) {
                     break;
                 }
             }
@@ -213,8 +215,10 @@ public final class LoadScript {
         if (toSet.get() != null) {
             Preset preset;
             try {
+                Class<?> c = Class.forName(presetStart.getAttributeByName(new QName("type")).getValue());
+                Constructor<?> constructor = c.getConstructor(CameraSettings.class, int.class);
                 preset = (Preset) constructor.newInstance(toSet.get(), id);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw new XMLStreamException("Instantiating preset failed.", e);
             }
@@ -226,31 +230,34 @@ public final class LoadScript {
         }
     }
 
-    private static void loadShots() throws XMLStreamException {
+    private static List<Shot> loadShots() throws XMLStreamException {
+        List<Shot> shots = new LinkedList<Shot>();
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
-                if (start.getName().getLocalPart() == "shot") {
-                    loadShot();
+                if ("shot".equals(start.getName().getLocalPart())) {
+                    shots.add(loadShot(start));
                 } else {
                     throw new XMLStreamException("Unexpected start tag in shot section: "
                             + start.getName().getLocalPart());
                 }
             } else if (event.isEndElement()) {
                 EndElement end = event.asEndElement();
-                if (end.getName().getLocalPart() == "shots") {
-                    return;
+                if ("shots".equals(end.getName().getLocalPart())) {
+                    break;
                 } else {
                     throw new XMLStreamException("Unexpected end tag in shots section: "
                             + end.getName().getLocalPart());
                 }
             }
         }
+        return shots;
     }
 
-    private static void loadShot() throws XMLStreamException {
-        int id = -1;
+    private static Shot loadShot(StartElement startShot) throws XMLStreamException {
+        int id = Integer.parseInt(startShot.getAttributeByName(new QName("number")).getValue());
+        String shotId = "";
         int cameraId = -1;
         int presetId = -1;
         String description = "";
@@ -258,30 +265,45 @@ public final class LoadScript {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
-                if (start.getName().getLocalPart() == "Id") {
+                if ("shotId".equals(start.getName().getLocalPart())) {
                     XMLEvent shotIdEvent = reader.nextEvent();
                     if (shotIdEvent.isCharacters()) {
-                        id = Integer.parseInt(shotIdEvent.asCharacters().getData());
-                    } else {
-                        throw new XMLStreamException("Shot ID not present.");
+                        shotId = shotIdEvent.asCharacters().getData();
                     }
-                } else if (start.getName().getLocalPart() == "description") {
+                } else if ("description".equals(start.getName().getLocalPart())) {
                     XMLEvent descEvent = reader.nextEvent();
                     if (descEvent.isCharacters()) {
                         description = descEvent.asCharacters().getData();
                     }
-                } else if (start.getName().getLocalPart() == "cameraId") {
+                } else if ("cameraId".equals(start.getName().getLocalPart())) {
                     XMLEvent cameraIdEvent = reader.nextEvent();
                     if (cameraIdEvent.isCharacters()) {
                         cameraId = Integer.parseInt(cameraIdEvent.asCharacters().getData());
+                    } else {
+                        throw new XMLStreamException("No camera id present in shot.");
                     }
-                } else if (start.getName().getLocalPart() == "PresetId") {
-                    XMLEvent PresetIdEvent = reader.nextEvent();
-                    if (PresetIdEvent.isCharacters()) {
-                        presetId = Integer.parseInt(PresetIdEvent.asCharacters().getData());
+                } else if ("presetId".equals(start.getName().getLocalPart())) {
+                    XMLEvent presetIdEvent = reader.nextEvent();
+                    if (presetIdEvent.isCharacters()) {
+                        presetId = Integer.parseInt(presetIdEvent.asCharacters().getData());
+                    } else {
+                        throw new XMLStreamException("No preset id present in shot.");
                     }
                 }
             }
+            if (event.isEndElement()) {
+                EndElement end = event.asEndElement();
+                if ("shot".equals(end.getName().getLocalPart())) {
+                    break;
+                }
+            }
+        }
+        Camera cam = Camera.getCamera(cameraId);
+        if (cam != null && cam.getPreset(presetId) != null) {
+            return new Shot(id, shotId, cam, cam.getPreset(presetId), description);
+        } else {
+            throw new XMLStreamException("Camera or preset can be found with camera id: " + cameraId
+                    + " and preset id: " + presetId);
         }
     }
 }
