@@ -149,6 +149,7 @@ public class Camera extends Observable {
     public boolean addPreset(Preset p) {
         if (presets.get(p.getId()) == null) {
             presets.put(p.getId(), p);
+            notifyObservers();
             return true;
         }
         return false;
@@ -160,6 +161,15 @@ public class Camera extends Observable {
      */
     public void overwritePreset(Preset p) {
         presets.put(p.getId(), p);
+        notifyObservers();
+    }
+    
+    /**
+     * Removes a preset from the camera.
+     * @param p The preset to remove.
+     */
+    public void removePreset(Preset p) {
+        presets.remove(p.getId());
     }
     
     /**
@@ -170,6 +180,14 @@ public class Camera extends Observable {
      */
     public Preset getPreset(int id) {
         return presets.get(id);
+    }
+    
+    /**
+     * Returns a hashmap with all the presets of this camera.
+     * @return A hashmap with all the presets of this camera.
+     */
+    public HashMap<Integer, Preset> getPresets() {
+        return presets;
     }
     
     /**
