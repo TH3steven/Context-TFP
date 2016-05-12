@@ -1,9 +1,7 @@
 package main.java.nl.tudelft.contextproject.gui;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -93,7 +91,7 @@ public class PresetController {
             MenuController.show();
         });
 
-        //TODO: Save camera settings with the preset
+        //TODO: Save actual camera settings in the preset
         btnSave.setOnAction((event) -> {
             int id = -1;
             try {
@@ -105,7 +103,7 @@ public class PresetController {
             }
         });
 
-        //TODO: Update current view of camera
+        //TODO: Update current view of camera with livefeed from camera
         cameraSelecter.setOnAction((event) -> {
             Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
