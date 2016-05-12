@@ -165,6 +165,14 @@ public class Camera extends Observable {
     }
     
     /**
+     * Removes a preset from the camera.
+     * @param p The preset to remove.
+     */
+    public void removePreset(Preset p) {
+        presets.remove(p.getId());
+    }
+    
+    /**
      * Returns the preset with the specified id.
      * Returns null if the preset doesn't exist.
      * @param id The id of the preset to get.

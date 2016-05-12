@@ -39,6 +39,7 @@ public class PresetController {
     @FXML private ImageView cameraView;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
+    @FXML private Button btnRemove;
     @FXML private CheckBox overwrite;
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
@@ -110,6 +111,16 @@ public class PresetController {
             data.clear();
             for (Preset p : presets.values()) {
                 data.add(p);
+            }
+        });
+        
+        btnRemove.setOnAction((event) -> {
+            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex > 0) {
+                Preset selected = tableView.getItems().get(selectedIndex);
+                Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                cam.removePreset(selected);
+                data.remove(selected);
             }
         });
     }
