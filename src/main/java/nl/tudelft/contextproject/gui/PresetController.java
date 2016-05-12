@@ -7,7 +7,10 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class PresetController {
 
@@ -146,8 +150,26 @@ public class PresetController {
                 tableView.getSortOrder().clear();
                 tableView.getSortOrder().add(presetColumn);
             } else {
-                //TODO: Show error message
+                confirmOverwrite(newPreset, cam);
             }
+        }
+    }
+    
+    private void confirmOverwrite(Preset newPreset, Camera cam) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm overwriting");
+        alert.setHeaderText("You are about to overwrite a preset");
+        alert.setContentText("Are you sure you want to overwrite preset " + newPreset.getId() + "?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        
+        if (result.get() == ButtonType.OK) {
+            cam.overwritePreset(newPreset);
+            int newId = newPreset.getId();
+            removePreset(newId);  
+            data.add(newPreset);
+            tableView.getSortOrder().clear();
+            tableView.getSortOrder().add(presetColumn);
         }
     }
     
