@@ -13,13 +13,10 @@
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.PresetController">
    <children>
-      <Label layoutX="160.0" layoutY="39.0" text="Select your camera:" AnchorPane.topAnchor="39.0" />
-      <Label layoutX="160.0" layoutY="75.0" text="Current view of the camera" AnchorPane.topAnchor="75.0" />
-      <ChoiceBox fx:id="cameraSelecter" layoutX="269.0" layoutY="35.0" prefHeight="25.0" prefWidth="44.0" AnchorPane.topAnchor="35.0" />
       <TableView fx:id="tableView" layoutX="457.0" layoutY="22.0" minHeight="519.0" minWidth="315.0" AnchorPane.bottomAnchor="34.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="22.0">
         <columns>
           <TableColumn fx:id="presetColumn" prefWidth="69.0" text="Preset" />
-          <TableColumn fx:id="descColumn" prefWidth="255.0" text="Description" />
+          <TableColumn fx:id="descColumn" minWidth="255.0" prefWidth="-1.0" text="Description" />
         </columns>
       </TableView>
       <Label layoutX="32.0" layoutY="360.0" text="Preset ID:" AnchorPane.bottomAnchor="198.0" />
@@ -29,10 +26,17 @@
       <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Back" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
       <TextField fx:id="presetID" layoutX="106.0" layoutY="356.0" prefHeight="25.0" prefWidth="41.0" AnchorPane.bottomAnchor="194.0" />
       <CheckBox fx:id="overwrite" layoutX="106.0" layoutY="445.0" mnemonicParsing="false" text="Allow overwriting of presets" AnchorPane.bottomAnchor="113.0" />
-      <VBox layoutX="32.0" layoutY="115.0" minHeight="225.0" minWidth="400.0" AnchorPane.bottomAnchor="235.0" AnchorPane.leftAnchor="32.0" AnchorPane.topAnchor="115.0">
+      <VBox fx:id="vBox" layoutX="32.0" layoutY="115.0" minHeight="225.0" minWidth="400.0" style="-fx-background-color: black;" AnchorPane.bottomAnchor="235.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="368.0" AnchorPane.topAnchor="115.0">
          <children>
-            <ImageView fx:id="cameraView" fitHeight="225.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="cameraView" fitHeight="225.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
+      <AnchorPane layoutX="35.0" layoutY="25.0" minHeight="75.0" minWidth="400.0" style="-fx-background-color: grey;" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="365.0" AnchorPane.topAnchor="25.0">
+         <children>
+            <Label alignment="TOP_CENTER" layoutX="122.0" layoutY="9.0" text="Select your camera:" AnchorPane.bottomAnchor="49.0" AnchorPane.topAnchor="9.0" />
+            <Label layoutX="129.0" layoutY="52.0" text="Current view of the camera" AnchorPane.bottomAnchor="6.0" AnchorPane.topAnchor="52.0" />
+            <ChoiceBox fx:id="cameraSelecter" layoutX="232.0" layoutY="5.0" prefHeight="25.0" prefWidth="44.0" AnchorPane.bottomAnchor="45.0" AnchorPane.topAnchor="5.0" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

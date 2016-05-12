@@ -1,10 +1,12 @@
 package main.java.nl.tudelft.contextproject.gui;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -15,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
@@ -38,6 +41,7 @@ public class PresetController {
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
     @FXML private TableColumn<Preset, String> descColumn;
+    @FXML private VBox vBox;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
 
     @FXML
@@ -59,10 +63,17 @@ public class PresetController {
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
         cameraView.setImage(new Image("main/resources/placeholder_picture.jpg"));
         
+        applySettings();
         setFactories();
         setActions();
     }
 
+    private void applySettings() {
+        vBox.setAlignment(Pos.CENTER);
+        cameraView.fitWidthProperty().bind(vBox.widthProperty());
+        cameraView.fitHeightProperty().bind(vBox.heightProperty());
+    }
+    
     private void setFactories() {
         presetColumn.setCellValueFactory(
                 new PropertyValueFactory<Preset, Integer>("id"));
