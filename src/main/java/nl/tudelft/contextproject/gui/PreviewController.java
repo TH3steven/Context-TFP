@@ -6,13 +6,16 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -39,12 +42,14 @@ public class PreviewController {
     @FXML private Button play;
     @FXML private Button stop;
     @FXML private Button back;
+    @FXML private Button confirm;
     @FXML private ChoiceBox<Shot> cb;
     @FXML private TextField duration;
     @FXML private Rectangle highlight1;
     @FXML private Rectangle highlight2;
     @FXML private Rectangle highlight3;
     @FXML private Rectangle highlight4;
+    @FXML private Label error;
     
     private SimpleIntegerProperty currentShot;
     private int currentSelected;
@@ -112,9 +117,28 @@ public class PreviewController {
               Object newValue) {
             System.out.println("oldValue:"+ oldValue + ", newValue = " + newValue);
             cb.setValue(shots.get(currentShot.get() - 1));
+            Shot shot = shots.get(currentShot.get() - 1);
+            if(shot.getDuration() > 0) {
+                duration.setText(Double.toString(shots.get(currentShot.get() - 1).getDuration()));
+            } else {
+                duration.setText("");
+            }
             timeline.stop();
           }
         };
+        
+        duration.setDisable(true);
+        
+        duration.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                String character=event.getCharacter();
+
+                if(!character.matches("[0-9.]")) {
+                    event.consume();
+                }                    
+            }});
+        
         currentShot.addListener(changeListener);
         
         addTextLimiter(duration, 2);
@@ -135,6 +159,11 @@ public class PreviewController {
         back.setOnAction((event) -> {
             timeline.stop();
             MenuController.show();
+        });
+        
+        confirm.setOnAction((event) -> {
+            Shot current = shots.get(currentShot.get() - 1);
+            current.setDuration(Double.parseDouble(duration.getText()));
         });
         
         viewOne.setOnMouseClicked((event) -> {
@@ -186,8 +215,15 @@ public class PreviewController {
         cb.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Shot>() {
             public void changed(ObservableValue<? extends Shot> ov, Shot oldVal, Shot newVal) {
                 showShot(newVal);
+                if(cb.getValue() == null) {
+                    duration.setDisable(true);
+                } else {
+                    duration.setDisable(false);
+                }
             }
         });
+        
+        error.setOpacity(0);
         
         
     }
