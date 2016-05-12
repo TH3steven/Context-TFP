@@ -123,9 +123,20 @@ public class PreviewController {
                 } else {
                     duration.setText("");
                 }
+                
+                double shotDuration = shots.get(currentShot.get() - 1).getDuration();
+                if (shotDuration > 0) {
+                    timeline.getKeyFrames().clear();
+                    timeline.getKeyFrames().add(new KeyFrame(
+                            Duration.millis(shots.get(currentShot.get() - 1).getDuration() * 1000), ae -> nextImage()));
+                } else {
+                    timeline.getKeyFrames().add(new KeyFrame(
+                            Duration.millis(1000), ae -> nextImage()));
+                }
                 timeline.stop();
             }
         };
+        currentShot.addListener(changeListener);
 
         duration.setDisable(true);
 
@@ -143,7 +154,7 @@ public class PreviewController {
         duration.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-                if (!newValue) {
+                if ((!newValue) && (!confirm.focusedProperty().get())) {
                     double shotDuration = shots.get(currentShot.get() - 1).getDuration();
                     if (shotDuration > 0) {
                         duration.setText(Double.toString(shotDuration));
@@ -154,17 +165,20 @@ public class PreviewController {
             }
         });
 
-        currentShot.addListener(changeListener);
-
         addTextLimiter(duration, 2);
         highlight2.setOpacity(0);
         highlight3.setOpacity(0);
         highlight4.setOpacity(0);
-
-        timeline = new Timeline(new KeyFrame(Duration.millis(2000), ae -> nextImage()));
+        
+        double initialDuration = shots.get(0).getDuration();
+        if (initialDuration > 0) {
+            timeline = new Timeline(new KeyFrame(Duration.millis(initialDuration * 1000), ae -> nextImage()));
+        } else {
+            timeline = new Timeline(new KeyFrame(Duration.millis(1000), ae -> nextImage()));
+        }
 
         play.setOnAction((event) -> {
-            timeline.play();
+            timeline.playFromStart();;
         });
 
         stop.setOnAction((event) -> {
@@ -178,6 +192,7 @@ public class PreviewController {
 
         confirm.setOnAction((event) -> {
             Shot current = shots.get(currentShot.get() - 1);
+            System.out.println(duration.getText());
             current.setDuration(Double.parseDouble(duration.getText()));
         });
 
@@ -262,9 +277,11 @@ public class PreviewController {
      * shows the next image on the actual camera screen.
      */
     public void nextImage() {
+        if (currentShot.get() == shots.size()) {
+            timeline.stop();
+            return;
+        }
         showShot(shots.get(currentShot.get()));
-        timeline.getKeyFrames().clear();
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(5000), ae -> nextImage()));
         timeline.playFromStart();
     }
 
