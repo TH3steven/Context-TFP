@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class to represent a script of presets.
@@ -107,6 +108,23 @@ public class Script implements Iterator<Shot> {
         return current < shots.size();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Script)) {
+            return false;
+        }
+        Script script = (Script) o;
+        return Objects.equals(getShots(), script.getShots());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getShots());
+    }
+
     /**
      * Does what {@link Iterator#next} does, but also
      * executes the shot ({@link Shot#execute()} while doing so.
@@ -117,5 +135,6 @@ public class Script implements Iterator<Shot> {
         s.execute();
         current++;
         return s;
+
     }
 }

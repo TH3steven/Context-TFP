@@ -3,6 +3,8 @@ package main.java.nl.tudelft.contextproject.script;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 
+import java.util.Objects;
+
 /**
  * Class to represent a shot to be taken by a Camera.
  *
@@ -33,7 +35,10 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = description;
-        duration = -1;
+        if (cam != null) {
+            cam.addPreset(pres);
+        }
+        this.duration = -1;
     }
 
     /**
@@ -45,16 +50,19 @@ public class Shot {
      */
     public Shot(int num, Camera cam, Preset pres) {
         this.number = num;
-        this.shotId = null;
+        this.shotId = "";
         this.camera = cam;
         this.preset = pres;
-        this.description = null;
+        this.description = "";
+        if (cam != null) {
+            cam.addPreset(pres);
+        }
         duration = -1;
     }
 
     /**
      * Used to tell a particular camera to take a shot.
-     * Makes use of {@link Camera#takeShot()}
+     * Makes use of {@link Preset#applyTo(Camera)}
      */
     public void execute() {
         preset.applyTo(camera);
@@ -130,6 +138,28 @@ public class Shot {
      */
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Shot)) {
+            return false;
+        }
+        Shot shot = (Shot) o;
+        boolean result = getNumber() == shot.getNumber()
+                && Objects.equals(getCamera(), shot.getCamera())
+                && Objects.equals(getPreset(), shot.getPreset())
+                && Objects.equals(getShotId(), shot.getShotId())
+                && Objects.equals(getDescription(), shot.getDescription());
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getNumber(), getCamera(), getPreset(), getShotId(), getDescription());
     }
 
     /**

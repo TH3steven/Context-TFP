@@ -3,6 +3,8 @@ package main.java.nl.tudelft.contextproject.presets;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 
+import java.util.Objects;
+
 /**
  * Class to represent a camera preset.
  * Extend this class to create different presets, with different
@@ -10,8 +12,6 @@ import main.java.nl.tudelft.contextproject.camera.CameraSettings;
  * 
  * {@link #applyTo(Camera)} should be implemented to apply the
  * preset to the camera, in its respective way.
- * 
- * @author Bart van Oort
  * @since 0.2
  */
 public abstract class Preset {
@@ -31,6 +31,7 @@ public abstract class Preset {
         this.description = "";
         this.toSet = toSet;
         this.id = identifier;
+        imageLocation = "";
     }
     
     /**
@@ -40,8 +41,30 @@ public abstract class Preset {
     public int getId() {
         return id;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Preset)) {
+            return false;
+        }
+        Preset preset = (Preset) o;
+        boolean result = getId() == preset.getId()
+                && Objects.equals(getDescription(), preset.getDescription())
+                && Objects.equals(getToSet(), preset.getToSet())
+                && Objects.equals(imageLocation, preset.imageLocation);
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDescription(), getToSet(), getId(), imageLocation);
+    }
+
     /**
+
      * Returns the settings the camera should be set to.
      * @return To be applied camera settings
      */
