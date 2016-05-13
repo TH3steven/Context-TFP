@@ -125,21 +125,6 @@ public class PresetController {
         });
     }
 
-    /**
-     * Shows this view.
-     */
-    public static void show() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ContextTFP.class.getResource("view/PresetView.fxml"));
-            AnchorPane createScriptView = (AnchorPane) loader.load();
-
-            ContextTFP.getRootLayout().setCenter(createScriptView);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void addPreset(int id) {
         Preset newPreset = new InstantPreset(
                 new CameraSettings(1, 1, 1, 2000),
@@ -196,6 +181,21 @@ public class PresetController {
 
         if (position != -1) {
             data.remove(position);
+        }
+    }
+    
+    /**
+     * Shows this view.
+     */
+    public static void show() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(ContextTFP.class.getResource("view/PresetView.fxml"));
+            AnchorPane createScriptView = (AnchorPane) loader.load();
+
+            ContextTFP.getRootLayout().setCenter(createScriptView);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -20,7 +20,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
@@ -46,8 +45,6 @@ public class CreateScriptController {
 
     @FXML private ChoiceBox<Integer> addCamera;
     @FXML private ChoiceBox<Integer> addPreset;
-
-    @FXML private HBox paneEdit;
 
     @FXML private TableView<Shot> tableEvents;
     @FXML private TableColumn<Shot, Shot> columnAction;
@@ -85,24 +82,22 @@ public class CreateScriptController {
     private void allowEditing() {
         columnShot.setCellFactory(TextFieldTableCell.forTableColumn());
         columnShot.setOnEditCommit( (event) -> {
-            ((Shot) event.getTableView().getItems().get(
-                    event.getTablePosition().getRow())
+            final int row = event.getTablePosition().getRow();
+
+            ((Shot) event.getTableView().getItems().get(row)
                     ).setShotId(event.getNewValue());
 
-            ContextTFP.getScript().getShots().get(
-                    event.getTablePosition().getRow()
-                    ).setShotId(event.getNewValue());
+            ContextTFP.getScript().getShots().get(row).setShotId(event.getNewValue());
         });
 
         columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
         columnDescription.setOnEditCommit( (event) -> {
-            ((Shot) event.getTableView().getItems().get(
-                    event.getTablePosition().getRow())
+            final int row = event.getTablePosition().getRow();
+            
+            ((Shot) event.getTableView().getItems().get(row)
                     ).setDescription(event.getNewValue());
 
-            ContextTFP.getScript().getShots().get(
-                    event.getTablePosition().getRow()
-                    ).setDescription(event.getNewValue());
+            ContextTFP.getScript().getShots().get(row).setDescription(event.getNewValue());
         });
     }
 
@@ -110,7 +105,7 @@ public class CreateScriptController {
      * Fills the choicebox for selecting a camera.
      */
     private void initCamera() {
-        List<Integer> cameraList = new ArrayList<Integer>();
+        final List<Integer> cameraList = new ArrayList<Integer>();
 
         for (int i = 0; i < Camera.getCameraAmount(); ++i) {
             cameraList.add(i + 1);
@@ -124,7 +119,7 @@ public class CreateScriptController {
      * of a certain camera.
      */
     private void initPreset() {
-        List<Integer> presetList = new ArrayList<Integer>();
+        final List<Integer> presetList = new ArrayList<Integer>();
 
         addCamera.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
             @Override
@@ -162,13 +157,15 @@ public class CreateScriptController {
 
         columnCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> c) {
-                return new ReadOnlyObjectWrapper<Integer>(c.getValue().getCamera().getNumber() + 1);
+                final int num = c.getValue().getCamera().getNumber() + 1;
+                return new ReadOnlyObjectWrapper<Integer>(num);
             }
         });
 
         columnPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> p) {
-                return new ReadOnlyObjectWrapper<Integer>(p.getValue().getPreset().getId() + 1);
+                final int id = p.getValue().getPreset().getId() + 1;
+                return new ReadOnlyObjectWrapper<Integer>(id);
             }
         });
 
@@ -242,7 +239,7 @@ public class CreateScriptController {
                     id = 1;
                 }
 
-                Shot newShot = new Shot(
+                final Shot newShot = new Shot(
                         id,
                         addShot.getText(),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),

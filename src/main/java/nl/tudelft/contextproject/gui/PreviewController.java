@@ -198,8 +198,9 @@ public class PreviewController {
         duration.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-                if ((!newValue) && (!confirm.focusedProperty().get())) {
+                if (!newValue && !confirm.focusedProperty().get()) {
                     double shotDuration = shots.get(currentShot.get() - 1).getDuration();
+                    
                     if (shotDuration > 0) {
                         duration.setText(Double.toString(shotDuration));
                     } else {
@@ -316,7 +317,8 @@ public class PreviewController {
     }
 
     /**
-     * Initialize the timeline with the duration of the first shot or 1 second by default.
+     * Initialize the timeline with the duration of the first 
+     * shot or 1 second by default.
      */
     private void initializeTimeline() {
         double initialDuration = shots.get(0).getDuration();
@@ -332,21 +334,23 @@ public class PreviewController {
      * @return - the shotNumber in the shotlist
      */
     private int checkShots() {
+        int returnValue = -1;
+        
         if (currentShot.get() <= shots.size() - 3) {
             currentSelected = 1;
-            return 0;
+            returnValue = 0;
         } else if (currentShot.get() == shots.size() - 2) {
             currentSelected = 2;
-            return 1;
+            returnValue = 1;
         } else if (currentShot.get() == shots.size() - 1) {
             currentSelected = 3;
-            return 2;
+            returnValue = 2;
         } else if (currentShot.get() == shots.size()) {
             currentSelected = 4;
-            return 3;
-        } else {
-            return -1;
-        }
+            returnValue = 3;
+        } 
+        
+        return returnValue;
     }
 
     /**
