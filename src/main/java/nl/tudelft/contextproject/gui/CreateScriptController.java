@@ -25,8 +25,6 @@ import javafx.util.Callback;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
@@ -66,15 +64,6 @@ public class CreateScriptController {
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
-
-        //TEMP
-        Camera c = new Camera();
-        new Camera();
-        c.addPreset(new InstantPreset(new CameraSettings(), 0, "wow"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 1, "nice"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
-        //
-
         setFactories();
         setActions();
 
@@ -217,12 +206,12 @@ public class CreateScriptController {
      */
     private void setActions() {
         final ObservableList<Shot> data = FXCollections.observableArrayList();
-        
+
         tableEvents.setItems(data);
 
         btnAdd.setOnAction( event -> {
             boolean emptyField = false;
-            
+
             if (addCamera.getSelectionModel().isEmpty()) {
                 addCamera.setStyle("-fx-border-color: red;");
                 emptyField = true;
@@ -246,13 +235,13 @@ public class CreateScriptController {
 
             if (!emptyField) {
                 int id;
-                
+
                 if (tableEvents.getItems().size() > 0) {
                     id = tableEvents.getItems().get(tableEvents.getItems().size() - 1).getNumber() + 1;
                 } else {
                     id = 1;
                 }
-                    
+
                 Shot newShot = new Shot(
                         id,
                         addShot.getText(),

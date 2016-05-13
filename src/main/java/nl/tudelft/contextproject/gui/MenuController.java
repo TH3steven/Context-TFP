@@ -13,6 +13,8 @@ import java.io.IOException;
 /**
  * Controller class for the main menu. This class controls the actions to be taken
  * when one of the menu buttons is clicked.
+ * 
+ * @since 0.1
  */
 public class MenuController {
 
@@ -21,7 +23,7 @@ public class MenuController {
     @FXML private Button btnPreview;
     @FXML private Button btnPresets;
     @FXML private Button btnLive;
-    
+
     @FXML private TextField numberOfCameras;
 
     @FXML
@@ -29,15 +31,15 @@ public class MenuController {
         btnCreateScript.setOnAction((event) -> {
             CreateScriptController.show();
         });
-        
+
         btnPreview.setOnAction((event) -> {
             PreviewController.show();
         });
-        
+
         btnPresets.setOnAction((event) -> {
             PresetController.show();
         });
-        
+
         btnLive.setOnAction((event) -> {
             CameraLiveController.show();
         });

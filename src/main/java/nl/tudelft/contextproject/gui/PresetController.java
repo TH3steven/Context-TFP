@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
@@ -31,6 +32,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This class is a control class for the preset creation screen. It
+ * enables the creation and modification of presets for different cameras.
+ * 
+ * @since 0.2
+ */
 public class PresetController {
 
     @FXML private ChoiceBox<Integer> cameraSelecter;
@@ -45,27 +52,20 @@ public class PresetController {
     @FXML private TableColumn<Preset, Integer> presetColumn;
     @FXML private TableColumn<Preset, String> descColumn;
     @FXML private VBox vBox;
+
     private ObservableList<Preset> data = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
-
-        //TEMP
-        Camera c = new Camera();
-        Camera c2 = new Camera();
-        c.addPreset(new InstantPreset(new CameraSettings(), 1, "wow"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 5, "nice"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 3, "awesome"));
-        c2.addPreset(new InstantPreset(new CameraSettings(), 1, "huh"));
-        //
-
         List<Integer> cameraList = new ArrayList<Integer>();
+
         for (int i = 0; i < Camera.getCameraAmount(); i++) {
             cameraList.add(i + 1);
         }
+
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
         cameraView.setImage(new Image("main/resources/placeholder_picture.jpg"));
-        
+
         applySettings();
         setFactories();
         setActions();
@@ -76,7 +76,7 @@ public class PresetController {
         cameraView.fitWidthProperty().bind(vBox.widthProperty());
         cameraView.fitHeightProperty().bind(vBox.heightProperty());
     }
-    
+
     private void setFactories() {
         presetColumn.setCellValueFactory(
                 new PropertyValueFactory<Preset, Integer>("id"));
@@ -113,7 +113,7 @@ public class PresetController {
                 data.add(p);
             }
         });
-        
+
         btnRemove.setOnAction((event) -> {
             int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
             if (selectedIndex > 0) {
@@ -139,13 +139,14 @@ public class PresetController {
             e.printStackTrace();
         }
     }
-    
+
     private void addPreset(int id) {
         Preset newPreset = new InstantPreset(
                 new CameraSettings(1, 1, 1, 2000),
                 id,
                 description.getText());
         Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+
         if (overwrite.isSelected()) {
             cam.overwritePreset(newPreset);
             int newId = newPreset.getId();
@@ -163,7 +164,7 @@ public class PresetController {
             }
         }
     }
-    
+
     private void confirmOverwrite(Preset newPreset, Camera cam) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirm overwriting");
@@ -171,7 +172,7 @@ public class PresetController {
         alert.setContentText("Are you sure you want to overwrite preset " + newPreset.getId() + "?");
 
         Optional<ButtonType> result = alert.showAndWait();
-        
+
         if (result.get() == ButtonType.OK) {
             cam.overwritePreset(newPreset);
             int newId = newPreset.getId();
@@ -181,10 +182,10 @@ public class PresetController {
             tableView.getSortOrder().add(presetColumn);
         }
     }
-    
+
     private void removePreset(int id) {
         int position = -1;
-        
+
         for (int i = 0; i < data.size(); i++) {
             Preset p = data.get(i);
             if (p.getId() == id) {
@@ -192,7 +193,7 @@ public class PresetController {
                 break;
             }
         }
-        
+
         if (position != -1) {
             data.remove(position);
         }
