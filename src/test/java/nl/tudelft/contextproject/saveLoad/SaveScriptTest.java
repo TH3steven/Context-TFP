@@ -1,30 +1,26 @@
-package test.java.nl.tudelft.contextproject.script;
+package test.java.nl.tudelft.contextproject.saveLoad;
 
+import static org.junit.Assert.fail;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.presets.InstantPreset;
+import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
 import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-/**
- * Demo application for how a script works.
- */
-public final class ScriptApp {
+import javax.xml.stream.XMLStreamException;
+
+public class SaveScriptTest {
     
-    private ScriptApp() {
-        throw new UnsupportedOperationException();
-    }
+    private final String saveFileLocation = "src/test/resources/saveScriptTest.xml";
 
-    /**
-     * Demo application for how a script works.
-     * Run and press enter to run through the script.
-     * @param args Application arguments. Not used.
-     */
-    public static void main(String[] args) {
+    @Test
+    public void testSave() {
         List<Shot> shots = new ArrayList<Shot>();
         Camera cam0 = new Camera();
         Camera cam1 = new Camera();
@@ -34,15 +30,13 @@ public final class ScriptApp {
         shots.add(new Shot(3, cam0, new InstantPreset(new CameraSettings(4, 4, 4, 4), 4)));
         Script script = new Script(shots);
         
-        Scanner sc = new Scanner(System.in);
-        while (script.hasNext()) {
-            sc.nextLine();
-            Shot s = script.next();
-            CameraSettings cs = s.getCamera().getSettings();
-            System.out.println("Camera " + s.getCamera().getNumber() + " set to preset: " + cs.getPan() 
-                    + ", " + cs.getTilt() + ", " + cs.getZoom());
+        try {
+            SaveScript.setSaveLocation(saveFileLocation);
+            SaveScript.save(script);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+            fail("Some XML thing went wrong");
         }
-        sc.close();
     }
 
 }

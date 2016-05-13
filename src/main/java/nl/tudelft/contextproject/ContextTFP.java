@@ -13,12 +13,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import main.java.nl.tudelft.contextproject.camera.Camera;
+import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 import main.java.nl.tudelft.contextproject.gui.MenuController;
+import main.java.nl.tudelft.contextproject.presets.InstantPreset;
+import main.java.nl.tudelft.contextproject.script.Script;
+import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
- * This is the main file for the contextproject of Team Free Pizza.
+ * This is the main file for the Multi-Media Contextproject of Team Free Pizza.
  * The main purpose of this project is to allow PolyCast Productions B.V. to
  * easily control their cameras and to improve their digital environment.
  * 
@@ -31,12 +37,25 @@ import java.io.IOException;
 public class ContextTFP extends Application {
 
     private static BorderPane rootLayout;
+    private static Script script;
+
     private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("TFP Camera Control");
+
+        // Create the script to be used by the application.
+        script = new Script(new ArrayList<Shot>());
+
+        //TEMP
+        Camera c = new Camera();
+        new Camera();
+        c.addPreset(new InstantPreset(new CameraSettings(), 0, "wow"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 1, "nice"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
+        //
 
         initRootLayout();
         MenuController.show();
@@ -74,9 +93,32 @@ public class ContextTFP extends Application {
      * @return The main stage
      */
     public Stage getPrimaryStage() {
-        return this.primaryStage;
+        return primaryStage;
     }
-    
+
+    /**
+     * Get the active script used by the application.
+     * 
+     * @return The script.
+     */
+    public static Script getScript() {
+        return script;
+    }
+
+    /**
+     * Sets the active script used by the application.
+     * 
+     * @param script The script to be used.
+     */
+    public void setScript(Script script) {
+        ContextTFP.script = script;
+    }
+
+    /**
+     * Retrieves the root layout of the application.
+     * 
+     * @return The root layout
+     */
     public static BorderPane getRootLayout() {
         return rootLayout;
     }

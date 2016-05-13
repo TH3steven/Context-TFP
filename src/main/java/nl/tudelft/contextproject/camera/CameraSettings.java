@@ -133,4 +133,33 @@ public class CameraSettings {
                 (focus + offset > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : focus + offset;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + focus;
+        result = prime * result + pan;
+        result = prime * result + tilt;
+        result = prime * result + zoom;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof CameraSettings)) {
+            return false;
+        }
+        CameraSettings other = (CameraSettings) obj;
+        boolean result = focus == other.focus
+                && pan == other.pan
+                && tilt == other.tilt
+                && zoom == other.zoom;
+        return result;
+    }
 }

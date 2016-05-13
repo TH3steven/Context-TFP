@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
+
+import org.junit.After;
 import org.junit.Test;
 
 import java.util.Observable;
@@ -13,11 +15,13 @@ import java.util.Observer;
 /**
  * Class to test the Camera class. More tests should be
  * added.
- * 
- * @author Team Free Pizza
- *
  */
 public class CameraTest {
+    
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
+    }
 
     /**
      * Tests setSettings method. Also tests if observer
@@ -177,23 +181,24 @@ public class CameraTest {
         cam.focus(656565);
         assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
     }
-}
-
-/**
- * Simple test observer used to see if an observer was actually
- * called.
- * 
- * @author Bart van Oort
- */
-class TestObserver implements Observer {
-    boolean called = false;
-
-    @Override
-    public void update(Observable o, Object arg) {
-        called = true;
-    }
     
-    public boolean wasCalled() {
-        return called;
+
+    /**
+     * Simple test observer used to see if an observer was actually
+     * called.
+     * 
+     * @author Bart van Oort
+     */
+    class TestObserver implements Observer {
+        boolean called = false;
+
+        @Override
+        public void update(Observable o, Object arg) {
+            called = true;
+        }
+    
+        public boolean wasCalled() {
+            return called;
+        }
     }
 }

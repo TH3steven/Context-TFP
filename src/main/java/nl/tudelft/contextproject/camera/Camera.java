@@ -1,5 +1,10 @@
 package main.java.nl.tudelft.contextproject.camera;
 
+import main.java.nl.tudelft.contextproject.presets.Preset;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Observable;
 
 /**
@@ -11,10 +16,12 @@ import java.util.Observable;
  */
 public class Camera extends Observable {
     
+    private static final HashMap<Integer, Camera> CAMERAS = new HashMap<Integer, Camera>();
     private static int numCams = 0;
     
     private int num;
     private CameraSettings camSet;
+    private HashMap<Integer, Preset> presets;
     
     /**
      * Creates a Camera object with initial camera settings
@@ -23,6 +30,8 @@ public class Camera extends Observable {
     public Camera() {
         camSet = new CameraSettings();
         num = numCams++;
+        presets = new HashMap<Integer, Preset>();
+        CAMERAS.put(num, this);
     }
     
     /**
@@ -34,6 +43,32 @@ public class Camera extends Observable {
     public Camera(CameraSettings init) {
         camSet = init;
         num = numCams++;
+        presets = new HashMap<Integer, Preset>();
+        CAMERAS.put(num, this);
+    }
+    
+    /**
+     * Returns the camera with a specific number, or null if it
+     * does not yet exist.
+     * @param camNum number of the camera to get
+     * @return the camera with the associated number, or null if
+     *      it does not exist.
+     */
+    public static Camera getCamera(int camNum) {
+        return CAMERAS.get(camNum);
+    }
+    
+    /**
+     * Returns all cameras currently made.
+     * @return a collection of all cameras currently specified.
+     */
+    public static Collection<Camera> getAllCameras() {
+        return CAMERAS.values();
+    }
+    
+    public static void clearAllCameras() {
+        CAMERAS.clear();
+        numCams = 0;
     }
     
     /**
@@ -63,6 +98,14 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+    
+    /**
+     * Get the total amount of cameras connected to the system.
+     * @return The number of cameras.
+     */
+    public static int getCameraAmount() {
+        return numCams;
+    } 
     
     /**
      * Pans the camera a certain offset. Cannot pan past
@@ -111,13 +154,92 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+    
+    /**
+     * Adds a preset to the camera, if there is not already
+     * a preset with the same id. Returns true if successful.
+     * @param p The preset to add to this camera.
+     * @return True if the preset was added, otherwise false.
+     */
+    public boolean addPreset(Preset p) {
+        if (presets.get(p.getId()) == null) {
+            presets.put(p.getId(), p);
+            notifyObservers();
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Adds a preset, overwriting if it already exists.
+     * @param p The preset to add.
+     */
+    public void overwritePreset(Preset p) {
+        presets.put(p.getId(), p);
+        notifyObservers();
+    }
+    
+    /**
+     * Removes a preset from the camera.
+     * @param p The preset to remove.
+     */
+    public void removePreset(Preset p) {
+        presets.remove(p.getId());
+    }
+    
+    /**
+     * Returns the preset with the specified id.
+     * Returns null if the preset doesn't exist.
+     * @param id The id of the preset to get.
+     * @return The requested preset.
+     */
+    public Preset getPreset(int id) {
+        return presets.get(id);
+    }
+    
+    /**
+     * Returns a hashmap with all the presets of this camera.
+     * @return A hashmap with all the presets of this camera.
+     */
+    public HashMap<Integer, Preset> getPresets() {
+        return presets;
+    }
+    
+    /**
+     * Returns the amount of presets currently registered to this camera.
+     * @return Amount of presets.
+     */
+    public int getPresetAmount() {
+        return presets.size();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Camera)) {
+            return false;
+        }
+        Camera camera = (Camera) o;
+        boolean result = num == camera.num
+                && Objects.equals(camSet, camera.camSet)
+                && Objects.equals(presets, camera.presets);
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(num, camSet, presets);
+    }
 
     /**
-     * This is still to be implemented but should be responsible for the taking
-     * of shots by a camera.
-     */
-    public void takeShot() {
 
+     * Returns the list of presets currently registered to this camera.
+     * @return the list of presets registered to this camera.
+     */
+    public Collection<Preset> getAllPresets() {
+        return presets.values();
     }
     
 }
