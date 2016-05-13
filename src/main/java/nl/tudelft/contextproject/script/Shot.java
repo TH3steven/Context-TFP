@@ -3,6 +3,8 @@ package main.java.nl.tudelft.contextproject.script;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.presets.Preset;
 
+import java.util.Objects;
+
 /**
  * Class to represent a shot to be taken by a Camera.
  *
@@ -133,6 +135,23 @@ public class Shot {
      */
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Shot)) return false;
+        Shot shot = (Shot) o;
+        return getNumber() == shot.getNumber() &&
+                Objects.equals(getCamera(), shot.getCamera()) &&
+                Objects.equals(getPreset(), shot.getPreset()) &&
+                Objects.equals(getShotId(), shot.getShotId()) &&
+                Objects.equals(getDescription(), shot.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getNumber(), getCamera(), getPreset(), getShotId(), getDescription());
     }
 
     /**

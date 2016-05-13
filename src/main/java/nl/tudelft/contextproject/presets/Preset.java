@@ -3,6 +3,8 @@ package main.java.nl.tudelft.contextproject.presets;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 
+import java.util.Objects;
+
 /**
  * Class to represent a camera preset.
  * Extend this class to create different presets, with different
@@ -38,8 +40,25 @@ public abstract class Preset {
     public int getId() {
         return id;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Preset)) return false;
+        Preset preset = (Preset) o;
+        return getId() == preset.getId() &&
+                Objects.equals(getDescription(), preset.getDescription()) &&
+                Objects.equals(getToSet(), preset.getToSet()) &&
+                Objects.equals(imageLocation, preset.imageLocation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDescription(), getToSet(), getId(), imageLocation);
+    }
+
     /**
+
      * Returns the settings the camera should be set to.
      * @return To be applied camera settings
      */

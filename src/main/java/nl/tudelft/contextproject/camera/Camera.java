@@ -4,6 +4,7 @@ import main.java.nl.tudelft.contextproject.presets.Preset;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Observable;
 
 /**
@@ -193,8 +194,24 @@ public class Camera extends Observable {
     public int getPresetAmount() {
         return presets.size();
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Camera)) return false;
+        Camera camera = (Camera) o;
+        return num == camera.num &&
+                Objects.equals(camSet, camera.camSet) &&
+                Objects.equals(presets, camera.presets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(num, camSet, presets);
+    }
+
     /**
+
      * Returns the list of presets currently registered to this camera.
      * @return the list of presets registered to this camera.
      */
