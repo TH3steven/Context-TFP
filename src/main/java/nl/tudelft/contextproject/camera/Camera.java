@@ -197,12 +197,17 @@ public class Camera extends Observable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Camera)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Camera)) {
+            return false;
+        }
         Camera camera = (Camera) o;
-        return num == camera.num &&
-                Objects.equals(camSet, camera.camSet) &&
-                Objects.equals(presets, camera.presets);
+        boolean result = num == camera.num
+                && Objects.equals(camSet, camera.camSet)
+                && Objects.equals(presets, camera.presets);
+        return result;
     }
 
     @Override

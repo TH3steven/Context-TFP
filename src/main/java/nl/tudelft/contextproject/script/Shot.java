@@ -139,14 +139,19 @@ public class Shot {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Shot)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Shot)) {
+            return false;
+        }
         Shot shot = (Shot) o;
-        return getNumber() == shot.getNumber() &&
-                Objects.equals(getCamera(), shot.getCamera()) &&
-                Objects.equals(getPreset(), shot.getPreset()) &&
-                Objects.equals(getShotId(), shot.getShotId()) &&
-                Objects.equals(getDescription(), shot.getDescription());
+        boolean result = getNumber() == shot.getNumber()
+                && Objects.equals(getCamera(), shot.getCamera())
+                && Objects.equals(getPreset(), shot.getPreset())
+                && Objects.equals(getShotId(), shot.getShotId())
+                && Objects.equals(getDescription(), shot.getDescription());
+        return result;
     }
 
     @Override

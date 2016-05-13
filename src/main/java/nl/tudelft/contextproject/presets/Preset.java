@@ -31,6 +31,7 @@ public abstract class Preset {
         this.description = "";
         this.toSet = toSet;
         this.id = identifier;
+        imageLocation = "";
     }
     
     /**
@@ -43,13 +44,18 @@ public abstract class Preset {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Preset)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Preset)) {
+            return false;
+        }
         Preset preset = (Preset) o;
-        return getId() == preset.getId() &&
-                Objects.equals(getDescription(), preset.getDescription()) &&
-                Objects.equals(getToSet(), preset.getToSet()) &&
-                Objects.equals(imageLocation, preset.imageLocation);
+        boolean result = getId() == preset.getId()
+                && Objects.equals(getDescription(), preset.getDescription())
+                && Objects.equals(getToSet(), preset.getToSet())
+                && Objects.equals(imageLocation, preset.imageLocation);
+        return result;
     }
 
     @Override

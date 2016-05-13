@@ -34,6 +34,7 @@ public class LoadScriptTest {
         try {
             LoadScript.setLoadLocation(saveFileLocation);
             Script loadedScript = LoadScript.load();
+            assertEquals(script, loadedScript);
         } catch (XMLStreamException e) {
             e.printStackTrace();
             fail("Some XML thing went wrong");
