@@ -265,9 +265,9 @@ public class PreviewController {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(ContextTFP.class.getResource("view/ScriptPreview.fxml"));
-            AnchorPane createScriptView = (AnchorPane) loader.load();
+            AnchorPane scriptPreview = (AnchorPane) loader.load();
 
-            ContextTFP.getRootLayout().setCenter(createScriptView);
+            ContextTFP.getRootLayout().setCenter(scriptPreview);
         } catch (IOException e) {
             e.printStackTrace();
         }

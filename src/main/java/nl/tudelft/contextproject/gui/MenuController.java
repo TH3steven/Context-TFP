@@ -20,6 +20,7 @@ public class MenuController {
     @FXML private Button btnLoadScript;
     @FXML private Button btnPreview;
     @FXML private Button btnPresets;
+    @FXML private Button btnLive;
     
     @FXML private TextField numberOfCameras;
 
@@ -35,6 +36,10 @@ public class MenuController {
         
         btnPresets.setOnAction((event) -> {
             PresetController.show();
+        });
+        
+        btnLive.setOnAction((event) -> {
+            CameraLiveController.show();
         });
     }
 
