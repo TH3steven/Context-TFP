@@ -26,7 +26,7 @@
             <TableColumn fx:id="columnDescription" minWidth="300.0" prefWidth="-1.0" sortable="false" text="Event" />
             <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Up" />
             <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Down" />
-            <TableColumn fx:id="columnAction" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Remove" />
+            <TableColumn fx:id="columnAction" maxWidth="65.0" minWidth="65.0" prefWidth="-1.0" resizable="false" sortable="false" text="Remove" />
         </columns>
       </TableView>
       <HBox fx:id="paneEdit" layoutX="300.0" layoutY="515.0" prefHeight="50.0" prefWidth="200.0" />
