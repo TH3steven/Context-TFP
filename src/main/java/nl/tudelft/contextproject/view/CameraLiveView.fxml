@@ -4,11 +4,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.CameraLiveController">
    <children>
       <ImageView fx:id="bigView" fitHeight="271.0" fitWidth="340.0" layoutX="87.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="smallView" fitHeight="201.0" fitWidth="272.0" layoutX="493.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true" />
-      <Button fx:id="swap" layoutX="448.0" layoutY="42.0" mnemonicParsing="false" />
+      <Button fx:id="swap" layoutX="375.0" layoutY="27.0" mnemonicParsing="false" text="Switch" />
+      <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Back" />
    </children>
 </AnchorPane>
