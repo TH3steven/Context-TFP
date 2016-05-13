@@ -70,9 +70,9 @@ public class CreateScriptController {
         //TEMP
         Camera c = new Camera();
         new Camera();
-        c.addPreset(new InstantPreset(new CameraSettings(), 0));
-        c.addPreset(new InstantPreset(new CameraSettings(), 1));
-        c.addPreset(new InstantPreset(new CameraSettings(), 2));
+        c.addPreset(new InstantPreset(new CameraSettings(), 0, "wow"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 1, "nice"));
+        c.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
         //
 
         setFactories();
