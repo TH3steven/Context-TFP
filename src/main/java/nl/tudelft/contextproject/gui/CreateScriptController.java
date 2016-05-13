@@ -1,40 +1,44 @@
 package main.java.nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller class for the script creation screen.
+ * This class is responsible for the functions of the create script screen, to
+ * allow for easy creation and saving of a new script.
  * 
- * @author Steven Meijer
+ * @since 0.2
  */
 public class CreateScriptController {
-
-    Script script;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
@@ -43,78 +47,166 @@ public class CreateScriptController {
     @FXML private ChoiceBox<Integer> addPreset;
 
     @FXML private TableView<Shot> tableEvents;
-    @FXML private TableColumn<Shot, String> tAdd;
-    @FXML private TableColumn<Shot, Integer> tCamera;
-    @FXML private TableColumn<Shot, String> tDescription;
-    @FXML private TableColumn<Shot, Integer> tID;
-    @FXML private TableColumn<Shot, Integer> tPreset;
-    @FXML private TableColumn<Shot, String> tShot;
+    @FXML private TableColumn<Shot, Shot> columnAction;
+    @FXML private TableColumn<Shot, Integer> columnCamera;
+    @FXML private TableColumn<Shot, String> columnDescription;
+    @FXML private TableColumn<Shot, Integer> columnID;
+    @FXML private TableColumn<Shot, Integer> columnPreset;
+    @FXML private TableColumn<Shot, String> columnShot;
 
     @FXML private TextField addShot;
     @FXML private TextField addDescription;
 
-    @FXML
-    private void initialize() {
+    /**
+     * Initialize method used by JavaFX.
+     */
+    @FXML private void initialize() {
+        setFactories();
+        setActions();
 
-        //TEMP
-        Camera c = new Camera();
-        c.addPreset(new InstantPreset(new CameraSettings(), 0));
-        c.addPreset(new InstantPreset(new CameraSettings(), 1));
-        c.addPreset(new InstantPreset(new CameraSettings(), 2));
-        //
+        initCamera();
+        initPreset();
 
-        script = new Script(new ArrayList<Shot>());
+        allowEditing();
 
-        List<Integer> cameraList = new ArrayList<Integer>();
-        List<Integer> presetList = new ArrayList<Integer>();
+        // Disallow horizontal scrolling.
+        tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Allows the user to press ENTER to add a shot.
+        btnAdd.setDefaultButton(true);
+    }
+
+    /**
+     * Allows for editable rows in the table.
+     */
+    private void allowEditing() {
+        columnShot.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnShot.setOnEditCommit( (event) -> {
+            final int row = event.getTablePosition().getRow();
+
+            ((Shot) event.getTableView().getItems().get(row)
+                    ).setShotId(event.getNewValue());
+
+            ContextTFP.getScript().getShots().get(row).setShotId(event.getNewValue());
+        });
+
+        columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnDescription.setOnEditCommit( (event) -> {
+            final int row = event.getTablePosition().getRow();
+            
+            ((Shot) event.getTableView().getItems().get(row)
+                    ).setDescription(event.getNewValue());
+
+            ContextTFP.getScript().getShots().get(row).setDescription(event.getNewValue());
+        });
+    }
+
+    /**
+     * Fills the choicebox for selecting a camera.
+     */
+    private void initCamera() {
+        final List<Integer> cameraList = new ArrayList<Integer>();
 
         for (int i = 0; i < Camera.getCameraAmount(); ++i) {
             cameraList.add(i + 1);
         }
 
-        for (int i = 0; i < 3; ++i) {
-            presetList.add(i + 1);
-        }
-
         addCamera.setItems(FXCollections.observableArrayList(cameraList));
-        addPreset.setItems(FXCollections.observableArrayList(presetList));
-
-        //Disallow horizontal scrolling
-        tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        setFactories();
-        setActions();
     }
 
+    /**
+     * Fills the choicebox for selecting a preset, given the selection
+     * of a certain camera.
+     */
+    private void initPreset() {
+        final List<Integer> presetList = new ArrayList<Integer>();
+
+        addCamera.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> obs, Integer oldV, Integer newV) {
+                presetList.clear();
+
+                if (newV != null) {
+                    addPreset.setDisable(false);
+
+                    for (int i = 0; i < Camera.
+                            getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                        presetList.add(i + 1);
+                    }
+
+                    addPreset.setItems(FXCollections.observableArrayList(presetList));
+                } else {
+                    addPreset.setDisable(true);
+                }
+            }
+        });
+
+        addPreset.setDisable(true);
+    }
+
+    /**
+     * Sets the factories of the table columns, aka where they should
+     * get their value from.
+     */
     private void setFactories() {
-        tID.setCellValueFactory(
+        columnID.setCellValueFactory(
                 new PropertyValueFactory<Shot, Integer>("number"));
 
-        tShot.setCellValueFactory(
+        columnShot.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("shotId"));
 
-        tCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
+        columnCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> c) {
-                return new ReadOnlyObjectWrapper<Integer>(c.getValue().getCamera().getNumber() + 1);
+                final int num = c.getValue().getCamera().getNumber() + 1;
+                return new ReadOnlyObjectWrapper<Integer>(num);
             }
         });
 
-        tPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
+        columnPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
             public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> p) {
-                return new ReadOnlyObjectWrapper<Integer>(p.getValue().getPreset().getId() + 1);
+                final int id = p.getValue().getPreset().getId() + 1;
+                return new ReadOnlyObjectWrapper<Integer>(id);
             }
         });
 
-        tDescription.setCellValueFactory(
+        columnDescription.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("description"));
+
+        columnAction.setCellValueFactory( param -> 
+            new ReadOnlyObjectWrapper<>(param.getValue())
+        );
+
+        columnAction.setCellFactory( param -> new TableCell<Shot, Shot>() {
+            Button btnRemove = new Button("Remove");
+
+            @Override
+            protected void updateItem(Shot shot, boolean empty) {
+                super.updateItem(shot, empty);
+
+                if (shot == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                setGraphic(btnRemove);
+
+                btnRemove.setOnAction( event -> {
+                    getTableView().getItems().remove(shot);
+                    ContextTFP.getScript().getShots().remove(shot);
+                });
+            }
+        });
     }
 
+    /**
+     * Sets the actions to be taken when a button is pressed.
+     */
     private void setActions() {
-
         final ObservableList<Shot> data = FXCollections.observableArrayList();
+
         tableEvents.setItems(data);
 
-        btnAdd.setOnAction((event) -> {
+        btnAdd.setOnAction( event -> {
             boolean emptyField = false;
 
             if (addCamera.getSelectionModel().isEmpty()) {
@@ -139,16 +231,24 @@ public class CreateScriptController {
             }
 
             if (!emptyField) {
-                Shot newShot = new Shot(
-                        tableEvents.getItems().size() + 1,
+                int id;
+
+                if (tableEvents.getItems().size() > 0) {
+                    id = tableEvents.getItems().get(tableEvents.getItems().size() - 1).getNumber() + 1;
+                } else {
+                    id = 1;
+                }
+
+                final Shot newShot = new Shot(
+                        id,
                         addShot.getText(),
-                        Camera.getCamera(addCamera.getSelectionModel().getSelectedItem() - 1),
-                        Camera.getCamera(addCamera.getSelectionModel().getSelectedItem() - 1)
-                            .getPreset(addPreset.getSelectionModel().getSelectedItem() - 1),
+                        Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
+                        Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
+                            .getPreset(addPreset.getSelectionModel().getSelectedIndex()),
                         addDescription.getText()
                         );
 
-                script.addShot(newShot);
+                ContextTFP.getScript().addShot(newShot);
                 data.add(newShot);
 
                 addShot.clear();
@@ -158,7 +258,21 @@ public class CreateScriptController {
             }
         });
 
-        btnBack.setOnAction((event) -> {
+        btnBack.setOnAction( event -> {
+            if (!tableEvents.getItems().isEmpty()) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirm quitting");
+                alert.setHeaderText("Exiting will erase made changes");
+                alert.setContentText("Are you sure you want to quit? Any unsaved changes "
+                        + "will not be saved");
+
+                Optional<ButtonType> result = alert.showAndWait();
+
+                if (result.get() == ButtonType.CANCEL) {
+                    return;
+                }
+            }
+
             MenuController.show();
         });
     }
