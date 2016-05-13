@@ -222,8 +222,6 @@ public class CreateScriptController {
 
         btnAdd.setOnAction( event -> {
             boolean emptyField = false;
-
-            System.out.println(ContextTFP.getScript().getShots());
             
             if (addCamera.getSelectionModel().isEmpty()) {
                 addCamera.setStyle("-fx-border-color: red;");
@@ -247,8 +245,16 @@ public class CreateScriptController {
             }
 
             if (!emptyField) {
+                int id;
+                
+                if (tableEvents.getItems().size() > 0) {
+                    id = tableEvents.getItems().get(tableEvents.getItems().size() - 1).getNumber() + 1;
+                } else {
+                    id = 1;
+                }
+                    
                 Shot newShot = new Shot(
-                        tableEvents.getItems().size() + 1,
+                        id,
                         addShot.getText(),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
