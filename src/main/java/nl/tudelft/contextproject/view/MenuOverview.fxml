@@ -5,7 +5,7 @@
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.MenuController">
    <children>
-      <Button disable="true" layoutX="240.0" layoutY="386.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Button" />
+      <Button fx:id="btnLive" layoutX="240.0" layoutY="386.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Live UI" />
       <Button fx:id="btnPreview" layoutX="440.0" layoutY="450.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Preview script" />
       <Button disable="true" layoutX="240.0" layoutY="450.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Button" />
       <Button fx:id="btnCreateScript" layoutX="440.0" layoutY="322.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Create script" />
