@@ -186,13 +186,13 @@ public class CreateScriptController {
         columnDescription.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("description"));
 
-        columnAction.setCellValueFactory(
-            param -> new ReadOnlyObjectWrapper<>(param.getValue())
+        columnAction.setCellValueFactory( param -> 
+            new ReadOnlyObjectWrapper<>(param.getValue())
         );
 
         columnAction.setCellFactory( param -> new TableCell<Shot, Shot>() {
-            Button deleteButton = new Button("Remove");
-            
+            Button btnRemove = new Button("Remove");
+
             @Override
             protected void updateItem(Shot shot, boolean empty) {
                 super.updateItem(shot, empty);
@@ -202,13 +202,12 @@ public class CreateScriptController {
                     return;
                 }
 
-                setGraphic(deleteButton);
-                
-//                deleteButton.setOnAction( (event) -> {
-//                    getTableView().getItems().remove(shot);
-//                    
-//                    ContextTFP.getScript().getShots().remove(event.getTablePosition().getRow());
-//                });
+                setGraphic(btnRemove);
+
+                btnRemove.setOnAction( event -> {
+                    getTableView().getItems().remove(shot);
+                    ContextTFP.getScript().getShots().remove(shot);
+                });
             }
         });
     }
@@ -220,10 +219,12 @@ public class CreateScriptController {
         final ObservableList<Shot> data = FXCollections.observableArrayList();
         
         tableEvents.setItems(data);
-        
+
         btnAdd.setOnAction( event -> {
             boolean emptyField = false;
 
+            System.out.println(ContextTFP.getScript().getShots());
+            
             if (addCamera.getSelectionModel().isEmpty()) {
                 addCamera.setStyle("-fx-border-color: red;");
                 emptyField = true;
@@ -251,7 +252,7 @@ public class CreateScriptController {
                         addShot.getText(),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                         Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                        .getPreset(addPreset.getSelectionModel().getSelectedIndex()),
+                            .getPreset(addPreset.getSelectionModel().getSelectedIndex()),
                         addDescription.getText()
                         );
 
