@@ -5,8 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -17,7 +15,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -193,9 +190,9 @@ public class CreateScriptController {
             param -> new ReadOnlyObjectWrapper<>(param.getValue())
         );
 
-        columnAction.setCellFactory(param -> new TableCell<Shot, Shot>() {
+        columnAction.setCellFactory( param -> new TableCell<Shot, Shot>() {
             Button deleteButton = new Button("Remove");
-
+            
             @Override
             protected void updateItem(Shot shot, boolean empty) {
                 super.updateItem(shot, empty);
@@ -204,11 +201,14 @@ public class CreateScriptController {
                     setGraphic(null);
                     return;
                 }
-                
+
                 setGraphic(deleteButton);
-                deleteButton.setOnAction( event -> {
-                    getTableView().getItems().remove(shot);
-                });
+                
+//                deleteButton.setOnAction( (event) -> {
+//                    getTableView().getItems().remove(shot);
+//                    
+//                    ContextTFP.getScript().getShots().remove(event.getTablePosition().getRow());
+//                });
             }
         });
     }
@@ -218,9 +218,9 @@ public class CreateScriptController {
      */
     private void setActions() {
         final ObservableList<Shot> data = FXCollections.observableArrayList();
-
+        
         tableEvents.setItems(data);
-
+        
         btnAdd.setOnAction( event -> {
             boolean emptyField = false;
 
