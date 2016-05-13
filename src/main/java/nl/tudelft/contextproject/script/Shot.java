@@ -16,6 +16,7 @@ public class Shot {
     private Preset preset;
     private String shotId;
     private String description;
+    private double duration;
 
     /**
      * Creates a shot instance with each shot having a number,
@@ -32,6 +33,7 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = description;
+        duration = -1;
     }
 
     /**
@@ -47,6 +49,7 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = null;
+        duration = -1;
     }
 
     /**
@@ -135,5 +138,17 @@ public class Shot {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public double getDuration() {
+        return duration;
+    }
+    
+    public void setDuration(double dur) {
+        duration = dur;
+    }
+    
+    public String toString() {
+        return "Shot " + number;
     }
 }
