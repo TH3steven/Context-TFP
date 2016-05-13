@@ -158,10 +158,9 @@ public class PreviewController {
      * Initialize the listeners.
      */
     private void initializeListeners() {
-        final ChangeListener changeListener = new ChangeListener() {
+        final ChangeListener<Number> changeListener = new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue observableValue, Object oldValue,
-                    Object newValue) {
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 cb.setValue(shots.get(currentShot.get() - 1));
                 Shot shot = shots.get(currentShot.get() - 1);
                 if (shot.getDuration() > 0) {
