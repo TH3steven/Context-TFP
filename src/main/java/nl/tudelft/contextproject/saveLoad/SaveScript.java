@@ -8,7 +8,6 @@ import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;

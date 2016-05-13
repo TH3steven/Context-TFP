@@ -21,6 +21,13 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+/**
+ * Utility class for loading a script from an XML file.
+ * The location this file is to be loaded from is stored in the private
+ * variable {@link #loadLocation}, which can be set using {@link #setLoadLocation}.
+ * 
+ * @since 0.3
+ */
 public final class LoadScript {
 
     /**
@@ -29,6 +36,9 @@ public final class LoadScript {
      */
     private static String loadLocation = "savefile.xml";
 
+    /**
+     * XMLEventReader that reads from a save file.
+     */
     private static XMLEventReader reader;
 
     private static final Object MUTEX = new Object();
@@ -65,7 +75,8 @@ public final class LoadScript {
     /**
      * Loads a script from the XML file at the location specified in
      * {@link #loadLocation}.
-     *
+     * It loads the cameras from the save file and puts them in {@link Camera#CAMERAS}.
+     * It then loads the shots from the save file and returns them as a Script object.
      * @return the loaded script
      */
     public static Script load() throws XMLStreamException {
@@ -104,6 +115,11 @@ public final class LoadScript {
         }
     }
 
+    /**
+     * Reads the 'cameras' section of the XML file.
+     * Assumes that the start element of this section has already been read.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static void loadCameras() throws XMLStreamException {
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
@@ -127,6 +143,11 @@ public final class LoadScript {
         }
     }
 
+    /**
+     * Reads a 'camera' section of the XML file.
+     * Assumes that the start element of this section has already been read.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static void loadCamera() throws XMLStreamException {
         Camera cam = new Camera();
         while (reader.hasNext()) {
@@ -148,6 +169,14 @@ public final class LoadScript {
         }
     }
 
+    /**
+     * Reads a 'cameraSettings' section of the XML file.
+     * Assumes that the start element of this section has already been read
+     * and is inserted into this method as the start parameter.
+     * @param start The start element of the 'cameraSettings' section.
+     * @return the loaded CameraSettings object.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static CameraSettings loadCameraSettings(StartElement start) {
         return new CameraSettings(
                 Integer.parseInt(start.getAttributeByName(new QName("pan")).getValue()),
@@ -157,7 +186,13 @@ public final class LoadScript {
         );
     }
 
-    // TODO this method has to be removed or updated.
+    /**
+     * Reads a 'presets' section associated with a camera of the XML file and
+     * adds these presets to the camera they belong to.
+     * Assumes that the start element of this section has already been read.
+     * @param cam Camera object associated with this 'presets' section.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static void loadPresets(Camera cam) throws XMLStreamException {
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
@@ -175,6 +210,14 @@ public final class LoadScript {
         }
     }
 
+    /**
+     * Reads a 'preset' section of the XML file.
+     * Assumes that the start element of this section has already been read
+     * and is inserted into this method as the presetStart parameter.
+     * @param presetStart The start element of the 'preset' section.
+     * @return the loaded Preset object.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static Preset loadPreset(StartElement presetStart) throws XMLStreamException {
         int id = -1;
         String description = "";
@@ -230,6 +273,13 @@ public final class LoadScript {
         }
     }
 
+    /**
+     * Reads the 'shots' section of the XML file and returns this as a list
+     * of Shot objects.
+     * Assumes that the start element of this section has already been read.
+     * @return the loaded list of shots.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static List<Shot> loadShots() throws XMLStreamException {
         List<Shot> shots = new LinkedList<Shot>();
         while (reader.hasNext()) {
@@ -255,6 +305,13 @@ public final class LoadScript {
         return shots;
     }
 
+    /**
+     * Reads a 'shot' section of the XML file and returns this as a Shot object.
+     * Assumes that the start element of this section has already been read and
+     * is inserted into this method as the startShot parameter.
+     * @return the loaded shot.
+     * @throws XMLStreamException when an error occurs in the XML.
+     */
     private static Shot loadShot(StartElement startShot) throws XMLStreamException {
         int id = Integer.parseInt(startShot.getAttributeByName(new QName("number")).getValue());
         String shotId = "";
@@ -302,7 +359,7 @@ public final class LoadScript {
         if (cam != null && cam.getPreset(presetId) != null) {
             return new Shot(id, shotId, cam, cam.getPreset(presetId), description);
         } else {
-            throw new XMLStreamException("Camera or preset can be found with camera id: " + cameraId
+            throw new XMLStreamException("Camera or preset cannot be found with camera id: " + cameraId
                     + " and preset id: " + presetId);
         }
     }
