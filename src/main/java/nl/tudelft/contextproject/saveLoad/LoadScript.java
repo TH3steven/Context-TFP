@@ -256,21 +256,38 @@ public final class LoadScript {
             }
         }
         if (toSet.get() != null) {
-            Preset preset;
-            try {
-                Class<?> c = Class.forName(presetStart.getAttributeByName(new QName("type")).getValue());
-                Constructor<?> constructor = c.getConstructor(CameraSettings.class, int.class);
-                preset = (Preset) constructor.newInstance(toSet.get(), id);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new XMLStreamException("Instantiating preset failed.", e);
-            }
-            preset.setDescription(description);
-            preset.setImageLocation(imgLoc);
-            return preset;
+            String type = presetStart.getAttributeByName(new QName("type")).getValue();
+            return createPreset(type, toSet.get(), id, description, imgLoc);
         } else {
             throw new XMLStreamException("No camera settings found in preset");
         }
+    }
+    
+    /**
+     * Gets the constructor from the right preset class as defined by parameter 'type' and
+     * returns the Preset object instantiated with the rest of the arguments.
+     * @param type Full name of the preset class, as returned by {@link Class#getName()}
+     * @param toSet CameraSettings to set in the preset.
+     * @param id Id of the preset.
+     * @param description Description of the preset.
+     * @param imgLoc Image location of the preset.
+     * @return The constructed preset according to the parameters given.
+     * @throws XMLStreamException when instantiating the preset fails.
+     * @see {@link #Preset}
+     */
+    private static Preset createPreset(String type, CameraSettings toSet, int id, 
+            String description, String imgLoc) throws XMLStreamException {
+        Preset preset;
+        try {
+            Constructor<?> constructor = Class.forName(type).getConstructor(CameraSettings.class, int.class);
+            preset = (Preset) constructor.newInstance(toSet, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new XMLStreamException("Instantiating preset failed.", e);
+        }
+        preset.setDescription(description);
+        preset.setImageLocation(imgLoc);
+        return preset;
     }
 
     /**

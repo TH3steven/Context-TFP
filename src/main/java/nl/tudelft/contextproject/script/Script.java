@@ -1,6 +1,10 @@
 package main.java.nl.tudelft.contextproject.script;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Class to represent a script of presets.
@@ -106,8 +110,12 @@ public class Script implements Iterator<Shot> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Script)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Script)) {
+            return false;
+        }
         Script script = (Script) o;
         return Objects.equals(getShots(), script.getShots());
     }
