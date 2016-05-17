@@ -14,6 +14,14 @@ public class LiveCameraConnection extends CameraConnection {
     public static final String CAMERA_MODEL = "AW-HE130";
     
     private boolean autoFocus;
+    
+    /**
+     * Returns true iff the camera is on auto focus.
+     * @return true iff the camera is on auto focus.
+     */
+    public boolean hasAutoFocus() {
+        return autoFocus;
+    }
 
     @Override
     public void update(Observable o, Object arg) {
@@ -22,11 +30,17 @@ public class LiveCameraConnection extends CameraConnection {
         }
         Camera cam = (Camera) o;
         if (arg instanceof CameraSettings) {
-            mutateSettings(cam, (CameraSettings) arg);
+            mutateSettings((CameraSettings) arg);
         }
     }
     
-    private boolean mutateSettings(Camera cam, CameraSettings toSet) {
+    /**
+     * Finds the least amount of commands to send to the 
+     * camera in order to apply the specified camera settings
+     * @param toSet camera settings to apply to the camera.
+     * @return true iff the camera was set to the specified settings.
+     */
+    private boolean mutateSettings(CameraSettings toSet) {
         CameraSettings curSettings = getCurrentCameraSettings();
         boolean result = true;
         if (curSettings.getPan() != toSet.getPan() 
