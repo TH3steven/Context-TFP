@@ -11,6 +11,10 @@ import java.util.Observer;
  */
 public abstract class CameraConnection implements Observer {
     
+    public abstract boolean setUpConnection();
+    
+    public abstract boolean isConnected();
+    
     public abstract CameraSettings getCurrentCameraSettings();
     
     protected abstract boolean absPanTilt(int panValue, int tiltValue);

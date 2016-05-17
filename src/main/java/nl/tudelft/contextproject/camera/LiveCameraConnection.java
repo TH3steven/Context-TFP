@@ -13,7 +13,26 @@ public class LiveCameraConnection extends CameraConnection {
     
     public static final String CAMERA_MODEL = "AW-HE130";
     
+    private String address;
+    private boolean connected;
+    
     private boolean autoFocus;
+    
+    public LiveCameraConnection(String address) {
+        this.address = address;
+        this.connected = false;
+    }
+    
+    @Override
+    public boolean setUpConnection() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
     
     /**
      * Returns true iff the camera is on auto focus.
@@ -115,5 +134,4 @@ public class LiveCameraConnection extends CameraConnection {
         // TODO Auto-generated method stub
         return false;
     }
-
 }

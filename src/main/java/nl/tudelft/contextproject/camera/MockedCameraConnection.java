@@ -3,11 +3,23 @@ package main.java.nl.tudelft.contextproject.camera;
 import java.util.Observable;
 
 /**
- * Class to represent a mocked camera. It mimics or mocks the behavior of a specific camera
+ * Class to represent a mocked camera. It mimics or mocks the behaviour of a specific camera
  * without having a real connection to the cameras.
+ * 
+ * @since 0.4
  */
 public class MockedCameraConnection extends CameraConnection {
     private CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
+    
+    @Override
+    public boolean setUpConnection() {
+        return true;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return true;
+    }
 
     @Override
     public CameraSettings getCurrentCameraSettings() {
