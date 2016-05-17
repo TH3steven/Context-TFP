@@ -3,10 +3,10 @@ package main.java.nl.tudelft.contextproject.gui;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-
 import main.java.nl.tudelft.contextproject.ContextTFP;
 
 import java.io.IOException;
@@ -23,12 +23,22 @@ public class CameraLiveController {
 
     @FXML private ImageView bigView;
     @FXML private ImageView smallView;
+    
+    @FXML private Label bigLabel;
+    @FXML private Label smallLabel;
 
     @FXML private void initialize() {
+        initializeLabels();
         initializeViews();
         initializeButtons();
     }
 
+    private void initializeLabels() {
+        bigLabel.setText("LIVE");
+        bigLabel.setStyle("-fx-text-fill: red;");
+        smallLabel.setText("Up next");
+    }
+    
     private void initializeViews() {
         Image actual = new Image("main/resources/placeholder_picture.jpg");
         bigView.setImage(actual);
@@ -42,6 +52,16 @@ public class CameraLiveController {
             Image three = bigView.getImage();
             bigView.setImage(smallView.getImage());
             smallView.setImage(three);
+            String text = bigLabel.getText();
+            bigLabel.setText(smallLabel.getText());
+            smallLabel.setText(text);
+            if (text.equals("LIVE")) {
+                smallLabel.setStyle("-fx-text-fill: red;");
+                bigLabel.setStyle("");
+            } else {
+                smallLabel.setStyle("");
+                bigLabel.setStyle("-fx-text-fill: red;");
+            }
         });
         
         btnBack.setOnAction((event) -> {
