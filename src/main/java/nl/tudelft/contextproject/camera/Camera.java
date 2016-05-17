@@ -22,6 +22,7 @@ public class Camera extends Observable {
     private int num;
     private CameraSettings camSet;
     private HashMap<Integer, Preset> presets;
+    private CameraConnection connection;
     
     /**
      * Creates a Camera object with initial camera settings
@@ -96,7 +97,41 @@ public class Camera extends Observable {
     public void setSettings(CameraSettings settings) {
         camSet = settings;
         setChanged();
-        notifyObservers();
+        notifyObservers(settings);
+    }
+    
+    /**
+     * Returns true iff the camera has a non-null CameraConnection
+     * object.
+     * @return true iff the camera has a non-null CameraConnection
+     */
+    public boolean hasConnection() {
+        return connection != null;
+    }
+    
+    /**
+     * Returns the CameraConnection object used for communicating with
+     * the actual camera. May be null if it has not yet been initialized.
+     * @return the CameraConnection object used for communicating with
+     *      the actual camera.
+     */
+    public CameraConnection getConnection() {
+        return connection;
+    }
+    
+    /**
+     * Sets the CameraConnection object used for communicating with
+     * the actual camera. It adds this new connection as an observer
+     * and if there was a previous connection, removes the previous
+     * connection as observer.
+     * @param connect the new connection to the camera.
+     */
+    public void setConnection(CameraConnection connect) {
+        if (hasConnection()) {
+            this.deleteObserver(connection);
+        }
+        connection = connect;
+        this.addObserver(connect);
     }
     
     /**
@@ -115,6 +150,9 @@ public class Camera extends Observable {
      */
     public void pan(int offset) {
         camSet.pan(offset);
+        if (hasConnection()) {
+            connection.relPan(offset);
+        }
         setChanged();
         notifyObservers();
     }
@@ -127,6 +165,9 @@ public class Camera extends Observable {
      */
     public void tilt(int offset) {
         camSet.tilt(offset);
+        if (hasConnection()) {
+            connection.relTilt(offset);
+        }
         setChanged();
         notifyObservers();
     }
@@ -139,6 +180,9 @@ public class Camera extends Observable {
      */
     public void zoom(int offset) {
         camSet.zoom(offset);
+        if (hasConnection()) {
+            connection.relZoom(offset);
+        }
         setChanged();
         notifyObservers();
     }
@@ -151,6 +195,9 @@ public class Camera extends Observable {
      */
     public void focus(int offset) {
         camSet.focus(offset);
+        if (hasConnection()) {
+            connection.relFocus(offset);
+        }
         setChanged();
         notifyObservers();
     }

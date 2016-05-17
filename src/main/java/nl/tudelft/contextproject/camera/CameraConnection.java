@@ -13,6 +13,8 @@ public abstract class CameraConnection implements Observer {
     
     public abstract CameraSettings getCurrentCameraSettings();
     
+    protected abstract boolean absPanTilt(int panValue, int tiltValue);
+    
     protected abstract boolean absPan(int value);
     
     protected abstract boolean absTilt(int value);
