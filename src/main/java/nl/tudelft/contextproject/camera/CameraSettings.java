@@ -95,7 +95,7 @@ public class CameraSettings {
      * 
      * @param offset The offset to pan the camera.
      */
-    public void pan(int offset) {
+    protected void pan(int offset) {
         pan = (pan + offset < PAN_LIMIT_LOW) ? PAN_LIMIT_LOW : 
             (pan + offset > PAN_LIMIT_HIGH) ? PAN_LIMIT_HIGH : pan + offset;
     }
@@ -106,7 +106,7 @@ public class CameraSettings {
      * 
      * @param offset The offset to tilt the camera.
      */
-    public void tilt(int offset) {
+    protected void tilt(int offset) {
         tilt = (tilt + offset < TILT_LIMIT_LOW) ? TILT_LIMIT_LOW : 
                (tilt + offset > TILT_LIMIT_HIGH) ? TILT_LIMIT_HIGH : tilt + offset;
     }
@@ -117,7 +117,7 @@ public class CameraSettings {
      * 
      * @param offset The offset to zoom the camera.
      */
-    public void zoom(int offset) {
+    protected void zoom(int offset) {
         zoom = (zoom + offset < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW : 
                (zoom + offset > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : zoom + offset;
     }
@@ -128,7 +128,7 @@ public class CameraSettings {
      *
      * @param offset The offset to focus the camera.
      */
-    public void focus(int offset) {
+    protected void focus(int offset) {
         focus = (focus + offset < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
                 (focus + offset > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : focus + offset;
     }
