@@ -15,6 +15,13 @@ public class MockedCameraConnection extends CameraConnection {
     }
 
     @Override
+    protected boolean absPanTilt(int panValue, int tiltValue) {
+        camSet.setPan(panValue);
+        camSet.setTilt(tiltValue);
+        return true;
+    }
+
+    @Override
     protected boolean absPan(int value) {
         camSet.setPan(value);
         return true;
