@@ -64,7 +64,39 @@ public class CameraSettings {
     public int getPan() {
         return pan;
     }
-    
+
+    /**
+     *
+     * @param pan sets the pan level of the camera to that specified value.
+     */
+    public void setPan(int pan) {
+        this.pan = pan;
+    }
+
+    /**
+     *
+     * @param tilt sets the tilt level of the camera to that specified value.
+     */
+    public void setTilt(int tilt) {
+        this.tilt = tilt;
+    }
+
+    /**
+     *
+     * @param zoom sets the zoom level of the camera to the specified value.
+     */
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
+    }
+
+    /**
+     *
+     * @param focus sets the focus level of the camera to the specified value.
+     */
+    public void setFocus(int focus) {
+        this.focus = focus;
+    }
+
     /**
      * Gets the tilt level (vertical orientation).
      * @return Tilt level (vertical orientation).
