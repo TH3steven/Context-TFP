@@ -7,6 +7,9 @@ import java.util.Observable;
  * responsible for the communication between our data model and
  * the actual camera, in this case a Panasonic AW-HE130.
  * 
+ * <p>In the {@link #setUpConnection()} method, it will check if the
+ * correct {@link #CAMERA_MODEL} is being talked to.
+ * 
  * @since 0.4
  */
 public class LiveCameraConnection extends CameraConnection {
@@ -15,9 +18,14 @@ public class LiveCameraConnection extends CameraConnection {
     
     private String address;
     private boolean connected;
-    
     private boolean autoFocus;
     
+    /**
+     * Creates a LiveCameraConnection object. Assumes that the
+     * address given is the correctly formulated IP address of the
+     * camera to connect to.
+     * @param address IP address of the camera to connect to.
+     */
     public LiveCameraConnection(String address) {
         this.address = address;
         this.connected = false;
@@ -63,7 +71,7 @@ public class LiveCameraConnection extends CameraConnection {
         CameraSettings curSettings = getCurrentCameraSettings();
         boolean result = true;
         if (curSettings.getPan() != toSet.getPan() 
-                || curSettings.getPan() != toSet.getPan()) {
+                || curSettings.getTilt() != toSet.getTilt()) {
             result = result && absPanTilt(toSet.getPan(), toSet.getTilt());
         }
         if (curSettings.getZoom() != toSet.getZoom()) {
