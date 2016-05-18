@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.saveLoad.LoadScript;
 
@@ -46,7 +47,7 @@ public class MenuController {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select script to use");
             fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
-            
+
             File file = fileChooser.showOpenDialog(((Node) event.getTarget()).getScene().getWindow());
 
             if (file != null) {
@@ -58,7 +59,7 @@ public class MenuController {
                     alert.setTitle("Info Dialog");
                     alert.setHeaderText("Loading script was succesful!");
                     alert.setContentText("Succesful load of script: " + file.getName());
-                    
+
                     setLabel(file.getName());
 
                     alert.showAndWait();

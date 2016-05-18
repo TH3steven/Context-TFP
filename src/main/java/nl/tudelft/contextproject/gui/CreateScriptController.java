@@ -340,7 +340,7 @@ public class CreateScriptController {
 
                 } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error Dialog");
+                    alert.setTitle(e.getMessage());
                     alert.setHeaderText("Saving script was unsuccesful!");
                     alert.setContentText("Error when trying to save script at location: " 
                             + file.getAbsolutePath()
