@@ -6,9 +6,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.saveLoad.LoadScript;
@@ -24,17 +26,19 @@ import java.io.IOException;
  */
 public class MenuController {
 
+    @FXML private Label lblScript;
+
     @FXML private Button btnCreateScript;
     @FXML private Button btnLoadScript;
     @FXML private Button btnPreview;
     @FXML private Button btnPresets;
-    @FXML private Button btnLive;
     @FXML private Button btnEditScript;
+    @FXML private Button btnDirector;
+    @FXML private Button btnCameraman;
 
     @FXML private TextField numberOfCameras;
 
-    @FXML
-    private void initialize() {
+    @FXML private void initialize() {
         btnCreateScript.setOnAction((event) -> {
             CreateScriptController.show();
         });
@@ -42,6 +46,8 @@ public class MenuController {
         btnLoadScript.setOnAction((event) -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select script to use");
+            fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
+
             File file = fileChooser.showOpenDialog(((Node) event.getTarget()).getScene().getWindow());
 
             if (file != null) {
@@ -54,13 +60,17 @@ public class MenuController {
                     alert.setHeaderText("Loading script was succesful!");
                     alert.setContentText("Succesful load of script: " + file.getName());
 
+                    setLabel(file.getName());
+
                     alert.showAndWait();
                 } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error Dialog");
+                    alert.setTitle(e.getMessage());
                     alert.setHeaderText("Loading script was unsuccesful!");
                     alert.setContentText("Error when trying to load script at location: " 
-                            + file.getAbsolutePath());
+                            + file.getAbsolutePath()
+                            + "\n\nError: "
+                            + e.getCause());
 
                     alert.showAndWait();
                 }
@@ -75,14 +85,25 @@ public class MenuController {
             PresetController.show();
         });
 
-        btnLive.setOnAction((event) -> {
+        btnDirector.setOnAction((event) -> {
             CameraLiveController.show();
         });
-        
+
         btnEditScript.setOnAction((event) -> {
             CreateScriptController.setFill(true);
             CreateScriptController.show();
         });
+    }
+
+    /**
+     * Sets the text of the script label on the menu.
+     * 
+     * @param text The text to set to the label. This will be appended to the
+     *      string: "Current script: " 
+     */
+    public void setLabel(String text) {
+        //TODO Observable label
+        lblScript.setText("Current script: " + text);
     }
 
     /**

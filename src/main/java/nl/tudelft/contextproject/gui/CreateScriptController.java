@@ -22,6 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
@@ -45,7 +46,7 @@ import java.util.Optional;
 public class CreateScriptController {
 
     private static boolean fill = false;
-    
+
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
@@ -83,14 +84,14 @@ public class CreateScriptController {
 
         // Allows the user to press ENTER to add a shot.
         btnAdd.setDefaultButton(true);
-        
+
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
         }
-        
+
         fill = false;
     }
-    
+
     /**
      * Fills the table with the shots given in the argument.
      * 
@@ -221,7 +222,7 @@ public class CreateScriptController {
             }
         });
     }
-    
+
     /**
      * Sets the onAction for the add button.
      */
@@ -282,7 +283,7 @@ public class CreateScriptController {
             }
         });
     }
-    
+
     /**
      * Sets the onAction for the back button.
      */
@@ -305,7 +306,7 @@ public class CreateScriptController {
             MenuController.show();
         });
     }
-    
+
     /**
      * Sets the onAction for the save button.
      */
@@ -314,34 +315,37 @@ public class CreateScriptController {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save script");
             fileChooser.setInitialFileName("script");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML (*.xml)", "*.xml"));
-            
+            fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
+
             File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
 
             if (file != null) {
                 try {
                     SaveScript.save(ContextTFP.getScript());
-                    
+
                     SaveScript.setSaveLocation(file.getAbsolutePath());
-                    
+
                     Alert alert = new Alert(AlertType.CONFIRMATION);
                     alert.setTitle("Confirm exiting");
                     alert.setHeaderText("Saving script was succesful!");
-                    alert.setContentText("Succesful save of script: " + file.getName()
+                    alert.setContentText("Succesful save of script: " 
+                            + file.getName()
                             + " Do you want to quit to menu?");
-                    
+
                     Optional<ButtonType> result = alert.showAndWait();
-                    
+
                     if (result.get() == ButtonType.OK) {
                         MenuController.show();
                     }
-                    
+
                 } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error Dialog");
+                    alert.setTitle(e.getMessage());
                     alert.setHeaderText("Saving script was unsuccesful!");
                     alert.setContentText("Error when trying to save script at location: " 
-                            + file.getAbsolutePath());
+                            + file.getAbsolutePath()
+                            + "\n\nError: "
+                            + e.getCause());
 
                     alert.showAndWait();
                 }
@@ -363,7 +367,7 @@ public class CreateScriptController {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Sets if the table should be filled beforehand.
      * 
