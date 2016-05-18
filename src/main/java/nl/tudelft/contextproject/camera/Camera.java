@@ -200,6 +200,12 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Pans and Tilts the camera to a certain pan and tilt value.
+     * It cannot past the pan or tilt limit
+     * @param panValue the value to pan the Camera.
+     * @param tiltValue the value to tilt the Camera.
+     */
     public void absPanTilt(int panValue, int tiltValue) {
         camSet.setPan(panValue);
         camSet.setTilt(tiltValue);
@@ -210,6 +216,11 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Pans the camera to a certain value. Value cannot
+     * past the pan limits.
+     * @param value The new value to pan the Camera.
+     */
     public void absPan(int value) {
         camSet.setPan(value);
         if (hasConnection()) {
@@ -219,6 +230,11 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Tilts the camera to a certain value. Value cannot
+     * past the tilt limits.
+     * @param value The new value to tilt the Camera.
+     */
     public void absTilt(int value) {
         camSet.setTilt(value);
         if (hasConnection()) {
@@ -228,6 +244,11 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Zooms the camera to a certain value. Value cannot
+     * past the zoom limits.
+     * @param value The new value to zoom the Camera.
+     */
     public void absZoom(int value) {
         camSet.setZoom(value);
         if (hasConnection()) {
@@ -237,6 +258,11 @@ public class Camera extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Focuses the camera to a certain value. Value cannot
+     * past the focus limits.
+     * @param value The new value to focus the Camera.
+     */
     public void absFocus(int value) {
         camSet.setFocus(value);
         if (hasConnection()) {
