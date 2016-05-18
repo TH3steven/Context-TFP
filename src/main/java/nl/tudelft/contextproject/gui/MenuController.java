@@ -28,13 +28,13 @@ public class MenuController {
     @FXML private Button btnLoadScript;
     @FXML private Button btnPreview;
     @FXML private Button btnPresets;
-    @FXML private Button btnLive;
     @FXML private Button btnEditScript;
+    @FXML private Button btnDirector;
+    @FXML private Button btnCameraman;
 
     @FXML private TextField numberOfCameras;
 
-    @FXML
-    private void initialize() {
+    @FXML private void initialize() {
         btnCreateScript.setOnAction((event) -> {
             CreateScriptController.show();
         });
@@ -75,7 +75,11 @@ public class MenuController {
             PresetController.show();
         });
 
-        btnLive.setOnAction((event) -> {
+        btnCameraman.setOnAction((event) -> {
+            CameraLiveController.show();
+        });
+        
+        btnDirector.setOnAction((event) -> {
             CameraLiveController.show();
         });
         
