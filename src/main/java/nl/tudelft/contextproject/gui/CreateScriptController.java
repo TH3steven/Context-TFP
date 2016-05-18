@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -22,9 +22,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.script.Shot;
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;

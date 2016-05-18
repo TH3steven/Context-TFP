@@ -1,13 +1,14 @@
-package test.java.nl.tudelft.contextproject.saveLoad;
+package nl.tudelft.contextproject.saveLoad;
 
 import static org.junit.Assert.fail;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
-import main.java.nl.tudelft.contextproject.script.Script;
-import main.java.nl.tudelft.contextproject.script.Shot;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
+
+import org.junit.After;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -18,6 +19,11 @@ import javax.xml.stream.XMLStreamException;
 public class SaveScriptTest {
     
     private final String saveFileLocation = "src/test/resources/saveScriptTest.xml";
+    
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
+    }
 
     @Test
     public void testSave() {

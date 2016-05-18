@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.camera;
+package nl.tudelft.contextproject.camera;
 
 /**
  * Class to represent camera settings. Can be extended with colour
