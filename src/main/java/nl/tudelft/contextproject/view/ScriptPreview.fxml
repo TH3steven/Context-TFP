@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane id="anchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.PreviewController">
+<AnchorPane id="anchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.PreviewController">
    <children>
       <Rectangle fx:id="highlight1" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="88.0" layoutX="140.0" layoutY="341.0" stroke="#6b5812" strokeType="INSIDE" strokeWidth="3.0" width="125.0" />
       <Rectangle fx:id="highlight2" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="88.0" layoutX="264.0" layoutY="341.0" stroke="#6b5812" strokeType="INSIDE" strokeWidth="3.0" width="125.0" />

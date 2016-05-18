@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.CreateScriptController">
+<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CreateScriptController">
    <children>
       <TextField fx:id="addShot" layoutX="15.0" layoutY="479.0" prefHeight="25.0" prefWidth="70.0" AnchorPane.bottomAnchor="71.0" />
       <ChoiceBox fx:id="addCamera" layoutX="95.0" layoutY="479.0" prefHeight="25.0" prefWidth="40.0" AnchorPane.bottomAnchor="71.0" />
