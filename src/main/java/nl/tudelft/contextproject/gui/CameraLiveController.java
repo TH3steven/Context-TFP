@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.script.Script;
 
@@ -31,6 +32,9 @@ public class CameraLiveController {
     @FXML private TextArea smallDescriptionField;
     @FXML private TextArea bigDescriptionField;
     
+    @FXML private VBox smallViewBox;
+    @FXML private VBox bigViewBox;
+    
     @FXML private Label bigStatusLabel;
     @FXML private Label smallStatusLabel;
     @FXML private Label smallShotNumberLabel;
@@ -42,9 +46,16 @@ public class CameraLiveController {
 
     @FXML private void initialize() {
         script = ContextTFP.getScript();
+        
+        bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
+        bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
+        
+        smallView.fitWidthProperty().bind(smallViewBox.widthProperty());
+        smallView.fitHeightProperty().bind(smallViewBox.heightProperty());
+        
         initializeLabels();
         initializeViews();
-        initializeButtons();
+        initializeButtons();        
     }
 
     private void initializeLabels() {
