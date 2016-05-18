@@ -3,7 +3,7 @@
  * may be modified without notice of the original creators. This modified version may
  * be distributed for commercial use when appropriate credit is given where due.
  * 
- * See http://creativecommons.org/licenses/by/4.0/
+ * <p>See http://creativecommons.org/licenses/by/4.0/
  */
 
 package nl.tudelft.contextproject;
