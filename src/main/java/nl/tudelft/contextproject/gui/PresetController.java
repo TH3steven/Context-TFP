@@ -116,7 +116,7 @@ public class PresetController {
 
         btnRemove.setOnAction((event) -> {
             int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
-            if (selectedIndex > 0) {
+            if (selectedIndex >= 0) {
                 Preset selected = tableView.getItems().get(selectedIndex);
                 Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
                 cam.removePreset(selected);
