@@ -44,6 +44,8 @@ import java.util.Optional;
  */
 public class CreateScriptController {
 
+    private static boolean fill = false;
+    
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
@@ -81,6 +83,21 @@ public class CreateScriptController {
 
         // Allows the user to press ENTER to add a shot.
         btnAdd.setDefaultButton(true);
+        
+        if (fill) {
+            fillTable(ContextTFP.getScript().getShots());
+        }
+        
+        fill = false;
+    }
+    
+    /**
+     * Fills the table with the shots given in the argument.
+     * 
+     * @param shots The shot the table should be filled with.
+     */
+    public void fillTable(List<Shot> shots) {
+        tableEvents.getItems().addAll(shots);
     }
 
     /**
@@ -301,16 +318,33 @@ public class CreateScriptController {
             
             File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
 
-            if (file == null) {
-                return;
-            } else {
-                SaveScript.setSaveLocation(file.getAbsolutePath());
-            }
+            if (file != null) {
+                try {
+                    SaveScript.save(ContextTFP.getScript());
+                    
+                    SaveScript.setSaveLocation(file.getAbsolutePath());
+                    
+                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Confirm exiting");
+                    alert.setHeaderText("Saving script was succesful!");
+                    alert.setContentText("Succesful save of script: " + file.getName()
+                            + " Do you want to quit to menu?");
+                    
+                    Optional<ButtonType> result = alert.showAndWait();
+                    
+                    if (result.get() == ButtonType.OK) {
+                        MenuController.show();
+                    }
+                    
+                } catch (Exception e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Dialog");
+                    alert.setHeaderText("Saving script was unsuccesful!");
+                    alert.setContentText("Error when trying to save script at location: " 
+                            + file.getAbsolutePath());
 
-            try {
-                SaveScript.save(ContextTFP.getScript());
-            } catch (Exception e) {
-                e.printStackTrace();
+                    alert.showAndWait();
+                }
             }
         });
     }
@@ -328,5 +362,14 @@ public class CreateScriptController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Sets if the table should be filled beforehand.
+     * 
+     * @param toFill True if the table should be filled.
+     */
+    public static void setFill(boolean toFill) {
+        fill = toFill;
     }
 }

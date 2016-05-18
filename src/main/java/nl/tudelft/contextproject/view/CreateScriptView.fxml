@@ -15,7 +15,7 @@
       <ChoiceBox fx:id="addPreset" layoutX="155.0" layoutY="479.0" prefHeight="25.0" prefWidth="40.0" AnchorPane.bottomAnchor="71.0" />
       <TextField fx:id="addDescription" layoutX="208.0" layoutY="479.0" maxHeight="25.0" maxWidth="5000.0" minHeight="25.0" minWidth="440.0" promptText="Enter the description of the shot" AnchorPane.bottomAnchor="71.0" AnchorPane.leftAnchor="208.0" AnchorPane.rightAnchor="152.0" />
       <Button fx:id="btnAdd" layoutX="665.0" layoutY="479.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Add Event" AnchorPane.bottomAnchor="71.0" AnchorPane.rightAnchor="15.0" />
-      <Button fx:id="btnSave" layoutX="686.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Save" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <Button fx:id="btnSave" layoutX="686.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Save script" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
       <Button fx:id="btnBack" layoutX="16.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Cancel and return to menu" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
       <TableView fx:id="tableEvents" editable="true" layoutX="15.0" layoutY="14.0" prefHeight="440.0" prefWidth="770.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <columns>
