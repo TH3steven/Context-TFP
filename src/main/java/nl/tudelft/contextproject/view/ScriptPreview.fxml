@@ -43,5 +43,7 @@
             <ImageView fx:id="actualCam" fitHeight="280.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </StackPane>
+      <Button fx:id="leftArrow" layoutX="100.0" layoutY="341.0" mnemonicParsing="false" prefHeight="85.0" prefWidth="32.0" />
+      <Button fx:id="rightArrow" layoutX="640.0" layoutY="341.0" mnemonicParsing="false" prefHeight="85.0" prefWidth="32.0" />
    </children>
 </AnchorPane>
