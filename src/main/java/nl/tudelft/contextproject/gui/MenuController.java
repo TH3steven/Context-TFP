@@ -74,10 +74,6 @@ public class MenuController {
         btnPresets.setOnAction((event) -> {
             PresetController.show();
         });
-
-        btnCameraman.setOnAction((event) -> {
-            CameraLiveController.show();
-        });
         
         btnDirector.setOnAction((event) -> {
             CameraLiveController.show();
