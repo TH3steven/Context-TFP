@@ -83,6 +83,12 @@ public class MockedCameraConnection extends CameraConnection {
 
     @Override
     public void update(Observable o, Object arg) {
+        if (!(o instanceof Camera)) {
+            return;
+        }
+        if(arg instanceof CameraSettings) {
+            camSet = (CameraSettings) arg;
+        }
 
     }
 }

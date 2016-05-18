@@ -3,8 +3,6 @@ package main.java.nl.tudelft.contextproject.camera;
 /**
  * Class to represent camera settings. Can be extended with colour
  * settings etc.
- * 
- * @author Bart van Oort
  * @since 0.2
  */
 public class CameraSettings {
@@ -67,34 +65,38 @@ public class CameraSettings {
 
     /**
      *
-     * @param pan sets the pan level of the camera to that specified value.
+     * @param panPos sets the pan level of the camera to that specified value.
      */
-    public void setPan(int pan) {
-        this.pan = pan;
+    public void setPan(int panPos) {
+        this.pan =   (panPos < PAN_LIMIT_LOW) ? PAN_LIMIT_LOW :
+                (panPos > PAN_LIMIT_HIGH) ? PAN_LIMIT_HIGH : panPos;
     }
 
     /**
      *
-     * @param tilt sets the tilt level of the camera to that specified value.
+     * @param tiltPos sets the tilt level of the camera to that specified value.
      */
-    public void setTilt(int tilt) {
-        this.tilt = tilt;
+    public void setTilt(int tiltPos) {
+        this.tilt =  (tiltPos < TILT_LIMIT_LOW) ? TILT_LIMIT_LOW :
+                (tiltPos > TILT_LIMIT_HIGH) ? TILT_LIMIT_HIGH : tiltPos;
     }
 
     /**
      *
-     * @param zoom sets the zoom level of the camera to the specified value.
+     * @param zoomPos sets the zoom level of the camera to the specified value.
      */
-    public void setZoom(int zoom) {
-        this.zoom = zoom;
+    public void setZoom(int zoomPos) {
+        this.zoom =  (zoomPos < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW :
+                (zoomPos > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : zoomPos;
     }
 
     /**
      *
-     * @param focus sets the focus level of the camera to the specified value.
+     * @param focusPos sets the focus level of the camera to the specified value.
      */
-    public void setFocus(int focus) {
-        this.focus = focus;
+    public void setFocus(int focusPos) {
+        this.focus = (focusPos < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
+                (focusPos > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : focusPos;
     }
 
     /**

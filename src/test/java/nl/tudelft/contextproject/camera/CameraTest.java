@@ -15,6 +15,7 @@ import java.util.Observer;
 /**
  * Class to test the Camera class. More tests should be
  * added.
+ * @since 0.4
  */
 public class CameraTest {
     
@@ -186,8 +187,6 @@ public class CameraTest {
     /**
      * Simple test observer used to see if an observer was actually
      * called.
-     * 
-     * @author Bart van Oort
      */
     class TestObserver implements Observer {
         boolean called = false;

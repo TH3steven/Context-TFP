@@ -10,8 +10,6 @@ import java.util.Observable;
 /**
  * Class to represent a camera.
  * Extends Observables so its settings can be observed.
- * 
- * @author Bart van Oort
  * @since 0.2
  */
 public class Camera extends Observable {
@@ -201,7 +199,52 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
-    
+
+    public void absPanTilt(int panValue, int tiltValue) {
+        camSet.setPan(panValue);
+        camSet.setTilt(tiltValue);
+        if (hasConnection()) {
+            connection.absPanTilt(panValue, tiltValue);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void absPan(int value) {
+        camSet.setPan(value);
+        if (hasConnection()) {
+            connection.absPan(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void absTilt(int value) {
+        camSet.setTilt(value);
+        if (hasConnection()) {
+            connection.absTilt(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void absZoom(int value) {
+        camSet.setZoom(value);
+        if (hasConnection()) {
+            connection.absZoom(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void absFocus(int value) {
+        camSet.setFocus(value);
+        if (hasConnection()) {
+            connection.absFocus(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
     /**
      * Adds a preset to the camera, if there is not already
      * a preset with the same id. Returns true if successful.
