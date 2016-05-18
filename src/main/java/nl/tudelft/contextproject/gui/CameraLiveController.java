@@ -4,10 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import main.java.nl.tudelft.contextproject.ContextTFP;
+import main.java.nl.tudelft.contextproject.script.Script;
 
 import java.io.IOException;
 
@@ -18,25 +20,51 @@ import java.io.IOException;
  */
 public class CameraLiveController {
 
+    private static Script script;
+    
     @FXML private Button btnBack;
     @FXML private Button swap;
 
     @FXML private ImageView bigView;
     @FXML private ImageView smallView;
     
-    @FXML private Label bigLabel;
-    @FXML private Label smallLabel;
+    @FXML private TextArea smallDescriptionField;
+    @FXML private TextArea bigDescriptionField;
+    
+    @FXML private Label bigStatusLabel;
+    @FXML private Label smallStatusLabel;
+    @FXML private Label smallShotNumberLabel;
+    @FXML private Label smallCameraNumberLabel;
+    @FXML private Label smallPresetLabel;
+    @FXML private Label bigShotNumberLabel;
+    @FXML private Label bigCameraNumberLabel;
+    @FXML private Label bigPresetLabel;
 
     @FXML private void initialize() {
+        script = ContextTFP.getScript();
         initializeLabels();
         initializeViews();
         initializeButtons();
     }
 
     private void initializeLabels() {
-        bigLabel.setText("LIVE");
-        bigLabel.setStyle("-fx-text-fill: red;");
-        smallLabel.setText("Up next");
+        bigStatusLabel.setText("LIVE");
+        bigStatusLabel.setStyle("-fx-text-fill: red;");
+        smallStatusLabel.setText("Up next");
+        
+        if (script.getNextShot() != null) {
+            smallShotNumberLabel.setText(script.getNextShot().getShotId());;
+            smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
+            smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
+            smallDescriptionField.setText(script.getNextShot().getDescription());
+        }
+        
+        if (script.getCurrentShot() != null) {
+            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());;
+            bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
+            bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
+            bigDescriptionField.setText(script.getCurrentShot().getDescription());
+        }
     }
     
     private void initializeViews() {
@@ -52,15 +80,15 @@ public class CameraLiveController {
             Image three = bigView.getImage();
             bigView.setImage(smallView.getImage());
             smallView.setImage(three);
-            String text = bigLabel.getText();
-            bigLabel.setText(smallLabel.getText());
-            smallLabel.setText(text);
+            String text = bigStatusLabel.getText();
+            bigStatusLabel.setText(smallStatusLabel.getText());
+            smallStatusLabel.setText(text);
             if (text.equals("LIVE")) {
-                smallLabel.setStyle("-fx-text-fill: red;");
-                bigLabel.setStyle("");
+                smallStatusLabel.setStyle("-fx-text-fill: red;");
+                bigStatusLabel.setStyle("");
             } else {
-                smallLabel.setStyle("");
-                bigLabel.setStyle("-fx-text-fill: red;");
+                smallStatusLabel.setStyle("");
+                bigStatusLabel.setStyle("-fx-text-fill: red;");
             }
         });
         
