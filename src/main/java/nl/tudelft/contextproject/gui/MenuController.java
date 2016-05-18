@@ -2,12 +2,18 @@ package main.java.nl.tudelft.contextproject.gui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
+import main.java.nl.tudelft.contextproject.saveLoad.LoadScript;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -23,6 +29,7 @@ public class MenuController {
     @FXML private Button btnPreview;
     @FXML private Button btnPresets;
     @FXML private Button btnLive;
+    @FXML private Button btnEditScript;
 
     @FXML private TextField numberOfCameras;
 
@@ -30,6 +37,34 @@ public class MenuController {
     private void initialize() {
         btnCreateScript.setOnAction((event) -> {
             CreateScriptController.show();
+        });
+
+        btnLoadScript.setOnAction((event) -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select script to use");
+            File file = fileChooser.showOpenDialog(((Node) event.getTarget()).getScene().getWindow());
+
+            if (file != null) {
+                try {
+                    LoadScript.setLoadLocation(file.getAbsolutePath());
+                    ContextTFP.setScript(LoadScript.load());
+
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Info Dialog");
+                    alert.setHeaderText("Loading script was succesful!");
+                    alert.setContentText("Succesful load of script: " + file.getName());
+
+                    alert.showAndWait();
+                } catch (Exception e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Dialog");
+                    alert.setHeaderText("Loading script was unsuccesful!");
+                    alert.setContentText("Error when trying to load script at location: " 
+                            + file.getAbsolutePath());
+
+                    alert.showAndWait();
+                }
+            }
         });
 
         btnPreview.setOnAction((event) -> {
@@ -42,6 +77,11 @@ public class MenuController {
 
         btnLive.setOnAction((event) -> {
             CameraLiveController.show();
+        });
+        
+        btnEditScript.setOnAction((event) -> {
+            CreateScriptController.setFill(true);
+            CreateScriptController.show();
         });
     }
 
