@@ -110,7 +110,7 @@ public class ContextTFP extends Application {
      * 
      * @param script The script to be used.
      */
-    public void setScript(Script script) {
+    public static void setScript(Script script) {
         ContextTFP.script = script;
     }
 

@@ -7,9 +7,9 @@
    <children>
       <Button fx:id="btnLive" layoutX="240.0" layoutY="386.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Live UI" />
       <Button fx:id="btnPreview" layoutX="440.0" layoutY="450.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Preview script" />
-      <Button disable="true" layoutX="240.0" layoutY="450.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Button" />
+      <Button fx:id="btnEditScript" layoutX="240.0" layoutY="450.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit script" />
       <Button fx:id="btnCreateScript" layoutX="440.0" layoutY="322.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Create script" />
-      <Button fx:id="btnLoadScript" disable="true" layoutX="440.0" layoutY="386.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" />
+      <Button fx:id="btnLoadScript" layoutX="440.0" layoutY="386.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" />
       <Button fx:id="btnPresets" layoutX="240.0" layoutY="322.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit presets" />
    </children>
 </AnchorPane>
