@@ -8,8 +8,6 @@ import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
-import nl.tudelft.contextproject.script.Shot;
-import nl.tudelft.contextproject.script.Timeline;
 
 import org.junit.After;
 import org.junit.Test;
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to test the Timeline Class.Test cases will be expanded
+ * Class to test the Timeline Class. Test cases will be expanded
  * with time.
  * @since 0.2
  */

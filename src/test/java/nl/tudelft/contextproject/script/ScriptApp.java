@@ -3,8 +3,6 @@ package nl.tudelft.contextproject.script;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
-import nl.tudelft.contextproject.script.Script;
-import nl.tudelft.contextproject.script.Shot;
 
 import java.util.ArrayList;
 import java.util.List;
