@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -20,12 +21,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
+import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,7 @@ public class CreateScriptController {
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
+    @FXML private Button btnSave;
 
     @FXML private ChoiceBox<Integer> addCamera;
     @FXML private ChoiceBox<Integer> addPreset;
@@ -62,7 +67,9 @@ public class CreateScriptController {
      */
     @FXML private void initialize() {
         setFactories();
-        setActions();
+        setAddButton();
+        setBackButton();
+        setSaveButton();
 
         initCamera();
         initPreset();
@@ -93,7 +100,7 @@ public class CreateScriptController {
         columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
         columnDescription.setOnEditCommit( (event) -> {
             final int row = event.getTablePosition().getRow();
-            
+
             ((Shot) event.getTableView().getItems().get(row)
                     ).setDescription(event.getNewValue());
 
@@ -197,11 +204,11 @@ public class CreateScriptController {
             }
         });
     }
-
+    
     /**
-     * Sets the actions to be taken when a button is pressed.
+     * Sets the onAction for the add button.
      */
-    private void setActions() {
+    private void setAddButton() {
         final ObservableList<Shot> data = FXCollections.observableArrayList();
 
         tableEvents.setItems(data);
@@ -257,7 +264,12 @@ public class CreateScriptController {
                 addDescription.clear();
             }
         });
-
+    }
+    
+    /**
+     * Sets the onAction for the back button.
+     */
+    private void setBackButton() {
         btnBack.setOnAction( event -> {
             if (!tableEvents.getItems().isEmpty()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -274,6 +286,32 @@ public class CreateScriptController {
             }
 
             MenuController.show();
+        });
+    }
+    
+    /**
+     * Sets the onAction for the save button.
+     */
+    private void setSaveButton() {
+        btnSave.setOnAction( event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save script");
+            fileChooser.setInitialFileName("script");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML (*.xml)", "*.xml"));
+            
+            File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
+
+            if (file == null) {
+                return;
+            } else {
+                SaveScript.setSaveLocation(file.getAbsolutePath());
+            }
+
+            try {
+                SaveScript.save(ContextTFP.getScript());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
