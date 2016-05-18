@@ -11,7 +11,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.CameraLiveController">
    <children>
       <Button fx:id="swap" layoutX="475.0" layoutY="317.0" mnemonicParsing="false" text="Switch" AnchorPane.bottomAnchor="233.0" AnchorPane.rightAnchor="274.0" />
-      <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Back" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
+      <Button fx:id="btnBack" alignment="BOTTOM_LEFT" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Back" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
       <VBox fx:id="bigViewBox" alignment="CENTER" layoutX="14.0" layoutY="14.0" minHeight="149.0" minWidth="187.0" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="269.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="14.0">
          <children>
             <ImageView fx:id="bigView" fitHeight="292.0" fitWidth="512.0" pickOnBounds="true" />
