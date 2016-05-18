@@ -177,7 +177,6 @@ public class PreviewController {
             if (shotNumFirst > 0) {
                 switchViews(shots.get(shotNumFirst - 1));
             }
-            System.out.println(shotNumFirst);
         });
         
         rightArrow.setOnAction((event) -> {
@@ -185,7 +184,6 @@ public class PreviewController {
             if (shotNumFirst < shots.size() - 1) {
                 switchViews(shots.get(shotNumFirst + 1));
             }
-            System.out.println(shotNumFirst);
         });
     }
 
