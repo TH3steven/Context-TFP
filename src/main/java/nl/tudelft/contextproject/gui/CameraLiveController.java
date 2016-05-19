@@ -103,6 +103,7 @@ public class CameraLiveController {
             }
         });
         
+        btnBack.toFront();
         btnBack.setOnAction((event) -> {
             MenuController.show();
         });
