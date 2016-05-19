@@ -64,8 +64,10 @@ public class CameraSettings {
     }
 
     /**
+     * Sets the pan level of the camera to a specified value without
+     * exceeding its lowest or highest zoom levels.
      *
-     * @param panPos sets the pan level of the camera to that specified value.
+     * @param panPos the zoom value to set the camera to.
      */
     public void setPan(int panPos) {
         this.pan =   (panPos < PAN_LIMIT_LOW) ? PAN_LIMIT_LOW :
@@ -73,8 +75,10 @@ public class CameraSettings {
     }
 
     /**
+     * Sets the tilt level of the camera to a specified value without
+     * exceeding its lowest or highest tilt levels.
      *
-     * @param tiltPos sets the tilt level of the camera to that specified value.
+     * @param tiltPos the tilt value to set the camera to.
      */
     public void setTilt(int tiltPos) {
         this.tilt =  (tiltPos < TILT_LIMIT_LOW) ? TILT_LIMIT_LOW :
@@ -82,8 +86,10 @@ public class CameraSettings {
     }
 
     /**
+     * Sets the zoom level of the camera to a specified value without
+     * exceeding its lowest or highest zoom levels.
      *
-     * @param zoomPos sets the zoom level of the camera to the specified value.
+     * @param zoomPos the zoom value to set the camera to.
      */
     public void setZoom(int zoomPos) {
         this.zoom =  (zoomPos < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW :
@@ -91,8 +97,10 @@ public class CameraSettings {
     }
 
     /**
-     *
-     * @param focusPos sets the focus level of the camera to the specified value.
+     * Sets the focus level of the camera to a specified value without
+     * exceeding its lowest or highest focus levels.
+     * 
+     * @param focusPos the focus value to set the camera to.
      */
     public void setFocus(int focusPos) {
         this.focus = (focusPos < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
