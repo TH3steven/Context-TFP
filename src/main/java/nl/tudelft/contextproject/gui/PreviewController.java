@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import main.java.nl.tudelft.contextproject.ContextTFP;
@@ -45,6 +46,8 @@ public class PreviewController {
     @FXML private Button rightArrow;
 
     @FXML private ChoiceBox<Shot> cb;
+    
+    @FXML private StackPane imagePane;
 
     @FXML private ImageView actualCam;
     // Camera actualCam;
@@ -83,6 +86,9 @@ public class PreviewController {
         initializeTextFields();
         initializeImages();
         initializeTimeline();
+        
+        actualCam.fitWidthProperty().bind(imagePane.widthProperty());
+        actualCam.fitHeightProperty().bind(imagePane.heightProperty());
 
         highlight2.setOpacity(0);
         highlight3.setOpacity(0);
