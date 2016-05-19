@@ -56,6 +56,13 @@ public class MockedCameraConnection extends CameraConnection {
         camSet.setFocus(value);
         return true;
     }
+    
+    @Override
+    protected boolean relPanTilt(int panOffset, int tiltOffset) {
+        camSet.pan(panOffset);
+        camSet.tilt(tiltOffset);
+        return true;
+    }
 
     @Override
     protected boolean relPan(int offset) {
@@ -86,7 +93,7 @@ public class MockedCameraConnection extends CameraConnection {
         if (!(o instanceof Camera)) {
             return;
         }
-        if(arg instanceof CameraSettings) {
+        if (arg instanceof CameraSettings) {
             camSet = (CameraSettings) arg;
         }
 

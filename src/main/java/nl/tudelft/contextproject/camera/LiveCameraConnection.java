@@ -115,7 +115,7 @@ public class LiveCameraConnection extends CameraConnection {
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String response = reader.readLine();
         reader.close();
-        return response;
+        return response != null ? response : "";
     }
     
     /**
@@ -171,66 +171,121 @@ public class LiveCameraConnection extends CameraConnection {
                 int tilt = Integer.parseInt(panTiltRes.substring(8, 12), 16);
                 int zoom = (int) Math.round((Integer.parseInt(zoomRes.substring(3, 6), 16) - 1365) / 27.3);
                 int focus = lastKnown.getFocus(); //TODO Fix this.
-                return new CameraSettings(pan, tilt, zoom, focus);
+                lastKnown = new CameraSettings(pan, tilt, zoom, focus);
+                return lastKnown;
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return lastKnown;
         }
-        return null;
+        return lastKnown;
     }
     
     @Override
     protected boolean absPanTilt(int panValue, int tiltValue) {
-        // TODO Auto-generated method stub
-        return false;
+        try {
+            String res = sendRequest(buildPanTiltHeadControlURL(
+                        "#APC" + Integer.toHexString(panValue) + Integer.toHexString(tiltValue)
+                    ));
+            if (res.startsWith("aPC")) {
+                lastKnown.setPan(panValue);
+                lastKnown.setTilt(tiltValue);
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     protected boolean absPan(int value) {
-        // TODO Auto-generated method stub
-        return false;
+        return absPanTilt(value, lastKnown.getTilt());
     }
 
     @Override
     protected boolean absTilt(int value) {
-        // TODO Auto-generated method stub
-        return false;
+        return absPanTilt(lastKnown.getPan(), value);
     }
 
     @Override
     protected boolean absZoom(int value) {
-        // TODO Auto-generated method stub
-        return false;
+        try {
+            String res = sendRequest(buildPanTiltHeadControlURL(
+                        "#AXZ" + Integer.toHexString(value)
+                    ));
+            if (res.startsWith("axz")) {
+                lastKnown.setZoom(value);
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     protected boolean absFocus(int value) {
-        // TODO Auto-generated method stub
-        return false;
+        try {
+            if (autoFocus) {
+                throw new IOException("Autofocus is on");
+            }
+            String res = sendRequest(buildPanTiltHeadControlURL(
+                        "#AXF" + Integer.toHexString(value)
+                    ));
+            if (res.startsWith("axf")) {
+                lastKnown.setZoom(value);
+                return true;
+            } else if (res.startsWith("ER3")) {
+                autoFocus = true;
+                throw new IOException("Autofocus is on");
+            }
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    @Override
+    protected boolean relPanTilt(int panOffset, int tiltOffset) {
+        try {
+            String res = sendRequest(buildPanTiltHeadControlURL(
+                        "#RPC" + Integer.toHexString(panOffset) + Integer.toHexString(tiltOffset)
+                    ));
+            if (res.startsWith("rPC")) {
+                lastKnown.pan(panOffset);
+                lastKnown.tilt(tiltOffset);
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     protected boolean relPan(int offset) {
-        // TODO Auto-generated method stub
-        return false;
+        return relPanTilt(offset, 0);
     }
 
     @Override
     protected boolean relTilt(int offset) {
-        // TODO Auto-generated method stub
-        return false;
+        return relPanTilt(0, offset);
     }
 
     @Override
     protected boolean relZoom(int offset) {
-        // TODO Auto-generated method stub
+        absZoom(lastKnown.getZoom() + offset);
         return false;
     }
 
     @Override
     protected boolean relFocus(int offset) {
-        // TODO Auto-generated method stub
+        absFocus(lastKnown.getZoom() + offset);
         return false;
     }
 }

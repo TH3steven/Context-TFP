@@ -67,6 +67,14 @@ public abstract class CameraConnection implements Observer {
     protected abstract boolean absFocus(int value);
     
     /**
+     * Pans and tilts the camera a certain offset.
+     * @param panOffset offset to pan.
+     * @param tiltOffset offset to tilt.
+     * @return true iff the operation was performed successfully.
+     */
+    protected abstract boolean relPanTilt(int panOffset, int tiltOffset);
+    
+    /**
      * Pans the camera a certain offset.
      * @param offset offset to pan.
      * @return true iff the operation was performed successfully.
