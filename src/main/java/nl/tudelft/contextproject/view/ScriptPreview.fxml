@@ -27,7 +27,7 @@
             <Button fx:id="confirm" layoutX="15.0" layoutY="146.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="109.0" text="Set Duration" />
          </children>
       </AnchorPane>
-      <StackPane id="stack" fx:id="imagePane" layoutX="188.0" layoutY="49.0" minHeight="280.0" minWidth="400.0" AnchorPane.bottomAnchor="246.0" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="212.0" AnchorPane.topAnchor="49.0">
+      <StackPane id="stack" fx:id="imagePane" alignment="TOP_CENTER" layoutX="174.0" layoutY="21.0" minHeight="280.0" minWidth="400.0" prefHeight="301.0" prefWidth="430.0" AnchorPane.bottomAnchor="253.0" AnchorPane.leftAnchor="174.0" AnchorPane.rightAnchor="196.0" AnchorPane.topAnchor="21.0">
          <children>
             <ImageView fx:id="actualCam" fitHeight="280.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
          </children>

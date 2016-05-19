@@ -50,7 +50,6 @@ public class PreviewController {
     @FXML private StackPane imagePane;
 
     @FXML private ImageView actualCam;
-    // Camera actualCam;
     
     @FXML private ImageView viewOne;
     @FXML private ImageView viewTwo;
@@ -70,12 +69,13 @@ public class PreviewController {
     private List<Shot> shots;
     private List<ImageView> views;
     private Script script;
+    //private Camera actualCamera;
 
     @FXML private void initialize() {
-        // backend
-//        script = ContextTFP.getScript();
-//        shots = script.getShots();
-//        actualCam = shots.get(0).getCamera();
+
+        script = ContextTFP.getScript();
+        shots = script.getShots();
+        //actualCamera = shots.get(0).getCamera();
         
         currentShot = new SimpleIntegerProperty(1);
 
@@ -130,53 +130,10 @@ public class PreviewController {
             current.setDuration(Double.parseDouble(duration.getText()));
         });
 
-        viewOne.setOnMouseClicked((event) -> {
-            int diff = checkShots(shots.get(currentShot.get() - 1)) - 1;
-            int shotNum = currentShot.get() - diff;
-
-            showShot(shots.get(shotNum - 1));
-            highlight1.setOpacity(1);
-            highlight2.setOpacity(0);
-            highlight3.setOpacity(0);
-            highlight4.setOpacity(0);
-            timeline.stop();
-        });
-
-        viewTwo.setOnMouseClicked((event) -> {
-            int diff = checkShots(shots.get(currentShot.get() - 1)) - 2;
-            int shotNum = currentShot.get() - diff;
-
-            showShot(shots.get(shotNum - 1));
-            highlight1.setOpacity(0);
-            highlight2.setOpacity(1);
-            highlight3.setOpacity(0);
-            highlight4.setOpacity(0);
-            timeline.stop();
-        });
-
-        viewThree.setOnMouseClicked((event) -> {
-            int diff = checkShots(shots.get(currentShot.get() - 1)) - 3;
-            int shotNum = currentShot.get() - diff;
-
-            showShot(shots.get(shotNum - 1));
-            highlight1.setOpacity(0);
-            highlight2.setOpacity(0);
-            highlight3.setOpacity(1);
-            highlight4.setOpacity(0);
-            timeline.stop();
-        });
-
-        viewFour.setOnMouseClicked((event) -> {
-            int diff = checkShots(shots.get(currentShot.get() - 1)) - 4;
-            int shotNum = currentShot.get() - diff;
-
-            showShot(shots.get(shotNum - 1));
-            highlight1.setOpacity(0);
-            highlight2.setOpacity(0);
-            highlight3.setOpacity(0);
-            highlight4.setOpacity(1);
-            timeline.stop();
-        });
+        initializeViewActions(viewOne, 1);
+        initializeViewActions(viewTwo, 2);
+        initializeViewActions(viewThree, 3);
+        initializeViewActions(viewFour, 4);
         
         leftArrow.setOnAction((event) -> {
             int shotNumFirst = currentFirst.getNumber() - 1;
@@ -190,6 +147,33 @@ public class PreviewController {
             if (shotNumFirst < shots.size() - 1) {
                 switchViews(shots.get(shotNumFirst + 1));
             }
+        });
+    }
+    
+    /**
+     * Applies the standard settings to an ImageView.
+     * @param view The ImageView to apply the setting to.
+     * @param id The id of the ImageView.
+     */
+    private void initializeViewActions(ImageView view, int id) {
+        view.setOnMouseClicked((event) -> {
+            int diff = checkShots(shots.get(currentShot.get() - 1)) - id;
+            int shotNum = currentShot.get() - diff;
+
+            showShot(shots.get(shotNum - 1));
+            highlight1.setOpacity(0);
+            highlight2.setOpacity(0);
+            highlight3.setOpacity(0);
+            highlight4.setOpacity(0);
+            
+            switch (id) {
+                case 1: highlight1.setOpacity(1); break;
+                case 2: highlight2.setOpacity(1); break;
+                case 3: highlight3.setOpacity(1); break;
+                case 4: highlight4.setOpacity(1); break;
+                default: break;
+            }
+            timeline.stop();
         });
     }
 
@@ -296,28 +280,6 @@ public class PreviewController {
         views.add(viewThree);
         views.add(viewFour);
     }
-    
-//    /**
-//     * Initialize the ImageViews with their images.
-//     */
-//    private void initializeImages() {
-//        actualCam.setImage(new Image("main/resources/placeholder_picture.jpg"));
-//        Image imgOne = new Image(shots.get(0).getPreset().getImage());
-//        Image imgTwo = new Image(shots.get(1).getPreset().getImage());
-//        Image imgThree = new Image(shots.get(2).getPreset().getImage());
-//        Image imgFour = new Image(shots.get(3).getPreset().getImage());
-//
-//        viewOne.setImage(imgOne);
-//        viewTwo.setImage(imgTwo);
-//        viewThree.setImage(imgThree);
-//        viewFour.setImage(imgFour);
-//
-//        views = new ArrayList<ImageView>();
-//        views.add(viewOne);
-//        views.add(viewTwo);
-//        views.add(viewThree);
-//        views.add(viewFour);
-//    }
 
     /**
      * Make the dummy shots.
