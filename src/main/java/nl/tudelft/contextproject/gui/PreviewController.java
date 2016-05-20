@@ -157,8 +157,8 @@ public class PreviewController {
      */
     private void initializeViewActions(ImageView view, int id) {
         view.setOnMouseClicked((event) -> {
-            int diff = checkShots(shots.get(currentShot.get() - 1)) - id;
-            int shotNum = currentShot.get() - diff;
+            int diff = checkShots(shots.get(currentFirst.getNumber() - 1)) - id;
+            int shotNum = currentFirst.getNumber() - diff;
 
             showShot(shots.get(shotNum - 1));
             highlight1.setOpacity(0);
