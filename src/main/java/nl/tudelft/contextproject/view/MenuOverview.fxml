@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.MenuController">
+<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.MenuController">
    <children>
       <GridPane layoutX="100.0" layoutY="81.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -36,7 +36,7 @@
                   <Button id="button" fx:id="btnLoadScript" layoutX="338.0" layoutY="442.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" />
                   <ImageView fitHeight="226.0" fitWidth="420.0" layoutX="90.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../../../resources/logo-TFP.png" />
+                        <Image url="logo-TFP.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="lblScript" layoutX="247.0" layoutY="516.0" text="Current script: None" />

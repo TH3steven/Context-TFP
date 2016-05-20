@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.script;
+package nl.tudelft.contextproject.script;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,8 +11,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.saveLoad.LoadScript;
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.saveLoad.LoadScript;
 
 import java.io.File;
 import java.io.IOException;

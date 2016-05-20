@@ -1,11 +1,9 @@
-package test.java.nl.tudelft.contextproject.presets;
+package nl.tudelft.contextproject.presets;
 
 import static org.junit.Assert.assertEquals;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
 
 import org.junit.After;
 import org.junit.Test;

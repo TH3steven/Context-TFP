@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -22,11 +22,11 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
-import main.java.nl.tudelft.contextproject.script.Script;
-import main.java.nl.tudelft.contextproject.script.Shot;
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.saveLoad.SaveScript;
+import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.File;
 import java.io.IOException;
