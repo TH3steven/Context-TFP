@@ -1,9 +1,6 @@
 package main.java.nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -50,15 +48,17 @@ public class CreateScriptController {
     @FXML private Button btnBack;
     @FXML private Button btnSave;
 
-    @FXML private ChoiceBox<Integer> addCamera;
-    @FXML private ChoiceBox<Integer> addPreset;
+    @FXML private ChoiceBox<Number> addCamera;
+    @FXML private ChoiceBox<Number> addPreset;
+
+    @FXML private HBox editBox;
 
     @FXML private TableView<Shot> tableEvents;
     @FXML private TableColumn<Shot, Shot> columnAction;
-    @FXML private TableColumn<Shot, Integer> columnCamera;
+    @FXML private TableColumn<Shot, Number> columnCamera;
     @FXML private TableColumn<Shot, String> columnDescription;
-    @FXML private TableColumn<Shot, Integer> columnID;
-    @FXML private TableColumn<Shot, Integer> columnPreset;
+    @FXML private TableColumn<Shot, Number> columnID;
+    @FXML private TableColumn<Shot, Number> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
 
     @FXML private TextField addShot;
@@ -101,9 +101,45 @@ public class CreateScriptController {
     }
 
     /**
+     * Sets if the table should be filled beforehand. This
+     * method is used to enable editing of the currently
+     * active script.
+     * 
+     * @param toFill True if the table should be filled.
+     */
+    public static void setFill(boolean toFill) {
+        fill = toFill;
+    }
+
+    /**
      * Allows for editable rows in the table.
      */
     private void allowEditing() {
+
+        /**
+         * TODO Finish WIP code
+         * This code is being worked on but is not finished before sprint 4.
+         * 
+
+        tableEvents.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+            if (nv != null) {
+                btnEditShot.setText(nv.getShotId());
+                btnEditCamera.getSelectionModel().select(nv.getCamera().getNumber());
+                btnEditPreset.getSelectionModel().select(nv.getPreset().getId());
+                btnEditDescription.setText(nv.getDescription());
+            }
+        });
+
+        tableEvents.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+
+                editBox.setVisible(true);
+                editBox.toFront();
+            }
+        });
+
+         */
+
         columnShot.setCellFactory(TextFieldTableCell.forTableColumn());
         columnShot.setOnEditCommit(event -> {
             final int row = event.getTablePosition().getRow();
@@ -129,7 +165,7 @@ public class CreateScriptController {
      * Fills the choicebox for selecting a camera.
      */
     private void initCamera() {
-        final List<Integer> cameraList = new ArrayList<Integer>();
+        final List<Number> cameraList = new ArrayList<Number>();
 
         for (int i = 0; i < Camera.getCameraAmount(); ++i) {
             cameraList.add(i + 1);
@@ -143,25 +179,39 @@ public class CreateScriptController {
      * of a certain camera.
      */
     private void initPreset() {
-        final List<Integer> presetList = new ArrayList<Integer>();
+        final List<Number> presetList = new ArrayList<Number>();
 
-        addCamera.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
-            @Override
-            public void changed(ObservableValue<? extends Integer> obs, Integer oldV, Integer newV) {
-                presetList.clear();
+        addCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            presetList.clear();
 
-                if (newV != null) {
-                    addPreset.setDisable(false);
+            if (newV != null) {
+                addPreset.setDisable(false);
 
-                    for (int i = 0; i < Camera.
-                            getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
-                        presetList.add(i + 1);
-                    }
-
-                    addPreset.setItems(FXCollections.observableArrayList(presetList));
-                } else {
-                    addPreset.setDisable(true);
+                for (int i = 0; i < Camera.
+                        getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                    presetList.add(i + 1);
                 }
+
+                addPreset.setItems(FXCollections.observableArrayList(presetList));
+            } else {
+                addPreset.setDisable(true);
+            }
+        });
+
+        addCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            presetList.clear();
+
+            if (newV != null) {
+                addPreset.setDisable(false);
+
+                for (int i = 0; i < Camera.
+                        getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                    presetList.add(i + 1);
+                }
+
+                addPreset.setItems(FXCollections.observableArrayList(presetList));
+            } else {
+                addPreset.setDisable(true);
             }
         });
 
@@ -174,19 +224,19 @@ public class CreateScriptController {
      */
     private void setFactories() {
         columnID.setCellValueFactory(
-            new PropertyValueFactory<Shot, Integer>("number"));
+            new PropertyValueFactory<Shot, Number>("number"));
 
         columnShot.setCellValueFactory(
             new PropertyValueFactory<Shot, String>("shotId"));
 
         columnCamera.setCellValueFactory(cellData ->
-            new SimpleIntegerProperty(cellData.getValue().getCamera().getNumber() + 1).asObject());
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getCamera().getNumber() + 1));
 
         columnPreset.setCellValueFactory(cellData ->
-            new SimpleIntegerProperty(cellData.getValue().getPreset().getId() + 1).asObject());
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getPreset().getId() + 1));
 
         columnDescription.setCellValueFactory(
-                new PropertyValueFactory<Shot, String>("description"));
+            new PropertyValueFactory<Shot, String>("description"));
 
         columnAction.setCellValueFactory(cellData -> 
             new ReadOnlyObjectWrapper<>(cellData.getValue()));
@@ -284,7 +334,7 @@ public class CreateScriptController {
                 alert.setTitle("Confirm quitting");
                 alert.setHeaderText("Exiting will erase any unsaved changes");
                 alert.setContentText("Are you sure you want to quit? Any unsaved changes "
-                        + "will not be saved");
+                        + "will not be kept.");
 
                 Optional<ButtonType> result = alert.showAndWait();
 
@@ -342,17 +392,6 @@ public class CreateScriptController {
                 }
             }
         });
-    }
-
-    /**
-     * Sets if the table should be filled beforehand. This
-     * method is used to enable editing of the currently
-     * active script.
-     * 
-     * @param toFill True if the table should be filled.
-     */
-    public static void setFill(boolean toFill) {
-        fill = toFill;
     }
 
     /**

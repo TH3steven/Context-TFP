@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.nl.tudelft.contextproject.gui.CreateScriptController">
    <children>
@@ -33,5 +34,15 @@
       <Label layoutX="95.0" layoutY="462.0" text="Camera" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="159.0" layoutY="462.0" text="Preset" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="212.0" layoutY="462.0" text="Description" AnchorPane.bottomAnchor="96.0" />
+      <HBox fx:id="editBox" layoutX="16.0" layoutY="507.0" prefHeight="25.0" prefWidth="770.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
+         <children>
+            <TextField fx:id="btnEditShot" prefHeight="25.0" prefWidth="70.0" />
+            <ChoiceBox fx:id="btnEditCamera" prefHeight="25.0" prefWidth="50.0" />
+            <ChoiceBox fx:id="btnEditPreset" prefHeight="25.0" prefWidth="50.0" />
+            <TextField fx:id="btnEditDescription" maxHeight="25.0" maxWidth="10000.0" minHeight="25.0" minWidth="200.0" />
+            <Button fx:id="btnEditConfirm" mnemonicParsing="false" text="Confirm" />
+            <Button fx:id="btnEditRemove" mnemonicParsing="false" text="Remove" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
