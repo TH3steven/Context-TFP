@@ -1,8 +1,8 @@
-package test.java.nl.tudelft.contextproject.camera;
+package nl.tudelft.contextproject.camera;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.camera.MockedCameraConnection;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import org.junit.After;
 import org.junit.Test;
 

@@ -271,6 +271,7 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+    
     /**
      * Adds a preset to the camera, if there is not already
      * a preset with the same id. Returns true if successful.

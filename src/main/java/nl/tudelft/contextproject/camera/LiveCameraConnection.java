@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.camera;
+package nl.tudelft.contextproject.camera;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,7 +45,8 @@ public class LiveCameraConnection extends CameraConnection {
         try {
             URL url = buildCamControlURL("QID");
             if (("OID:" + CAMERA_MODEL).equals(sendRequest(url))) {
-                int hasAutoFocus = Integer.parseInt(sendRequest(buildPanTiltHeadControlURL("#D1")));
+                String autoFocusResponse = sendRequest(buildPanTiltHeadControlURL("%23D1"));
+                int hasAutoFocus = Integer.parseInt(autoFocusResponse.substring(2));
                 autoFocus = hasAutoFocus == 1;
                 connected = true;
                 lastKnown = new CameraSettings();
@@ -109,7 +110,7 @@ public class LiveCameraConnection extends CameraConnection {
      */
     private String sendRequest(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod("GET");
         connection.setReadTimeout(READ_TIMEOUT);
         connection.connect();
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -162,14 +163,14 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     public CameraSettings getCurrentCameraSettings() {
         try {
-            URL panTiltUrl = buildPanTiltHeadControlURL("#APC");
-            URL zoomUrl = buildPanTiltHeadControlURL("#GZ");
+            URL panTiltUrl = buildPanTiltHeadControlURL("%23APC");
+            URL zoomUrl = buildPanTiltHeadControlURL("%23GZ");
             String panTiltRes = sendRequest(panTiltUrl);
             String zoomRes = sendRequest(zoomUrl);
             if (panTiltRes != null && panTiltRes.startsWith("aPC") && zoomRes.startsWith("gz")) {
-                int pan = Integer.parseInt(panTiltRes.substring(4, 8), 16);
-                int tilt = Integer.parseInt(panTiltRes.substring(8, 12), 16);
-                int zoom = (int) Math.round((Integer.parseInt(zoomRes.substring(3, 6), 16) - 1365) / 27.3);
+                int pan = Integer.parseInt(panTiltRes.substring(3, 7), 16);
+                int tilt = Integer.parseInt(panTiltRes.substring(7, 11), 16);
+                int zoom = (int) Math.round((Integer.parseInt(zoomRes.substring(2, 5), 16) - 1365) / 27.3);
                 int focus = lastKnown.getFocus(); //TODO Fix this.
                 lastKnown = new CameraSettings(pan, tilt, zoom, focus);
                 return lastKnown;
@@ -185,9 +186,12 @@ public class LiveCameraConnection extends CameraConnection {
     protected boolean absPanTilt(int panValue, int tiltValue) {
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
-                        "#APC" + Integer.toHexString(panValue) + Integer.toHexString(tiltValue)
+                        "%23APS" 
+                        + Integer.toHexString( 0x10000 | panValue).substring(1).toUpperCase() 
+                        + Integer.toHexString( 0x10000 | tiltValue).substring(1).toUpperCase()
+                        + "1D" + "2"
                     ));
-            if (res.startsWith("aPC")) {
+            if (res.startsWith("aPS")) {
                 lastKnown.setPan(panValue);
                 lastKnown.setTilt(tiltValue);
                 return true;
@@ -213,7 +217,7 @@ public class LiveCameraConnection extends CameraConnection {
     protected boolean absZoom(int value) {
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
-                        "#AXZ" + Integer.toHexString(value)
+                        "%23AXZ" + Integer.toHexString(value)
                     ));
             if (res.startsWith("axz")) {
                 lastKnown.setZoom(value);
@@ -233,7 +237,7 @@ public class LiveCameraConnection extends CameraConnection {
                 throw new IOException("Autofocus is on");
             }
             String res = sendRequest(buildPanTiltHeadControlURL(
-                        "#AXF" + Integer.toHexString(value)
+                        "%23AXF" + Integer.toHexString(value)
                     ));
             if (res.startsWith("axf")) {
                 lastKnown.setZoom(value);
@@ -253,7 +257,7 @@ public class LiveCameraConnection extends CameraConnection {
     protected boolean relPanTilt(int panOffset, int tiltOffset) {
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
-                        "#RPC" + Integer.toHexString(panOffset) + Integer.toHexString(tiltOffset)
+                        "%23RPC" + Integer.toHexString(panOffset) + Integer.toHexString(tiltOffset)
                     ));
             if (res.startsWith("rPC")) {
                 lastKnown.pan(panOffset);
