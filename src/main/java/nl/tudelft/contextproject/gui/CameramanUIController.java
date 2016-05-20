@@ -57,7 +57,6 @@ public class CameramanUIController {
     
     @FXML private Label bigStatusLabel;
     @FXML private Label smallStatusLabel;
-    @FXML private Label CameraNumberLabel;
     @FXML private Label cameraNumberLabel;
     @FXML private Label presetLabel;
     @FXML private Label movement;
@@ -117,6 +116,8 @@ public class CameramanUIController {
             presetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
             descriptionField.setText(script.getCurrentShot().getDescription());
         }
+        cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
+        presetLabel.setText(String.valueOf(liveCam.getPreset(1).getId()));
     }
     
     /**
