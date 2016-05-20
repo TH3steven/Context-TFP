@@ -1,6 +1,6 @@
-package main.java.nl.tudelft.contextproject.script;
+package nl.tudelft.contextproject.script;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.Camera;
 
 import java.util.LinkedList;
 import java.util.List;

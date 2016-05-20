@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -20,12 +20,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.script.Script;
-import main.java.nl.tudelft.contextproject.script.Shot;
+
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.script.Shot;
+import nl.tudelft.contextproject.script.Script;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,13 +70,11 @@ public class PreviewController {
     private List<Shot> shots;
     private List<ImageView> views;
     private Script script;
-    //private Camera actualCamera;
 
     @FXML private void initialize() {
 
         script = ContextTFP.getScript();
         shots = script.getShots();
-        //actualCamera = shots.get(0).getCamera();
         
         currentShot = new SimpleIntegerProperty(1);
 
@@ -295,12 +294,12 @@ public class PreviewController {
         InstantPreset presetFive = new InstantPreset(dummySettings, 5);
         InstantPreset presetSix = new InstantPreset(dummySettings, 6);
 
-        presetOne.setImageLocation("main/resources/placeholder_picture.jpg");
-        presetTwo.setImageLocation("main/resources/test2.jpg");
-        presetThree.setImageLocation("main/resources/test3.jpg");
-        presetFour.setImageLocation("main/resources/test4.jpg");
-        presetFive.setImageLocation("main/resources/test5.jpg");
-        presetSix.setImageLocation("main/resources/test6.jpg");
+        presetOne.setImageLocation("placeholder_picture.jpg");
+        presetTwo.setImageLocation("test2.jpg");
+        presetThree.setImageLocation("test3.jpg");
+        presetFour.setImageLocation("test4.jpg");
+        presetFive.setImageLocation("test5.jpg");
+        presetSix.setImageLocation("test6.jpg");
 
         Shot shotOne = new Shot(1, dummyCamera, presetOne);
         Shot shotTwo = new Shot(2, dummyCamera, presetTwo);
@@ -318,13 +317,7 @@ public class PreviewController {
         shots.add(shotSix);
         
         currentFirst = shots.get(0);
-    }
-    
-//    private void initializeShots() {
-//        shots = script.getShots();
-//    }
-    
-    
+    }    
 
     /**
      * Fills the the choicebox with shots the user can choose from.

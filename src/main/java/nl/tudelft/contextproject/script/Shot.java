@@ -1,7 +1,7 @@
-package main.java.nl.tudelft.contextproject.script;
+package nl.tudelft.contextproject.script;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.Preset;
 
 import java.util.Objects;
 

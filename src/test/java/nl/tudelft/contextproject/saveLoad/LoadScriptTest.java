@@ -1,24 +1,30 @@
-package test.java.nl.tudelft.contextproject.saveLoad;
+package nl.tudelft.contextproject.saveLoad;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
+
+import org.junit.After;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.saveLoad.LoadScript;
-import main.java.nl.tudelft.contextproject.script.Script;
-import main.java.nl.tudelft.contextproject.script.Shot;
-
-import org.junit.Test;
-
 public class LoadScriptTest {
     
     private final String saveFileLocation = "src/test/resources/loadScriptTest.xml";
+    
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
+    }
 
     @Test
     public void testLoad() {

@@ -3,22 +3,23 @@
  * may be modified without notice of the original creators. This modified version may
  * be distributed for commercial use when appropriate credit is given where due.
  * 
- * See http://creativecommons.org/licenses/by/4.0/
+ * <p>See http://creativecommons.org/licenses/by/4.0/
  */
 
-package main.java.nl.tudelft.contextproject;
+package nl.tudelft.contextproject;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.gui.MenuController;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.script.Script;
-import main.java.nl.tudelft.contextproject.script.Shot;
+
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.gui.MenuController;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;

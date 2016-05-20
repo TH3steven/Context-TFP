@@ -1,6 +1,6 @@
-package main.java.nl.tudelft.contextproject.camera;
+package nl.tudelft.contextproject.camera;
 
-import main.java.nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.presets.Preset;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,8 +10,6 @@ import java.util.Observable;
 /**
  * Class to represent a camera.
  * Extends Observables so its settings can be observed.
- * 
- * @author Bart van Oort
  * @since 0.2
  */
 public class Camera extends Observable {
@@ -22,6 +20,7 @@ public class Camera extends Observable {
     private int num;
     private CameraSettings camSet;
     private HashMap<Integer, Preset> presets;
+    private CameraConnection connection;
     
     /**
      * Creates a Camera object with initial camera settings
@@ -96,7 +95,41 @@ public class Camera extends Observable {
     public void setSettings(CameraSettings settings) {
         camSet = settings;
         setChanged();
-        notifyObservers();
+        notifyObservers(settings);
+    }
+    
+    /**
+     * Returns true iff the camera has a non-null CameraConnection
+     * object.
+     * @return true iff the camera has a non-null CameraConnection
+     */
+    public boolean hasConnection() {
+        return connection != null;
+    }
+    
+    /**
+     * Returns the CameraConnection object used for communicating with
+     * the actual camera. May be null if it has not yet been initialized.
+     * @return the CameraConnection object used for communicating with
+     *      the actual camera.
+     */
+    public CameraConnection getConnection() {
+        return connection;
+    }
+    
+    /**
+     * Sets the CameraConnection object used for communicating with
+     * the actual camera. It adds this new connection as an observer
+     * and if there was a previous connection, removes the previous
+     * connection as observer.
+     * @param connect the new connection to the camera.
+     */
+    public void setConnection(CameraConnection connect) {
+        if (hasConnection()) {
+            this.deleteObserver(connection);
+        }
+        connection = connect;
+        this.addObserver(connect);
     }
     
     /**
@@ -115,6 +148,9 @@ public class Camera extends Observable {
      */
     public void pan(int offset) {
         camSet.pan(offset);
+        if (hasConnection()) {
+            connection.relPan(offset);
+        }
         setChanged();
         notifyObservers();
     }
@@ -127,6 +163,9 @@ public class Camera extends Observable {
      */
     public void tilt(int offset) {
         camSet.tilt(offset);
+        if (hasConnection()) {
+            connection.relTilt(offset);
+        }
         setChanged();
         notifyObservers();
     }
@@ -139,6 +178,9 @@ public class Camera extends Observable {
      */
     public void zoom(int offset) {
         camSet.zoom(offset);
+        if (hasConnection()) {
+            connection.relZoom(offset);
+        }
         setChanged();
         notifyObservers();
     }
@@ -151,6 +193,81 @@ public class Camera extends Observable {
      */
     public void focus(int offset) {
         camSet.focus(offset);
+        if (hasConnection()) {
+            connection.relFocus(offset);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Pans and Tilts the camera to a certain pan and tilt value.
+     * It cannot past the pan or tilt limit
+     * @param panValue the value to pan the Camera.
+     * @param tiltValue the value to tilt the Camera.
+     */
+    public void absPanTilt(int panValue, int tiltValue) {
+        camSet.setPan(panValue);
+        camSet.setTilt(tiltValue);
+        if (hasConnection()) {
+            connection.absPanTilt(panValue, tiltValue);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Pans the camera to a certain value. Value cannot
+     * past the pan limits.
+     * @param value The new value to pan the Camera.
+     */
+    public void absPan(int value) {
+        camSet.setPan(value);
+        if (hasConnection()) {
+            connection.absPan(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Tilts the camera to a certain value. Value cannot
+     * past the tilt limits.
+     * @param value The new value to tilt the Camera.
+     */
+    public void absTilt(int value) {
+        camSet.setTilt(value);
+        if (hasConnection()) {
+            connection.absTilt(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Zooms the camera to a certain value. Value cannot
+     * past the zoom limits.
+     * @param value The new value to zoom the Camera.
+     */
+    public void absZoom(int value) {
+        camSet.setZoom(value);
+        if (hasConnection()) {
+            connection.absZoom(value);
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Focuses the camera to a certain value. Value cannot
+     * past the focus limits.
+     * @param value The new value to focus the Camera.
+     */
+    public void absFocus(int value) {
+        camSet.setFocus(value);
+        if (hasConnection()) {
+            connection.absFocus(value);
+        }
         setChanged();
         notifyObservers();
     }

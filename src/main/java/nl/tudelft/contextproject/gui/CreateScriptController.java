@@ -1,8 +1,6 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,20 +13,20 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Callback;
 
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
-import main.java.nl.tudelft.contextproject.script.Shot;
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.saveLoad.SaveScript;
+import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,20 +44,23 @@ import java.util.Optional;
 public class CreateScriptController {
 
     private static boolean fill = false;
+    private Script script;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
 
-    @FXML private ChoiceBox<Integer> addCamera;
-    @FXML private ChoiceBox<Integer> addPreset;
+    @FXML private ChoiceBox<Number> addCamera;
+    @FXML private ChoiceBox<Number> addPreset;
+
+    @FXML private HBox editBox;
 
     @FXML private TableView<Shot> tableEvents;
     @FXML private TableColumn<Shot, Shot> columnAction;
-    @FXML private TableColumn<Shot, Integer> columnCamera;
+    @FXML private TableColumn<Shot, Number> columnCamera;
     @FXML private TableColumn<Shot, String> columnDescription;
-    @FXML private TableColumn<Shot, Integer> columnID;
-    @FXML private TableColumn<Shot, Integer> columnPreset;
+    @FXML private TableColumn<Shot, Number> columnID;
+    @FXML private TableColumn<Shot, Number> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
 
     @FXML private TextField addShot;
@@ -87,9 +88,11 @@ public class CreateScriptController {
 
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
+            fill = false;
         }
-
-        fill = false;
+        
+        // Store the current script locally to reduce traffic.
+        script = ContextTFP.getScript();
     }
 
     /**
@@ -102,27 +105,63 @@ public class CreateScriptController {
     }
 
     /**
+     * Sets if the table should be filled beforehand. This
+     * method is used to enable editing of the currently
+     * active script.
+     * 
+     * @param bFill True if the table should be filled.
+     */
+    public static void setFill(boolean bFill) {
+        fill = bFill;
+    }
+
+    /**
      * Allows for editable rows in the table.
      */
     private void allowEditing() {
+
+        /**
+         * TODO Finish WIP code
+         * This code is being worked on but is not finished before sprint 4.
+         * 
+
+        tableEvents.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+            if (nv != null) {
+                btnEditShot.setText(nv.getShotId());
+                btnEditCamera.getSelectionModel().select(nv.getCamera().getNumber());
+                btnEditPreset.getSelectionModel().select(nv.getPreset().getId());
+                btnEditDescription.setText(nv.getDescription());
+            }
+        });
+
+        tableEvents.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+
+                editBox.setVisible(true);
+                editBox.toFront();
+            }
+        });
+
+         */
+
         columnShot.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnShot.setOnEditCommit( (event) -> {
+        columnShot.setOnEditCommit(event -> {
             final int row = event.getTablePosition().getRow();
 
             ((Shot) event.getTableView().getItems().get(row)
                     ).setShotId(event.getNewValue());
 
-            ContextTFP.getScript().getShots().get(row).setShotId(event.getNewValue());
+            script.getShots().get(row).setShotId(event.getNewValue());
         });
 
         columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnDescription.setOnEditCommit( (event) -> {
+        columnDescription.setOnEditCommit(event -> {
             final int row = event.getTablePosition().getRow();
 
             ((Shot) event.getTableView().getItems().get(row)
                     ).setDescription(event.getNewValue());
 
-            ContextTFP.getScript().getShots().get(row).setDescription(event.getNewValue());
+            script.getShots().get(row).setDescription(event.getNewValue());
         });
     }
 
@@ -130,7 +169,7 @@ public class CreateScriptController {
      * Fills the choicebox for selecting a camera.
      */
     private void initCamera() {
-        final List<Integer> cameraList = new ArrayList<Integer>();
+        final List<Number> cameraList = new ArrayList<Number>();
 
         for (int i = 0; i < Camera.getCameraAmount(); ++i) {
             cameraList.add(i + 1);
@@ -144,25 +183,39 @@ public class CreateScriptController {
      * of a certain camera.
      */
     private void initPreset() {
-        final List<Integer> presetList = new ArrayList<Integer>();
+        final List<Number> presetList = new ArrayList<Number>();
 
-        addCamera.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>() {
-            @Override
-            public void changed(ObservableValue<? extends Integer> obs, Integer oldV, Integer newV) {
-                presetList.clear();
+        addCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            presetList.clear();
 
-                if (newV != null) {
-                    addPreset.setDisable(false);
+            if (newV != null) {
+                addPreset.setDisable(false);
 
-                    for (int i = 0; i < Camera.
-                            getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
-                        presetList.add(i + 1);
-                    }
-
-                    addPreset.setItems(FXCollections.observableArrayList(presetList));
-                } else {
-                    addPreset.setDisable(true);
+                for (int i = 0; i < Camera.
+                        getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                    presetList.add(i + 1);
                 }
+
+                addPreset.setItems(FXCollections.observableArrayList(presetList));
+            } else {
+                addPreset.setDisable(true);
+            }
+        });
+
+        addCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            presetList.clear();
+
+            if (newV != null) {
+                addPreset.setDisable(false);
+
+                for (int i = 0; i < Camera.
+                        getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                    presetList.add(i + 1);
+                }
+
+                addPreset.setItems(FXCollections.observableArrayList(presetList));
+            } else {
+                addPreset.setDisable(true);
             }
         });
 
@@ -175,33 +228,24 @@ public class CreateScriptController {
      */
     private void setFactories() {
         columnID.setCellValueFactory(
-                new PropertyValueFactory<Shot, Integer>("number"));
+            new PropertyValueFactory<Shot, Number>("number"));
 
         columnShot.setCellValueFactory(
-                new PropertyValueFactory<Shot, String>("shotId"));
+            new PropertyValueFactory<Shot, String>("shotId"));
 
-        columnCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
-            public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> c) {
-                final int num = c.getValue().getCamera().getNumber() + 1;
-                return new ReadOnlyObjectWrapper<Integer>(num);
-            }
-        });
+        columnCamera.setCellValueFactory(cellData ->
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getCamera().getNumber() + 1));
 
-        columnPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
-            public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> p) {
-                final int id = p.getValue().getPreset().getId() + 1;
-                return new ReadOnlyObjectWrapper<Integer>(id);
-            }
-        });
+        columnPreset.setCellValueFactory(cellData ->
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getPreset().getId() + 1));
 
         columnDescription.setCellValueFactory(
-                new PropertyValueFactory<Shot, String>("description"));
+            new PropertyValueFactory<Shot, String>("description"));
 
-        columnAction.setCellValueFactory( param -> 
-            new ReadOnlyObjectWrapper<>(param.getValue())
-        );
+        columnAction.setCellValueFactory(cellData -> 
+            new ReadOnlyObjectWrapper<>(cellData.getValue()));
 
-        columnAction.setCellFactory( param -> new TableCell<Shot, Shot>() {
+        columnAction.setCellFactory(cellData -> new TableCell<Shot, Shot>() {
             Button btnRemove = new Button("Remove");
 
             @Override
@@ -215,9 +259,9 @@ public class CreateScriptController {
 
                 setGraphic(btnRemove);
 
-                btnRemove.setOnAction( event -> {
+                btnRemove.setOnAction(event -> {
                     getTableView().getItems().remove(shot);
-                    ContextTFP.getScript().getShots().remove(shot);
+                    script.getShots().remove(shot);
                 });
             }
         });
@@ -231,7 +275,7 @@ public class CreateScriptController {
 
         tableEvents.setItems(data);
 
-        btnAdd.setOnAction( event -> {
+        btnAdd.setOnAction(event -> {
             boolean emptyField = false;
 
             if (addCamera.getSelectionModel().isEmpty()) {
@@ -273,8 +317,8 @@ public class CreateScriptController {
                         addDescription.getText()
                         );
 
-                ContextTFP.getScript().addShot(newShot);
                 data.add(newShot);
+                script.addShot(newShot);
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
@@ -288,13 +332,13 @@ public class CreateScriptController {
      * Sets the onAction for the back button.
      */
     private void setBackButton() {
-        btnBack.setOnAction( event -> {
+        btnBack.setOnAction(event -> {
             if (!tableEvents.getItems().isEmpty()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Confirm quitting");
-                alert.setHeaderText("Exiting will erase made changes");
+                alert.setHeaderText("Exiting will erase any unsaved changes");
                 alert.setContentText("Are you sure you want to quit? Any unsaved changes "
-                        + "will not be saved");
+                        + "will not be kept.");
 
                 Optional<ButtonType> result = alert.showAndWait();
 
@@ -311,7 +355,7 @@ public class CreateScriptController {
      * Sets the onAction for the save button.
      */
     private void setSaveButton() {
-        btnSave.setOnAction( event -> {
+        btnSave.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save script");
             fileChooser.setInitialFileName("script");
@@ -321,9 +365,11 @@ public class CreateScriptController {
 
             if (file != null) {
                 try {
-                    SaveScript.save(ContextTFP.getScript());
-
                     SaveScript.setSaveLocation(file.getAbsolutePath());
+                    SaveScript.save(script);
+
+                    script.setName(file.getName());
+                    ContextTFP.setScript(script);
 
                     Alert alert = new Alert(AlertType.CONFIRMATION);
                     alert.setTitle("Confirm exiting");
@@ -366,14 +412,5 @@ public class CreateScriptController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Sets if the table should be filled beforehand.
-     * 
-     * @param toFill True if the table should be filled.
-     */
-    public static void setFill(boolean toFill) {
-        fill = toFill;
     }
 }
