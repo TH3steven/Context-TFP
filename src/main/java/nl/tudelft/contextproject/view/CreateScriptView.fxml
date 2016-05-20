@@ -34,7 +34,7 @@
       <Label layoutX="95.0" layoutY="462.0" text="Camera" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="159.0" layoutY="462.0" text="Preset" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="212.0" layoutY="462.0" text="Description" AnchorPane.bottomAnchor="96.0" />
-      <HBox fx:id="editBox" layoutX="16.0" layoutY="507.0" prefHeight="25.0" prefWidth="770.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
+      <HBox fx:id="editBox" layoutX="16.0" layoutY="507.0" prefHeight="25.0" prefWidth="770.0" visible="false" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
          <children>
             <TextField fx:id="btnEditShot" prefHeight="25.0" prefWidth="70.0" />
             <ChoiceBox fx:id="btnEditCamera" prefHeight="25.0" prefWidth="50.0" />

@@ -25,6 +25,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
 import main.java.nl.tudelft.contextproject.saveLoad.SaveScript;
+import main.java.nl.tudelft.contextproject.script.Script;
 import main.java.nl.tudelft.contextproject.script.Shot;
 
 import java.io.File;
@@ -43,6 +44,7 @@ import java.util.Optional;
 public class CreateScriptController {
 
     private static boolean fill = false;
+    private Script script;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
@@ -86,9 +88,11 @@ public class CreateScriptController {
 
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
+            fill = false;
         }
-
-        fill = false;
+        
+        // Store the current script locally to reduce traffic.
+        script = ContextTFP.getScript();
     }
 
     /**
@@ -105,10 +109,10 @@ public class CreateScriptController {
      * method is used to enable editing of the currently
      * active script.
      * 
-     * @param toFill True if the table should be filled.
+     * @param bFill True if the table should be filled.
      */
-    public static void setFill(boolean toFill) {
-        fill = toFill;
+    public static void setFill(boolean bFill) {
+        fill = bFill;
     }
 
     /**
@@ -147,7 +151,7 @@ public class CreateScriptController {
             ((Shot) event.getTableView().getItems().get(row)
                     ).setShotId(event.getNewValue());
 
-            ContextTFP.getScript().getShots().get(row).setShotId(event.getNewValue());
+            script.getShots().get(row).setShotId(event.getNewValue());
         });
 
         columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -157,7 +161,7 @@ public class CreateScriptController {
             ((Shot) event.getTableView().getItems().get(row)
                     ).setDescription(event.getNewValue());
 
-            ContextTFP.getScript().getShots().get(row).setDescription(event.getNewValue());
+            script.getShots().get(row).setDescription(event.getNewValue());
         });
     }
 
@@ -257,7 +261,7 @@ public class CreateScriptController {
 
                 btnRemove.setOnAction(event -> {
                     getTableView().getItems().remove(shot);
-                    ContextTFP.getScript().getShots().remove(shot);
+                    script.getShots().remove(shot);
                 });
             }
         });
@@ -313,8 +317,8 @@ public class CreateScriptController {
                         addDescription.getText()
                         );
 
-                ContextTFP.getScript().addShot(newShot);
                 data.add(newShot);
+                script.addShot(newShot);
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
@@ -362,9 +366,10 @@ public class CreateScriptController {
             if (file != null) {
                 try {
                     SaveScript.setSaveLocation(file.getAbsolutePath());
-                    SaveScript.save(ContextTFP.getScript());
+                    SaveScript.save(script);
 
-                    ContextTFP.getScript().setName(file.getName());
+                    script.setName(file.getName());
+                    ContextTFP.setScript(script);
 
                     Alert alert = new Alert(AlertType.CONFIRMATION);
                     alert.setTitle("Confirm exiting");
