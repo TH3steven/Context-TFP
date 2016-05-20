@@ -88,6 +88,10 @@ public class MenuController {
         btnDirector.setOnAction((event) -> {
             CameraLiveController.show();
         });
+        
+        btnCameraman.setOnAction((event) -> {
+            CameramanUIController.show();
+        });
 
         btnEditScript.setOnAction((event) -> {
             CreateScriptController.setFill(true);

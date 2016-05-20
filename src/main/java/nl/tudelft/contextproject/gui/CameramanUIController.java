@@ -28,7 +28,7 @@ import java.io.IOException;
  * 
  * @since 0.3
  */
-public class CameramenUIController {
+public class CameramanUIController {
 
     private static Script script;
     
@@ -313,7 +313,7 @@ public class CameramenUIController {
     public static void show() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ContextTFP.class.getResource("view/CameramenUIView.fxml"));
+            loader.setLocation(ContextTFP.class.getResource("view/CameramanUIView.fxml"));
             AnchorPane cameraLiveUI = (AnchorPane) loader.load();
 
             ContextTFP.getRootLayout().setCenter(cameraLiveUI);
