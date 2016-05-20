@@ -12,7 +12,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
+import main.java.nl.tudelft.contextproject.camera.CameraSettings;
+import main.java.nl.tudelft.contextproject.presets.InstantPreset;
 import main.java.nl.tudelft.contextproject.presets.MovementType;
+import main.java.nl.tudelft.contextproject.presets.Preset;
 import main.java.nl.tudelft.contextproject.script.Script;
 
 import java.io.IOException;
@@ -41,21 +44,18 @@ public class CameramenUIController {
     @FXML private ImageView bigView;
     @FXML private ImageView smallView;
     
-    @FXML private TextArea smallDescriptionField;
-    @FXML private TextArea bigDescriptionField;
+    @FXML private TextArea descriptionField;
     
     @FXML private VBox smallViewBox;
     @FXML private VBox bigViewBox;
     
     @FXML private Label bigStatusLabel;
     @FXML private Label smallStatusLabel;
-    @FXML private Label smallShotNumberLabel;
-    @FXML private Label smallCameraNumberLabel;
-    @FXML private Label smallPresetLabel;
-    @FXML private Label bigShotNumberLabel;
-    @FXML private Label bigCameraNumberLabel;
-    @FXML private Label bigPresetLabel;
+    @FXML private Label CameraNumberLabel;
+    @FXML private Label cameraNumberLabel;
+    @FXML private Label presetLabel;
     @FXML private Label movement;
+    @FXML private Label infoLabel;
     
     private int currentView;
     
@@ -76,9 +76,17 @@ public class CameramenUIController {
         
         currentView = 0;
         
-        //Initialize dummy cameras
+        //Initialize dummy cameras and presets
         liveCam = new Camera();
         currentCam = new Camera();
+        
+        CameraSettings dummySettings = new CameraSettings();
+        
+        Preset presetOne = new InstantPreset(dummySettings, 1);
+        Preset presetTwo = new InstantPreset(dummySettings, 2);
+        
+        liveCam.addPreset(presetOne);
+        currentCam.addPreset(presetTwo);
         
         initializeLabels();
         initializeViews();
@@ -91,18 +99,10 @@ public class CameramenUIController {
         bigStatusLabel.setStyle("-fx-text-fill: red;");
         smallStatusLabel.setText("Current camera");
         
-        if (script.getNextShot() != null) {
-            smallShotNumberLabel.setText(script.getNextShot().getShotId());;
-            smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
-            smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
-            smallDescriptionField.setText(script.getNextShot().getDescription());
-        }
-        
         if (script.getCurrentShot() != null) {
-            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());;
-            bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
-            bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
-            bigDescriptionField.setText(script.getCurrentShot().getDescription());
+            cameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
+            presetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
+            descriptionField.setText(script.getCurrentShot().getDescription());
         }
     }
     
@@ -129,6 +129,7 @@ public class CameramenUIController {
                 smallStatusLabel.setStyle("");
                 bigStatusLabel.setStyle("-fx-text-fill: red;");
             }
+            swapInfoTable();
             swapCurrentView();
         });
         
@@ -179,6 +180,24 @@ public class CameramenUIController {
             currentView = 1;
         } else {
             currentView = 0;
+        }
+    }
+    
+    private void swapInfoTable() {
+        if (currentView == 0) {
+            Preset preset = currentCam.getPreset(2);
+            infoLabel.setText("Information about current camera");
+            cameraNumberLabel.setText(String.valueOf(currentCam.getNumber()));
+            presetLabel.setText(String.valueOf(preset.getId()));
+            movement.setText(MovementType.getName(currentMovement));
+            descriptionField.setText(preset.getDescription());
+        } else {
+            Preset preset = liveCam.getPreset(1);
+            infoLabel.setText("Information about live camera");
+            cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
+            presetLabel.setText(String.valueOf(preset.getId()));
+            movement.setText(MovementType.getName(liveMovement));
+            descriptionField.setText(preset.getDescription());
         }
     }
     

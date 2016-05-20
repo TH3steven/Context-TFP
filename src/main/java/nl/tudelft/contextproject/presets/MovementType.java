@@ -17,6 +17,13 @@ public enum MovementType {
         return typeToCameraSettings.get(mt);
     }
     
+    public static String getName(MovementType mt) {
+        if (typeToCameraSettings == null) {
+            initMapping();
+        }
+        return typeToName.get(mt);
+    }
+    
     private static void initMapping() {
         typeToCameraSettings = new EnumMap<>(MovementType.class);
         typeToName = new EnumMap<>(MovementType.class);

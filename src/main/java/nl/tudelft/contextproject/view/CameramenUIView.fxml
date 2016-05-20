@@ -61,15 +61,14 @@
                   </HBox>
                   <AnchorPane maxHeight="176.0" maxWidth="512.0" minHeight="176.0" minWidth="512.0" prefHeight="176.0" prefWidth="512.0" style="-fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
-                        <Label fx:id="infoLabel" layoutX="7.0" layoutY="6.0" text="Information about current camera" />
-                        <Label fx:id="bigShotNumberLabel" layoutX="137.0" layoutY="6.0" prefHeight="17.0" prefWidth="51.0" />
+                        <Label fx:id="infoLabel" layoutX="7.0" layoutY="6.0" text="Information about live camera" />
                         <Rectangle arcHeight="5.0" arcWidth="5.0" height="1.0" layoutY="27.0" stroke="BLACK" strokeType="INSIDE" width="240.0" />
                         <Label layoutX="14.0" layoutY="37.0" text="Camera:" />
                         <Label layoutX="14.0" layoutY="63.0" text="Preset:" />
                         <Label layoutX="256.0" layoutY="6.0" text="Description:" />
-                        <TextArea fx:id="bigDescriptionField" layoutX="256.0" layoutY="35.0" prefHeight="127.0" prefWidth="242.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="255.0" AnchorPane.rightAnchor="19.0" />
-                        <Label fx:id="bigCameraNumberLabel" layoutX="85.0" layoutY="37.0" text="-1" />
-                        <Label fx:id="bigPresetLabel" layoutX="85.0" layoutY="63.0" text="-1" />
+                        <TextArea fx:id="descriptionField" layoutX="256.0" layoutY="35.0" prefHeight="127.0" prefWidth="242.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="255.0" AnchorPane.rightAnchor="19.0" />
+                        <Label fx:id="cameraNumberLabel" layoutX="85.0" layoutY="37.0" text="-1" />
+                        <Label fx:id="presetLabel" layoutX="85.0" layoutY="63.0" text="-1" />
                         <Rectangle arcHeight="5.0" arcWidth="5.0" height="28.0" layoutX="240.0" stroke="BLACK" strokeType="INSIDE" width="1.0" />
                         <Label layoutX="14.0" layoutY="89.0" text="Movement:" />
                         <Label fx:id="movement" layoutX="108.0" layoutY="89.0" prefHeight="21.0" prefWidth="139.0" text="None" />
@@ -112,14 +111,13 @@
                   <AnchorPane maxHeight="365.0" maxWidth="242.0" minHeight="365.0" minWidth="242.0" style="-fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
                         <Label layoutX="7.0" layoutY="6.0" text="preset movement" />
-                        <Label fx:id="smallShotNumberLabel" layoutX="137.0" layoutY="6.0" prefHeight="17.0" prefWidth="51.0" />
                         <Rectangle arcHeight="5.0" arcWidth="5.0" height="1.0" layoutY="27.0" stroke="BLACK" strokeType="INSIDE" width="245.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" />
                         <VBox layoutX="1.0" layoutY="28.0" prefHeight="200.0" prefWidth="240.0">
                            <children>
                               <Button fx:id="moveOne" mnemonicParsing="false" prefHeight="31.0" prefWidth="250.0" text="Constant zoom in" />
                               <Button fx:id="moveTwo" mnemonicParsing="false" prefHeight="31.0" prefWidth="248.0" text="Constant zoom out" />
-                              <Button fx:id="moveThree" mnemonicParsing="false" prefHeight="31.0" prefWidth="245.0" text="Constant pan right" />
-                              <Button fx:id="moveFour" mnemonicParsing="false" prefHeight="31.0" prefWidth="245.0" text="Constant pan left" />
+                              <Button fx:id="moveThree" mnemonicParsing="false" prefHeight="31.0" prefWidth="245.0" text="Constant pan left" />
+                              <Button fx:id="moveFour" mnemonicParsing="false" prefHeight="31.0" prefWidth="245.0" text="Constant pan right" />
                               <Button fx:id="moveFive" mnemonicParsing="false" prefHeight="31.0" prefWidth="243.0" text="Constant pan up" />
                               <Button fx:id="moveSix" mnemonicParsing="false" prefHeight="31.0" prefWidth="245.0" text="Constant pan down" />
                               <Button fx:id="moveSeven" mnemonicParsing="false" prefHeight="31.0" prefWidth="306.0" text="Custom" />
