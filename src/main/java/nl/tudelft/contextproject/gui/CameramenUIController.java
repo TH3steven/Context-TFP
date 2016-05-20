@@ -1,13 +1,16 @@
 package main.java.nl.tudelft.contextproject.gui;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import main.java.nl.tudelft.contextproject.ContextTFP;
@@ -40,11 +43,14 @@ public class CameramenUIController {
     @FXML private Button moveFive;
     @FXML private Button moveSix;
     @FXML private Button moveSeven;
+    @FXML private Button btnConfirm;
 
     @FXML private ImageView bigView;
     @FXML private ImageView smallView;
     
     @FXML private TextArea descriptionField;
+    
+    @FXML private TextField speed;
     
     @FXML private VBox smallViewBox;
     @FXML private VBox bigViewBox;
@@ -61,6 +67,9 @@ public class CameramenUIController {
     
     private Camera liveCam;
     private Camera currentCam;
+    
+    private int liveSpeed;
+    private int currentSpeed;
     
     private MovementType liveMovement;
     private MovementType currentMovement;
@@ -92,8 +101,12 @@ public class CameramenUIController {
         initializeViews();
         initializeButtons();
         initializeMovements();
+        initializeTextFields();
     }
-
+    
+    /**
+     * Initializes the labels in the gui.
+     */
     private void initializeLabels() {
         bigStatusLabel.setText("LIVE");
         bigStatusLabel.setStyle("-fx-text-fill: red;");
@@ -106,6 +119,9 @@ public class CameramenUIController {
         }
     }
     
+    /**
+     * Initializes the views.
+     */
     private void initializeViews() {
         Image actual = new Image("main/resources/placeholder_picture.jpg");
         bigView.setImage(actual);
@@ -113,7 +129,10 @@ public class CameramenUIController {
         Image current = new Image("main/resources/test3.jpg");
         smallView.setImage(current);
     }
-
+    
+    /**
+     * Initialize button styling and functionality.
+     */
     private void initializeButtons() {
         swap.setOnAction((event) -> {
             Image three = bigView.getImage();
@@ -129,15 +148,35 @@ public class CameramenUIController {
                 smallStatusLabel.setStyle("");
                 bigStatusLabel.setStyle("-fx-text-fill: red;");
             }
-            swapInfoTable();
             swapCurrentView();
+            swapInfoTable();
+            swapSpeed();
         });
         
         btnBack.setOnAction((event) -> {
             MenuController.show();
         });
+        
+        btnConfirm.setOnAction((event) -> {
+            if (!speed.getText().isEmpty()) {
+                int spd = Integer.parseInt(speed.getText());
+                if (spd > 100) {
+                    spd = 100;
+                }
+                if (live()) {                   
+                    liveSpeed = spd;
+                    speed.setText(String.valueOf(spd));
+                } else {
+                    currentSpeed = spd;
+                    speed.setText(String.valueOf(spd));
+                }
+            }
+        });
     }
     
+    /**
+     * Initialize movements.
+     */
     private void initializeMovements() {
         moveOne.setOnAction((event) -> {
             movement.setText(moveOne.getText());
@@ -175,37 +214,96 @@ public class CameramenUIController {
         });
     }
     
+    /**
+     * Initialize the textfields.
+     */
+    private void initializeTextFields() {
+        speed.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                String character = event.getCharacter();
+
+                if (!character.matches("[0-9]")) {
+                    event.consume();
+                } else if (speed.getText().length() == 3) {
+                    event.consume();
+                }
+            }
+        });
+    }
+    
+    /**
+     * Swap currentView.
+     */
     private void swapCurrentView() {
-        if (currentView == 0) {
+        if (live()) {
             currentView = 1;
         } else {
             currentView = 0;
         }
     }
     
+    /**
+     * Swap info table according to the big view.
+     */
     private void swapInfoTable() {
-        if (currentView == 0) {
-            Preset preset = currentCam.getPreset(2);
-            infoLabel.setText("Information about current camera");
-            cameraNumberLabel.setText(String.valueOf(currentCam.getNumber()));
-            presetLabel.setText(String.valueOf(preset.getId()));
-            movement.setText(MovementType.getName(currentMovement));
-            descriptionField.setText(preset.getDescription());
-        } else {
+        if (live()) {
             Preset preset = liveCam.getPreset(1);
             infoLabel.setText("Information about live camera");
             cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
             presetLabel.setText(String.valueOf(preset.getId()));
             movement.setText(MovementType.getName(liveMovement));
             descriptionField.setText(preset.getDescription());
+        } else {
+            Preset preset = currentCam.getPreset(2);
+            infoLabel.setText("Information about current camera");
+            cameraNumberLabel.setText(String.valueOf(currentCam.getNumber()));
+            presetLabel.setText(String.valueOf(preset.getId()));
+            movement.setText(MovementType.getName(currentMovement));
+            descriptionField.setText(preset.getDescription());
         }
     }
     
+    /**
+     * Swap speed according to the big view.
+     */
+    private void swapSpeed() {
+        if (live()) {
+            if (liveSpeed > 0) {
+                speed.setText(String.valueOf(liveSpeed));
+            } else {
+                speed.setText("");
+            }
+        } else {
+            if (currentSpeed > 0) {
+                speed.setText(String.valueOf(currentSpeed));
+            } else {
+                speed.setText("");
+            }
+        }
+    }
+    
+    /**
+     * set movement type to the big view.
+     * @param mt - the movement type to set.
+     */
     private void setMovement(MovementType mt) {
-        if (currentView == 0) {
+        if (live()) {
             liveMovement = mt;
         } else {
             currentMovement = mt;
+        }
+    }
+    
+    /**
+     * See what is currently on the big view.
+     * @return - whether it's the live camera on the view or the current camera.
+     */
+    private boolean live() {
+        if (currentView == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
