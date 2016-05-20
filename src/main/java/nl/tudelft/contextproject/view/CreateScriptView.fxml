@@ -7,13 +7,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CreateScriptController">
    <children>
       <TextField fx:id="addShot" layoutX="15.0" layoutY="479.0" prefHeight="25.0" prefWidth="70.0" AnchorPane.bottomAnchor="71.0" />
       <ChoiceBox fx:id="addCamera" layoutX="95.0" layoutY="479.0" prefHeight="25.0" prefWidth="40.0" AnchorPane.bottomAnchor="71.0" />
       <ChoiceBox fx:id="addPreset" layoutX="155.0" layoutY="479.0" prefHeight="25.0" prefWidth="40.0" AnchorPane.bottomAnchor="71.0" />
-      <TextField fx:id="addDescription" layoutX="208.0" layoutY="479.0" maxHeight="25.0" maxWidth="5000.0" minHeight="25.0" minWidth="440.0" promptText="Enter the description of the shot" AnchorPane.bottomAnchor="71.0" AnchorPane.leftAnchor="208.0" AnchorPane.rightAnchor="152.0" />
+      <TextField fx:id="addDescription" layoutX="208.0" layoutY="479.0" maxHeight="25.0" maxWidth="5000.0" minHeight="25.0" minWidth="100.0" promptText="Enter the description of the shot" AnchorPane.bottomAnchor="71.0" AnchorPane.leftAnchor="208.0" AnchorPane.rightAnchor="152.0" />
       <Button fx:id="btnAdd" layoutX="665.0" layoutY="479.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Add Event" AnchorPane.bottomAnchor="71.0" AnchorPane.rightAnchor="15.0" />
       <Button fx:id="btnSave" layoutX="686.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Save script" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
       <Button fx:id="btnBack" layoutX="16.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Cancel and return to menu" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
@@ -23,7 +24,7 @@
           <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" text="Shot" />
           <TableColumn fx:id="columnCamera" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" text="Camera #" />
             <TableColumn fx:id="columnPreset" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset #" />
-            <TableColumn fx:id="columnDescription" minWidth="300.0" prefWidth="-1.0" sortable="false" text="Event" />
+            <TableColumn fx:id="columnDescription" minWidth="200.0" prefWidth="-1.0" sortable="false" text="Event" />
             <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Up" />
             <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Down" />
             <TableColumn fx:id="columnAction" maxWidth="65.0" minWidth="65.0" prefWidth="-1.0" resizable="false" sortable="false" text="Remove" />
@@ -33,5 +34,15 @@
       <Label layoutX="95.0" layoutY="462.0" text="Camera" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="159.0" layoutY="462.0" text="Preset" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="212.0" layoutY="462.0" text="Description" AnchorPane.bottomAnchor="96.0" />
+      <HBox fx:id="editBox" layoutX="16.0" layoutY="507.0" prefHeight="25.0" prefWidth="770.0" visible="false" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
+         <children>
+            <TextField fx:id="btnEditShot" prefHeight="25.0" prefWidth="70.0" />
+            <ChoiceBox fx:id="btnEditCamera" prefHeight="25.0" prefWidth="50.0" />
+            <ChoiceBox fx:id="btnEditPreset" prefHeight="25.0" prefWidth="50.0" />
+            <TextField fx:id="btnEditDescription" maxHeight="25.0" maxWidth="10000.0" minHeight="25.0" minWidth="200.0" />
+            <Button fx:id="btnEditConfirm" mnemonicParsing="false" text="Confirm" />
+            <Button fx:id="btnEditRemove" mnemonicParsing="false" text="Remove" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
