@@ -1,6 +1,7 @@
 package main.java.nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,7 +16,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,7 +23,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Callback;
 
 import main.java.nl.tudelft.contextproject.ContextTFP;
 import main.java.nl.tudelft.contextproject.camera.Camera;
@@ -106,7 +105,7 @@ public class CreateScriptController {
      */
     private void allowEditing() {
         columnShot.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnShot.setOnEditCommit( (event) -> {
+        columnShot.setOnEditCommit(event -> {
             final int row = event.getTablePosition().getRow();
 
             ((Shot) event.getTableView().getItems().get(row)
@@ -116,7 +115,7 @@ public class CreateScriptController {
         });
 
         columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnDescription.setOnEditCommit( (event) -> {
+        columnDescription.setOnEditCommit(event -> {
             final int row = event.getTablePosition().getRow();
 
             ((Shot) event.getTableView().getItems().get(row)
@@ -175,33 +174,24 @@ public class CreateScriptController {
      */
     private void setFactories() {
         columnID.setCellValueFactory(
-                new PropertyValueFactory<Shot, Integer>("number"));
+            new PropertyValueFactory<Shot, Integer>("number"));
 
         columnShot.setCellValueFactory(
-                new PropertyValueFactory<Shot, String>("shotId"));
+            new PropertyValueFactory<Shot, String>("shotId"));
 
-        columnCamera.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
-            public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> c) {
-                final int num = c.getValue().getCamera().getNumber() + 1;
-                return new ReadOnlyObjectWrapper<Integer>(num);
-            }
-        });
+        columnCamera.setCellValueFactory(cellData ->
+            new SimpleIntegerProperty(cellData.getValue().getCamera().getNumber() + 1).asObject());
 
-        columnPreset.setCellValueFactory(new Callback<CellDataFeatures<Shot, Integer>, ObservableValue<Integer>>() {
-            public ObservableValue<Integer> call(CellDataFeatures<Shot, Integer> p) {
-                final int id = p.getValue().getPreset().getId() + 1;
-                return new ReadOnlyObjectWrapper<Integer>(id);
-            }
-        });
+        columnPreset.setCellValueFactory(cellData ->
+            new SimpleIntegerProperty(cellData.getValue().getPreset().getId() + 1).asObject());
 
         columnDescription.setCellValueFactory(
                 new PropertyValueFactory<Shot, String>("description"));
 
-        columnAction.setCellValueFactory( param -> 
-            new ReadOnlyObjectWrapper<>(param.getValue())
-        );
+        columnAction.setCellValueFactory(cellData -> 
+            new ReadOnlyObjectWrapper<>(cellData.getValue()));
 
-        columnAction.setCellFactory( param -> new TableCell<Shot, Shot>() {
+        columnAction.setCellFactory(cellData -> new TableCell<Shot, Shot>() {
             Button btnRemove = new Button("Remove");
 
             @Override
@@ -215,7 +205,7 @@ public class CreateScriptController {
 
                 setGraphic(btnRemove);
 
-                btnRemove.setOnAction( event -> {
+                btnRemove.setOnAction(event -> {
                     getTableView().getItems().remove(shot);
                     ContextTFP.getScript().getShots().remove(shot);
                 });
@@ -231,7 +221,7 @@ public class CreateScriptController {
 
         tableEvents.setItems(data);
 
-        btnAdd.setOnAction( event -> {
+        btnAdd.setOnAction(event -> {
             boolean emptyField = false;
 
             if (addCamera.getSelectionModel().isEmpty()) {
@@ -288,11 +278,11 @@ public class CreateScriptController {
      * Sets the onAction for the back button.
      */
     private void setBackButton() {
-        btnBack.setOnAction( event -> {
+        btnBack.setOnAction(event -> {
             if (!tableEvents.getItems().isEmpty()) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Confirm quitting");
-                alert.setHeaderText("Exiting will erase made changes");
+                alert.setHeaderText("Exiting will erase any unsaved changes");
                 alert.setContentText("Are you sure you want to quit? Any unsaved changes "
                         + "will not be saved");
 
@@ -311,7 +301,7 @@ public class CreateScriptController {
      * Sets the onAction for the save button.
      */
     private void setSaveButton() {
-        btnSave.setOnAction( event -> {
+        btnSave.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save script");
             fileChooser.setInitialFileName("script");
@@ -321,9 +311,10 @@ public class CreateScriptController {
 
             if (file != null) {
                 try {
+                    SaveScript.setSaveLocation(file.getAbsolutePath());
                     SaveScript.save(ContextTFP.getScript());
 
-                    SaveScript.setSaveLocation(file.getAbsolutePath());
+                    ContextTFP.getScript().setName(file.getName());
 
                     Alert alert = new Alert(AlertType.CONFIRMATION);
                     alert.setTitle("Confirm exiting");
@@ -354,6 +345,17 @@ public class CreateScriptController {
     }
 
     /**
+     * Sets if the table should be filled beforehand. This
+     * method is used to enable editing of the currently
+     * active script.
+     * 
+     * @param toFill True if the table should be filled.
+     */
+    public static void setFill(boolean toFill) {
+        fill = toFill;
+    }
+
+    /**
      * Shows this view.
      */
     public static void show() {
@@ -366,14 +368,5 @@ public class CreateScriptController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Sets if the table should be filled beforehand.
-     * 
-     * @param toFill True if the table should be filled.
-     */
-    public static void setFill(boolean toFill) {
-        fill = toFill;
     }
 }

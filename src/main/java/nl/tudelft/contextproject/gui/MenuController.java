@@ -7,7 +7,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -26,24 +25,33 @@ import java.io.IOException;
  */
 public class MenuController {
 
+    @FXML private Button btnCameraman;
+    @FXML private Button btnCreateScript;
+    @FXML private Button btnDirector;
+    @FXML private Button btnEditScript;
+    @FXML private Button btnPresets;
+    @FXML private Button btnPreview;
+    @FXML private Button btnLoadScript;
+
     @FXML private Label lblScript;
 
-    @FXML private Button btnCreateScript;
-    @FXML private Button btnLoadScript;
-    @FXML private Button btnPreview;
-    @FXML private Button btnPresets;
-    @FXML private Button btnEditScript;
-    @FXML private Button btnDirector;
-    @FXML private Button btnCameraman;
-
-    @FXML private TextField numberOfCameras;
-
+    /**
+     * Initialize method used by JavaFX.
+     */
     @FXML private void initialize() {
-        btnCreateScript.setOnAction((event) -> {
+        final String name = ContextTFP.getScript().getName();
+
+        if (name.equals("") || name == null) {
+            setLabel("None");
+        } else {
+            setLabel(name);
+        }
+
+        btnCreateScript.setOnAction(event -> {
             CreateScriptController.show();
         });
 
-        btnLoadScript.setOnAction((event) -> {
+        btnLoadScript.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select script to use");
             fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
@@ -54,6 +62,8 @@ public class MenuController {
                 try {
                     LoadScript.setLoadLocation(file.getAbsolutePath());
                     ContextTFP.setScript(LoadScript.load());
+                    
+                    ContextTFP.getScript().setName(file.getName());
 
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Info Dialog");
@@ -77,19 +87,19 @@ public class MenuController {
             }
         });
 
-        btnPreview.setOnAction((event) -> {
+        btnPreview.setOnAction(event -> {
             PreviewController.show();
         });
 
-        btnPresets.setOnAction((event) -> {
+        btnPresets.setOnAction(event -> {
             PresetController.show();
         });
 
-        btnDirector.setOnAction((event) -> {
+        btnDirector.setOnAction(event -> {
             CameraLiveController.show();
         });
 
-        btnEditScript.setOnAction((event) -> {
+        btnEditScript.setOnAction(event -> {
             CreateScriptController.setFill(true);
             CreateScriptController.show();
         });
@@ -102,7 +112,6 @@ public class MenuController {
      *      string: "Current script: " 
      */
     public void setLabel(String text) {
-        //TODO Observable label
         lblScript.setText("Current script: " + text);
     }
 
