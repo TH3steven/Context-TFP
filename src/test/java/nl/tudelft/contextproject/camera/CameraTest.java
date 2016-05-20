@@ -1,8 +1,11 @@
 package nl.tudelft.contextproject.camera;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.presets.Preset;
 import org.junit.After;
 import org.junit.Test;
 
@@ -179,8 +182,106 @@ public class CameraTest {
         cam.focus(656565);
         assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
     }
-    
 
+    /**
+     * Tests absPanTilt method.
+     * Also tests if the observer is actually called.
+     */
+    @Test
+    public void testAbsPanTilt() {
+        Camera cam = new Camera(new CameraSettings(30, 30, 0, 0));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.absPanTilt(45, 45);
+        assertEquals(45, cam.getSettings().getPan());
+        assertEquals(45, cam.getSettings().getTilt());
+        assertTrue(testOb.wasCalled());
+    }
+
+    /**
+     * Tests the absPan method.
+     * Also tests if the observer is actually called.
+     */
+    @Test
+    public void testAbsPan() {
+        Camera cam = new Camera(new CameraSettings(30, 0, 0, 0));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.absPan(45);
+        assertEquals(45, cam.getSettings().getPan());
+        assertTrue(testOb.wasCalled());
+    }
+
+    /**
+     * Tests the absTilt method.
+     * Also tests if the observer is actually called.
+     */
+    @Test
+    public void testAbsTilt() {
+        Camera cam = new Camera(new CameraSettings(0, 30, 0, 0));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.absTilt(45);
+        assertEquals(45, cam.getSettings().getTilt());
+        assertTrue(testOb.wasCalled());
+    }
+
+    /**
+     * Test the absZoom method.
+     * Also tests if the observer is called.
+     */
+    @Test
+    public void testAbsZoom() {
+        Camera cam = new Camera(new CameraSettings(0, 0, 30, 0));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.absZoom(45);
+        assertEquals(45, cam.getSettings().getZoom());
+        assertTrue(testOb.wasCalled());
+    }
+
+    /**
+     * Tests the addPreset method.
+     */
+    @Test
+    public void testAddPreset() {
+        Camera cam = new Camera(new CameraSettings(1, 33, 7, 10));
+        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65), 1);
+        cam.addPreset(p);
+        assertTrue(cam.getPresets().containsKey(p.getId()));
+    }
+
+    /**
+     * Tests the overwritePreset method.
+     */
+    @Test
+    public void testOverwritePreset() {
+        Camera cam = new Camera(new CameraSettings(1, 33, 7, 10));
+        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65), 1);
+        p.getToSet().setPan(130);
+        cam.addPreset(p);
+        cam.overwritePreset(p);
+        assertEquals(cam.getPreset(1).getToSet().getPan(), 130);
+        assertEquals(cam.getPreset(1).getToSet().getTilt(), 65);
+    }
+
+    /**
+     * Test the removePreset method.
+     */
+    @Test
+    public void testRemovePreset() {
+        Camera cam = new Camera(new CameraSettings(1, 10, 10, 10));
+        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65), 1);
+        Preset p2 = new InstantPreset(new CameraSettings(35, 35, 35, 30), 2);
+        cam.addPreset(p);
+        cam.addPreset(p2);
+        assertTrue(cam.getAllPresets().contains(p));
+        cam.removePreset(p);
+        assertFalse(cam.getAllPresets().contains(p));
+        assertTrue(cam.getAllPresets().contains(p2));
+        cam.removePreset(p2);
+        assertTrue(cam.getAllPresets().isEmpty());
+    }
     /**
      * Simple test observer used to see if an observer was actually
      * called.
