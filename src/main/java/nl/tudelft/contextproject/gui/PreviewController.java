@@ -262,7 +262,7 @@ public class PreviewController {
      * Initialize the ImageViews with their images.
      */
     private void initializeImages() {
-        actualCam.setImage(new Image("main/resources/placeholder_picture.jpg"));
+        actualCam.setImage(new Image("placeholder_picture.jpg"));
         Image imgOne = new Image(shots.get(0).getPreset().getImage());
         Image imgTwo = new Image(shots.get(1).getPreset().getImage());
         Image imgThree = new Image(shots.get(2).getPreset().getImage());
