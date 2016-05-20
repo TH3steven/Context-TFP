@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,13 +13,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.presets.MovementType;
-import main.java.nl.tudelft.contextproject.presets.Preset;
-import main.java.nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.presets.MovementType;
+import nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.script.Script;
 
 import java.io.IOException;
 
@@ -124,10 +124,10 @@ public class CameramanUIController {
      * Initializes the views.
      */
     private void initializeViews() {
-        Image actual = new Image("main/resources/placeholder_picture.jpg");
+        Image actual = new Image("placeholder_picture.jpg");
         bigView.setImage(actual);
 
-        Image current = new Image("main/resources/test3.jpg");
+        Image current = new Image("test3.jpg");
         smallView.setImage(current);
     }
     
