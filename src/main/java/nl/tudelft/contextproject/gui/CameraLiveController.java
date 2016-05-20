@@ -64,14 +64,14 @@ public class CameraLiveController {
         smallStatusLabel.setText("Up next");
         
         if (script.getNextShot() != null) {
-            smallShotNumberLabel.setText(script.getNextShot().getShotId());;
+            smallShotNumberLabel.setText(script.getNextShot().getShotId());
             smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
             smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
             smallDescriptionField.setText(script.getNextShot().getDescription());
         }
         
         if (script.getCurrentShot() != null) {
-            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());;
+            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());
             bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
             bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
             bigDescriptionField.setText(script.getCurrentShot().getDescription());
