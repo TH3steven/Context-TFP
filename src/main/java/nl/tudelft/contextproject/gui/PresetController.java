@@ -70,8 +70,7 @@ public class PresetController {
         setFactories();
         setActions();
         
-        tableView.getSortOrder().clear();
-        tableView.getSortOrder().add(presetColumn);
+        sort();
     }
 
     /**
@@ -189,6 +188,13 @@ public class PresetController {
      */
     private void addToTable(Preset p) {
         data.add(p);
+        sort();
+    }
+    
+    /**
+     * Sorts the tableview, ascending to preset id.
+     */
+    private void sort() {
         tableView.getSortOrder().clear();
         tableView.getSortOrder().add(presetColumn);
     }
