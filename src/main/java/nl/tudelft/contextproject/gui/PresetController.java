@@ -69,14 +69,22 @@ public class PresetController {
         applySettings();
         setFactories();
         setActions();
+        
+        sort();
     }
 
+    /**
+     * Applies javafx settings that can't be specified in the fxml.
+     */
     private void applySettings() {
         vBox.setAlignment(Pos.CENTER);
         cameraView.fitWidthProperty().bind(vBox.widthProperty());
         cameraView.fitHeightProperty().bind(vBox.heightProperty());
     }
 
+    /**
+     * Sets the factories for the table.
+     */
     private void setFactories() {
         presetColumn.setCellValueFactory(
                 new PropertyValueFactory<Preset, Integer>("id"));
@@ -85,6 +93,9 @@ public class PresetController {
                 new PropertyValueFactory<Preset, String>("description"));
     }
 
+    /**
+     * Adds all actions and listeners to the javafx components.
+     */
     private void setActions() {
         tableView.setItems(data);
 
@@ -116,7 +127,7 @@ public class PresetController {
 
         btnRemove.setOnAction((event) -> {
             int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
-            if (selectedIndex > 0) {
+            if (selectedIndex >= 0) {
                 Preset selected = tableView.getItems().get(selectedIndex);
                 Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
                 cam.removePreset(selected);
@@ -125,6 +136,10 @@ public class PresetController {
         });
     }
 
+    /**
+     * Method for adding a preset to the view and the model.
+     * @param id The id of the preset to add.
+     */
     private void addPreset(int id) {
         Preset newPreset = new InstantPreset(
                 new CameraSettings(1, 1, 1, 2000),
@@ -136,20 +151,21 @@ public class PresetController {
             cam.overwritePreset(newPreset);
             int newId = newPreset.getId();
             removePreset(newId);  
-            data.add(newPreset);
-            tableView.getSortOrder().clear();
-            tableView.getSortOrder().add(presetColumn);
+            addToTable(newPreset);
         } else {
             if (cam.addPreset(newPreset)) {
-                data.add(newPreset);
-                tableView.getSortOrder().clear();
-                tableView.getSortOrder().add(presetColumn);
+                addToTable(newPreset);
             } else {
                 confirmOverwrite(newPreset, cam);
             }
         }
     }
 
+    /**
+     * Shows a message box to confirm overwriting a preset.
+     * @param newPreset The preset which will overwrite another preset.
+     * @param cam The camera of the preset that will be overridden.
+     */
     private void confirmOverwrite(Preset newPreset, Camera cam) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirm overwriting");
@@ -162,25 +178,39 @@ public class PresetController {
             cam.overwritePreset(newPreset);
             int newId = newPreset.getId();
             removePreset(newId);  
-            data.add(newPreset);
-            tableView.getSortOrder().clear();
-            tableView.getSortOrder().add(presetColumn);
+            addToTable(newPreset);
         }
     }
-
+    
+    /**
+     * Used to add a preset to the table view.
+     * @param p The preset to add.
+     */
+    private void addToTable(Preset p) {
+        data.add(p);
+        sort();
+    }
+    
+    /**
+     * Sorts the tableview, ascending to preset id.
+     */
+    private void sort() {
+        tableView.getSortOrder().clear();
+        tableView.getSortOrder().add(presetColumn);
+    }
+    
+    /**
+     * Because the preset id might not be the same as the position in the list, 
+     * this method is required to remove a preset.
+     * @param id The id of the preset to remove.
+     */
     private void removePreset(int id) {
-        int position = -1;
-
         for (int i = 0; i < data.size(); i++) {
             Preset p = data.get(i);
             if (p.getId() == id) {
-                position = i;
+                data.remove(i);
                 break;
             }
-        }
-
-        if (position != -1) {
-            data.remove(position);
         }
     }
     

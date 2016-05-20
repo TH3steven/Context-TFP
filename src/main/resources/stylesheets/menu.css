@@ -1,0 +1,21 @@
+.button {
+    -fx-background-color: 
+        #eee,
+        #000000,
+        linear-gradient(#666, #444);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.button:hover {
+  -fx-background-color:
+        #eee,
+        #000000,
+        linear-gradient(#444, #666);
+}
+
+.button Text {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
+}

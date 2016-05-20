@@ -102,6 +102,29 @@ public class Script implements Iterator<Shot> {
             timelines.put(s.getCamera().getNumber(), t);
         }
     }
+    
+    /**
+     * Returns the current shot, null if there is no such shot.
+     * @return Cureent shot.
+     */
+    public Shot getCurrentShot() {
+        try {
+            return shots.get(current);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the shot after the current shot, null if there is no such shot.
+     * @return Shot after the current shot.
+     */
+    public Shot getNextShot() {
+        if (hasNext()) {
+            return shots.get(current + 1);
+        }
+        return null;
+    }
 
     @Override
     public boolean hasNext() {
