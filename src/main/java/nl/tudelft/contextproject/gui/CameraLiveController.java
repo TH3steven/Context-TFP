@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
-import main.java.nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.ContextTFP;
 
 import java.io.IOException;
 
@@ -30,10 +30,10 @@ public class CameraLiveController {
     }
 
     private void initializeViews() {
-        Image actual = new Image("main/resources/placeholder_picture.jpg");
+        Image actual = new Image("placeholder_picture.jpg");
         bigView.setImage(actual);
 
-        Image current = new Image("main/resources/test3.jpg");
+        Image current = new Image("test3.jpg");
         smallView.setImage(current);
     }
 

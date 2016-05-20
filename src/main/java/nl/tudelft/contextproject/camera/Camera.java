@@ -1,6 +1,6 @@
-package main.java.nl.tudelft.contextproject.camera;
+package nl.tudelft.contextproject.camera;
 
-import main.java.nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.presets.Preset;
 
 import java.util.Collection;
 import java.util.HashMap;

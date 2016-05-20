@@ -1,10 +1,7 @@
-package test.java.nl.tudelft.contextproject.camera;
+package nl.tudelft.contextproject.camera;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
 
 import org.junit.After;
 import org.junit.Test;

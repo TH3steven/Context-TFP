@@ -1,4 +1,4 @@
-package main.java.nl.tudelft.contextproject.gui;
+package nl.tudelft.contextproject.gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,11 +20,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-import main.java.nl.tudelft.contextproject.ContextTFP;
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.InstantPreset;
-import main.java.nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.ContextTFP;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.presets.Preset;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class PresetController {
         }
 
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
-        cameraView.setImage(new Image("main/resources/placeholder_picture.jpg"));
+        cameraView.setImage(new Image("placeholder_picture.jpg"));
 
         applySettings();
         setFactories();

@@ -1,10 +1,10 @@
-package main.java.nl.tudelft.contextproject.saveLoad;
+package nl.tudelft.contextproject.saveLoad;
 
-import main.java.nl.tudelft.contextproject.camera.Camera;
-import main.java.nl.tudelft.contextproject.camera.CameraSettings;
-import main.java.nl.tudelft.contextproject.presets.Preset;
-import main.java.nl.tudelft.contextproject.script.Script;
-import main.java.nl.tudelft.contextproject.script.Shot;
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.FileWriter;
 import java.io.IOException;
