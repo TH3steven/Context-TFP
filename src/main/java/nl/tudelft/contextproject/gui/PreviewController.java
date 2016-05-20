@@ -69,13 +69,11 @@ public class PreviewController {
     private List<Shot> shots;
     private List<ImageView> views;
     private Script script;
-    //private Camera actualCamera;
 
     @FXML private void initialize() {
 
         script = ContextTFP.getScript();
         shots = script.getShots();
-        //actualCamera = shots.get(0).getCamera();
         
         currentShot = new SimpleIntegerProperty(1);
 
@@ -318,13 +316,7 @@ public class PreviewController {
         shots.add(shotSix);
         
         currentFirst = shots.get(0);
-    }
-    
-//    private void initializeShots() {
-//        shots = script.getShots();
-//    }
-    
-    
+    }    
 
     /**
      * Fills the the choicebox with shots the user can choose from.
