@@ -11,7 +11,6 @@ import java.util.Objects;
  * Implements the Iterator interface so it can apply
  * presets as the list of presets is being traversed.
  * 
- * @author Bart van Oort
  * @since 0.2
  */
 public class Script implements Iterator<Shot> {
@@ -33,6 +32,11 @@ public class Script implements Iterator<Shot> {
     private int current;
     
     /**
+     * The name of the script as displayed on the ui.
+     */
+    private String name;
+    
+    /**
      * Creates a script that starts from the beginning
      * with specified shots.
      * @param shots The actual script of the different shots in order of appearance.
@@ -40,6 +44,7 @@ public class Script implements Iterator<Shot> {
     public Script(List<Shot> shots) {
         this.shots = shots;
         current = 0;
+        name = "";
         timelines = new HashMap<Integer, Timeline>();
         initTimelines();
     }
@@ -90,6 +95,7 @@ public class Script implements Iterator<Shot> {
      * If the shot is associated to a camera that does not have
      * a timeline associated with it in the script, it will create
      * a new timeline for it.
+     * 
      * @param s shot to be added.
      */
     public void addShot(Shot s) {
@@ -101,6 +107,45 @@ public class Script implements Iterator<Shot> {
             t.addShot(s);
             timelines.put(s.getCamera().getNumber(), t);
         }
+    }
+    
+    /**
+     * Returns the current shot, null if there is no such shot.
+     * @return Cureent shot.
+     */
+    public Shot getCurrentShot() {
+        try {
+            return shots.get(current);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the shot after the current shot, null if there is no such shot.
+     * @return Shot after the current shot.
+     */
+    public Shot getNextShot() {
+        if (hasNext()) {
+            return shots.get(current + 1);
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the name of the script. The name is set when a script is saved.
+     * @return The name of the script.
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * Sets the name of the script.
+     * @param name The name of the script.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

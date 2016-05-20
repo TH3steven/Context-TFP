@@ -3,7 +3,7 @@
  * may be modified without notice of the original creators. This modified version may
  * be distributed for commercial use when appropriate credit is given where due.
  * 
- * See http://creativecommons.org/licenses/by/4.0/
+ * <p>See http://creativecommons.org/licenses/by/4.0/
  */
 
 package nl.tudelft.contextproject;
@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.gui.MenuController;
@@ -110,7 +111,7 @@ public class ContextTFP extends Application {
      * 
      * @param script The script to be used.
      */
-    public void setScript(Script script) {
+    public static void setScript(Script script) {
         ContextTFP.script = script;
     }
 
