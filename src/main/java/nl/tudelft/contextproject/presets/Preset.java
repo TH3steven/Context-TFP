@@ -31,7 +31,7 @@ public abstract class Preset {
         this.description = "";
         this.toSet = toSet;
         this.id = identifier;
-        imageLocation = "";
+        this.imageLocation = "error.jpg";
     }
     
     /**
