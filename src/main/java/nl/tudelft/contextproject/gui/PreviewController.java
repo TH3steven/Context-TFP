@@ -70,6 +70,7 @@ public class PreviewController {
     private List<Shot> shots;
     private List<ImageView> views;
     private Script script;
+    private List<Image> images;
 
     @FXML private void initialize() {
 
@@ -92,19 +93,6 @@ public class PreviewController {
         highlight2.setOpacity(0);
         highlight3.setOpacity(0);
         highlight4.setOpacity(0);
-    }
-
-    /**
-     * Shows the next image on the actual camera screen.
-     */
-    private void nextImage() {
-        if (currentShot.get() == shots.size()) {
-            timeline.stop();
-            return;
-        }
-
-        showShot(shots.get(currentShot.get()));
-        timeline.playFromStart();
     }
 
     /**
@@ -283,39 +271,7 @@ public class PreviewController {
     /**
      * Make the dummy shots.
      */
-    private void initializeShots() {
-        CameraSettings dummySettings = new CameraSettings();
-        Camera dummyCamera = new Camera();
-
-        InstantPreset presetOne = new InstantPreset(dummySettings, 1);
-        InstantPreset presetTwo = new InstantPreset(dummySettings, 2);
-        InstantPreset presetThree = new InstantPreset(dummySettings, 3);
-        InstantPreset presetFour = new InstantPreset(dummySettings, 4);
-        InstantPreset presetFive = new InstantPreset(dummySettings, 5);
-        InstantPreset presetSix = new InstantPreset(dummySettings, 6);
-
-        presetOne.setImageLocation("placeholder_picture.jpg");
-        presetTwo.setImageLocation("test2.jpg");
-        presetThree.setImageLocation("test3.jpg");
-        presetFour.setImageLocation("test4.jpg");
-        presetFive.setImageLocation("test5.jpg");
-        presetSix.setImageLocation("test6.jpg");
-
-        Shot shotOne = new Shot(1, dummyCamera, presetOne);
-        Shot shotTwo = new Shot(2, dummyCamera, presetTwo);
-        Shot shotThree = new Shot(3, dummyCamera, presetThree);
-        Shot shotFour = new Shot(4, dummyCamera, presetFour);
-        Shot shotFive = new Shot(5, dummyCamera, presetFive);
-        Shot shotSix = new Shot(6, dummyCamera, presetSix);
-
-        shots = new ArrayList<Shot>();
-        shots.add(shotOne);
-        shots.add(shotTwo);
-        shots.add(shotThree);
-        shots.add(shotFour);
-        shots.add(shotFive);
-        shots.add(shotSix);
-        
+    private void initializeShots() {       
         currentFirst = shots.get(0);
     }    
 
@@ -361,6 +317,19 @@ public class PreviewController {
         } 
         
         return returnValue;
+    }
+    
+    /**
+     * Shows the next image on the actual camera screen.
+     */
+    private void nextImage() {
+        if (currentShot.get() == shots.size()) {
+            timeline.stop();
+            return;
+        }
+
+        showShot(shots.get(currentShot.get()));
+        timeline.playFromStart();
     }
 
     /**
