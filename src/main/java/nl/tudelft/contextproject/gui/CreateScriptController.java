@@ -1,6 +1,8 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,10 +15,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -39,6 +41,8 @@ import java.util.Optional;
  * This class is responsible for the functions of the create script screen, to
  * allow for easy creation and saving of a new script.
  * 
+ * <p>The view section is defined under view/CreateScriptView.fxml
+ * 
  * @since 0.2
  */
 public class CreateScriptController {
@@ -48,10 +52,14 @@ public class CreateScriptController {
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
+    @FXML private Button btnEditConfirm;
+    @FXML private Button btnEditRemove;
     @FXML private Button btnSave;
 
     @FXML private ChoiceBox<Number> addCamera;
     @FXML private ChoiceBox<Number> addPreset;
+    @FXML private ChoiceBox<Number> editCamera;
+    @FXML private ChoiceBox<Number> editPreset;
 
     @FXML private HBox editBox;
 
@@ -65,6 +73,8 @@ public class CreateScriptController {
 
     @FXML private TextField addShot;
     @FXML private TextField addDescription;
+    @FXML private TextField editShot;
+    @FXML private TextField editDescription;
 
     /**
      * Initialize method used by JavaFX.
@@ -90,83 +100,109 @@ public class CreateScriptController {
             fillTable(ContextTFP.getScript().getShots());
             fill = false;
         }
-        
+
         // Store the current script locally to reduce traffic.
         script = ContextTFP.getScript();
     }
 
     /**
-     * Fills the table with the shots given in the argument.
+     * Sets if the table should be filled beforehand. This method is used to 
+     * enable editing of the currently active script.
      * 
-     * @param shots The shot the table should be filled with.
-     */
-    public void fillTable(List<Shot> shots) {
-        tableEvents.getItems().addAll(shots);
-    }
-
-    /**
-     * Sets if the table should be filled beforehand. This
-     * method is used to enable editing of the currently
-     * active script.
+     * <p>When the argument is {@code true}, the {@link #fillTable(List)} method
+     * is called after this view is loaded.
      * 
-     * @param bFill True if the table should be filled.
+     * @param bFill If the table should be filled.
      */
     public static void setFill(boolean bFill) {
         fill = bFill;
     }
 
     /**
-     * Allows for editable rows in the table.
+     * Fills the tableView of the create script screen with the shots
+     * listed in the argument. It makes sure these elements get displayed
+     * in the table.
+     * 
+     * @param shots A {@link List} of shots that the tableView should be
+     *      filled with.
+     */
+    private void fillTable(List<Shot> shots) {
+        tableEvents.getItems().addAll(shots);
+    }
+
+    /**
+     * Allows for editable rows in the table. This method defines the
+     * necessary components for row by row editing of the table.
      */
     private void allowEditing() {
+        editBox.setVisible(false);
+        editBox.toBack();
 
-        /**
-         * TODO Finish WIP code
-         * This code is being worked on but is not finished before sprint 4.
-         * 
+        // Allows for getting the last selected row.
+        ObjectProperty<TableRow<Shot>> lastSelectedRow = new SimpleObjectProperty<>();
+        tableEvents.setRowFactory(tableView -> {
+            TableRow<Shot> row = new TableRow<Shot>();
+            
+            row.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                if (isNowSelected) {
+                    lastSelectedRow.set(row);
+                } 
+            });
+            
+            return row;
+        });
 
         tableEvents.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
             if (nv != null) {
-                btnEditShot.setText(nv.getShotId());
-                btnEditCamera.getSelectionModel().select(nv.getCamera().getNumber());
-                btnEditPreset.getSelectionModel().select(nv.getPreset().getId());
-                btnEditDescription.setText(nv.getDescription());
+                editShot.setText(nv.getShotId());
+                editCamera.getSelectionModel().select(nv.getCamera().getNumber());
+                editPreset.getSelectionModel().select(nv.getPreset().getId());
+                editDescription.setText(nv.getDescription());
+                
+                editBox.setVisible(true);
+            } else {
+                editBox.setVisible(false);
+                editBox.toBack();
             }
         });
 
         tableEvents.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-
-                editBox.setVisible(true);
+                
+                // Make sure the HBox is drawn over the selected row.
+                editBox.setLayoutY(lastSelectedRow.get().getLayoutY()
+                        + editBox.getTranslateY()
+                        + 41);
                 editBox.toFront();
             }
         });
-
-         */
-
-        columnShot.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnShot.setOnEditCommit(event -> {
-            final int row = event.getTablePosition().getRow();
-
-            ((Shot) event.getTableView().getItems().get(row)
-                    ).setShotId(event.getNewValue());
-
-            script.getShots().get(row).setShotId(event.getNewValue());
+        
+        btnEditConfirm.setOnAction(event -> {
+            Shot shot = lastSelectedRow.get().getItem();
+            
+            shot.setShotId(editShot.getText());
+            shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
+            shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
+                    .getPreset(editPreset.getSelectionModel().getSelectedIndex()));
+            shot.setDescription(editDescription.getText());
+            
+            editBox.setVisible(false);
+            editBox.toBack();
+            tableEvents.refresh();
         });
 
-        columnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnDescription.setOnEditCommit(event -> {
-            final int row = event.getTablePosition().getRow();
-
-            ((Shot) event.getTableView().getItems().get(row)
-                    ).setDescription(event.getNewValue());
-
-            script.getShots().get(row).setDescription(event.getNewValue());
+        btnEditRemove.setOnAction(event -> {
+            Shot shot = lastSelectedRow.get().getItem();
+            tableEvents.getItems().remove(shot);
+            
+            editBox.setVisible(false);
+            editBox.toBack();
         });
     }
 
     /**
-     * Fills the choicebox for selecting a camera.
+     * Fills the choiceboxes for selecting a camera, both the box that
+     * adds a new camera as the box that is shown when editing a shot.
      */
     private void initCamera() {
         final List<Number> cameraList = new ArrayList<Number>();
@@ -176,10 +212,11 @@ public class CreateScriptController {
         }
 
         addCamera.setItems(FXCollections.observableArrayList(cameraList));
+        editCamera.setItems(FXCollections.observableArrayList(cameraList));
     }
 
     /**
-     * Fills the choicebox for selecting a preset, given the selection
+     * Fills the choiceboxes for selecting a preset, given the selection
      * of a certain camera.
      */
     private void initPreset() {
@@ -201,21 +238,19 @@ public class CreateScriptController {
                 addPreset.setDisable(true);
             }
         });
-
-        addCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+        
+        editCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             presetList.clear();
 
             if (newV != null) {
-                addPreset.setDisable(false);
-
                 for (int i = 0; i < Camera.
-                        getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                        getCamera(editCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
                     presetList.add(i + 1);
                 }
 
-                addPreset.setItems(FXCollections.observableArrayList(presetList));
+                editPreset.setItems(FXCollections.observableArrayList(presetList));
             } else {
-                addPreset.setDisable(true);
+                editPreset.setDisable(true);
             }
         });
 
@@ -268,7 +303,7 @@ public class CreateScriptController {
     }
 
     /**
-     * Sets the onAction for the add button.
+     * Sets the onAction for the add new camera button.
      */
     private void setAddButton() {
         final ObservableList<Shot> data = FXCollections.observableArrayList();
@@ -400,7 +435,8 @@ public class CreateScriptController {
     }
 
     /**
-     * Shows this view.
+     * Calling this method shows this view in the middle of the rootLayout,
+     * forcing the current view to disappear.
      */
     public static void show() {
         try {
