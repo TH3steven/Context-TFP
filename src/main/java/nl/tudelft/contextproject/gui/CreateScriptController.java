@@ -5,7 +5,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +21,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -173,7 +174,7 @@ public class CreateScriptController {
         });
 
         tableEvents.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            if (event.getClickCount() == 2 && lastSelectedRow.get() != null) {
                 // Make sure the HBox is drawn over the selected row.
                 editBox.setLayoutY(lastSelectedRow.get().getLayoutY()
                         + editBox.getTranslateY()
@@ -194,16 +195,17 @@ public class CreateScriptController {
             editDoneAction();
         });
         
-        EventHandler<ActionEvent> addResourceHandler = event -> {
-            if (lastSelectedRow.get() != null) {
+        EventHandler<KeyEvent> addResourceHandler = event -> {
+            if (lastSelectedRow.get() != null && event.getCode() == KeyCode.ENTER) {
                 editConfirmAction(lastSelectedRow.get().getItem());
             }
         };
 
-        editShot.setOnAction(addResourceHandler);
-        editCamera.setOnAction(addResourceHandler);
-        editPreset.setOnAction(addResourceHandler);
-        editDescription.setOnAction(addResourceHandler);
+        editBox.setOnKeyPressed(addResourceHandler);
+        editShot.setOnKeyReleased(addResourceHandler);
+        editCamera.setOnKeyReleased(addResourceHandler);
+        editPreset.setOnKeyReleased(addResourceHandler);
+        editDescription.setOnKeyReleased(addResourceHandler);
     }
     
     /**
@@ -226,8 +228,6 @@ public class CreateScriptController {
     private void editDoneAction() {
         editBox.setVisible(false);
         editBox.toBack();
-        btnEditConfirm.setDefaultButton(false);
-        btnAdd.setDefaultButton(true);
         tableEvents.refresh();
     }
 
