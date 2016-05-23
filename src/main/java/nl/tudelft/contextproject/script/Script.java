@@ -44,7 +44,7 @@ public class Script implements Iterator<Shot> {
      */
     public Script(List<Shot> shots) {
         this.shots = shots;
-        current = 0;
+        current = -1;
         name = "";
         timelines = new HashMap<Integer, Timeline>();
         initTimelines();
@@ -123,7 +123,7 @@ public class Script implements Iterator<Shot> {
     
     /**
      * Returns the current shot, null if there is no such shot.
-     * @return Cureent shot.
+     * @return Current shot.
      */
     public Shot getCurrentShot() {
         try {
@@ -188,9 +188,9 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
+        current++;
         Shot s = shots.get(current);
         s.execute();
-        current++;
         return s;
 
     }
