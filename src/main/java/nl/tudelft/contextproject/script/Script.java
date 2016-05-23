@@ -187,12 +187,16 @@ public class Script implements Iterator<Shot> {
 
     /**
      * Does what {@link Iterator#next} does, but also
-     * executes the shot ({@link Shot#execute()} while doing so.
+     * executes the shot ({@link Shot#execute()} while doing so. 
+     * The method also makes sure the next preset of the camera is loaded.
      */
     @Override
     public Shot next() {
-        Shot old = shots.get(current);
-        timelines.get(old.getCamera().getNumber()).nextPreset(old);
+        if (current > -1) {
+            Shot old = shots.get(current);
+            timelines.get(old.getCamera().getNumber()).nextPreset(old);
+        }
+        
         current++;
         Shot next = shots.get(current);
         next.execute();
