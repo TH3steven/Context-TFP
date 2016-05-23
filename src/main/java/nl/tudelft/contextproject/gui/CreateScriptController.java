@@ -5,6 +5,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -95,6 +98,9 @@ public class CreateScriptController {
 
         // Allows the user to press ENTER to add a shot.
         btnAdd.setDefaultButton(true);
+        
+        // Removes the "No content in table" label.
+        tableEvents.setPlaceholder(new Label(""));
 
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
@@ -146,58 +152,83 @@ public class CreateScriptController {
             row.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
                 if (isNowSelected) {
                     lastSelectedRow.set(row);
-                } 
+                }
             });
             
             return row;
         });
 
         tableEvents.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
-            if (nv != null) {
+            if (nv != null) {                
                 editShot.setText(nv.getShotId());
                 editCamera.getSelectionModel().select(nv.getCamera().getNumber());
                 editPreset.getSelectionModel().select(nv.getPreset().getId());
                 editDescription.setText(nv.getDescription());
-                
-                editBox.setVisible(true);
-            } else {
-                editBox.setVisible(false);
-                editBox.toBack();
+
+                if (ov != nv && ov != null) {
+                    // Commit edit?
+                    editDoneAction();
+                }
             }
         });
 
         tableEvents.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                
                 // Make sure the HBox is drawn over the selected row.
                 editBox.setLayoutY(lastSelectedRow.get().getLayoutY()
                         + editBox.getTranslateY()
-                        + 41);
+                        + 40);
                 editBox.toFront();
+                editBox.setVisible(true);
             }
         });
         
         btnEditConfirm.setOnAction(event -> {
-            Shot shot = lastSelectedRow.get().getItem();
-            
-            shot.setShotId(editShot.getText());
-            shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
-            shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(editPreset.getSelectionModel().getSelectedIndex()));
-            shot.setDescription(editDescription.getText());
-            
-            editBox.setVisible(false);
-            editBox.toBack();
-            tableEvents.refresh();
+            editConfirmAction(lastSelectedRow.get().getItem());
         });
 
         btnEditRemove.setOnAction(event -> {
             Shot shot = lastSelectedRow.get().getItem();
             tableEvents.getItems().remove(shot);
-            
-            editBox.setVisible(false);
-            editBox.toBack();
+
+            editDoneAction();
         });
+        
+        EventHandler<ActionEvent> addResourceHandler = event -> {
+            if (lastSelectedRow.get() != null) {
+                editConfirmAction(lastSelectedRow.get().getItem());
+            }
+        };
+
+        editShot.setOnAction(addResourceHandler);
+        editCamera.setOnAction(addResourceHandler);
+        editPreset.setOnAction(addResourceHandler);
+        editDescription.setOnAction(addResourceHandler);
+    }
+    
+    /**
+     * Sets the action to be taken when an edit is complete.
+     * @param shot The shot that is edited.
+     */
+    private void editConfirmAction(Shot shot) {
+        shot.setShotId(editShot.getText());
+        shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
+        shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
+                .getPreset(editPreset.getSelectionModel().getSelectedIndex()));
+        shot.setDescription(editDescription.getText());
+        
+        editDoneAction();
+    }
+    
+    /**
+     * Sets the actions to be done when editing a row is finished.
+     */
+    private void editDoneAction() {
+        editBox.setVisible(false);
+        editBox.toBack();
+        btnEditConfirm.setDefaultButton(false);
+        btnAdd.setDefaultButton(true);
+        tableEvents.refresh();
     }
 
     /**
@@ -316,26 +347,24 @@ public class CreateScriptController {
             if (addCamera.getSelectionModel().isEmpty()) {
                 addCamera.setStyle("-fx-border-color: red;");
                 emptyField = true;
-            } else {
-                addCamera.setStyle("");
             }
 
             if (addPreset.getSelectionModel().isEmpty()) {
                 addPreset.setStyle("-fx-border-color: red;");
                 emptyField = true;
-            } else {
-                addPreset.setStyle("");
             }
 
             if (addDescription.getText().isEmpty()) {
                 addDescription.setStyle("-fx-border-color: red;");
                 emptyField = true;
-            } else {
-                addPreset.setStyle("");
             }
 
             if (!emptyField) {
                 int id;
+                
+                addCamera.setStyle("");
+                addPreset.setStyle("");
+                addDescription.setStyle("");
 
                 if (tableEvents.getItems().size() > 0) {
                     id = tableEvents.getItems().get(tableEvents.getItems().size() - 1).getNumber() + 1;
