@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Class to represent a script of presets.
@@ -47,6 +48,7 @@ public class Script implements Iterator<Shot> {
         name = "";
         timelines = new HashMap<Integer, Timeline>();
         initTimelines();
+        initPresetLoading();
     }
 
     /**
@@ -87,6 +89,16 @@ public class Script implements Iterator<Shot> {
                 t.addShot(s);
                 timelines.put(s.getCamera().getNumber(), t);
             }
+        }
+    }
+    
+    /**
+     * Loads the first presets of all the cameras.
+     */
+    private void initPresetLoading() {
+        Set<Integer> keys = timelines.keySet();
+        for (Integer i : keys) {
+            timelines.get(i).initPreset();
         }
     }
     
