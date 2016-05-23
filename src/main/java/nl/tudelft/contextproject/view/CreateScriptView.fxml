@@ -22,13 +22,12 @@
       <Button fx:id="btnBack" layoutX="16.0" layoutY="536.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Cancel and return to menu" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
       <TableView fx:id="tableEvents" editable="true" layoutX="15.0" layoutY="14.0" prefHeight="440.0" prefWidth="770.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <columns>
+            <TableColumn fx:id="columnReorder" editable="false" maxWidth="15.0" minWidth="15.0" prefWidth="-1.0" resizable="false" sortable="false" />
             <TableColumn fx:id="columnID" maxWidth="60.0" minWidth="30.0" prefWidth="-1.0" resizable="false" sortable="false" text="ID" />
           <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" text="Shot" />
           <TableColumn fx:id="columnCamera" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" text="Camera #" />
             <TableColumn fx:id="columnPreset" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset #" />
             <TableColumn fx:id="columnDescription" minWidth="200.0" prefWidth="-1.0" sortable="false" text="Event" />
-            <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Up" />
-            <TableColumn maxWidth="40.0" minWidth="40.0" prefWidth="-1.0" resizable="false" sortable="false" text="Down" />
             <TableColumn fx:id="columnAction" maxWidth="65.0" minWidth="65.0" prefWidth="-1.0" resizable="false" sortable="false" text="Remove" />
         </columns>
       </TableView>
@@ -40,7 +39,7 @@
          <children>
             <TextField fx:id="editShot" prefHeight="25.0" prefWidth="70.0">
                <HBox.margin>
-                  <Insets bottom="2.0" left="32.0" top="2.0" />
+                  <Insets bottom="2.0" left="42.0" top="2.0" />
                </HBox.margin>
                <opaqueInsets>
                   <Insets />
