@@ -160,9 +160,12 @@ public class Script implements Iterator<Shot> {
         this.name = name;
     }
 
+    /**
+     * Returns true if there is a next shot, the +1 is used because we initialize with -1.
+     */
     @Override
     public boolean hasNext() {
-        return current < shots.size();
+        return current + 1 < shots.size();
     }
 
     @Override
