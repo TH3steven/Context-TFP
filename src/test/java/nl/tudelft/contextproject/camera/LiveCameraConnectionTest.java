@@ -1,6 +1,5 @@
 package nl.tudelft.contextproject.camera;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -11,11 +10,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-*/
 
-//import com.sun.net.httpserver.HttpExchange;
-
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+*/
 
 import org.junit.Before;
 //import org.junit.BeforeClass;
@@ -24,8 +22,9 @@ import org.junit.Test;
 public class LiveCameraConnectionTest {
     
     private static boolean doTests = true;
+    private static final int MAX_MOV_OFFSET = 2;
     
-    private static HttpServer server;
+    //private static HttpServer server;
     private LiveCameraConnection connection;
     
     
@@ -83,18 +82,27 @@ public class LiveCameraConnectionTest {
     @Test
     public void testAbsPanTilt() throws InterruptedException {
         if (doTests) {
-            assertTrue(connection.absPanTilt(1965, 31965));
-            Thread.sleep(5000);
+            assertTrue(connection.absPanTilt(19965, 19965));
+            Thread.sleep(4000);
             CameraSettings curSet = connection.getCurrentCameraSettings();
-            assertEquals(1965, curSet.getPan());
-            assertEquals(31965, curSet.getTilt());
+            assertTrue(19965 - MAX_MOV_OFFSET <= curSet.getPan());
+            assertTrue(19965 + MAX_MOV_OFFSET >= curSet.getPan());
+            assertTrue(19965 - MAX_MOV_OFFSET <= curSet.getTilt());
+            assertTrue(19965 + MAX_MOV_OFFSET >= curSet.getTilt());
         }
     }
 
     @Test
-    public void testAbsPan() {
+    public void testAbsPan() throws InterruptedException {
         if (doTests) {
-            fail("Not yet implemented");
+            CameraSettings before = connection.getCurrentCameraSettings();
+            assertTrue(connection.absPan(31965));
+            Thread.sleep(4000);
+            CameraSettings after = connection.getCurrentCameraSettings();
+            assertTrue(before.getTilt() - MAX_MOV_OFFSET <= after.getTilt());
+            assertTrue(before.getTilt() + MAX_MOV_OFFSET >= after.getTilt());
+            assertTrue(31965 - MAX_MOV_OFFSET <= after.getPan());
+            assertTrue(31965 + MAX_MOV_OFFSET >= after.getPan());
         }
     }
 

@@ -22,6 +22,18 @@ public class LiveCameraConnection extends CameraConnection {
     
     public static final String CAMERA_MODEL = "AW-HE130";
     
+    public static final int PAN_LIMIT_LOW = 11528;
+    public static final int PAN_LIMIT_HIGH = 54005;
+    
+    public static final int TILT_LIMIT_LOW = 7283;
+    public static final int TILT_LIMIT_HIGH = 36408;
+    
+    public static final int ZOOM_LIMIT_LOW = 1365;
+    public static final int ZOOM_LIMIT_HIGH = 4095;
+
+    public static final int FOCUS_LIMIT_LOW = 1365;
+    public static final int FOCUS_LIMIT_HIGH = 4095;
+    
     private static final int READ_TIMEOUT = 5000;
     
     private String address;
@@ -113,9 +125,11 @@ public class LiveCameraConnection extends CameraConnection {
         connection.setRequestMethod("GET");
         connection.setReadTimeout(READ_TIMEOUT);
         connection.connect();
+        System.out.println("Sending request: " + url.toString()); // TODO: Print statement
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String response = reader.readLine();
         reader.close();
+        System.out.println("Response: " + response);
         return response != null ? response : "";
     }
     
@@ -163,15 +177,21 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     public CameraSettings getCurrentCameraSettings() {
         try {
-            URL panTiltUrl = buildPanTiltHeadControlURL("%23APC");
-            URL zoomUrl = buildPanTiltHeadControlURL("%23GZ");
-            String panTiltRes = sendRequest(panTiltUrl);
-            String zoomRes = sendRequest(zoomUrl);
-            if (panTiltRes != null && panTiltRes.startsWith("aPC") && zoomRes.startsWith("gz")) {
+            String autoFocusRes = sendRequest(buildPanTiltHeadControlURL("%23D1"));
+            String panTiltRes = sendRequest(buildPanTiltHeadControlURL("%23APC"));
+            String zoomRes = sendRequest(buildPanTiltHeadControlURL("%23GZ"));
+            if (panTiltRes != null && panTiltRes.startsWith("aPC") && zoomRes.startsWith("gz")
+                    && autoFocusRes.startsWith("d1")) {
                 int pan = Integer.parseInt(panTiltRes.substring(3, 7), 16);
                 int tilt = Integer.parseInt(panTiltRes.substring(7, 11), 16);
-                int zoom = (int) Math.round((Integer.parseInt(zoomRes.substring(2, 5), 16) - 1365) / 27.3);
-                int focus = lastKnown.getFocus(); //TODO Fix this.
+                int zoom = Integer.parseInt(zoomRes.substring(2, 5), 16);
+                int focus = -1;
+                if (Integer.parseInt(autoFocusRes.substring(2)) == 1) {
+                    autoFocus = true;
+                } else {
+                    String focusRes = sendRequest(buildPanTiltHeadControlURL("%23GF"));
+                    focus = Integer.parseInt(focusRes.substring(2), 16);
+                }
                 lastKnown = new CameraSettings(pan, tilt, zoom, focus);
                 return lastKnown;
             }
@@ -184,6 +204,10 @@ public class LiveCameraConnection extends CameraConnection {
     
     @Override
     protected boolean absPanTilt(int panValue, int tiltValue) {
+        panValue =  (panValue < PAN_LIMIT_LOW) ? PAN_LIMIT_LOW :
+                    (panValue > PAN_LIMIT_HIGH) ? PAN_LIMIT_HIGH : panValue;
+        tiltValue = (tiltValue < TILT_LIMIT_LOW) ? TILT_LIMIT_LOW :
+                    (tiltValue > TILT_LIMIT_HIGH) ? TILT_LIMIT_HIGH : tiltValue;
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
                         "%23APS" 
@@ -215,6 +239,8 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean absZoom(int value) {
+        value = (value < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW :
+                (value > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : value;
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
                         "%23AXZ" + Integer.toHexString(value)
@@ -232,6 +258,8 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean absFocus(int value) {
+        value = (value < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
+                (value > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : value;
         try {
             if (autoFocus) {
                 throw new IOException("Autofocus is on");
@@ -255,6 +283,15 @@ public class LiveCameraConnection extends CameraConnection {
     
     @Override
     protected boolean relPanTilt(int panOffset, int tiltOffset) {
+        CameraSettings curSet = getCurrentCameraSettings();
+        panOffset = (curSet.getPan() + panOffset < PAN_LIMIT_LOW) ? 
+                        curSet.getPan() - PAN_LIMIT_LOW : 
+                    (curSet.getPan() + panOffset > PAN_LIMIT_HIGH) ?
+                        PAN_LIMIT_HIGH - curSet.getPan() : panOffset;
+        tiltOffset = (curSet.getTilt() + tiltOffset < TILT_LIMIT_LOW) ? 
+                        curSet.getTilt() - TILT_LIMIT_LOW : 
+                    (curSet.getTilt() + tiltOffset > TILT_LIMIT_HIGH) ?
+                        TILT_LIMIT_HIGH - curSet.getTilt() : tiltOffset;
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
                         "%23RPC" + Integer.toHexString(panOffset) + Integer.toHexString(tiltOffset)
