@@ -65,6 +65,15 @@ public class Timeline {
     public List<Shot> getShots() {
         return shots;
     }
+    
+    /**
+     * Loads the initial preset of the timeline.
+     */
+    public void initPreset() {
+        if (!shots.isEmpty()) {
+            shots.get(0).getPreset().applyTo(camera);  
+        }
+    }
 
     /**
      * This method is responsible for the execution of the shots present on our script.
