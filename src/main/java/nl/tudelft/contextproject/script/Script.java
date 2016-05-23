@@ -38,8 +38,8 @@ public class Script implements Iterator<Shot> {
     private String name;
     
     /**
-     * Creates a script that starts from the beginning
-     * with specified shots.
+     * Creates a script that starts from the beginning with specified shots.
+     * Current is initialized with -1, so the first call of next() returns the first shot.
      * @param shots The actual script of the different shots in order of appearance.
      */
     public Script(List<Shot> shots) {
@@ -188,7 +188,7 @@ public class Script implements Iterator<Shot> {
     /**
      * Does what {@link Iterator#next} does, but also
      * executes the shot ({@link Shot#execute()} while doing so. 
-     * The method also makes sure the next preset of the camera is loaded.
+     * The method also loads the next preset of the camera that was live.
      */
     @Override
     public Shot next() {
