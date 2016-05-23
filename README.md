@@ -1,5 +1,5 @@
 
-![Build Status](https://travis-ci.org/TH3steven/Context-TFP.svg?branch=master)(https://travis-ci.org/TH3steven/Context-TFP)
+[![Build Status](https://travis-ci.org/TH3steven/Context-TFP.svg?branch=master)](https://travis-ci.org/TH3steven/Context-TFP)
 
 ![TFP](src/main/resources/logo-TFP.png)
 
