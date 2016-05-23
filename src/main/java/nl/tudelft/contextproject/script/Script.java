@@ -191,10 +191,12 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
+        Shot old = shots.get(current);
+        timelines.get(old.getCamera().getNumber()).nextPreset(old);
         current++;
-        Shot s = shots.get(current);
-        s.execute();
-        return s;
+        Shot next = shots.get(current);
+        next.execute();
+        return next;
 
     }
 }

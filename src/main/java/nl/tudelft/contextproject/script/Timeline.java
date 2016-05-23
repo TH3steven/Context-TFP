@@ -74,6 +74,18 @@ public class Timeline {
             shots.get(0).getPreset().applyTo(camera);  
         }
     }
+    
+    /**
+     * Loads the next preset for a camera.
+     * @param oldShot The shot that just finished.
+     */
+    public void nextPreset(Shot oldShot) {
+        int oldIndex = shots.indexOf(oldShot);
+        if (oldIndex + 1 < shots.size()) {
+            Shot nextShot = shots.get(oldIndex + 1);
+            nextShot.getPreset().applyTo(nextShot.getCamera());
+        }
+    }
 
     /**
      * This method is responsible for the execution of the shots present on our script.
