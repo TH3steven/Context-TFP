@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CreateScriptController">
+<AnchorPane prefHeight="575.0" prefWidth="800.0" stylesheets="stylesheets/scriptcreation.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CreateScriptController">
    <children>
       <TextField fx:id="addShot" layoutX="15.0" layoutY="479.0" prefHeight="25.0" prefWidth="70.0" AnchorPane.bottomAnchor="71.0" />
       <ChoiceBox fx:id="addCamera" layoutX="95.0" layoutY="479.0" prefHeight="25.0" prefWidth="40.0" AnchorPane.bottomAnchor="71.0" />
@@ -35,7 +35,7 @@
       <Label layoutX="95.0" layoutY="462.0" text="Camera" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="159.0" layoutY="462.0" text="Preset" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="212.0" layoutY="462.0" text="Description" AnchorPane.bottomAnchor="96.0" />
-      <HBox fx:id="editBox" layoutX="13.0" layoutY="41.0" prefHeight="27.0" prefWidth="770.0" styleClass="editBox" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+      <HBox fx:id="editBox" layoutX="13.0" layoutY="41.0" maxHeight="30.0" maxWidth="10000.0" minHeight="30.0" minWidth="350.0" styleClass="editBox" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
          <children>
             <TextField fx:id="editShot" prefHeight="25.0" prefWidth="70.0">
                <HBox.margin>
@@ -52,7 +52,7 @@
                <HBox.margin>
                   <Insets bottom="2.0" left="7.0" top="2.0" />
                </HBox.margin></ChoiceBox>
-            <TextField fx:id="editDescription" maxHeight="25.0" maxWidth="10000.0" minHeight="25.0" minWidth="200.0">
+            <TextField fx:id="editDescription" maxHeight="25.0" maxWidth="10000.0" minHeight="25.0" minWidth="240.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets bottom="2.0" left="10.0" top="2.0" />
                </HBox.margin></TextField>
@@ -62,7 +62,7 @@
                </HBox.margin></Button>
             <Button fx:id="btnEditRemove" mnemonicParsing="false" text="Remove">
                <HBox.margin>
-                  <Insets bottom="2.0" left="5.0" top="2.0" />
+                  <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
                </HBox.margin></Button>
          </children>
       </HBox>
