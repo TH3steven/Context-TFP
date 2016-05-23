@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -34,14 +35,35 @@
       <Label layoutX="95.0" layoutY="462.0" text="Camera" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="159.0" layoutY="462.0" text="Preset" AnchorPane.bottomAnchor="96.0" />
       <Label layoutX="212.0" layoutY="462.0" text="Description" AnchorPane.bottomAnchor="96.0" />
-      <HBox fx:id="editBox" layoutX="16.0" layoutY="507.0" prefHeight="25.0" prefWidth="770.0" visible="false" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
+      <HBox fx:id="editBox" layoutX="13.0" layoutY="41.0" prefHeight="27.0" prefWidth="770.0" styleClass="editBox" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
          <children>
-            <TextField fx:id="btnEditShot" prefHeight="25.0" prefWidth="70.0" />
-            <ChoiceBox fx:id="btnEditCamera" prefHeight="25.0" prefWidth="50.0" />
-            <ChoiceBox fx:id="btnEditPreset" prefHeight="25.0" prefWidth="50.0" />
-            <TextField fx:id="btnEditDescription" maxHeight="25.0" maxWidth="10000.0" minHeight="25.0" minWidth="200.0" />
-            <Button fx:id="btnEditConfirm" mnemonicParsing="false" text="Confirm" />
-            <Button fx:id="btnEditRemove" mnemonicParsing="false" text="Remove" />
+            <TextField fx:id="editShot" prefHeight="25.0" prefWidth="70.0">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="32.0" top="2.0" />
+               </HBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></TextField>
+            <ChoiceBox fx:id="editCamera" prefHeight="25.0" prefWidth="50.0">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="7.0" top="2.0" />
+               </HBox.margin></ChoiceBox>
+            <ChoiceBox fx:id="editPreset" prefHeight="25.0" prefWidth="50.0">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="7.0" top="2.0" />
+               </HBox.margin></ChoiceBox>
+            <TextField fx:id="editDescription" maxHeight="25.0" maxWidth="10000.0" minHeight="25.0" minWidth="200.0">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="10.0" top="2.0" />
+               </HBox.margin></TextField>
+            <Button fx:id="btnEditConfirm" mnemonicParsing="false" text="Confirm">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="5.0" top="2.0" />
+               </HBox.margin></Button>
+            <Button fx:id="btnEditRemove" mnemonicParsing="false" text="Remove">
+               <HBox.margin>
+                  <Insets bottom="2.0" left="5.0" top="2.0" />
+               </HBox.margin></Button>
          </children>
       </HBox>
    </children>
