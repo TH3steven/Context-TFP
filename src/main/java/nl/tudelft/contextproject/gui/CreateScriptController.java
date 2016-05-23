@@ -21,13 +21,21 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Callback;
 
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
@@ -40,6 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Controller class for the script creation screen.
@@ -56,6 +65,7 @@ public class CreateScriptController {
 
     private ObjectProperty<TableRow<Shot>> lastSelectedRow;
     private Script script;
+    private int maximumId = 1;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
@@ -78,6 +88,7 @@ public class CreateScriptController {
     @FXML private TableColumn<Shot, String> columnDescription;
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
+    @FXML private TableColumn<Shot, Image> columnReorder;
     @FXML private TableColumn<Shot, String> columnShot;
 
     @FXML private TextField addShot;
@@ -98,6 +109,7 @@ public class CreateScriptController {
         initPreset();
 
         allowEditing();
+        allowRowReordering();
 
         // Disallow horizontal scrolling.
         tableEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -111,6 +123,13 @@ public class CreateScriptController {
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
             fill = false;
+        }
+        
+        // Makes sure there are no duplicate ID's of the shots in the table.
+        for (Shot s : tableEvents.getItems()) {
+            if (s.getNumber() > maximumId) {
+                maximumId = s.getNumber();
+            }
         }
 
         // Store the current script locally to reduce traffic.
@@ -176,7 +195,7 @@ public class CreateScriptController {
                 editCamera.setStyle("-fx-border-color: red;");
                 emptyField = true;
             }
-            
+
             if (editPreset.getSelectionModel().isEmpty()) {
                 editPreset.setStyle("-fx-border-color: red;");
                 emptyField = true;
@@ -191,7 +210,7 @@ public class CreateScriptController {
                 editCamera.setStyle("");
                 editPreset.setStyle("");
                 editDescription.setStyle("");
-                
+
                 editConfirmAction(lastSelectedRow.get().getItem());
             }
         });
@@ -283,6 +302,114 @@ public class CreateScriptController {
     }
 
     /**
+     * Allows the reordering of rows. This uses a special column in the tableView,
+     * that is filled with an image.
+     */
+    private void allowRowReordering() {
+        final Callback<TableColumn<Shot, Image>, TableCell<Shot, Image>> cellFactory = callback -> {
+            return new TableCell<Shot, Image>() {
+                {
+                    setOnDragDetected(createDragDetectedHandler(this));
+                    setOnDragOver(createDragOverHandler(this, tableEvents));
+                    setOnDragDropped(createDragDroppedHandler(this, tableEvents));
+                }
+
+                @Override
+                public void updateItem(Image item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (empty) {
+                        setText(null);
+                    } else {
+                        ImageView imageview = new ImageView();
+                        imageview.setImage(new Image("reorder.png"));
+                        imageview.setFitHeight(20);
+                        imageview.setFitWidth(10);
+                        setGraphic(imageview);
+                        setItem(item);
+                    }
+                }
+            };
+        };
+
+        columnReorder.setCellFactory(cellFactory);
+    }
+
+    /**
+     * The next three methods define the functionality of the drag and drop actions that can
+     * be called by initializing a drag and drop action on the image that is intended for this
+     * functionality.
+     * 
+     * <p>Most credits go to James_D for creating the original code.
+     * 
+     * @param cell The cell in the tableView.
+     * @return Returns an event that holds the start of a Drag and Drop action.
+     * @see <a href="https://community.oracle.com/message/11057757#11057757">Oracle Community</a>
+     */
+    private EventHandler<MouseEvent> createDragDetectedHandler(TableCell<Shot, ?> cell) {
+        return event -> {
+            final Dragboard db = cell.startDragAndDrop(TransferMode.MOVE);
+            final ClipboardContent content = new ClipboardContent();
+            
+            content.putString(String.valueOf(cell.getIndex()));
+            db.setContent(content);
+        };
+    }
+
+    /**
+     * @param cell The cell in the tableView.
+     * @param table The table itself
+     * @return Returns an event that contains the drag action.
+     * @see #createDragDetectedHandler(TableCell)
+     */
+    private EventHandler<DragEvent> createDragOverHandler(TableCell<Shot, ?> cell, final TableView<Shot> table) {
+        return event -> {
+            final String INTEGER_REGEX = "-?\\d+";
+            final Dragboard dragboard = event.getDragboard();
+
+            if (dragboard.hasString()) {
+                final String value = dragboard.getString();
+                
+                if (Pattern.matches(INTEGER_REGEX, value)) {
+                    try {
+                        final int index = Integer.parseInt(value);
+                        
+                        if (index != cell.getIndex()
+                                && index != -1
+                                && (index < table.getItems().size() - 1 || cell.getIndex() != -1)) {
+                            event.acceptTransferModes(TransferMode.MOVE);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * 
+     * @param cell The cell in the tableView.
+     * @param table The table itself
+     * @return Returns an event that handles the dropped action.
+     * @see #createDragDetectedHandler(TableCell)
+     */
+    private EventHandler<DragEvent> createDragDroppedHandler(TableCell<Shot, ?> cell, TableView<Shot> table) {
+        return event -> {
+            final Dragboard db = event.getDragboard();
+            int myIndex = cell.getIndex();
+
+            if (myIndex < 0 || myIndex >= table.getItems().size()) {
+                myIndex = table.getItems().size() - 1;
+            }
+
+            final int incomingIndex = Integer.parseInt(db.getString());
+            table.getItems().add(myIndex, table.getItems().remove(incomingIndex));
+            event.setDropCompleted(true);
+        };
+    }
+
+    /**
      * Fills the choiceboxes for selecting a camera, both the box that
      * adds a new camera as the box that is shown when editing a shot.
      */
@@ -371,7 +498,7 @@ public class CreateScriptController {
             new ReadOnlyObjectWrapper<>(cellData.getValue()));
 
         columnAction.setCellFactory(cellData -> new TableCell<Shot, Shot>() {
-            Button btnRemove = new Button("Remove");
+            final Button btnRemove = new Button("Remove");
 
             @Override
             protected void updateItem(Shot shot, boolean empty) {
@@ -407,7 +534,7 @@ public class CreateScriptController {
                 addCamera.setStyle("-fx-border-color: red;");
                 emptyField = true;
             }
-            
+
             if (addPreset.getSelectionModel().isEmpty()) {
                 addPreset.setStyle("-fx-border-color: red;");
                 emptyField = true;
@@ -419,22 +546,13 @@ public class CreateScriptController {
             }
 
             if (!emptyField) {
-                int id;
-
                 addCamera.setStyle("");
                 addPreset.setStyle("");
                 addDescription.setStyle("");
 
-                // Sets the ID to be used.
-                if (tableEvents.getItems().size() > 0) {
-                    id = tableEvents.getItems().get(tableEvents.getItems().size() - 1).getNumber() + 1;
-                } else {
-                    id = 1;
-                }
-
                 if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
                     final Shot newShot = new Shot(
-                            id,
+                            maximumId,
                             addShot.getText(),
                             Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                             addDescription.getText()
@@ -444,7 +562,7 @@ public class CreateScriptController {
                     script.addShot(newShot);
                 } else {
                     final Shot newShot = new Shot(
-                            id,
+                            maximumId,
                             addShot.getText(),
                             Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                             Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
@@ -455,6 +573,8 @@ public class CreateScriptController {
                     data.add(newShot);
                     script.addShot(newShot);
                 }
+                
+                maximumId++;
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
@@ -497,7 +617,7 @@ public class CreateScriptController {
             fileChooser.setInitialFileName("script");
             fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
 
-            File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
+            final File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
 
             if (file != null) {
                 try {
