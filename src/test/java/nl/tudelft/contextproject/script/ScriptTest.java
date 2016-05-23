@@ -103,5 +103,61 @@ public class ScriptTest {
         assertFalse(script2.hasNext());
         assertFalse(script1.hasNext());
     }
+    
+    /**
+     * Tests the isValid() method with a valid script.
+     */
+    @Test
+    public void testIsValidTrue() {
+        Camera cam0 = new Camera();
+        Camera cam1 = new Camera();
+        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 5, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 4, 2), 2);
+        Preset pres3 = new InstantPreset(new CameraSettings(1, 1, 2, 2), 3);
+        Shot shot1 = new Shot(1, cam0, pres1);
+        Shot shot2 = new Shot(2, cam1, pres2);
+        Shot shot3 = new Shot(3, cam0, pres3);
+        List<Shot> shots = new ArrayList<>();
+        shots.add(shot1);
+        shots.add(shot2);
+        shots.add(shot3);
+        Script script = new Script(shots);
+        assertTrue(script.isValid());
+    }
+    
+    /**
+     * Tests the isValid() method with an invalid script.
+     */
+    @Test
+    public void testIsValidFalse() {
+        Camera cam0 = new Camera();
+        Camera cam1 = new Camera();
+        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 5, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 4, 2), 2);
+        Preset pres3 = new InstantPreset(new CameraSettings(1, 1, 2, 2), 3);
+        Shot shot1 = new Shot(1, cam1, pres1);
+        Shot shot2 = new Shot(2, cam0, pres2);
+        Shot shot3 = new Shot(3, cam0, pres3);
+        List<Shot> shots = new ArrayList<>();
+        shots.add(shot1);
+        shots.add(shot2);
+        shots.add(shot3);
+        Script script = new Script(shots);
+        assertFalse(script.isValid());        
+    }
+    
+    /**
+     * Tests the isValid() method with a short script.
+     */
+    @Test
+    public void testIsValidShort() {
+        Camera cam0 = new Camera();
+        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 5, 2), 1);
+        Shot shot1 = new Shot(1, cam0, pres1);
+        List<Shot> shots = new ArrayList<>();
+        shots.add(shot1);
+        Script script = new Script(shots);
+        assertTrue(script.isValid());
+    }
 
 }
