@@ -64,7 +64,7 @@ public class CreateScriptController {
     private static boolean fill = false;
 
     private ObjectProperty<TableRow<Shot>> lastSelectedRow;
-    private Script script;
+    private List<Shot> backupList;
     private int maximumId = 1;
 
     @FXML private Button btnAdd;
@@ -131,9 +131,9 @@ public class CreateScriptController {
                 maximumId = s.getNumber();
             }
         }
-
-        // Store the current script locally to reduce traffic.
-        script = ContextTFP.getScript();
+        
+        backupList = new ArrayList<Shot>();
+        backupList.addAll(0, ContextTFP.getScript().getShots());
     }
 
     /**
@@ -278,6 +278,9 @@ public class CreateScriptController {
      * @param shot The shot that is edited.
      */
     private void editConfirmAction(Shot shot) {
+        Shot backup = new Shot(shot.getNumber(), shot.getShotId(), 
+                shot.getCamera(), shot.getPreset(), shot.getDescription());
+        
         shot.setShotId(editShot.getText());
         shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
         if (!editPreset.getSelectionModel().getSelectedItem().equals("None")) {
@@ -288,6 +291,7 @@ public class CreateScriptController {
         }
         shot.setDescription(editDescription.getText());
 
+        backupList.set(lastSelectedRow.get().getIndex(), backup);
         editDoneAction();
     }
 
@@ -358,7 +362,7 @@ public class CreateScriptController {
 
     /**
      * @param cell The cell in the tableView.
-     * @param table The table itself
+     * @param table The table itself.
      * @return Returns an event that contains the drag action.
      * @see #createDragDetectedHandler(TableCell)
      */
@@ -388,9 +392,8 @@ public class CreateScriptController {
     }
 
     /**
-     * 
      * @param cell The cell in the tableView.
-     * @param table The table itself
+     * @param table The table itself.
      * @return Returns an event that handles the dropped action.
      * @see #createDragDetectedHandler(TableCell)
      */
@@ -513,7 +516,6 @@ public class CreateScriptController {
 
                 btnRemove.setOnAction(event -> {
                     getTableView().getItems().remove(shot);
-                    script.getShots().remove(shot);
                 });
             }
         });
@@ -559,7 +561,6 @@ public class CreateScriptController {
                             );
 
                     data.add(newShot);
-                    script.addShot(newShot);
                 } else {
                     final Shot newShot = new Shot(
                             maximumId,
@@ -571,7 +572,6 @@ public class CreateScriptController {
                             );
 
                     data.add(newShot);
-                    script.addShot(newShot);
                 }
                 
                 maximumId++;
@@ -603,6 +603,7 @@ public class CreateScriptController {
                 }
             }
 
+            ContextTFP.setScript(new Script(backupList));
             MenuController.show();
         });
     }
@@ -618,6 +619,7 @@ public class CreateScriptController {
             fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
 
             final File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
+            final Script script = new Script(tableEvents.getItems());
 
             if (file != null) {
                 try {
