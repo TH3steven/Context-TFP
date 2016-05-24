@@ -31,6 +31,28 @@ public abstract class CameraConnection implements Observer {
     public abstract CameraSettings getCurrentCameraSettings();
     
     /**
+     * Returns the current pan and tilt values of the camera in
+     * the form of an array.
+     * @return an array with the pan and tilt values. [0] holds
+     *      the pan value, [1] holds the tilt value.
+     */
+    public abstract int[] getCurrentPanTilt();
+    
+    /**
+     * Returns the current zoom value of the camera.
+     * @return the current zoom value of the camera.
+     */
+    public abstract int getCurrentZoom();
+    
+    /**
+     * Returns the current focus value of the camera.
+     * In the case of a LiveCameraConnection, this method may
+     * return -1 when auto focus is on.
+     * @return the current focus value of the camera.
+     */
+    public abstract int getCurrentFocus();
+    
+    /**
      * Pans and tilts to an absolute position.
      * @param panValue the absolute pan value to pan to.
      * @param tiltValue the absolute tilt value to tilt to.

@@ -25,6 +25,21 @@ public class MockedCameraConnection extends CameraConnection {
     public CameraSettings getCurrentCameraSettings() {
         return camSet;
     }
+    
+    @Override
+    public int[] getCurrentPanTilt() {
+        return new int[]{camSet.getPan(), camSet.getTilt()};
+    }
+    
+    @Override
+    public int getCurrentZoom() {
+        return camSet.getZoom();
+    }
+    
+    @Override
+    public int getCurrentFocus() {
+        return camSet.getFocus();
+    }
 
     @Override
     protected boolean absPanTilt(int panValue, int tiltValue) {

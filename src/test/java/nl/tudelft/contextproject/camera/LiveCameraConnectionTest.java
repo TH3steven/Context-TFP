@@ -1,5 +1,8 @@
 package nl.tudelft.contextproject.camera;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -76,6 +79,7 @@ public class LiveCameraConnectionTest {
     public void testGetCurrentCameraSettings() {
         if (doTests) {
             CameraSettings curSet = connection.getCurrentCameraSettings();
+            assertNotNull(curSet);
         }
     }
 
@@ -84,46 +88,71 @@ public class LiveCameraConnectionTest {
         if (doTests) {
             assertTrue(connection.absPanTilt(19965, 19965));
             Thread.sleep(4000);
-            CameraSettings curSet = connection.getCurrentCameraSettings();
-            assertTrue(19965 - MAX_MOV_OFFSET <= curSet.getPan());
-            assertTrue(19965 + MAX_MOV_OFFSET >= curSet.getPan());
-            assertTrue(19965 - MAX_MOV_OFFSET <= curSet.getTilt());
-            assertTrue(19965 + MAX_MOV_OFFSET >= curSet.getTilt());
+            int[] curSet = connection.getCurrentPanTilt();
+            assertTrue(19965 - MAX_MOV_OFFSET <= curSet[0]);
+            assertTrue(19965 + MAX_MOV_OFFSET >= curSet[0]);
+            assertTrue(19965 - MAX_MOV_OFFSET <= curSet[1]);
+            assertTrue(19965 + MAX_MOV_OFFSET >= curSet[1]);
         }
     }
 
     @Test
     public void testAbsPan() throws InterruptedException {
         if (doTests) {
-            CameraSettings before = connection.getCurrentCameraSettings();
+            int[] before = connection.getCurrentPanTilt();
             assertTrue(connection.absPan(31965));
             Thread.sleep(4000);
-            CameraSettings after = connection.getCurrentCameraSettings();
-            assertTrue(before.getTilt() - MAX_MOV_OFFSET <= after.getTilt());
-            assertTrue(before.getTilt() + MAX_MOV_OFFSET >= after.getTilt());
-            assertTrue(31965 - MAX_MOV_OFFSET <= after.getPan());
-            assertTrue(31965 + MAX_MOV_OFFSET >= after.getPan());
+            int[] after = connection.getCurrentPanTilt();
+            assertTrue(before[1] - MAX_MOV_OFFSET <= after[1]);
+            assertTrue(before[1] + MAX_MOV_OFFSET >= after[1]);
+            assertTrue(31965 - MAX_MOV_OFFSET <= after[0]);
+            assertTrue(31965 + MAX_MOV_OFFSET >= after[0]);
         }
     }
 
     @Test
-    public void testAbsTilt() {
+    public void testAbsTilt() throws InterruptedException {
         if (doTests) {
-            fail("Not yet implemented");
+            int[] before = connection.getCurrentPanTilt();
+            assertTrue(connection.absTilt(31965));
+            Thread.sleep(4000);
+            int[] after = connection.getCurrentPanTilt();
+            assertTrue(before[0] - MAX_MOV_OFFSET <= after[0]);
+            assertTrue(before[0] + MAX_MOV_OFFSET >= after[0]);
+            assertTrue(31965 - MAX_MOV_OFFSET <= after[1]);
+            assertTrue(31965 + MAX_MOV_OFFSET >= after[1]);
         }
     }
 
     @Test
-    public void testAbsZoom() {
+    public void testAbsZoom() throws InterruptedException {
         if (doTests) {
-            fail("Not yet implemented");
+            assertTrue(connection.absZoom(1965));
+            Thread.sleep(2000);
+            int newZoom = connection.getCurrentZoom();
+            assertTrue(1965 - MAX_MOV_OFFSET <= newZoom);
+            assertTrue(1965 + MAX_MOV_OFFSET >= newZoom);
         }
     }
 
     @Test
-    public void testAbsFocus() {
+    public void testAbsFocusNoAutoFocus() {
         if (doTests) {
-            fail("Not yet implemented");
+            assertTrue(connection.setAutoFocus(false));
+            assertTrue(connection.absFocus(1965));
+            int newFocus = connection.getCurrentFocus();
+            assertTrue(1965 - MAX_MOV_OFFSET <= newFocus);
+            assertTrue(1965 + MAX_MOV_OFFSET >= newFocus);
+        }
+    }
+    
+    @Test
+    public void testAbsFocusWithAutoFocus() {
+        if (doTests) {
+            assertTrue(connection.setAutoFocus(true));
+            assertFalse(connection.absFocus(1965));
+            int newFocus = connection.getCurrentFocus();
+            assertEquals(-1, newFocus);
         }
     }
 
@@ -163,9 +192,11 @@ public class LiveCameraConnectionTest {
     }
 
     @Test
-    public void testHasAutoFocus() {
+    public void testSetAutoFocus() {
         if (doTests) {
-            fail("Not yet implemented");
+            boolean currentAutoFocus = connection.hasAutoFocus();
+            connection.setAutoFocus(!currentAutoFocus);
+            assertEquals(!currentAutoFocus, connection.hasAutoFocus());
         }
     }
 
