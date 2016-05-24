@@ -60,7 +60,7 @@ public class ShotTest {
         Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         shot1.execute();
-        assertEquals(cam0.getSettings().getFocus(), 1365);
+        assertEquals(cam0.getSettings().getFocus(), 2);
         assertEquals(cam0.getSettings().getPan(), 1);
         assertEquals(cam0.getSettings().getTilt(), 1);
         assertEquals(cam0.getSettings().getZoom(), 1);
