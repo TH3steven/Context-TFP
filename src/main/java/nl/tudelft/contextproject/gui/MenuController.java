@@ -13,6 +13,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.saveLoad.LoadScript;
+import nl.tudelft.contextproject.saveLoad.SaveScript;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,8 @@ public class MenuController {
                     setLabel(file.getName());
 
                     alert.showAndWait();
+                    
+                    SaveScript.setSaveLocation(file.getAbsolutePath());
                 } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle(e.getMessage());

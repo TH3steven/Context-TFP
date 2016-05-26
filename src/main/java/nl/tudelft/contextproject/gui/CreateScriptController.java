@@ -5,6 +5,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,7 +54,8 @@ import java.util.regex.Pattern;
 /**
  * Controller class for the script creation screen.
  * This class is responsible for the functions of the create script screen, to
- * allow for easy creation and saving of a new script.
+ * allow for easy creation and saving of a new script, and editing of an existing
+ * script.
  * 
  * <p>The view section is defined under view/CreateScriptView.fxml
  * 
@@ -65,13 +67,14 @@ public class CreateScriptController {
 
     private ObjectProperty<TableRow<Shot>> lastSelectedRow;
     private List<Shot> backupList;
-    private int maximumId = 1;
+    private int maximumId = 0;
 
     @FXML private Button btnAdd;
     @FXML private Button btnBack;
     @FXML private Button btnEditConfirm;
     @FXML private Button btnEditRemove;
     @FXML private Button btnSave;
+    @FXML private Button btnSaveAs;
 
     @FXML private ChoiceBox<Number> addCamera;
     @FXML private ChoiceBox<String> addPreset;
@@ -100,6 +103,11 @@ public class CreateScriptController {
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
+        
+        // Set the current script as backup.
+        backupList = new ArrayList<Shot>();
+        backupList.addAll(0, ContextTFP.getScript().getShots());
+        
         setFactories();
         setAddButton();
         setBackButton();
@@ -131,9 +139,6 @@ public class CreateScriptController {
                 maximumId = s.getNumber();
             }
         }
-        
-        backupList = new ArrayList<Shot>();
-        backupList.addAll(0, ContextTFP.getScript().getShots());
     }
 
     /**
@@ -253,7 +258,6 @@ public class CreateScriptController {
                 editDescription.setText(nv.getDescription());
 
                 if (ov != nv && ov != null) {
-                    // Commit edit?
                     editDoneAction();
                 }
             }
@@ -291,7 +295,10 @@ public class CreateScriptController {
         }
         shot.setDescription(editDescription.getText());
 
-        backupList.set(lastSelectedRow.get().getIndex(), backup);
+        if (lastSelectedRow.get().getIndex() < backupList.size()) {
+            backupList.set(lastSelectedRow.get().getIndex(), backup);
+        }
+
         editDoneAction();
     }
 
@@ -552,6 +559,8 @@ public class CreateScriptController {
                 addPreset.setStyle("");
                 addDescription.setStyle("");
 
+                maximumId++;
+
                 if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
                     final Shot newShot = new Shot(
                             maximumId,
@@ -573,8 +582,6 @@ public class CreateScriptController {
 
                     data.add(newShot);
                 }
-                
-                maximumId++;
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
@@ -603,58 +610,84 @@ public class CreateScriptController {
                 }
             }
 
-            ContextTFP.setScript(new Script(backupList));
+            Script bak = new Script(backupList);
+            bak.setName(ContextTFP.getScript().getName());
+            
+            ContextTFP.setScript(bak);
             MenuController.show();
+        });
+    }
+    
+    /**
+     * Sets the onAction for the save buttons.
+     */
+    private void setSaveButton() {
+        if (backupList.isEmpty()) {
+            btnSave.setDisable(true);
+        }
+        
+        btnSave.setOnAction(event -> {
+            setSavePopup(event, false);
+        });
+        
+        btnSaveAs.setOnAction(event -> {
+            setSavePopup(event, true);
         });
     }
 
     /**
-     * Sets the onAction for the save button.
+     * Handles the saving of a file.
      */
-    private void setSaveButton() {
-        btnSave.setOnAction(event -> {
+    private void setSavePopup(ActionEvent event, boolean showDialog) {
+        File file;
+        
+        if (showDialog) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save script");
             fileChooser.setInitialFileName("script");
             fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
+            
+            file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
+        } else {
+            file = new File(SaveScript.getSaveLocation());
+        }
+        
+        final Script script = new Script(tableEvents.getItems());
+        script.setName(ContextTFP.getScript().getName());
 
-            final File file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
-            final Script script = new Script(tableEvents.getItems());
+        if (file != null) {
+            try {
+                SaveScript.setSaveLocation(file.getAbsolutePath());
+                SaveScript.save(script);
 
-            if (file != null) {
-                try {
-                    SaveScript.setSaveLocation(file.getAbsolutePath());
-                    SaveScript.save(script);
+                script.setName(file.getName());
+                ContextTFP.setScript(script);
 
-                    script.setName(file.getName());
-                    ContextTFP.setScript(script);
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirm exiting");
+                alert.setHeaderText("Saving script was succesful!");
+                alert.setContentText("Succesful save of script: " 
+                        + file.getName()
+                        + " Do you want to quit to menu?");
 
-                    Alert alert = new Alert(AlertType.CONFIRMATION);
-                    alert.setTitle("Confirm exiting");
-                    alert.setHeaderText("Saving script was succesful!");
-                    alert.setContentText("Succesful save of script: " 
-                            + file.getName()
-                            + " Do you want to quit to menu?");
+                Optional<ButtonType> result = alert.showAndWait();
 
-                    Optional<ButtonType> result = alert.showAndWait();
-
-                    if (result.get() == ButtonType.OK) {
-                        MenuController.show();
-                    }
-
-                } catch (Exception e) {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle(e.getMessage());
-                    alert.setHeaderText("Saving script was unsuccesful!");
-                    alert.setContentText("Error when trying to save script at location: " 
-                            + file.getAbsolutePath()
-                            + "\n\nError: "
-                            + e.getCause());
-
-                    alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    MenuController.show();
                 }
+
+            } catch (Exception e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle(e.getMessage());
+                alert.setHeaderText("Saving script was unsuccesful!");
+                alert.setContentText("Error when trying to save script at location: " 
+                        + file.getAbsolutePath()
+                        + "\n\nError: "
+                        + e.getCause());
+
+                alert.showAndWait();
             }
-        });
+        }
     }
 
     /**
