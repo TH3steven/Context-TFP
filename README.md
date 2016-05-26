@@ -1,4 +1,3 @@
-
 [![Build Status](https://travis-ci.org/TH3steven/Context-TFP.svg?branch=master)](https://travis-ci.org/TH3steven/Context-TFP)
 
 ![TFP](src/main/resources/logo-TFP.png)
@@ -11,7 +10,7 @@ This product aims to improve the workflow of PolyCast Productions B.V. and is ma
 
 ## Requirements
 ###Java version
-Our software is built in Java and requires **at least Java version 8u65**, but it is recommended to use the latest stable version.
+Our software is build in Java and requires **at least Java version 8u65**, but it is recommended to use the latest stable version.
 The GUI is built with JavaFX and needs no additional plugins.
 
 ###Operating system
