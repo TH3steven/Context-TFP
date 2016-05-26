@@ -66,6 +66,7 @@ public class PreviewController {
 
     private SimpleIntegerProperty currentShot;
     private Shot currentFirst;
+    private int currentHighlight;
     private Timeline timeline;
     private List<Shot> shots;
     private List<ImageView> views;
@@ -78,6 +79,7 @@ public class PreviewController {
         shots = script.getShots();
         
         currentShot = new SimpleIntegerProperty(1);
+        currentHighlight = 1;
 
         initializeShots();
         initializeChoices();
@@ -139,15 +141,19 @@ public class PreviewController {
         leftArrow.setOnAction((event) -> {
             int shotNumFirst = currentFirst.getNumber() - 1;
             if (shotNumFirst > 0) {
-                switchViews(shots.get(shotNumFirst - 1));
+                switchViews(shots.get(shotNumFirst - 1), false);
+                highlightRight();
             }
+            System.out.println(shotNumFirst + "        " + currentHighlight);
         });
         
         rightArrow.setOnAction((event) -> {
             int shotNumFirst = currentFirst.getNumber() - 1;
-            if (shotNumFirst < shots.size() - 1) {
-                switchViews(shots.get(shotNumFirst + 1));
+            if (shotNumFirst < shots.size() - 4) {
+                switchViews(shots.get(shotNumFirst + 1), false);
+                highlightLeft();
             }
+            System.out.println(shotNumFirst + "        " + currentHighlight);
         });
     }
     
@@ -162,18 +168,8 @@ public class PreviewController {
             int shotNum = currentFirst.getNumber() - diff;
 
             showShot(shots.get(shotNum - 1));
-            highlight1.setOpacity(0);
-            highlight2.setOpacity(0);
-            highlight3.setOpacity(0);
-            highlight4.setOpacity(0);
-            
-            switch (id) {
-                case 1: highlight1.setOpacity(1); break;
-                case 2: highlight2.setOpacity(1); break;
-                case 3: highlight3.setOpacity(1); break;
-                case 4: highlight4.setOpacity(1); break;
-                default: break;
-            }
+            System.out.println(currentHighlight);
+
             timeline.stop();
         });
     }
@@ -272,7 +268,7 @@ public class PreviewController {
         views.add(viewThree);
         views.add(viewFour);
         
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             views.get(i).setImage(createInitialImage(i));
         }
     }
@@ -282,7 +278,7 @@ public class PreviewController {
      */
     private void initializeShots() {       
         //add example images
-        for(int i = 0; i < shots.size(); i++) {
+        for (int i = 0; i < shots.size(); i++) {
             shots.get(i).getPreset().setImageLocation(getImageLoc(i));
             System.out.println("Shot " + i + "      " + shots.get(i).getPreset().getImage());
         }
@@ -392,10 +388,10 @@ public class PreviewController {
     private void showShot(Shot shot) {
         currentShot.set(shot.getNumber());
         actualCam.setImage(new Image(shot.getPreset().getImage()));
-        switchViews(shot);
+        switchViews(shot, true);
     }
     
-    private void switchViews(Shot shot) {
+    private void switchViews(Shot shot, boolean shotSwitch) {
         int check = checkShots(shot);
         
         switch (check) {
@@ -405,6 +401,10 @@ public class PreviewController {
                 viewThree.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
                 viewFour.setImage(new Image(shots.get(shot.getNumber() + 2).getPreset().getImage()));
                 currentFirst = shot;
+                if (shotSwitch) {
+                    switchHighlights(1);
+                    System.out.println("tesst");
+                }
                 break;
             case 2: 
                 viewOne.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
@@ -412,6 +412,9 @@ public class PreviewController {
                 viewThree.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
                 viewFour.setImage(new Image(shots.get(shot.getNumber() + 1).getPreset().getImage()));
                 currentFirst = shots.get(shot.getNumber() - 2);
+                if (shotSwitch) {
+                    switchHighlights(2);
+                }
                 break;
             case 3: 
                 viewOne.setImage(new Image(shots.get(shot.getNumber() - 3).getPreset().getImage()));
@@ -419,6 +422,9 @@ public class PreviewController {
                 viewThree.setImage(new Image(shot.getPreset().getImage()));
                 viewFour.setImage(new Image(shots.get(shot.getNumber()).getPreset().getImage()));
                 currentFirst = shots.get(shot.getNumber() - 3);
+                if (shotSwitch) {
+                    switchHighlights(3);
+                }
                 break;
             case 4: 
                 viewOne.setImage(new Image(shots.get(shot.getNumber() - 4).getPreset().getImage()));
@@ -426,11 +432,76 @@ public class PreviewController {
                 viewThree.setImage(new Image(shots.get(shot.getNumber() - 2).getPreset().getImage()));
                 viewFour.setImage(new Image(shot.getPreset().getImage()));
                 currentFirst = shots.get(shot.getNumber() - 4);
+                if (shotSwitch) {
+                    switchHighlights(4);
+                }
                 break;
             default: return;
         }
     }
-
+    
+    /**
+     * Switches the highlight box.
+     */
+    private void switchHighlights(int id) {
+        disableHighlight();
+        currentHighlight = id;
+        
+        switch (id) {
+            case 1: highlight1.setOpacity(1); break;
+            case 2: highlight2.setOpacity(1); break;
+            case 3: highlight3.setOpacity(1); break;
+            case 4: highlight4.setOpacity(1); break;
+            default: break;
+        }
+    }
+    
+    /**
+     * Moves the highlightbox one shot to the right.
+     */
+    private void highlightRight() {
+        currentHighlight++;
+        if (highlightCheck()) {
+            switchHighlights(currentHighlight);
+        } else {
+            disableHighlight();
+        }
+    }
+    
+    /**
+     * Moves the highlightbox one shot to the left.
+     */
+    private void highlightLeft() {
+        currentHighlight--;
+        System.out.println("poep");
+        if (highlightCheck()) {
+            switchHighlights(currentHighlight);
+        } else {
+            disableHighlight();
+        }
+    }
+    
+    /**
+     * Checks if the current view to be highlighted is in bounds.
+     */
+    private boolean highlightCheck() {
+        if (currentHighlight < 1 || currentHighlight > 4) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Sets the highlight box invisible.
+     */
+    private void disableHighlight() {
+        highlight1.setOpacity(0);
+        highlight2.setOpacity(0);
+        highlight3.setOpacity(0);
+        highlight4.setOpacity(0);
+    }
+    
     /**
      * Shows this view.
      */
