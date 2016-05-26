@@ -114,7 +114,8 @@ public class CreateScriptController {
         setSaveButton();
 
         initCamera();
-        initPreset();
+        initPreset("add");
+        initPreset("edit");
 
         allowEditing();
         allowRowReordering();
@@ -438,40 +439,26 @@ public class CreateScriptController {
      * Fills the choiceboxes for selecting a preset, given the selection
      * of a certain camera.
      */
-    private void initPreset() {
+    private void initPreset(String prepend) {
         final List<String> presetList = new ArrayList<String>();
+        final ChoiceBox<Number> cam = (prepend.equals("add")) ? addCamera : editCamera;
+        final ChoiceBox<String> preset = (prepend.equals("edit")) ? addPreset : editPreset;
 
-        addCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+        cam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             presetList.clear();
             presetList.add("None");
 
             if (newV != null) {
-                addPreset.setDisable(false);
+                preset.setDisable(false);
 
                 for (int i = 0; i < Camera.
-                        getCamera(addCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                        getCamera(cam.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
                     presetList.add(Integer.toString(i + 1));
                 }
 
-                addPreset.setItems(FXCollections.observableArrayList(presetList));
+                preset.setItems(FXCollections.observableArrayList(presetList));
             } else {
-                addPreset.setDisable(true);
-            }
-        });
-
-        editCamera.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-            presetList.clear();
-            presetList.add("None");
-
-            if (newV != null) {
-                for (int i = 0; i < Camera.
-                        getCamera(editCamera.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
-                    presetList.add(Integer.toString(i + 1));
-                }
-
-                editPreset.setItems(FXCollections.observableArrayList(presetList));
-            } else {
-                editPreset.setDisable(true);
+                preset.setDisable(true);
             }
         });
 
