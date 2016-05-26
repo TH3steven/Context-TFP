@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -66,6 +67,7 @@ public class PreviewController {
     @FXML private Rectangle highlight3;
     @FXML private Rectangle highlight4;
 
+    @FXML private TextArea descArea;
     @FXML private TextField duration;
 
     private SimpleIntegerProperty currentShot;
@@ -450,12 +452,12 @@ public class PreviewController {
     }
     
     /**
-     * 
+     * Switch info of the shot info box to the corresponding selected shot.
      */
     private void switchInfo(Shot shot) {
         camNum.setText(String.valueOf(shot.getCamera().getNumber()));
-        System.out.println(shot.getCamera().getNumber());
         presNum.setText(String.valueOf(shot.getPreset().getId()));
+        descArea.setText(shot.getDescription());
     }
     
     /**
