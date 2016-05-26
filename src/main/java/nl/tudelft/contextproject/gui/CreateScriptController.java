@@ -115,7 +115,7 @@ public class CreateScriptController {
 
         initCamera();
         initPreset("add");
-        initPreset("edit");
+        initPreset("pres");
 
         allowEditing();
         allowRowReordering();
@@ -442,7 +442,7 @@ public class CreateScriptController {
     private void initPreset(String prepend) {
         final List<String> presetList = new ArrayList<String>();
         final ChoiceBox<Number> cam = (prepend.equals("add")) ? addCamera : editCamera;
-        final ChoiceBox<String> preset = (prepend.equals("edit")) ? addPreset : editPreset;
+        final ChoiceBox<String> preset = (prepend.equals("add")) ? addPreset : editPreset;
 
         cam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             presetList.clear();
