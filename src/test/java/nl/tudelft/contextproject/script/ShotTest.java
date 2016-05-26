@@ -34,6 +34,9 @@ public class ShotTest {
         Shot shot1 = new Shot(1, cam0, pres);
         Shot shot2 = new Shot(0, null, null);
         Shot shot3 = new Shot(2, "2!", cam1, pres, "cover main podium");
+        shot1.setDuration(5.0);
+        shot2.setDuration(3.5);
+        shot3.setDuration(1.5);
         assertEquals(shot3.getDescription(), "cover main podium");
         assertEquals(shot3.getShotId(), "2!");
         assertEquals(shot3.getCamera(), cam1);
@@ -41,6 +44,9 @@ public class ShotTest {
         assertEquals(shot1.getCamera(), cam0);
         assertEquals(shot1.getNumber(), 1);
         assertEquals(shot1.getPreset(), pres);
+        assertEquals(shot1.getDuration(), 4.5, 1);
+        assertEquals(shot2.getDuration(), 3.0, 1);
+        assertEquals(shot3.getDuration(), 1.0, 1);
         shot2.setCamera(cam1);
         shot2.setNumber(2);
         shot2.setPreset(pres2);
