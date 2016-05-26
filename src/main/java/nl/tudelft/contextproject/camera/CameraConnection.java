@@ -24,6 +24,12 @@ public abstract class CameraConnection implements Observer {
     public abstract boolean isConnected();
     
     /**
+     * Returns the link to a live feed from the camera.
+     * @return the link to a live feed from the camera.
+     */
+    public abstract String getStreamLink();
+    
+    /**
      * Returns the current camera settings of the camera as a
      * CameraSettings object.
      * @return the current camera settings of the camera.

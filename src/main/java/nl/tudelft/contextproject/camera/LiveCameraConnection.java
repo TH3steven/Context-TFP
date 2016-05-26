@@ -77,6 +77,11 @@ public class LiveCameraConnection extends CameraConnection {
         return connected;
     }
     
+    @Override
+    public String getStreamLink() {
+        return "http://" + address + "/cgi-bin/mjpeg?resolution=1920x1080";
+    }
+    
     /**
      * Builds the URL for the command specified, which must be a command
      * from section 3.1 Pan-tilt Head Control.

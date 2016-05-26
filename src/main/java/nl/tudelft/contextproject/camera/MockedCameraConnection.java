@@ -20,6 +20,11 @@ public class MockedCameraConnection extends CameraConnection {
     public boolean isConnected() {
         return true;
     }
+    
+    @Override
+    public String getStreamLink() {
+        return "placeholder_picture.jpg";
+    }
 
     @Override
     public CameraSettings getCurrentCameraSettings() {
