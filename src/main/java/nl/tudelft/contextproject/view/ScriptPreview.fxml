@@ -87,5 +87,18 @@
             </HBox>
          </children>
       </HBox>
+      <AnchorPane id="anchor2" layoutX="610.0" layoutY="34.0" prefHeight="162.0" prefWidth="125.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="21.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="200.0" layoutY="23.0" stroke="BLACK" strokeType="INSIDE" width="170.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="23.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="224.0" layoutY="-1.0" stroke="BLACK" strokeType="INSIDE" width="170.0" />
+            <Label layoutX="6.0" layoutY="2.0" text="Shot Info" />
+            <Label layoutX="11.0" layoutY="37.0" text="Camera Number:" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="37.0" />
+            <Label layoutX="11.0" layoutY="69.0" text="Preset Number:" />
+            <Label fx:id="camNum" layoutX="144.0" layoutY="37.0" text="0" />
+            <Label fx:id="presNum" layoutX="144.0" layoutY="69.0" text="0" />
+            <TextField fx:id="descField" layoutX="10.0" layoutY="127.0" prefHeight="85.0" prefWidth="151.0" />
+            <Label layoutX="11.0" layoutY="103.0" text="Description:" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
