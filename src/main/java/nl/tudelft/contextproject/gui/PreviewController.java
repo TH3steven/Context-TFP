@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -56,6 +57,9 @@ public class PreviewController {
     @FXML private ImageView viewTwo;
     @FXML private ImageView viewThree;
     @FXML private ImageView viewFour;
+    
+    @FXML private Label camNum;
+    @FXML private Label presNum;
 
     @FXML private Rectangle highlight1;
     @FXML private Rectangle highlight2;
@@ -394,6 +398,7 @@ public class PreviewController {
         currentShot.set(shot.getNumber());
         actualCam.setImage(new Image(shot.getPreset().getImage()));
         switchViews(shot, true);
+        switchInfo(shot);
     }
     
     private void switchViews(Shot shot, boolean shotSwitch) {
@@ -442,6 +447,15 @@ public class PreviewController {
                 break;
             default: return;
         }
+    }
+    
+    /**
+     * 
+     */
+    private void switchInfo(Shot shot) {
+        camNum.setText(String.valueOf(shot.getCamera().getNumber()));
+        System.out.println(shot.getCamera().getNumber());
+        presNum.setText(String.valueOf(shot.getPreset().getId()));
     }
     
     /**
