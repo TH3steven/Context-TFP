@@ -53,6 +53,52 @@ public class TimelineTest {
         timeline1.setCamera(cam2);
         assertEquals(timeline1.getCamera(), cam2);
     }
+    
+    /**
+     * Tests the method to load the next preset.
+     */
+    @Test
+    public void testNextPreset() {
+        Camera cam0 = new Camera();
+        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);        
+        Shot shot1 = new Shot(1, cam0, pres1);
+        Shot shot2 = new Shot(2, cam0, pres2);
+        List<Shot> los = new ArrayList<>();
+        los.add(shot1);
+        los.add(shot2);
+        Timeline timeline1 = new Timeline(cam0, los);
+        timeline1.nextPreset(shot1);
+        assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 3));
+    }
+    
+    /**
+     * Tests the method which initializes the presets.
+     */
+    @Test
+    public void testInitPreset() {
+        Camera cam0 = new Camera();
+        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);        
+        Shot shot1 = new Shot(1, cam0, pres1);
+        Shot shot2 = new Shot(2, cam0, pres2);
+        List<Shot> los = new ArrayList<>();
+        los.add(shot1);
+        los.add(shot2);
+        Timeline timeline1 = new Timeline(cam0, los);
+        timeline1.initPreset();
+        assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
+    }
+    
+    /**
+     * If no errors are thrown, the initPreset method handles an empty timeline.
+     */
+    @Test
+    public void testInitPresetEmpty() {
+        Timeline tl = new Timeline();
+        tl.initPreset();
+        assertEquals(tl.getShots().size(), 0);
+    }
 
     /**
      * Test addShot method.
