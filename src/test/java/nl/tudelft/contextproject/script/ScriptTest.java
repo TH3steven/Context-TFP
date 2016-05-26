@@ -104,4 +104,34 @@ public class ScriptTest {
         assertFalse(script1.hasNext());
     }
 
+    /**
+     * Tests getCurrentShot method.
+     * Retrieves and gets the current shot on a script.
+     * Tests getNextShot method as well.
+     * This gets the shot after the current shot on a script.
+     * Throws an exception if this does not exist.
+     */
+    @Test
+    public void testGetCurrentShot() {
+        Camera cam0 = new Camera();
+        Camera cam1 = new Camera();
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
+        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
+        Shot shot1 = new Shot(1, cam0, pres);
+        Shot shot2 = new Shot(2, cam1, pres2);
+        Shot shot3 = new Shot(3, cam0, pres3);
+        List<Shot> los = new ArrayList<>();
+        los.add(shot1);
+        los.add(shot2);
+        los.add(shot3);
+        Script script1 = new Script(los);
+        assertEquals(script1.getCurrentShot(), shot1);
+        assertTrue(script1.hasNext());
+        assertEquals(script1.getNextShot(), shot2);
+        assertTrue(script1.hasNext());
+        script1.next();
+        assertEquals(script1.getNextShot(), shot3);
+    }
+
 }
