@@ -81,11 +81,13 @@ public class PreviewController {
 
         initializeShots();
         initializeChoices();
+        initializeImages();
         initializeActions();
         initializeListeners();
         initializeTextFields();
-        initializeImages();
-        initializeTimeline();
+        if (!shots.isEmpty()) {
+            initializeTimeline();
+        }
         
         actualCam.fitWidthProperty().bind(imagePane.widthProperty());
         actualCam.fitHeightProperty().bind(imagePane.heightProperty());
@@ -99,6 +101,28 @@ public class PreviewController {
      * Initialize functionality on action.
      */
     private void initializeActions() {
+        back.setOnAction((event) -> {
+            MenuController.show();
+        });
+        
+        int check = 0;
+        if (shots.size() < views.size()) {
+            check = shots.size();
+        } else {
+            check = views.size();
+        }
+        for (int i = 0; i < check; i++) {
+            initializeViewActions(views.get(i), i + 1);
+        }
+        if (shots.size() > 0) {
+            initializeShotActions();
+        }
+    }
+    
+    /**
+     * Initialize actions which require shots to function.
+     */
+    private void initializeShotActions() {
         play.setOnAction((event) -> {
             timeline.playFromStart();
         });
@@ -106,21 +130,11 @@ public class PreviewController {
         stop.setOnAction((event) -> {
             timeline.stop();
         });
-
-        back.setOnAction((event) -> {
-            timeline.stop();
-            MenuController.show();
-        });
-
+        
         confirm.setOnAction((event) -> {
             Shot current = shots.get(currentShot.get() - 1);
             current.setDuration(Double.parseDouble(duration.getText()));
         });
-
-        initializeViewActions(viewOne, 1);
-        initializeViewActions(viewTwo, 2);
-        initializeViewActions(viewThree, 3);
-        initializeViewActions(viewFour, 4);
         
         leftArrow.setOnAction((event) -> {
             int shotNumFirst = currentFirst.getNumber() - 1;
@@ -251,28 +265,30 @@ public class PreviewController {
      */
     private void initializeImages() {
         actualCam.setImage(new Image("placeholder_picture.jpg"));
-        Image imgOne = new Image(shots.get(0).getPreset().getImage());
-        Image imgTwo = new Image(shots.get(1).getPreset().getImage());
-        Image imgThree = new Image(shots.get(2).getPreset().getImage());
-        Image imgFour = new Image(shots.get(3).getPreset().getImage());
-
-        viewOne.setImage(imgOne);
-        viewTwo.setImage(imgTwo);
-        viewThree.setImage(imgThree);
-        viewFour.setImage(imgFour);
-
+        
         views = new ArrayList<ImageView>();
         views.add(viewOne);
         views.add(viewTwo);
         views.add(viewThree);
         views.add(viewFour);
+        
+        for(int i = 0; i < 4; i++) {
+            views.get(i).setImage(createInitialImage(i));
+        }
     }
 
     /**
      * Make the dummy shots.
      */
     private void initializeShots() {       
-        currentFirst = shots.get(0);
+        //add example images
+        for(int i = 0; i < shots.size(); i++) {
+            shots.get(i).getPreset().setImageLocation(getImageLoc(i));
+            System.out.println("Shot " + i + "      " + shots.get(i).getPreset().getImage());
+        }
+        if (!shots.isEmpty()) {
+            currentFirst = shots.get(0);
+        }
     }    
 
     /**
@@ -317,6 +333,43 @@ public class PreviewController {
         } 
         
         return returnValue;
+    }
+    
+    /**
+     * gets an image location as an example for each dummy shot.
+     * @param i - number of the shot.
+     * @return - image location.
+     */
+    private String getImageLoc(int i) {
+        int check = i % 6;
+        System.out.println(check);
+        switch (check) {
+            case 0:
+                return "placeholder.jpg";
+            case 1:
+                return "test2.jpg";
+            case 2:
+                return "test3.jpg";
+            case 3:
+                return "test4.jpg";
+            case 4:
+                return "test5.jpg";
+            case 5:
+                return "test6.jpg";
+            default: 
+                return "error.jpg";
+        }
+    }
+    
+    /**
+     * Creates initial preview images for the shotbox.
+     */
+    private Image createInitialImage(int i) {
+        try {
+            return new Image(shots.get(i).getPreset().getImage());
+        } catch (IndexOutOfBoundsException e) {
+            return new Image("gray.jpg");
+        }
     }
     
     /**
