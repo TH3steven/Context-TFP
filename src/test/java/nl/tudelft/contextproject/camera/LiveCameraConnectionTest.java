@@ -6,6 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
+
 /*
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,12 +24,6 @@ import java.net.InetSocketAddress;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 */
-
-
-
-
-
-
 
 import org.junit.Before;
 //import org.junit.BeforeClass;
@@ -86,6 +87,7 @@ public class LiveCameraConnectionTest {
         if (doTests) {
             CameraSettings curSet = connection.getCurrentCameraSettings();
             assertNotNull(curSet);
+            assertEquals(curSet, connection.getLastKnownSettings());
         }
     }
 
@@ -95,10 +97,8 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.absPanTilt(29965, 29965));
             Thread.sleep(4000);
             int[] curSet = connection.getCurrentPanTilt();
-            assertTrue(29965 - MAX_MOV_OFFSET <= curSet[0]);
-            assertTrue(29965 + MAX_MOV_OFFSET >= curSet[0]);
-            assertTrue(29965 - MAX_MOV_OFFSET <= curSet[1]);
-            assertTrue(29965 + MAX_MOV_OFFSET >= curSet[1]);
+            assertWithinMaxOffset(29965, curSet[0]);
+            assertWithinMaxOffset(29965, curSet[1]);
         }
     }
 
@@ -109,10 +109,8 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.absPan(31965));
             Thread.sleep(4000);
             int[] after = connection.getCurrentPanTilt();
-            assertTrue(before[1] - MAX_MOV_OFFSET <= after[1]);
-            assertTrue(before[1] + MAX_MOV_OFFSET >= after[1]);
-            assertTrue(31965 - MAX_MOV_OFFSET <= after[0]);
-            assertTrue(31965 + MAX_MOV_OFFSET >= after[0]);
+            assertWithinMaxOffset(before[1], after[1]);
+            assertWithinMaxOffset(31965, after[0]);
         }
     }
 
@@ -123,10 +121,8 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.absTilt(31965));
             Thread.sleep(4000);
             int[] after = connection.getCurrentPanTilt();
-            assertTrue(before[0] - MAX_MOV_OFFSET <= after[0]);
-            assertTrue(before[0] + MAX_MOV_OFFSET >= after[0]);
-            assertTrue(31965 - MAX_MOV_OFFSET <= after[1]);
-            assertTrue(31965 + MAX_MOV_OFFSET >= after[1]);
+            assertWithinMaxOffset(before[0], after[0]);
+            assertWithinMaxOffset(31965, after[1]);
         }
     }
 
@@ -136,8 +132,7 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.absZoom(1965));
             Thread.sleep(2000);
             int newZoom = connection.getCurrentZoom();
-            assertTrue(1965 - MAX_MOV_OFFSET <= newZoom);
-            assertTrue(1965 + MAX_MOV_OFFSET >= newZoom);
+            assertWithinMaxOffset(1965, newZoom);
         }
     }
 
@@ -147,8 +142,7 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.setAutoFocus(false));
             assertTrue(connection.absFocus(1965));
             int newFocus = connection.getCurrentFocus();
-            assertTrue(1965 - MAX_MOV_OFFSET <= newFocus);
-            assertTrue(1965 + MAX_MOV_OFFSET >= newFocus);
+            assertWithinMaxOffset(1965, newFocus);
         }
     }
     
@@ -169,10 +163,8 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.relPanTilt(-420, 420));
             Thread.sleep(2000);
             int[] after = connection.getCurrentPanTilt();
-            assertTrue(before[0] - 420 - MAX_MOV_OFFSET <= after[0]);
-            assertTrue(before[0] - 420 + MAX_MOV_OFFSET >= after[0]);
-            assertTrue(before[1] + 420 - MAX_MOV_OFFSET <= after[1]);
-            assertTrue(before[1] + 420 + MAX_MOV_OFFSET >= after[1]);
+            assertWithinMaxOffset(before[0] - 420, after[0]);
+            assertWithinMaxOffset(before[1] + 420, after[1]);
         }
     }
 
@@ -183,10 +175,8 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.relPan(420));
             Thread.sleep(2000);
             int[] after = connection.getCurrentPanTilt();
-            assertTrue(before[0] + 420 - MAX_MOV_OFFSET <= after[0]);
-            assertTrue(before[0] + 420 + MAX_MOV_OFFSET >= after[0]);
-            assertTrue(before[1] - MAX_MOV_OFFSET <= after[1]);
-            assertTrue(before[1] + MAX_MOV_OFFSET >= after[1]);
+            assertWithinMaxOffset(before[0] + 420, after[0]);
+            assertWithinMaxOffset(before[1], after[1]);
         }
     }
 
@@ -197,10 +187,8 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.relTilt(420));
             Thread.sleep(2000);
             int[] after = connection.getCurrentPanTilt();
-            assertTrue(before[0] - MAX_MOV_OFFSET <= after[0]);
-            assertTrue(before[0] + MAX_MOV_OFFSET >= after[0]);
-            assertTrue(before[1] + 420 - MAX_MOV_OFFSET <= after[1]);
-            assertTrue(before[1] + 420 + MAX_MOV_OFFSET >= after[1]);
+            assertWithinMaxOffset(before[0], after[0]);
+            assertWithinMaxOffset(before[1] + 420, after[1]);
         }
     }
 
@@ -211,8 +199,7 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.relZoom(65));
             Thread.sleep(1000);
             int newZoom = connection.getCurrentZoom();
-            assertTrue(oldZoom + 65 - MAX_MOV_OFFSET <= newZoom);
-            assertTrue(oldZoom + 65 + MAX_MOV_OFFSET >= newZoom);
+            assertWithinMaxOffset(oldZoom + 65, newZoom);
         }
     }
 
@@ -224,8 +211,7 @@ public class LiveCameraConnectionTest {
             assertTrue(connection.relFocus(65));
             Thread.sleep(1000);
             int newFocus = connection.getCurrentFocus();
-            assertTrue(oldFocus + 65 - MAX_MOV_OFFSET <= newFocus);
-            assertTrue(oldFocus + 65 + MAX_MOV_OFFSET >= newFocus);
+            assertWithinMaxOffset(oldFocus + 65, newFocus);
         }
     }
 
@@ -239,9 +225,70 @@ public class LiveCameraConnectionTest {
     }
 
     @Test
-    public void testUpdate() {
-        if (doTests) {
-            fail("Not yet implemented");
+    public void testUpdateAll() {
+        Camera c = new Camera();
+        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
+        doReturn(true).when(connection).absPanTilt(1965, 1965);
+        doReturn(true).when(connection).absZoom(1965);
+        doReturn(true).when(connection).absFocus(1965);
+        connection.update(c, new CameraSettings(1965, 1965, 1965, 1965));
+        verify(connection).absPanTilt(1965, 1965);
+        verify(connection).absZoom(1965);
+        verify(connection).absFocus(1965);
+        Camera.clearAllCameras();
+    }
+    
+    @Test
+    public void testUpdatePanTiltOnly() {
+        Camera c = new Camera();
+        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
+        doReturn(true).when(connection).absPanTilt(1965, 1965);
+        connection.update(c, new CameraSettings(1965, 1965, 0, 0));
+        verify(connection).absPanTilt(1965, 1965);
+        verify(connection, never()).absZoom(anyInt());
+        verify(connection, never()).absFocus(anyInt());
+        Camera.clearAllCameras();
+    }
+    
+    @Test
+    public void testUpdateZoomOnly() {
+        Camera c = new Camera();
+        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
+        doReturn(true).when(connection).absZoom(1965);
+        connection.update(c, new CameraSettings(0, 0, 1965, 0));
+        verify(connection, never()).absPanTilt(anyInt(), anyInt());
+        verify(connection).absZoom(1965);
+        verify(connection, never()).absFocus(anyInt());
+        Camera.clearAllCameras();
+    }
+    
+    @Test
+    public void testUpdateFocusOnly() {
+        Camera c = new Camera();
+        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
+        doReturn(true).when(connection).absFocus(1965);
+        connection.update(c, new CameraSettings(0, 0, 0, 1965));
+        verify(connection, never()).absPanTilt(anyInt(), anyInt());
+        verify(connection, never()).absZoom(anyInt());
+        verify(connection).absFocus(1965);
+        Camera.clearAllCameras();
+    }
+    
+    /**
+     * Method to assert that the actual value is within {@link #MAX_MOV_OFFSET}
+     * from the expected value.
+     * @param expected expected value.
+     * @param actual actual value.
+     */
+    public static void assertWithinMaxOffset(int expected, int actual) {
+        int low = expected - MAX_MOV_OFFSET;
+        int high = expected + MAX_MOV_OFFSET;
+        if (actual < low || actual > high) {
+            fail("Expected between <" + low + "> and <" + high + "> but was <" + actual + ">");
         }
     }
 
