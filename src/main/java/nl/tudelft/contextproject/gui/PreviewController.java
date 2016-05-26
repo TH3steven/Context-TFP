@@ -20,11 +20,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Shot;
 import nl.tudelft.contextproject.script.Script;
 
@@ -144,7 +144,6 @@ public class PreviewController {
                 switchViews(shots.get(shotNumFirst - 1), false);
                 highlightRight();
             }
-            System.out.println(shotNumFirst + "        " + currentHighlight);
         });
         
         rightArrow.setOnAction((event) -> {
@@ -153,7 +152,6 @@ public class PreviewController {
                 switchViews(shots.get(shotNumFirst + 1), false);
                 highlightLeft();
             }
-            System.out.println(shotNumFirst + "        " + currentHighlight);
         });
     }
     
@@ -168,7 +166,6 @@ public class PreviewController {
             int shotNum = currentFirst.getNumber() - diff;
 
             showShot(shots.get(shotNum - 1));
-            System.out.println(currentHighlight);
 
             timeline.stop();
         });
@@ -280,7 +277,7 @@ public class PreviewController {
         //add example images
         for (int i = 0; i < shots.size(); i++) {
             shots.get(i).getPreset().setImageLocation(getImageLoc(i));
-            System.out.println("Shot " + i + "      " + shots.get(i).getPreset().getImage());
+            checkPresetImages(i);
         }
         if (!shots.isEmpty()) {
             currentFirst = shots.get(0);
@@ -331,6 +328,15 @@ public class PreviewController {
         return returnValue;
     }
     
+    private void checkPresetImages(int i) {
+        Preset preset = shots.get(i).getPreset();
+        try {
+            new Image(preset.getImage());
+        } catch (IllegalArgumentException e) {
+            preset.setImageLocation("error.jpg");
+        }
+    }
+    
     /**
      * gets an image location as an example for each dummy shot.
      * @param i - number of the shot.
@@ -338,7 +344,6 @@ public class PreviewController {
      */
     private String getImageLoc(int i) {
         int check = i % 6;
-        System.out.println(check);
         switch (check) {
             case 0:
                 return "placeholder.jpg";
@@ -351,7 +356,7 @@ public class PreviewController {
             case 4:
                 return "test5.jpg";
             case 5:
-                return "test6.jpg";
+                return "test.jpg";
             default: 
                 return "error.jpg";
         }
@@ -403,7 +408,6 @@ public class PreviewController {
                 currentFirst = shot;
                 if (shotSwitch) {
                     switchHighlights(1);
-                    System.out.println("tesst");
                 }
                 break;
             case 2: 
@@ -473,7 +477,6 @@ public class PreviewController {
      */
     private void highlightLeft() {
         currentHighlight--;
-        System.out.println("poep");
         if (highlightCheck()) {
             switchHighlights(currentHighlight);
         } else {
