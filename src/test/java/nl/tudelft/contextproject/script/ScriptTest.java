@@ -83,6 +83,20 @@ public class ScriptTest {
         assertFalse(script2.hasNext());
         assertTrue(script1.hasNext());
     }
+    
+    /**
+     * Test if the initPresetLoading method actually loads the presets.
+     */
+    @Test
+    public void testInitPresetLoading() {
+        Camera cam0 = new Camera();
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        Shot shot1 = new Shot(1, cam0, pres);
+        List<Shot> los1 = new ArrayList<>();
+        los1.add(shot1);
+        Script script1 = new Script(los1);
+        assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
+    }
 
     /**
      * Test next method.
@@ -159,5 +173,5 @@ public class ScriptTest {
         Script script = new Script(shots);
         assertTrue(script.isValid());
     }
-
+    
 }
