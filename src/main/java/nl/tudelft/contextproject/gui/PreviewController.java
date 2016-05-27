@@ -148,6 +148,7 @@ public class PreviewController {
                 switchViews(shots.get(shotNumFirst - 1), false);
                 highlightRight();
             }
+            timeline.stop();
         });
         
         rightArrow.setOnAction((event) -> {
@@ -156,6 +157,7 @@ public class PreviewController {
                 switchViews(shots.get(shotNumFirst + 1), false);
                 highlightLeft();
             }
+            timeline.stop();
         });
     }
     
