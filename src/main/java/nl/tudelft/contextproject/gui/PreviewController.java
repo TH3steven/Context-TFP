@@ -99,7 +99,8 @@ public class PreviewController {
         
         actualCam.fitWidthProperty().bind(imagePane.widthProperty());
         actualCam.fitHeightProperty().bind(imagePane.heightProperty());
-
+        
+        highlight1.setOpacity(0);
         highlight2.setOpacity(0);
         highlight3.setOpacity(0);
         highlight4.setOpacity(0);
