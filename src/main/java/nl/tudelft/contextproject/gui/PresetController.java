@@ -103,7 +103,6 @@ public class PresetController {
             MenuController.show();
         });
 
-        //TODO: Save actual camera settings in the preset
         btnSave.setOnAction((event) -> {
             int id = -1;
             try {
@@ -141,11 +140,11 @@ public class PresetController {
      * @param id The id of the preset to add.
      */
     private void addPreset(int id) {
+        Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
         Preset newPreset = new InstantPreset(
-                new CameraSettings(1, 1, 1, 2000),
+                cam.getSettings(),
                 id,
                 description.getText());
-        Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
 
         if (overwrite.isSelected()) {
             cam.overwritePreset(newPreset);
