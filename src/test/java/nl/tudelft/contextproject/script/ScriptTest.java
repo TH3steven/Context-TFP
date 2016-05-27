@@ -13,7 +13,6 @@ import nl.tudelft.contextproject.presets.Preset;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -46,6 +45,9 @@ public class ScriptTest {
         Camera.clearAllCameras();
     }
 
+    /**
+     * Initialises the above private variables before each test.
+     */
     @Before
     public void init() {
         cam0 = new Camera();
@@ -63,8 +65,8 @@ public class ScriptTest {
         los.add(shot3);
         script1 = new Script(los);
         script2 = new Script(los1);
-
     }
+    
     /**
      * Test the script constructor to find the shots
      * available in the script.
@@ -96,6 +98,14 @@ public class ScriptTest {
         assertFalse(script2.hasNext());
         assertTrue(script1.hasNext());
     }
+    
+    /**
+     * Test if the initPresetLoading method actually loads the presets.
+     */
+    @Test
+    public void testInitPresetLoading() {
+        assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
+    }
 
     /**
      * Test next method.
@@ -120,12 +130,48 @@ public class ScriptTest {
      */
     @Test
     public void testGetCurrentShot() {
-        assertEquals(script1.getCurrentShot(), shot1);
+        assertNull(script1.getCurrentShot());
         assertTrue(script1.hasNext());
-        assertEquals(script1.getNextShot(), shot2);
+        assertEquals(script1.getNextShot(), shot1);
         assertTrue(script1.hasNext());
         script1.next();
-        assertEquals(script1.getNextShot(), shot3);
+        assertEquals(script1.getNextShot(), shot2);
+    }
+
+    /**
+     * Tests the isValid() method with a valid script.
+     */
+    @Test
+    public void testIsValidTrue() {
+        assertTrue(script1.isValid());
+    }
+    
+    /**
+     * Tests the isValid() method with an invalid script.
+     */
+    @Test
+    public void testIsValidFalse() {
+        Shot shot1 = new Shot(1, cam1, pres);
+        Shot shot2 = new Shot(2, cam0, pres2);
+        Shot shot3 = new Shot(3, cam0, pres3);
+        List<Shot> shots = new ArrayList<>();
+        shots.add(shot1);
+        shots.add(shot2);
+        shots.add(shot3);
+        Script script = new Script(shots);
+        assertFalse(script.isValid());        
+    }
+    
+    /**
+     * Tests the isValid() method with a short script.
+     */
+    @Test
+    public void testIsValidShort() {
+        Shot shot1 = new Shot(1, cam0, pres);
+        List<Shot> shots = new ArrayList<>();
+        shots.add(shot1);
+        Script script = new Script(shots);
+        assertTrue(script.isValid());
     }
 
 }

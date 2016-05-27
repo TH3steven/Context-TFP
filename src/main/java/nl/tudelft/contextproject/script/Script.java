@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Class to represent a script of presets.
@@ -37,16 +38,17 @@ public class Script implements Iterator<Shot> {
     private String name;
     
     /**
-     * Creates a script that starts from the beginning
-     * with specified shots.
+     * Creates a script that starts from the beginning with specified shots.
+     * Current is initialized with -1, so the first call of next() returns the first shot.
      * @param shots The actual script of the different shots in order of appearance.
      */
     public Script(List<Shot> shots) {
         this.shots = shots;
-        current = 0;
+        current = -1;
         name = "";
         timelines = new HashMap<Integer, Timeline>();
         initTimelines();
+        initPresetLoading();
     }
 
     /**
@@ -55,6 +57,27 @@ public class Script implements Iterator<Shot> {
      */
     public List<Shot> getShots() {
         return shots;
+    }
+    
+    /**
+     * Valid means that one camera doesn't have two adjacent shots with different presets.
+     * @return True if a script is valid, otherwise false.
+     */
+    public boolean isValid() {
+        if (shots.size() <= 1) {
+            return true;
+        }
+
+        Shot prev = shots.get(0);
+        for (int i = 1; i < shots.size(); i++) {
+            Shot next = shots.get(i);
+            if (next.getCamera().equals(prev.getCamera()) && !next.getPreset().equals(prev.getPreset())) {
+                return false;
+            }
+            prev = next;
+        }
+        
+        return true;
     }
 
     /**
@@ -87,6 +110,16 @@ public class Script implements Iterator<Shot> {
                 t.addShot(s);
                 timelines.put(s.getCamera().getNumber(), t);
             }
+        }
+    }
+    
+    /**
+     * Loads the first presets of all the cameras.
+     */
+    private void initPresetLoading() {
+        Set<Integer> keys = timelines.keySet();
+        for (Integer i : keys) {
+            timelines.get(i).initPreset();
         }
     }
     
@@ -148,9 +181,12 @@ public class Script implements Iterator<Shot> {
         this.name = name;
     }
 
+    /**
+     * Returns true if there is a next shot, the +1 is used because we initialize with -1.
+     */
     @Override
     public boolean hasNext() {
-        return current < shots.size();
+        return current + 1 < shots.size();
     }
 
     @Override
@@ -172,14 +208,20 @@ public class Script implements Iterator<Shot> {
 
     /**
      * Does what {@link Iterator#next} does, but also
-     * executes the shot ({@link Shot#execute()} while doing so.
+     * executes the shot ({@link Shot#execute()} while doing so. 
+     * The method also loads the next preset of the camera that was live.
      */
     @Override
     public Shot next() {
-        Shot s = shots.get(current);
-        s.execute();
+        if (current > -1) {
+            Shot old = shots.get(current);
+            timelines.get(old.getCamera().getNumber()).nextPreset(old);
+        }
+        
         current++;
-        return s;
+        Shot next = shots.get(current);
+        next.execute();
+        return next;
 
     }
 }
