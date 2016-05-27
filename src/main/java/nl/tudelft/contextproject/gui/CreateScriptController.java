@@ -627,6 +627,27 @@ public class CreateScriptController {
      * Handles the saving of a file.
      */
     private void setSavePopup(ActionEvent event, boolean showDialog) {
+        final Script script = new Script(tableEvents.getItems());
+        //script.setName(ContextTFP.getScript().getName());
+        
+        // TODO fix validation check
+        Shot error = script.isValid();
+        
+        if (error != null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirm saving");
+            alert.setHeaderText("Trying to save invalid script");
+            alert.setContentText("Error at shot ID: " + error.getNumber()
+                    + "\nYou are trying to save an invalid script. "
+                    + "Are you sure you want to continue?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.get() == ButtonType.CANCEL) {
+                return;
+            }
+        }
+        
         File file;
         
         if (showDialog) {
@@ -639,9 +660,6 @@ public class CreateScriptController {
         } else {
             file = new File(SaveScript.getSaveLocation());
         }
-        
-        final Script script = new Script(tableEvents.getItems());
-        script.setName(ContextTFP.getScript().getName());
 
         if (file != null) {
             try {
