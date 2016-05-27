@@ -12,62 +12,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-
-/*
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
-*/
-
 import org.junit.Before;
-//import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class LiveCameraConnectionTest {
     
     private static boolean doTests = true;
-    private static final int MAX_MOV_OFFSET = 2;
+    private static final int MAX_MOV_OFFSET = 5;
     
-    //private static HttpServer server;
     private LiveCameraConnection connection;
     
-    
-    /*          //Work in progress to create test that works offline.
-    @BeforeClass
-    public static void setUpClass() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(8000), 0);
-        server.createContext("/cgi-bin", (exchange) -> {
-            if (exchange.getRequestMethod().equals("GET")) {
-                String data = exchange.getRequestURI().toString();
-                data = data.substring(20, data.lastIndexOf("&res=1"));
-                sendResponse(exchange, data);
-            } else {
-                fail();
-            }
-        });
-        server.setExecutor(null);
-        server.start();
-    }
-    
-    private static void sendResponse(HttpExchange exchange, String command) throws IOException {
-        switch (command) {
-            case "QID":
-                String response = "OID:AW-HE130";
-                exchange.sendResponseHeaders(200, response.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
-                break;
-        }
-    }
-    */
-
     @Before
     public void setUp() throws Exception {
         connection = new LiveCameraConnection("192.168.10.101");
@@ -160,11 +114,11 @@ public class LiveCameraConnectionTest {
     public void testRelPanTilt() throws InterruptedException {
         if (doTests) {
             int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.relPanTilt(-420, 420));
+            assertTrue(connection.relPanTilt(-420, -420));
             Thread.sleep(2000);
             int[] after = connection.getCurrentPanTilt();
             assertWithinMaxOffset(before[0] - 420, after[0]);
-            assertWithinMaxOffset(before[1] + 420, after[1]);
+            assertWithinMaxOffset(before[1] - 420, after[1]);
         }
     }
 

@@ -141,7 +141,7 @@ public class LiveCameraConnection extends CameraConnection {
             connected = false;
             return "";
         }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
         String response = reader.readLine();
         reader.close();
         return response != null ? response : "";
@@ -374,17 +374,17 @@ public class LiveCameraConnection extends CameraConnection {
     protected boolean relPanTilt(int panOffset, int tiltOffset) {
         CameraSettings curSet = getCurrentCameraSettings();
         panOffset = (curSet.getPan() + panOffset < PAN_LIMIT_LOW) 
-                    ? curSet.getPan() - PAN_LIMIT_LOW : 
+                        ? curSet.getPan() - PAN_LIMIT_LOW : 
                     (curSet.getPan() + panOffset > PAN_LIMIT_HIGH)
-                    ? PAN_LIMIT_HIGH - curSet.getPan() : panOffset;
+                        ? PAN_LIMIT_HIGH - curSet.getPan() : panOffset;
         tiltOffset = (curSet.getTilt() + tiltOffset < TILT_LIMIT_LOW)
-                     ? curSet.getTilt() - TILT_LIMIT_LOW : 
-                    (curSet.getTilt() + tiltOffset > TILT_LIMIT_HIGH)
-                     ? TILT_LIMIT_HIGH - curSet.getTilt() : tiltOffset;
+                         ? curSet.getTilt() - TILT_LIMIT_LOW : 
+                     (curSet.getTilt() + tiltOffset > TILT_LIMIT_HIGH)
+                         ? TILT_LIMIT_HIGH - curSet.getTilt() : tiltOffset;
         try {
             String res = sendRequest(buildPanTiltHeadControlURL("%23RPC" 
-                        + Integer.toHexString(0x10000 | panOffset).substring(1).toUpperCase() 
-                        + Integer.toHexString(0x10000 | tiltOffset).substring(1).toUpperCase()
+                        + Integer.toHexString(0x10000 | 32768 + panOffset).substring(1).toUpperCase() 
+                        + Integer.toHexString(0x10000 | 32768 + tiltOffset).substring(1).toUpperCase()
                     ));
             if (res.startsWith("rPC")) {
                 lastKnown.pan(panOffset);
@@ -410,13 +410,11 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean relZoom(int offset) {
-        absZoom(lastKnown.getZoom() + offset);
-        return false;
+        return absZoom(getCurrentZoom() + offset);
     }
 
     @Override
     protected boolean relFocus(int offset) {
-        absFocus(lastKnown.getFocus() + offset);
-        return false;
+        return absFocus(getCurrentFocus() + offset);
     }
 }
