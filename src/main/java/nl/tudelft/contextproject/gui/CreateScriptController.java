@@ -103,11 +103,11 @@ public class CreateScriptController {
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
-        
+
         // Set the current script as backup.
         backupList = new ArrayList<Shot>();
         backupList.addAll(0, ContextTFP.getScript().getShots());
-        
+
         setFactories();
         setAddButton();
         setBackButton();
@@ -133,7 +133,7 @@ public class CreateScriptController {
             fillTable(ContextTFP.getScript().getShots());
             fill = false;
         }
-        
+
         // Makes sure there are no duplicate ID's of the shots in the table.
         for (Shot s : tableEvents.getItems()) {
             if (s.getNumber() > maximumId) {
@@ -194,6 +194,29 @@ public class CreateScriptController {
             editConfirmAction(lastSelectedRow.get().getItem());
         });
 
+        initEditButtons();
+
+        EventHandler<KeyEvent> addResourceHandler = event -> {
+            if (lastSelectedRow.get() != null && event.getCode() == KeyCode.ENTER) {
+                editConfirmAction(lastSelectedRow.get().getItem());
+            }
+        };
+
+        editBox.setOnKeyPressed(addResourceHandler);
+        editShot.setOnKeyReleased(addResourceHandler);
+        editCamera.setOnKeyReleased(addResourceHandler);
+        editPreset.setOnKeyReleased(addResourceHandler);
+        editDescription.setOnKeyReleased(addResourceHandler);
+
+        initTable();
+    }
+
+    /**
+     * Sets the onAction for the edit confirm and
+     * edit remove buttons that show up when editing
+     * a shot.
+     */
+    private void initEditButtons() {
         btnEditConfirm.setOnAction(event -> {
             boolean emptyField = false;
 
@@ -227,20 +250,6 @@ public class CreateScriptController {
 
             editDoneAction();
         });
-
-        EventHandler<KeyEvent> addResourceHandler = event -> {
-            if (lastSelectedRow.get() != null && event.getCode() == KeyCode.ENTER) {
-                editConfirmAction(lastSelectedRow.get().getItem());
-            }
-        };
-
-        editBox.setOnKeyPressed(addResourceHandler);
-        editShot.setOnKeyReleased(addResourceHandler);
-        editCamera.setOnKeyReleased(addResourceHandler);
-        editPreset.setOnKeyReleased(addResourceHandler);
-        editDescription.setOnKeyReleased(addResourceHandler);
-
-        initTable();
     }
 
     /**
@@ -252,7 +261,7 @@ public class CreateScriptController {
                 editShot.setText(nv.getShotId());
                 editCamera.getSelectionModel().select(nv.getCamera().getNumber());
                 if (nv.getPreset() != null) {
-                    editPreset.getSelectionModel().select(nv.getPreset().getId() + 1);
+                    editPreset.getSelectionModel().select(nv.getPreset().getId()); //+1
                 } else {
                     editPreset.getSelectionModel().select(0);
                 }
@@ -285,12 +294,12 @@ public class CreateScriptController {
     private void editConfirmAction(Shot shot) {
         Shot backup = new Shot(shot.getNumber(), shot.getShotId(), 
                 shot.getCamera(), shot.getPreset(), shot.getDescription());
-        
+
         shot.setShotId(editShot.getText());
         shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
         if (!editPreset.getSelectionModel().getSelectedItem().equals("None")) {
             shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(new Integer(editPreset.getSelectionModel().getSelectedItem()) - 1));
+                    .getPreset(new Integer(editPreset.getSelectionModel().getSelectedIndex()))); //-1
         } else {
             shot.setPreset(null);
         }
@@ -362,7 +371,7 @@ public class CreateScriptController {
         return event -> {
             final Dragboard db = cell.startDragAndDrop(TransferMode.MOVE);
             final ClipboardContent content = new ClipboardContent();
-            
+
             content.putString(String.valueOf(cell.getIndex()));
             db.setContent(content);
         };
@@ -381,11 +390,11 @@ public class CreateScriptController {
 
             if (dragboard.hasString()) {
                 final String value = dragboard.getString();
-                
+
                 if (Pattern.matches(INTEGER_REGEX, value)) {
                     try {
                         final int index = Integer.parseInt(value);
-                        
+
                         if (index != cell.getIndex()
                                 && index != -1
                                 && (index < table.getItems().size() - 1 || cell.getIndex() != -1)) {
@@ -525,51 +534,13 @@ public class CreateScriptController {
         tableEvents.setItems(data);
 
         btnAdd.setOnAction(event -> {
-            boolean emptyField = false;
-
-            if (addCamera.getSelectionModel().isEmpty()) {
-                addCamera.setStyle("-fx-border-color: red;");
-                emptyField = true;
-            }
-
-            if (addPreset.getSelectionModel().isEmpty()) {
-                addPreset.setStyle("-fx-border-color: red;");
-                emptyField = true;
-            }
-
-            if (addDescription.getText().isEmpty()) {
-                addDescription.setStyle("-fx-border-color: red;");
-                emptyField = true;
-            }
-
-            if (!emptyField) {
+            if (isValidInput()) {
                 addCamera.setStyle("");
                 addPreset.setStyle("");
                 addDescription.setStyle("");
 
                 maximumId++;
-
-                if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
-                    final Shot newShot = new Shot(
-                            maximumId,
-                            addShot.getText(),
-                            Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                            addDescription.getText()
-                            );
-
-                    data.add(newShot);
-                } else {
-                    final Shot newShot = new Shot(
-                            maximumId,
-                            addShot.getText(),
-                            Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                            Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                                .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
-                            addDescription.getText()
-                            );
-
-                    data.add(newShot);
-                }
+                createNewShot(data);
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
@@ -577,6 +548,62 @@ public class CreateScriptController {
                 addDescription.clear();
             }
         });
+    }
+    
+    /**
+     * Checks if the new shot being added to the script
+     * is valid.
+     * 
+     * @return True if it has no errors.
+     */
+    private boolean isValidInput() {
+        boolean isValid = true;
+
+        if (addCamera.getSelectionModel().isEmpty()) {
+            addCamera.setStyle("-fx-border-color: red;");
+            isValid = false;
+        }
+
+        if (addPreset.getSelectionModel().isEmpty()) {
+            addPreset.setStyle("-fx-border-color: red;");
+            isValid = false;
+        }
+
+        if (addDescription.getText().isEmpty()) {
+            addDescription.setStyle("-fx-border-color: red;");
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+    
+    /**
+     * Creates a new shot based on the users' input.
+     * 
+     * @param data The data already in the table.
+     */
+    private void createNewShot(ObservableList<Shot> data) {
+        if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
+            final Shot newShot = new Shot(
+                    maximumId,
+                    addShot.getText(),
+                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
+                    addDescription.getText()
+                    );
+
+            data.add(newShot);
+        } else {
+            final Shot newShot = new Shot(
+                    maximumId,
+                    addShot.getText(),
+                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
+                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
+                    .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
+                    addDescription.getText()
+                    );
+
+            data.add(newShot);
+        }
     }
 
     /**
@@ -598,14 +625,14 @@ public class CreateScriptController {
                 }
             }
 
-            Script bak = new Script(backupList);
-            bak.setName(ContextTFP.getScript().getName());
-            
-            ContextTFP.setScript(bak);
+            Script backup = new Script(backupList);
+            backup.setName(ContextTFP.getScript().getName());
+
+            ContextTFP.setScript(backup);
             MenuController.show();
         });
     }
-    
+
     /**
      * Sets the onAction for the save buttons.
      */
@@ -613,11 +640,11 @@ public class CreateScriptController {
         if (backupList.isEmpty()) {
             btnSave.setDisable(true);
         }
-        
+
         btnSave.setOnAction(event -> {
             setSavePopup(event, false);
         });
-        
+
         btnSaveAs.setOnAction(event -> {
             setSavePopup(event, true);
         });
@@ -632,15 +659,15 @@ public class CreateScriptController {
         if (!script.showValid(1)) {
             return;
         }
-        
+
         File file;
-        
+
         if (showDialog) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save script");
             fileChooser.setInitialFileName("script");
             fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
-            
+
             file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
         } else {
             file = new File(SaveScript.getSaveLocation());
@@ -654,31 +681,50 @@ public class CreateScriptController {
                 script.setName(file.getName());
                 ContextTFP.setScript(script);
 
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Confirm exiting");
-                alert.setHeaderText("Saving script was succesful!");
-                alert.setContentText("Succesful save of script: " 
-                        + file.getName()
-                        + " Do you want to quit to menu?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-
-                if (result.get() == ButtonType.OK) {
-                    MenuController.show();
-                }
-
+                showConfirmExitDialog(file);
             } catch (Exception e) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle(e.getMessage());
-                alert.setHeaderText("Saving script was unsuccesful!");
-                alert.setContentText("Error when trying to save script at location: " 
-                        + file.getAbsolutePath()
-                        + "\n\nError: "
-                        + e.getCause());
-
-                alert.showAndWait();
+                showErrorDialog(e, file);
             }
         }
+    }
+
+    /**
+     * Displays a confirm to exit dialog when the 
+     * script has been saved.
+     * 
+     * @param file The file that has been saved.
+     */
+    private void showConfirmExitDialog(File file) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm exiting");
+        alert.setHeaderText("Saving script was succesful!");
+        alert.setContentText("Succesful save of script: " 
+                + file.getName()
+                + " Do you want to quit to menu?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            MenuController.show();
+        }
+    }
+
+    /**
+     * Displayes an error dialog when saving of the script
+     * was unsuccesful.
+     * 
+     * @param file The file that was supposed to be saved.
+     */
+    private void showErrorDialog(Exception e, File file) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(e.getMessage());
+        alert.setHeaderText("Saving script was unsuccesful!");
+        alert.setContentText("Error when trying to save script at location: " 
+                + file.getAbsolutePath()
+                + "\n\nError: "
+                + e.getCause());
+
+        alert.showAndWait();
     }
 
     /**
