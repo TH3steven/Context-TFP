@@ -58,6 +58,27 @@ public class Script implements Iterator<Shot> {
     public List<Shot> getShots() {
         return shots;
     }
+    
+    /**
+     * Valid means that one camera doesn't have two adjacent shots with different presets.
+     * @return True if a script is valid, otherwise false.
+     */
+    public boolean isValid() {
+        if (shots.size() <= 1) {
+            return true;
+        }
+
+        Shot prev = shots.get(0);
+        for (int i = 1; i < shots.size(); i++) {
+            Shot next = shots.get(i);
+            if (next.getCamera().equals(prev.getCamera()) && !next.getPreset().equals(prev.getPreset())) {
+                return false;
+            }
+            prev = next;
+        }
+        
+        return true;
+    }
 
     /**
      * Returns the timeline for a specific Camera.
