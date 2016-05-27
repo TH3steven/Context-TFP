@@ -7,8 +7,6 @@ import java.util.List;
 
 /** 
  * Class to represent a timeline of shots for a single camera.
- * 
- * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class Timeline {

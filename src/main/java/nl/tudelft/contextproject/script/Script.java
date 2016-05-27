@@ -45,7 +45,7 @@ public class Script implements Iterator<Shot> {
         this.shots = shots;
         current = 0;
         name = "";
-        timelines = new HashMap<>();
+        timelines = new HashMap<Integer, Timeline>();
         initTimelines();
     }
 
@@ -103,7 +103,7 @@ public class Script implements Iterator<Shot> {
         if (timelines.containsKey(s.getCamera().getNumber())) {
             timelines.get(s.getCamera().getNumber()).addShot(s);
         } else {
-            Timeline t = new Timeline(s.getCamera(), new LinkedList<>());
+            Timeline t = new Timeline(s.getCamera(), new LinkedList<Shot>());
             t.addShot(s);
             timelines.put(s.getCamera().getNumber(), t);
         }
