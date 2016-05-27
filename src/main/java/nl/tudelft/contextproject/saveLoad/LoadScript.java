@@ -273,7 +273,7 @@ public final class LoadScript {
      * @param imgLoc Image location of the preset.
      * @return The constructed preset according to the parameters given.
      * @throws XMLStreamException when instantiating the preset fails.
-     * @see {@link #Preset}
+     * @see {@link Preset#Preset}
      */
     private static Preset createPreset(String type, CameraSettings toSet, int id, 
             String description, String imgLoc) throws XMLStreamException {
