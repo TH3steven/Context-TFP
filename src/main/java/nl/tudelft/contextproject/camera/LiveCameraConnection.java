@@ -83,7 +83,7 @@ public class LiveCameraConnection extends CameraConnection {
     
     @Override
     public String getStreamLink() {
-        return "http://" + address + "/cgi-bin/mjpeg?resolution=1920x1080";
+        return "rtsp://" + address + "/MediaInput/h264";
     }
     
     /**
