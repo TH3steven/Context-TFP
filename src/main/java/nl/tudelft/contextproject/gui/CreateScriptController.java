@@ -446,7 +446,8 @@ public class CreateScriptController {
 
         cam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             presetList.clear();
-            presetList.add("None");
+            // None option disabled till it is implemented in the backend.
+            //TODO presetList.add("None");
 
             if (newV != null) {
                 preset.setDisable(false);
