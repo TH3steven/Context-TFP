@@ -12,6 +12,8 @@ import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
 import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -26,11 +28,43 @@ import java.util.NoSuchElementException;
  */
 public class ScriptTest {
 
+    private Camera cam1;
+    private Camera cam0;
+    private Preset pres;
+    private Preset pres2;
+    private Preset pres3;
+    private List<Shot> los;
+    private List<Shot> los1;
+    private Shot shot1;
+    private Shot shot2;
+    private Shot shot3;
+    private Script script1;
+    private Script script2;
+
     @After
     public void cleanUp() {
         Camera.clearAllCameras();
     }
-    
+
+    @Before
+    public void init() {
+        cam0 = new Camera();
+        cam1 = new Camera();
+        pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
+        pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
+        shot1 = new Shot(1, cam0, pres);
+        shot2 = new Shot(2, cam1, pres2);
+        shot3 = new Shot(3, cam0, pres3);
+        los = new ArrayList<>();
+        los1 = new ArrayList<>();
+        los.add(shot1);
+        los.add(shot2);
+        los.add(shot3);
+        script1 = new Script(los);
+        script2 = new Script(los1);
+
+    }
     /**
      * Test the script constructor to find the shots
      * available in the script.
@@ -39,19 +73,6 @@ public class ScriptTest {
      */
     @Test
     public void testScript() {
-        Camera cam0 = new Camera();
-        Camera cam1 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
-        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
-        Shot shot1 = new Shot(1, cam0, pres);
-        Shot shot2 = new Shot(2, cam1, pres2);
-        Shot shot3 = new Shot(3, cam0, pres3);
-        List<Shot> los = new ArrayList<>();
-        los.add(shot1);
-        los.add(shot2);
-        los.add(shot3);
-        Script script1 = new Script(los);
         assertEquals(script1.getShots().get(0), shot1);
         assertFalse(script1.isEmpty());
         assertNotNull(script1);
@@ -72,14 +93,6 @@ public class ScriptTest {
      */
     @Test
     public void testHasNext() {
-        Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Shot shot1 = new Shot(1, cam0, pres);
-        List<Shot> los2 = new ArrayList<>();
-        List<Shot> los1 = new ArrayList<>();
-        los1.add(shot1);
-        Script script1 = new Script(los1);
-        Script script2 = new Script(los2);
         assertFalse(script2.hasNext());
         assertTrue(script1.hasNext());
     }
@@ -91,16 +104,10 @@ public class ScriptTest {
      */
     @Test
     public  void testNext() throws NoSuchElementException {
-        Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Shot shot1 = new Shot(1, cam0, pres);
-        List<Shot> los2 = new ArrayList<>();
-        List<Shot> los1 = new ArrayList<>();
-        los1.add(shot1);
-        Script script1 = new Script(los1);
-        Script script2 = new Script(los2);
         assertEquals(script1.next(), shot1);
         assertFalse(script2.hasNext());
+        assertEquals(script1.next(), shot2);
+        script1.next();
         assertFalse(script1.hasNext());
     }
 
@@ -113,19 +120,6 @@ public class ScriptTest {
      */
     @Test
     public void testGetCurrentShot() {
-        Camera cam0 = new Camera();
-        Camera cam1 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
-        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
-        Shot shot1 = new Shot(1, cam0, pres);
-        Shot shot2 = new Shot(2, cam1, pres2);
-        Shot shot3 = new Shot(3, cam0, pres3);
-        List<Shot> los = new ArrayList<>();
-        los.add(shot1);
-        los.add(shot2);
-        los.add(shot3);
-        Script script1 = new Script(los);
         assertEquals(script1.getCurrentShot(), shot1);
         assertTrue(script1.hasNext());
         assertEquals(script1.getNextShot(), shot2);
