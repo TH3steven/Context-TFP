@@ -62,8 +62,9 @@ public class MenuController {
             if (file != null) {
                 try {
                     LoadScript.setLoadLocation(file.getAbsolutePath());
-                    ContextTFP.setScript(LoadScript.load());
+                    SaveScript.setSaveLocation(file.getAbsolutePath());
                     
+                    ContextTFP.setScript(LoadScript.load());
                     ContextTFP.getScript().setName(file.getName());
 
                     Alert alert = new Alert(AlertType.INFORMATION);
@@ -75,7 +76,8 @@ public class MenuController {
 
                     alert.showAndWait();
                     
-                    SaveScript.setSaveLocation(file.getAbsolutePath());
+                    ContextTFP.getScript().showValid(2);
+                    
                 } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle(e.getMessage());
