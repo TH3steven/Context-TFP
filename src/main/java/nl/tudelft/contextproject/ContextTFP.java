@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * The main purpose of this project is to allow PolyCast Productions B.V. to
  * easily control their cameras and to improve their digital environment.
  * 
- * <p>This file shoud be used to initialize the program.
+ * <p>This file should be used to initialize the program.
  * 
  * @author Team Free Pizza
  * @version %I%, %G%

@@ -20,10 +20,30 @@ public class MockedCameraConnection extends CameraConnection {
     public boolean isConnected() {
         return true;
     }
+    
+    @Override
+    public String getStreamLink() {
+        return "placeholder_picture.jpg";
+    }
 
     @Override
     public CameraSettings getCurrentCameraSettings() {
         return camSet;
+    }
+    
+    @Override
+    public int[] getCurrentPanTilt() {
+        return new int[]{camSet.getPan(), camSet.getTilt()};
+    }
+    
+    @Override
+    public int getCurrentZoom() {
+        return camSet.getZoom();
+    }
+    
+    @Override
+    public int getCurrentFocus() {
+        return camSet.getFocus();
     }
 
     @Override

@@ -28,12 +28,12 @@ public enum MovementType {
         typeToCameraSettings = new EnumMap<>(MovementType.class);
         typeToName = new EnumMap<>(MovementType.class);
      
-        typeToCameraSettings.put(MovementType.ZOOM_IN, new CameraSettings(0, 0, CameraSettings.ZOOM_LIMIT_HIGH, 0));
+        typeToCameraSettings.put(MovementType.ZOOM_IN, new CameraSettings(0, 0, 0, 0));
         typeToCameraSettings.put(MovementType.ZOOM_OUT, new CameraSettings(0, 0, 0, 0));
         typeToCameraSettings.put(MovementType.LEFT, new CameraSettings(0, 0, 0, 0));
-        typeToCameraSettings.put(MovementType.RIGHT, new CameraSettings(CameraSettings.PAN_LIMIT_HIGH, 0, 0, 0));
-        typeToCameraSettings.put(MovementType.UP, new CameraSettings(0, CameraSettings.PAN_LIMIT_HIGH, 0, 0));
-        typeToCameraSettings.put(MovementType.DOWN, new CameraSettings(0, CameraSettings.PAN_LIMIT_LOW, 0, 0));
+        typeToCameraSettings.put(MovementType.RIGHT, new CameraSettings(0, 0, 0, 0));
+        typeToCameraSettings.put(MovementType.UP, new CameraSettings(0, 0, 0, 0));
+        typeToCameraSettings.put(MovementType.DOWN, new CameraSettings(0, 0, 0, 0));
         typeToCameraSettings.put(MovementType.CUSTOM, new CameraSettings());
         
         typeToName.put(MovementType.ZOOM_IN, "Constant zoom in");

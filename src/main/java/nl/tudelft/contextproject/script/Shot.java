@@ -7,8 +7,6 @@ import java.util.Objects;
 
 /**
  * Class to represent a shot to be taken by a Camera.
- *
- * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class Shot {
@@ -169,15 +167,27 @@ public class Shot {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    /**
+     * Gets the duration of this shot in seconds.
+     * @return the duration of this shot in seconds..
+     */
     public double getDuration() {
         return duration;
     }
-    
+
+    /**
+     * Sets the duration of this shot in seconds.
+     * @param dur The duration of the shot in seconds.
+     */
     public void setDuration(double dur) {
         duration = dur;
     }
-    
+
+    /**
+     * Gives the shot and its number as a String.
+     * @return the particular shot and its number as a string.
+     */
     public String toString() {
         return "Shot " + number;
     }
