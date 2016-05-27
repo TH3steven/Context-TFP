@@ -23,19 +23,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import nl.tudelft.contextproject.ContextTFP;
-import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.CameraSettings;
-import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
-import nl.tudelft.contextproject.script.Shot;
 import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller class for the script creation screen.
+ * Controller class for the script preview screen.
  * 
  * @since 0.2
  */
@@ -77,7 +74,6 @@ public class PreviewController {
     private List<Shot> shots;
     private List<ImageView> views;
     private Script script;
-    private List<Image> images;
 
     @FXML private void initialize() {
 
