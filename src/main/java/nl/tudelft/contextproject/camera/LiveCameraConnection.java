@@ -35,7 +35,7 @@ public class LiveCameraConnection extends CameraConnection {
     public static final int FOCUS_LIMIT_LOW = 1365;
     public static final int FOCUS_LIMIT_HIGH = 4095;
     
-    private static final int READ_TIMEOUT = 5000;
+    private static final int READ_TIMEOUT = 3000;
     
     private String address;
     private boolean connected;
@@ -51,6 +51,10 @@ public class LiveCameraConnection extends CameraConnection {
     public LiveCameraConnection(String address) {
         this.address = address;
         this.connected = false;
+    }
+    
+    protected CameraSettings getLastKnownSettings() {
+        return lastKnown;
     }
     
     @Override
@@ -130,9 +134,8 @@ public class LiveCameraConnection extends CameraConnection {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         try {
             connection.setRequestMethod("GET");
-            connection.setReadTimeout(READ_TIMEOUT);
+            connection.setConnectTimeout(READ_TIMEOUT);
             connection.connect();
-            System.out.println("Sending request: " + url.toString()); // TODO: Print statement
         } catch (ConnectException e) {
             e.printStackTrace();
             connected = false;
@@ -141,7 +144,6 @@ public class LiveCameraConnection extends CameraConnection {
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String response = reader.readLine();
         reader.close();
-        System.out.println("Response: " + response);
         return response != null ? response : "";
     }
     
@@ -355,7 +357,7 @@ public class LiveCameraConnection extends CameraConnection {
                         + Integer.toHexString(0x1000 | value).substring(1).toUpperCase()
                     ));
             if (res.startsWith("axf")) {
-                lastKnown.setZoom(value);
+                lastKnown.setFocus(value);
                 return true;
             } else if (res.startsWith("ER3")) {
                 autoFocus = true;
@@ -414,7 +416,7 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean relFocus(int offset) {
-        absFocus(lastKnown.getZoom() + offset);
+        absFocus(lastKnown.getFocus() + offset);
         return false;
     }
 }
