@@ -76,7 +76,7 @@ public class Script implements Iterator<Shot> {
             }
             prev = next;
         }
-        
+
         return null;
     }
 
