@@ -159,7 +159,7 @@ public class ScriptTest {
         shots.add(shot2);
         shots.add(shot3);
         Script script = new Script(shots);
-        assertEquals(script.isValid(), shot2); 
+        assertEquals(script.isValid(), shot3); 
     }
     
     /**
