@@ -48,11 +48,11 @@ public class LiveCameraConnectionTest {
     @Test
     public void testAbsPanTilt() throws InterruptedException {
         if (doTests) {
-            assertTrue(connection.absPanTilt(29965, 29965));
+            assertTrue(connection.absPanTilt(29965, 28965));
             Thread.sleep(4000);
             int[] curSet = connection.getCurrentPanTilt();
             assertWithinMaxOffset(29965, curSet[0]);
-            assertWithinMaxOffset(29965, curSet[1]);
+            assertWithinMaxOffset(28965, curSet[1]);
         }
     }
 
@@ -114,11 +114,11 @@ public class LiveCameraConnectionTest {
     public void testRelPanTilt() throws InterruptedException {
         if (doTests) {
             int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.relPanTilt(-420, -420));
+            assertTrue(connection.relPanTilt(-420, 420));
             Thread.sleep(2000);
             int[] after = connection.getCurrentPanTilt();
             assertWithinMaxOffset(before[0] - 420, after[0]);
-            assertWithinMaxOffset(before[1] - 420, after[1]);
+            assertWithinMaxOffset(before[1] + 420, after[1]);
         }
     }
 
@@ -183,13 +183,13 @@ public class LiveCameraConnectionTest {
         Camera c = new Camera();
         connection = spy(new LiveCameraConnection("192.168.10.101"));
         doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
-        doReturn(true).when(connection).absPanTilt(1965, 1965);
-        doReturn(true).when(connection).absZoom(1965);
-        doReturn(true).when(connection).absFocus(1965);
-        connection.update(c, new CameraSettings(1965, 1965, 1965, 1965));
-        verify(connection).absPanTilt(1965, 1965);
-        verify(connection).absZoom(1965);
-        verify(connection).absFocus(1965);
+        doReturn(true).when(connection).absPanTilt(1965, 65);
+        doReturn(true).when(connection).absZoom(650);
+        doReturn(true).when(connection).absFocus(6500);
+        connection.update(c, new CameraSettings(1965, 65, 650, 6500));
+        verify(connection).absPanTilt(1965, 65);
+        verify(connection).absZoom(650);
+        verify(connection).absFocus(6500);
         Camera.clearAllCameras();
     }
     
@@ -198,9 +198,9 @@ public class LiveCameraConnectionTest {
         Camera c = new Camera();
         connection = spy(new LiveCameraConnection("192.168.10.101"));
         doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
-        doReturn(true).when(connection).absPanTilt(1965, 1965);
-        connection.update(c, new CameraSettings(1965, 1965, 0, 0));
-        verify(connection).absPanTilt(1965, 1965);
+        doReturn(true).when(connection).absPanTilt(1965, 65);
+        connection.update(c, new CameraSettings(1965, 65, 0, 0));
+        verify(connection).absPanTilt(1965, 65);
         verify(connection, never()).absZoom(anyInt());
         verify(connection, never()).absFocus(anyInt());
         Camera.clearAllCameras();

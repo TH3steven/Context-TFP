@@ -169,16 +169,16 @@ public class Shot {
     }
 
     /**
-     * Gets the duration of a particular shot.
-     * @return the duration of that shot as a double.
+     * Gets the duration of this shot in seconds.
+     * @return the duration of this shot in seconds..
      */
     public double getDuration() {
         return duration;
     }
 
     /**
-     * Sets the duration of a particular shot.
-     * @param dur The duration of the shot.
+     * Sets the duration of this shot in seconds.
+     * @param dur The duration of the shot in seconds.
      */
     public void setDuration(double dur) {
         duration = dur;
