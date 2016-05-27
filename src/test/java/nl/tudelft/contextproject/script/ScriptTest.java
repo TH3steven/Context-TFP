@@ -40,11 +40,6 @@ public class ScriptTest {
     private Script script1;
     private Script script2;
 
-    @After
-    public void cleanUp() {
-        Camera.clearAllCameras();
-    }
-
     /**
      * Initialises the above private variables before each test.
      */
@@ -65,6 +60,11 @@ public class ScriptTest {
         los.add(shot3);
         script1 = new Script(los);
         script2 = new Script(los1);
+    }
+    
+    @After
+    public void cleanUp() {
+        Camera.clearAllCameras();
     }
     
     /**
@@ -143,7 +143,9 @@ public class ScriptTest {
      */
     @Test
     public void testIsValidTrue() {
-        assertTrue(script1.isValid());
+        assertNull(script1.isValid());
+        assertTrue(script1.showValid(1));
+        assertTrue(script1.showValid(2));
     }
     
     /**
@@ -159,7 +161,7 @@ public class ScriptTest {
         shots.add(shot2);
         shots.add(shot3);
         Script script = new Script(shots);
-        assertFalse(script.isValid());        
+        assertNotNull(script.isValid());        
     }
     
     /**
@@ -171,7 +173,6 @@ public class ScriptTest {
         List<Shot> shots = new ArrayList<>();
         shots.add(shot1);
         Script script = new Script(shots);
-        assertTrue(script.isValid());
+        assertNull(script.isValid());
     }
-
 }

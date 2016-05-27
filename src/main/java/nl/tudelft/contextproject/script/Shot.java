@@ -38,6 +38,23 @@ public class Shot {
         }
         this.duration = -1;
     }
+    
+    /**
+     * Creates a shot instance with each shot having a number,
+     * camera and no preset.
+     * 
+     * @param num is the shot number
+     * @param shotId The identifier for the shot.
+     * @param cam is the camera used to make the shot.
+     * @param description The description of what happens during the shot.
+     */
+    public Shot(int num, String shotId, Camera cam, String description) {
+        this.number = num;
+        this.shotId = shotId;
+        this.camera = cam;
+        this.description = description;
+        this.duration = -1;
+    }
 
     /**
      * Creates a shot instance with each shot having a number,

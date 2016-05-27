@@ -1,10 +1,15 @@
 package nl.tudelft.contextproject.script;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -61,20 +66,56 @@ public class Script implements Iterator<Shot> {
     
     /**
      * Valid means that one camera doesn't have two adjacent shots with different presets.
-     * @return True if a script is valid, otherwise false.
+     * @return The first shot to cause an error.
      */
-    public boolean isValid() {
+    protected Shot isValid() {
         if (shots.size() <= 1) {
-            return true;
+            return null;
         }
 
         Shot prev = shots.get(0);
         for (int i = 1; i < shots.size(); i++) {
             Shot next = shots.get(i);
             if (next.getCamera().equals(prev.getCamera()) && !next.getPreset().equals(prev.getPreset())) {
-                return false;
+                return next;
             }
             prev = next;
+        }
+
+        return null;
+    }
+    
+    /**
+     * Checks if a script is valid and gives an error message when it isn't.
+     * 
+     * @param level The level of alert. Should be 1 for CONFIRMATION
+     *      or 2 for WARNING.
+     * @return True if the user wants to continue and ignore the error.
+     */
+    public boolean showValid(int level) {
+        Shot error = isValid();
+        
+        if (error != null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirm saving");
+            alert.setHeaderText("Trying to save invalid script");
+            
+            if (level == 1) {
+                alert.setContentText("Error at shot ID: " + error.getNumber()
+                    + "\nYou are trying to save an invalid script. "
+                    + "Are you sure you want to continue?");
+            } else if (level == 2) {
+                alert = new Alert(AlertType.WARNING);
+                alert.setContentText("Error at shot ID: " + error.getNumber()
+                    + "\nThe script you loaded is invalid. You can change "
+                    + "it in the edit script menu");
+            }
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.get() == ButtonType.CANCEL) {
+                return false;
+            }
         }
         
         return true;
