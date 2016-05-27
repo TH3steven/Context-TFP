@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Observable;
 
@@ -136,8 +137,7 @@ public class LiveCameraConnection extends CameraConnection {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(READ_TIMEOUT);
             connection.connect();
-        } catch (ConnectException e) {
-            e.printStackTrace();
+        } catch (SocketTimeoutException e) {
             connected = false;
             return "";
         }

@@ -28,6 +28,9 @@ public class LiveCameraConnectionTest {
         doTests = doTests ? connection.setUpConnection() : doTests;
     }
 
+    /**
+     * Tests whether the connection was set up properly.
+     */
     @Test
     public void testSetUpConnection() {
         if (doTests) {
@@ -36,6 +39,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests whether the getCurrentCameraSettings returns something
+     * and updates the last known settings properly.
+     */
     @Test
     public void testGetCurrentCameraSettings() {
         if (doTests) {
@@ -45,6 +52,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#absPanTilt(int, int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testAbsPanTilt() throws InterruptedException {
         if (doTests) {
@@ -56,6 +67,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#absPan(int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testAbsPan() throws InterruptedException {
         if (doTests) {
@@ -68,6 +83,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#absTilt(int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testAbsTilt() throws InterruptedException {
         if (doTests) {
@@ -80,6 +99,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#absZoom(int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testAbsZoom() throws InterruptedException {
         if (doTests) {
@@ -90,6 +113,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#absFocus(int)} when autofocus
+     * is turned off.
+     */
     @Test
     public void testAbsFocusNoAutoFocus() {
         if (doTests) {
@@ -100,6 +127,10 @@ public class LiveCameraConnectionTest {
         }
     }
     
+    /**
+     * Tests {@link LiveCameraConnection#absFocus(int)} when autofocus
+     * is turned on.
+     */
     @Test
     public void testAbsFocusWithAutoFocus() {
         if (doTests) {
@@ -110,6 +141,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#relPanTilt(int, int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testRelPanTilt() throws InterruptedException {
         if (doTests) {
@@ -122,6 +157,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#relPan(int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testRelPan() throws InterruptedException {
         if (doTests) {
@@ -134,6 +173,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#relTilt(int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testRelTilt() throws InterruptedException {
         if (doTests) {
@@ -146,6 +189,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#relZoom(int)}.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testRelZoom() throws InterruptedException {
         if (doTests) {
@@ -157,6 +204,13 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests {@link LiveCameraConnection#relFocus(int)} with autofocus
+     * turned off. Since that method uses {@link LiveCameraConnection#absFocus(int)}, 
+     * there is no need to test this with auto focus turned on, since 
+     * that has already been tested.
+     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     */
     @Test
     public void testRelFocus() throws InterruptedException {
         if (doTests) {
@@ -169,6 +223,9 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests setAutoFocus method.
+     */
     @Test
     public void testSetAutoFocus() {
         if (doTests) {
@@ -178,6 +235,10 @@ public class LiveCameraConnectionTest {
         }
     }
 
+    /**
+     * Tests update method:
+     * All camera settings have been changed.
+     */
     @Test
     public void testUpdateAll() {
         Camera c = new Camera();
@@ -193,6 +254,10 @@ public class LiveCameraConnectionTest {
         Camera.clearAllCameras();
     }
     
+    /**
+     * Tests update method:
+     * Only pan and tilt values have been changed.
+     */
     @Test
     public void testUpdatePanTiltOnly() {
         Camera c = new Camera();
@@ -206,6 +271,10 @@ public class LiveCameraConnectionTest {
         Camera.clearAllCameras();
     }
     
+    /**
+     * Tests update method:
+     * Only the zoom value has been changed.
+     */
     @Test
     public void testUpdateZoomOnly() {
         Camera c = new Camera();
@@ -219,6 +288,10 @@ public class LiveCameraConnectionTest {
         Camera.clearAllCameras();
     }
     
+    /**
+     * Tests update method:
+     * Only the focus value has been changed.
+     */
     @Test
     public void testUpdateFocusOnly() {
         Camera c = new Camera();
