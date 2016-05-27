@@ -60,7 +60,7 @@ public class PreviewController {
     @FXML private ImageView viewFour;
     
     @FXML private Label camNum;
-    @FXML private Label presNum;
+    @FXML private Label presetNum;
 
     @FXML private Rectangle highlight1;
     @FXML private Rectangle highlight2;
@@ -84,8 +84,8 @@ public class PreviewController {
         script = ContextTFP.getScript();
         shots = script.getShots();
         
-        currentShot = new SimpleIntegerProperty(1);
-        currentHighlight = 1;
+        currentShot = new SimpleIntegerProperty(0);
+        currentHighlight = -1;
 
         initializeShots();
         initializeChoices();
@@ -100,10 +100,7 @@ public class PreviewController {
         actualCam.fitWidthProperty().bind(imagePane.widthProperty());
         actualCam.fitHeightProperty().bind(imagePane.heightProperty());
         
-        highlight1.setOpacity(0);
-        highlight2.setOpacity(0);
-        highlight3.setOpacity(0);
-        highlight4.setOpacity(0);
+        disableHighlight();
     }
 
     /**
@@ -457,7 +454,7 @@ public class PreviewController {
      */
     private void switchInfo(Shot shot) {
         camNum.setText(String.valueOf(shot.getCamera().getNumber()));
-        presNum.setText(String.valueOf(shot.getPreset().getId()));
+        presetNum.setText(String.valueOf(shot.getPreset().getId()));
         descArea.setText(shot.getDescription());
     }
     

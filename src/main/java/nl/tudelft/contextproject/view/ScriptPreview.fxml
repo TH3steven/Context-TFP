@@ -96,7 +96,7 @@
             <Label layoutX="11.0" layoutY="37.0" text="Camera Number:" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="37.0" />
             <Label layoutX="11.0" layoutY="69.0" text="Preset Number:" />
             <Label fx:id="camNum" layoutX="144.0" layoutY="37.0" text="0" />
-            <Label fx:id="presNum" layoutX="144.0" layoutY="69.0" text="0" />
+            <Label fx:id="presetNum" layoutX="144.0" layoutY="69.0" text="0" />
             <Label layoutX="11.0" layoutY="103.0" text="Description:" />
             <TextArea fx:id="descArea" layoutX="7.0" layoutY="132.0" prefHeight="77.0" prefWidth="156.0" />
          </children>
