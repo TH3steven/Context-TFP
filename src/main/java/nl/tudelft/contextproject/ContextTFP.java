@@ -23,13 +23,15 @@ import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is the main file for the Multi-Media Contextproject of Team Free Pizza.
  * The main purpose of this project is to allow PolyCast Productions B.V. to
  * easily control their cameras and to improve their digital environment.
  * 
- * <p>This file shoud be used to initialize the program.
+ * <p>This file should be used to initialize the program.
  * 
  * @author Team Free Pizza
  * @version %I%, %G%
@@ -51,11 +53,22 @@ public class ContextTFP extends Application {
         script = new Script(new ArrayList<Shot>());
 
         //TEMP
+        Camera a = new Camera();
+        Camera b = new Camera();
         Camera c = new Camera();
-        new Camera();
-        c.addPreset(new InstantPreset(new CameraSettings(), 0, "wow"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 1, "nice"));
-        c.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
+        Camera d = new Camera();
+        Camera e = new Camera();
+        Camera f = new Camera();
+        
+        List<Camera> list = new ArrayList<Camera>();
+        list.addAll(Arrays.asList(a, b, c, d, e, f)); 
+
+        for (Camera cam : list) {
+            cam.addPreset(new InstantPreset(new CameraSettings(), 0, "wow"));
+            cam.addPreset(new InstantPreset(new CameraSettings(), 1, "nice"));
+            cam.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
+            cam.addPreset(new InstantPreset(new CameraSettings(), 3, "wuq"));
+        }
         //
 
         initRootLayout();

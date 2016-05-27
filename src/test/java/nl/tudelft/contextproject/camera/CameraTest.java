@@ -9,6 +9,7 @@ import nl.tudelft.contextproject.presets.Preset;
 import org.junit.After;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,6 +19,7 @@ import java.util.Observer;
  * @since 0.4
  */
 public class CameraTest {
+    private LiveCameraConnection connection;
     
     @After
     public void cleanUp() {
@@ -37,30 +39,49 @@ public class CameraTest {
         assertEquals(65, cam.getSettings().getPan());
         assertEquals(65, cam.getSettings().getTilt());
         assertEquals(65, cam.getSettings().getZoom());
-        assertEquals(1365, cam.getSettings().getFocus());
+        assertEquals(65, cam.getSettings().getFocus());
         assertTrue(testOb.wasCalled());
     }
-    
+
     /**
-     * Tests whether setSettings method actually keeps to bounds. 
-     * Also tests if observer is actually called.
+     * Tests getAllCameras method.
      */
     @Test
-    public void testSetSettingsBounds() {
-        Camera cam = new Camera(new CameraSettings(65, 65, 65, 65));
-        TestObserver testOb = new TestObserver();
-        cam.addObserver(testOb);
-        cam.setSettings(new CameraSettings(-65, -65, -65, -65));
-        assertEquals(0, cam.getSettings().getPan());
-        assertEquals(0, cam.getSettings().getTilt());
-        assertEquals(0, cam.getSettings().getZoom());
-        assertEquals(1365, cam.getSettings().getFocus());
-        assertTrue(testOb.wasCalled());
-        cam.setSettings(new CameraSettings(656565, 656565, 656565, 656565));
-        assertEquals(CameraSettings.PAN_LIMIT_HIGH, cam.getSettings().getPan());
-        assertEquals(CameraSettings.TILT_LIMIT_HIGH, cam.getSettings().getTilt());
-        assertEquals(CameraSettings.ZOOM_LIMIT_HIGH, cam.getSettings().getZoom());
-        assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
+    public void testGetAllCameras() {
+        Camera cam1 = new Camera();
+        Camera cam2 = new Camera();
+        cam1.setSettings(new CameraSettings(65, 65, 65, 65));
+        cam2.setSettings(new CameraSettings(90, 90, 90, 90));
+        Collection<Camera> camCollection = Camera.getAllCameras();
+        assertEquals(Camera.getCamera(0), cam1);
+        assertEquals(Camera.getCamera(1), cam2);
+        assertTrue(camCollection.size() == 2);
+    }
+
+    /**
+     * Tests clearAllCameras method.
+     */
+    @Test
+    public void testClearAllCameras() {
+        Camera cam1 = new Camera();
+        Camera cam2 = new Camera();
+        cam1.setSettings(new CameraSettings(65, 65, 65, 65));
+        cam2.setSettings(new CameraSettings(90, 90, 90, 90));
+        Camera.clearAllCameras();
+        assertTrue(Camera.getAllCameras().size() == 0);
+    }
+
+    /**
+     * Tests the setConnection method.
+     */
+    @Test
+    public  void testSetConnection() {
+        connection = new LiveCameraConnection("192.168.10.101");
+        Camera cam1 = new Camera();
+        cam1.setSettings(new CameraSettings(65, 65, 65, 65));
+        cam1.setConnection(connection);
+        assertTrue(cam1.hasConnection());
+        assertEquals(cam1.getConnection(), connection);
     }
 
     /**
@@ -76,22 +97,6 @@ public class CameraTest {
         assertEquals(1900, cam.getSettings().getPan());
         assertTrue(testOb.wasCalled());
     }
-    
-    /**
-     * Tests whether pan method actually keeps to bounds.
-     * Also tests if observer is actually called.
-     */
-    @Test
-    public void testPanBounds() {
-        Camera cam = new Camera();
-        TestObserver testOb = new TestObserver();
-        cam.addObserver(testOb);
-        cam.pan(-65);
-        assertEquals(0, cam.getSettings().getPan());
-        assertTrue(testOb.wasCalled());
-        cam.pan(656565);
-        assertEquals(CameraSettings.PAN_LIMIT_HIGH, cam.getSettings().getPan());
-    }
 
     /**
      * Tests tilt method. Also tests if observer
@@ -105,22 +110,6 @@ public class CameraTest {
         cam.tilt(-65);
         assertEquals(1900, cam.getSettings().getTilt());
         assertTrue(testOb.wasCalled());
-    }
-    
-    /**
-     * Tests whether tilt method actually keeps to bounds.
-     * Also tests if observer is actually called.
-     */
-    @Test
-    public void testTiltBounds() {
-        Camera cam = new Camera();
-        TestObserver testOb = new TestObserver();
-        cam.addObserver(testOb);
-        cam.tilt(-65);
-        assertEquals(0, cam.getSettings().getTilt());
-        assertTrue(testOb.wasCalled());
-        cam.tilt(656565);
-        assertEquals(CameraSettings.TILT_LIMIT_HIGH, cam.getSettings().getTilt());
     }
 
     /**
@@ -136,22 +125,6 @@ public class CameraTest {
         assertEquals(23, cam.getSettings().getZoom());
         assertTrue(testOb.wasCalled());
     }
-    
-    /**
-     * Tests whether zoom method actually keeps to bounds.
-     * Also tests if observer is actually called.
-     */
-    @Test
-    public void testZoomBounds() {
-        Camera cam = new Camera();
-        TestObserver testOb = new TestObserver();
-        cam.addObserver(testOb);
-        cam.zoom(-65);
-        assertEquals(0, cam.getSettings().getZoom());
-        assertTrue(testOb.wasCalled());
-        cam.zoom(656565);
-        assertEquals(CameraSettings.ZOOM_LIMIT_HIGH, cam.getSettings().getZoom());
-    }
 
     /**
      * Tests zoom method. Also tests if observer
@@ -165,22 +138,6 @@ public class CameraTest {
         cam.focus(-42);
         assertEquals(1568, cam.getSettings().getFocus());
         assertTrue(testOb.wasCalled());
-    }
-
-    /**
-     * Test whether focus actually keeps to bounds.
-     * Also tests if observer is actually called.
-     */
-    @Test
-    public void testFocusBounds() {
-        Camera cam = new Camera();
-        TestObserver testOb = new TestObserver();
-        cam.addObserver(testOb);
-        cam.focus(-65);
-        assertEquals(1365, cam.getSettings().getFocus());
-        assertTrue(testOb.wasCalled());
-        cam.focus(656565);
-        assertEquals(CameraSettings.FOCUS_LIMIT_HIGH, cam.getSettings().getFocus());
     }
 
     /**

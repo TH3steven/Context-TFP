@@ -26,14 +26,14 @@
          <children>
             <Pane GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Button id="button" fx:id="btnDirector" layoutX="110.0" layoutY="252.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as director" />
-                  <Button id="button" fx:id="btnCameraman" layoutX="315.0" layoutY="252.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as cameraman" />
-                  <Button id="button" fx:id="btnPresets" layoutX="143.0" layoutY="334.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit presets" />
-                  <Button id="button" fx:id="btnPreview" layoutX="143.0" layoutY="388.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Preview shots" />
+                  <Button fx:id="btnDirector" layoutX="110.0" layoutY="252.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as director" />
+                  <Button fx:id="btnCameraman" layoutX="315.0" layoutY="252.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as cameraman" />
+                  <Button fx:id="btnPresets" layoutX="143.0" layoutY="334.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit presets" />
+                  <Button fx:id="btnPreview" layoutX="143.0" layoutY="388.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Preview shots" />
                   <Button disable="true" layoutX="143.0" layoutY="442.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Settings" />
-                  <Button id="button" fx:id="btnCreateScript" layoutX="338.0" layoutY="334.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Create new script" />
-                  <Button id="button" fx:id="btnEditScript" layoutX="338.0" layoutY="388.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit current script" />
-                  <Button id="button" fx:id="btnLoadScript" layoutX="338.0" layoutY="442.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" />
+                  <Button fx:id="btnCreateScript" layoutX="338.0" layoutY="334.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Create new script" />
+                  <Button fx:id="btnEditScript" layoutX="338.0" layoutY="388.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit current script" />
+                  <Button fx:id="btnLoadScript" layoutX="338.0" layoutY="442.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" />
                   <ImageView fitHeight="226.0" fitWidth="420.0" layoutX="90.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="logo-TFP.png" />

@@ -1,13 +1,9 @@
 package nl.tudelft.contextproject.camera;
 
-import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.CameraSettings;
-import nl.tudelft.contextproject.camera.MockedCameraConnection;
-import org.junit.After;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Class to test the behavior of a mimiced or mocked camera.
@@ -29,6 +25,7 @@ public class MockedCameraConnectionTest {
         CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet);
     }
+    
     /**
      * Tests update method.
      */

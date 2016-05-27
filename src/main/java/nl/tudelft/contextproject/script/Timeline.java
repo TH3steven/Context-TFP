@@ -7,8 +7,6 @@ import java.util.List;
 
 /** 
  * Class to represent a timeline of shots for a single camera.
- * 
- * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class Timeline {
@@ -64,6 +62,28 @@ public class Timeline {
      */
     public List<Shot> getShots() {
         return shots;
+    }
+    
+    /**
+     * Loads the initial preset of the timeline, if shots is not empty.
+     */
+    public void initPreset() {
+        if (!shots.isEmpty()) {
+            shots.get(0).getPreset().applyTo(camera);  
+        }
+    }
+    
+    /**
+     * Loads the next preset for a camera, if there is one.
+     * @param oldShot The shot that just finished.
+     */
+    public void nextPreset(Shot oldShot) {
+        int oldIndex = shots.indexOf(oldShot);
+        
+        if (oldIndex + 1 < shots.size()) {
+            Shot nextShot = shots.get(oldIndex + 1);
+            nextShot.getPreset().applyTo(camera);
+        }
     }
 
     /**

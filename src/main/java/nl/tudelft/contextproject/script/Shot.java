@@ -7,8 +7,6 @@ import java.util.Objects;
 
 /**
  * Class to represent a shot to be taken by a Camera.
- *
- * @author Etta Tabe Takang Kajikaw
  * @since 0.2
  */
 public class Shot {
@@ -38,6 +36,23 @@ public class Shot {
         if (cam != null) {
             cam.addPreset(pres);
         }
+        this.duration = -1;
+    }
+    
+    /**
+     * Creates a shot instance with each shot having a number,
+     * camera and no preset.
+     * 
+     * @param num is the shot number
+     * @param shotId The identifier for the shot.
+     * @param cam is the camera used to make the shot.
+     * @param description The description of what happens during the shot.
+     */
+    public Shot(int num, String shotId, Camera cam, String description) {
+        this.number = num;
+        this.shotId = shotId;
+        this.camera = cam;
+        this.description = description;
         this.duration = -1;
     }
 
@@ -169,15 +184,27 @@ public class Shot {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    /**
+     * Gets the duration of this shot in seconds.
+     * @return the duration of this shot in seconds..
+     */
     public double getDuration() {
         return duration;
     }
-    
+
+    /**
+     * Sets the duration of this shot in seconds.
+     * @param dur The duration of the shot in seconds.
+     */
     public void setDuration(double dur) {
         duration = dur;
     }
-    
+
+    /**
+     * Gives the shot and its number as a String.
+     * @return the particular shot and its number as a string.
+     */
     public String toString() {
         return "Shot " + number;
     }
