@@ -35,6 +35,7 @@ public class LoadScriptTest {
         shots.add(new Shot(1, cam1, new InstantPreset(new CameraSettings(2, 2, 2, 2), 2)));
         shots.add(new Shot(2, cam1, new InstantPreset(new CameraSettings(3, 3, 3, 3), 3)));
         shots.add(new Shot(3, cam0, new InstantPreset(new CameraSettings(4, 4, 4, 4), 4)));
+        shots.add(new Shot(4, cam0, null));
         Script script = new Script(shots);
         
         try {

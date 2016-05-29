@@ -214,7 +214,9 @@ public final class SaveScript {
         writer.add(eventFactory.createCharacters(shot.getCamera().getNumber() + ""));
         writer.add(eventFactory.createEndElement("", "", "cameraId"));
         writer.add(eventFactory.createStartElement("", "", "presetId"));
-        writer.add(eventFactory.createCharacters(shot.getPreset().getId() + ""));
+        if (shot.getPreset() != null) {
+            writer.add(eventFactory.createCharacters(shot.getPreset().getId() + ""));
+        }
         writer.add(eventFactory.createEndElement("", "", "presetId"));
         writer.add(eventFactory.createEndElement("", "", "shot"));
     }
