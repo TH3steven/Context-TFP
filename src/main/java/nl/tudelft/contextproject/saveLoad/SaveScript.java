@@ -6,7 +6,7 @@ import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.xml.stream.XMLEventFactory;
@@ -94,7 +94,7 @@ public final class SaveScript {
      */
     private static XMLEventWriter createWriter() {
         try {
-            return (XMLOutputFactory.newFactory()).createXMLEventWriter(new FileWriter(saveLocation));
+            return (XMLOutputFactory.newFactory()).createXMLEventWriter(new FileOutputStream(saveLocation), "UTF-8");
         } catch (IOException | XMLStreamException e) {
             throw new RuntimeException("Something went wrong in creating your save file", e);
         }

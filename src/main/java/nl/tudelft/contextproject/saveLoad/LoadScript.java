@@ -108,7 +108,7 @@ public final class LoadScript {
      */
     private static XMLEventReader createReader() {
         try {
-            return (XMLInputFactory.newFactory()).createXMLEventReader(new FileInputStream(loadLocation));
+            return (XMLInputFactory.newFactory()).createXMLEventReader(new FileInputStream(loadLocation), "UTF-8");
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
             throw new RuntimeException("Your save file could not be found or read.", e);
