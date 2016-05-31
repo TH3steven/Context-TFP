@@ -2,6 +2,7 @@ package nl.tudelft.contextproject.gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -19,17 +20,25 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
+import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+
+import javax.swing.JPanel;
+
+import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 
 /**
  * This class is a control class for the preset creation screen. It
@@ -79,6 +88,25 @@ public class PresetController {
         vBox.setAlignment(Pos.CENTER);
         cameraView.fitWidthProperty().bind(vBox.widthProperty());
         cameraView.fitHeightProperty().bind(vBox.heightProperty());
+        vBox.getChildren().clear();
+        
+        System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
+        Canvas canvas = new Canvas();
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());       
+        SwingNode swingNode = new SwingNode();
+        
+        panel.add(canvas, BorderLayout.CENTER);                               
+        swingNode.setContent(panel);
+        vBox.getChildren().add(swingNode);
+        swingNode.toFront();
+        
+        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+        EmbeddedMediaPlayer mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
+        CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+        mediaPlayer.setVideoSurface(videoSurface);
+        
+        mediaPlayer.playMedia("C:\\Users\\Public\\Videos\\Wildlife.wmv");
     }
 
     /**
