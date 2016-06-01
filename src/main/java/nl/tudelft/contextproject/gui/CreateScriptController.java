@@ -261,7 +261,7 @@ public class CreateScriptController {
                 editShot.setText(nv.getShotId());
                 editCamera.getSelectionModel().select(nv.getCamera().getNumber());
                 if (nv.getPreset() != null) {
-                    editPreset.getSelectionModel().select(nv.getPreset().getId()); //+1
+                    editPreset.getSelectionModel().select(nv.getPreset().getId() + 1);
                 } else {
                     editPreset.getSelectionModel().select(0);
                 }
@@ -299,7 +299,7 @@ public class CreateScriptController {
         shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
         if (!editPreset.getSelectionModel().getSelectedItem().equals("None")) {
             shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(new Integer(editPreset.getSelectionModel().getSelectedIndex()))); //-1
+                    .getPreset(new Integer(editPreset.getSelectionModel().getSelectedItem()) - 1));
         } else {
             shot.setPreset(null);
         }
@@ -455,8 +455,7 @@ public class CreateScriptController {
 
         cam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             presetList.clear();
-            // None option disabled till it is implemented in the backend.
-            //TODO presetList.add("None");
+            presetList.add("None");
 
             if (newV != null) {
                 preset.setDisable(false);

@@ -108,7 +108,7 @@ public final class LoadScript {
      */
     private static XMLEventReader createReader() {
         try {
-            return (XMLInputFactory.newFactory()).createXMLEventReader(new FileInputStream(loadLocation));
+            return (XMLInputFactory.newFactory()).createXMLEventReader(new FileInputStream(loadLocation), "UTF-8");
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
             throw new RuntimeException("Your save file could not be found or read.", e);
@@ -360,8 +360,6 @@ public final class LoadScript {
                     XMLEvent presetIdEvent = reader.nextEvent();
                     if (presetIdEvent.isCharacters()) {
                         presetId = Integer.parseInt(presetIdEvent.asCharacters().getData());
-                    } else {
-                        throw new XMLStreamException("No preset id present in shot.");
                     }
                 }
             }
@@ -373,11 +371,10 @@ public final class LoadScript {
             }
         }
         Camera cam = Camera.getCamera(cameraId);
-        if (cam != null && cam.getPreset(presetId) != null) {
+        if (cam != null) {
             return new Shot(id, shotId, cam, cam.getPreset(presetId), description);
         } else {
-            throw new XMLStreamException("Camera or preset cannot be found with camera id: " + cameraId
-                    + " and preset id: " + presetId);
+            throw new XMLStreamException("Camera cannot be found with camera id: " + cameraId);
         }
     }
 }
