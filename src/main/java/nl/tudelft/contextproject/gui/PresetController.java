@@ -65,6 +65,7 @@ public class PresetController {
 
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
         cameraView.setImage(new Image("placeholder_picture.jpg"));
+        ContextTFP.getPrimaryStage().setOnCloseRequest(e -> exitApplication());
 
         applySettings();
         setFactories();
@@ -78,14 +79,19 @@ public class PresetController {
      */
     private void applySettings() {
         vBox.setAlignment(Pos.CENTER);
-        cameraView.fitWidthProperty().bind(vBox.widthProperty());
-        cameraView.fitHeightProperty().bind(vBox.heightProperty());
+
         vBox.getChildren().clear();
         
         System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
         Platform.runLater(() -> {
             updateStream("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8");
         });
+    }
+    
+    private void exitApplication() {
+        if (streamHandle != null) {
+            streamHandle.stop();
+        }        
     }
     
     /**

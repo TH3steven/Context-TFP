@@ -42,12 +42,12 @@ public class ContextTFP extends Application {
     private static BorderPane rootLayout;
     private static Script script;
 
-    private Stage primaryStage;
+    private static Stage primaryStage;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("TFP Camera Control");
+    public void start(Stage pStage) throws Exception {
+        primaryStage = pStage;
+        primaryStage.setTitle("TFP Camera Control");
 
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
@@ -106,7 +106,7 @@ public class ContextTFP extends Application {
      * 
      * @return The main stage
      */
-    public Stage getPrimaryStage() {
+    public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
