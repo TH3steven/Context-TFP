@@ -1,6 +1,7 @@
 package nl.tudelft.contextproject.gui;
 
 import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,7 +17,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -42,7 +42,6 @@ public class PresetController {
     @FXML private ChoiceBox<Integer> cameraSelecter;
     @FXML private TextField presetID;
     @FXML private TextField description;
-    @FXML private ImageView cameraView;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
     @FXML private Button btnRemove;
@@ -54,6 +53,8 @@ public class PresetController {
 
     private LiveStreamHandler streamHandle;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
+    private String currentStream = "";
+    //private ImageView imageView;
 
     @FXML
     private void initialize() {
@@ -64,8 +65,7 @@ public class PresetController {
         }
 
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
-        cameraView.setImage(new Image("placeholder_picture.jpg"));
-        ContextTFP.getPrimaryStage().setOnCloseRequest(e -> exitApplication());
+        ContextTFP.getPrimaryStage().setOnCloseRequest(e -> stopStreaming());
 
         applySettings();
         setFactories();
@@ -88,7 +88,10 @@ public class PresetController {
         });
     }
     
-    private void exitApplication() {
+    /**
+     * Stops the camera livestream.
+     */
+    private void stopStreaming() {
         if (streamHandle != null) {
             streamHandle.stop();
         }        
@@ -104,9 +107,23 @@ public class PresetController {
         }
         streamHandle = new LiveStreamHandler();
         vBox.getChildren().clear();
-        vBox.getChildren().add(streamHandle.createCanvas(streamLink));
+        vBox.getChildren().add(streamHandle.createCanvas(streamLink, vBox.getWidth(), vBox.getHeight()));
         streamHandle.start();
+        currentStream = streamLink;
     }
+    
+    //Test with imageViews isntead of canvas.
+//    public void updateStream2(String streamLink) {
+//        if (streamHandle != null) {
+//            streamHandle.stop();
+//        }
+//        streamHandle = new LiveStreamHandler();
+//        vBox.getChildren().clear();
+//        imageView = streamHandle.createImageView(streamLink, vBox.getWidth(), vBox.getHeight());
+//        vBox.getChildren().add(imageView);
+//        streamHandle.start();
+//        currentStream = streamLink;
+//    }
 
     /**
      * Sets the factories for the table.
@@ -152,8 +169,7 @@ public class PresetController {
             if (cam.hasConnection()) {
                 updateStream(cam.getConnection().getStreamLink());
             } else {
-                vBox.getChildren().clear();
-                vBox.getChildren().add(new ImageView("error.jpg"));
+                updateStream("http://www.formisimo.com/blog/wp-content/uploads/2014/04/error-mesage.png");
             }
         });
 
@@ -166,7 +182,35 @@ public class PresetController {
                 data.remove(selected);
             }
         });
+        
+        vBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            //fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
+        });
+        
+        vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            //fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
+        });
     }
+    
+    //Method to resize iimageviews
+//    private void fitImageViewSize(float width, float height) {
+//        Platform.runLater(() -> {
+//            FloatProperty videoSourceRatioProperty = streamHandle.getRatio();
+//            float fitHeight = videoSourceRatioProperty.get() * width;
+//            if (fitHeight > height) {
+//                imageView.setFitHeight(height);
+//                double fitWidth = height / videoSourceRatioProperty.get();
+//                imageView.setFitWidth(fitWidth);
+//                imageView.setX((width - fitWidth) / 2);
+//                imageView.setY(0);
+//            } else {
+//                imageView.setFitWidth(width);
+//                imageView.setFitHeight(fitHeight);
+//                imageView.setY((height - fitHeight) / 2);
+//                imageView.setX(0);
+//            }
+//        });        
+//    }
 
     /**
      * Method for adding a preset to the view and the model.
