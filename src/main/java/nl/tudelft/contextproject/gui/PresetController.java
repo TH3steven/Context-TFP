@@ -1,8 +1,8 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -25,20 +25,11 @@ import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
-import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
-import javax.swing.JPanel;
-
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 
 /**
  * This class is a control class for the preset creation screen. It
@@ -61,6 +52,7 @@ public class PresetController {
     @FXML private TableColumn<Preset, String> descColumn;
     @FXML private VBox vBox;
 
+    private LiveStreamHandler streamHandle;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
 
     @FXML
@@ -82,7 +74,7 @@ public class PresetController {
     }
 
     /**
-     * Applies javafx settings that can't be specified in the fxml.
+     * Applies JavaFX settings that can't be specified in the FXML.
      */
     private void applySettings() {
         vBox.setAlignment(Pos.CENTER);
@@ -91,22 +83,23 @@ public class PresetController {
         vBox.getChildren().clear();
         
         System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
-        Canvas canvas = new Canvas();
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());       
-        SwingNode swingNode = new SwingNode();
-        
-        panel.add(canvas, BorderLayout.CENTER);                               
-        swingNode.setContent(panel);
-        vBox.getChildren().add(swingNode);
-        swingNode.toFront();
-        
-        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-        EmbeddedMediaPlayer mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
-        CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-        mediaPlayer.setVideoSurface(videoSurface);
-        
-        mediaPlayer.playMedia("C:\\Users\\Public\\Videos\\Wildlife.wmv");
+        Platform.runLater(() -> {
+            updateStream("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8");
+        });
+    }
+    
+    /**
+     * Updates the camera stream to the stream referenced by the specified link.
+     * @param streamLink the link to the video stream to be played next.
+     */
+    public void updateStream(String streamLink) {
+        if (streamHandle != null) {
+            streamHandle.stop();
+        }
+        streamHandle = new LiveStreamHandler();
+        vBox.getChildren().clear();
+        vBox.getChildren().add(streamHandle.createCanvas(streamLink));
+        streamHandle.start();
     }
 
     /**
@@ -121,12 +114,13 @@ public class PresetController {
     }
 
     /**
-     * Adds all actions and listeners to the javafx components.
+     * Adds all actions and listeners to the JavaFX components.
      */
     private void setActions() {
         tableView.setItems(data);
 
         btnBack.setOnAction((event) -> {
+            streamHandle.stop();
             MenuController.show();
         });
 
@@ -148,6 +142,12 @@ public class PresetController {
             data.clear();
             for (Preset p : presets.values()) {
                 data.add(p);
+            }
+            if (cam.hasConnection()) {
+                updateStream(cam.getConnection().getStreamLink());
+            } else {
+                vBox.getChildren().clear();
+                vBox.getChildren().add(new ImageView("error.jpg"));
             }
         });
 
