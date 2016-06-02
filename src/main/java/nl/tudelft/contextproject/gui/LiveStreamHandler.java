@@ -107,7 +107,7 @@ public class LiveStreamHandler {
             Platform.runLater( () -> {
                 videoSourceRatioProperty.set((float) sourceHeight / (float) sourceWidth);
             });
-            return new RV32BufferFormat(1080, 1920);
+            return new RV32BufferFormat(1920, 1080);
         });
         return imageView;        
     }
