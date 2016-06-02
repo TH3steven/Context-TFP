@@ -14,6 +14,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.saveLoad.LoadScript;
 import nl.tudelft.contextproject.saveLoad.SaveScript;
+import nl.tudelft.contextproject.script.Script;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.io.IOException;
 /**
  * Controller class for the main menu. This class controls the actions to be taken
  * when one of the menu buttons is clicked. Additionally, this class is responsible
- * for the displaying of the logo and the label that indicates the active script.
+ * for the displaying of the logo and the label that indicates the active {@link Script}.
  * 
  * @since 0.1
  */
@@ -60,7 +61,7 @@ public class MenuController {
                 try {
                     LoadScript.setLoadLocation(file.getAbsolutePath());
                     SaveScript.setSaveLocation(file.getAbsolutePath());
-                    
+
                     ContextTFP.setScript(LoadScript.load());
                     ContextTFP.getScript().setName(file.getName());
                     setLabel(file.getName());
@@ -72,10 +73,10 @@ public class MenuController {
                 }
             }
         });
-        
+
         initOtherButtons();
     }
-    
+
     /**
      * Shows the dialog that notifies the user that the loading
      * of a script was successful.
@@ -87,10 +88,10 @@ public class MenuController {
         alert.setTitle("Info Dialog");
         alert.setHeaderText("Loading script was succesful!");
         alert.setContentText("Successful load of script: " + file.getName());
-        
+
         alert.showAndWait();
     }
-    
+
     /**
      * Displays an error dialog when saving of the script
      * was unsuccessful.
@@ -109,7 +110,7 @@ public class MenuController {
 
         alert.showAndWait();
     }
-    
+
     /**
      * Initializes the rest of the buttons.
      */
@@ -117,7 +118,7 @@ public class MenuController {
         btnCreateScript.setOnAction(event -> {
             CreateScriptController.show();
         });
-        
+
         btnPreview.setOnAction(event -> {
             PreviewController.show();
         });
@@ -129,8 +130,8 @@ public class MenuController {
         btnDirector.setOnAction(event -> {
             DirectorLiveController.show();
         });
-        
-        btnCameraman.setOnAction((event) -> {
+
+        btnCameraman.setOnAction(event -> {
             CameramanLiveController.show();
         });
 
@@ -151,7 +152,8 @@ public class MenuController {
     }
 
     /**
-     * Shows this view.
+     * Calling this method shows this view in the middle of the rootLayout,
+     * forcing the current view to disappear.
      */
     public static void show() {
         try {

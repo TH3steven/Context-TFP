@@ -549,7 +549,7 @@ public class CreateScriptController {
             }
         });
     }
-    
+
     /**
      * Checks if the new shot being added to the script
      * is valid.
@@ -573,10 +573,10 @@ public class CreateScriptController {
             addDescription.setStyle("-fx-border-color: red;");
             isValid = false;
         }
-        
+
         return isValid;
     }
-    
+
     /**
      * Creates a new shot based on the users' input.
      * @param data The data already in the table.

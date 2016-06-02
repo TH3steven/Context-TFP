@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ import java.io.IOException;
  * This class controls the screen that shows the live view
  * of the {@link Camera} for the director. The director can use this screen
  * to use the application during live production to get an overview
- * of the live camera, a preview camera and the script, along with controls
- * to control the cameras and the presets set to these cameras.
+ * of the live camera, a preview camera and the {@link Script}, along with controls
+ * to control the cameras and the {@link Preset Presets} set to these cameras.
  * 
  * <p>The view section is defined under view/DirectorLiveView.fxml
  * 
