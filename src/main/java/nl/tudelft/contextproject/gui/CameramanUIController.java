@@ -32,6 +32,8 @@ public class CameramanUIController {
 
     private static Script script;
     
+    @FXML private AnchorPane movementPane;
+    
     @FXML private TabPane tabs;
     
     @FXML private Button btnBack;
@@ -95,6 +97,7 @@ public class CameramanUIController {
         initializeTextFields();
         initializeCurrentCam();
         
+        movementPane.setDisable(true);
         descriptionField.setEditable(false);
     }
     
@@ -208,6 +211,8 @@ public class CameramanUIController {
             movement.setText(moveSeven.getText());
             setMovement(MovementType.CUSTOM);
         });
+        
+        
     }
     
     /**
@@ -250,9 +255,11 @@ public class CameramanUIController {
         if (live) {
             live = false;
             currentCam.setVisible(true);
+            movementPane.setDisable(false);
         } else {
             live = true;
             currentCam.setVisible(false);
+            movementPane.setDisable(true);
         }
     }
     

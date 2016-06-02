@@ -110,7 +110,7 @@
                         <Insets bottom="10.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <AnchorPane maxHeight="365.0" maxWidth="242.0" minHeight="365.0" minWidth="242.0" style="-fx-border-color: black;" VBox.vgrow="NEVER">
+                  <AnchorPane fx:id="movementPane" maxHeight="365.0" maxWidth="242.0" minHeight="365.0" minWidth="242.0" style="-fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
                         <Label layoutX="7.0" layoutY="6.0" text="preset movement" />
                         <Rectangle arcHeight="5.0" arcWidth="5.0" height="1.0" layoutY="27.0" stroke="BLACK" strokeType="INSIDE" width="245.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" />
