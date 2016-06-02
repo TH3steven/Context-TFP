@@ -554,7 +554,7 @@ public class CreateScriptController {
      * Checks if the new shot being added to the script
      * is valid.
      * 
-     * @return True if it has no errors.
+     * @return True iff it has no errors.
      */
     private boolean isValidInput() {
         boolean isValid = true;
@@ -579,7 +579,6 @@ public class CreateScriptController {
     
     /**
      * Creates a new shot based on the users' input.
-     * 
      * @param data The data already in the table.
      */
     private void createNewShot(ObservableList<Shot> data) {
@@ -598,7 +597,7 @@ public class CreateScriptController {
                     addShot.getText(),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
+                        .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
                     addDescription.getText()
                     );
 
@@ -642,18 +641,18 @@ public class CreateScriptController {
         }
 
         btnSave.setOnAction(event -> {
-            setSavePopup(event, false);
+            setSaveAction(event, false);
         });
 
         btnSaveAs.setOnAction(event -> {
-            setSavePopup(event, true);
+            setSaveAction(event, true);
         });
     }
 
     /**
      * Handles the saving of a file.
      */
-    private void setSavePopup(ActionEvent event, boolean showDialog) {
+    private void setSaveAction(ActionEvent event, boolean showDialog) {
         final Script script = new Script(tableEvents.getItems());
 
         if (!script.showValid(1)) {
@@ -710,9 +709,10 @@ public class CreateScriptController {
     }
 
     /**
-     * Displayes an error dialog when saving of the script
-     * was unsuccesful.
+     * Displays an error dialog when saving of the script
+     * was unsuccessful.
      * 
+     * @param e The exception that was thrown.
      * @param file The file that was supposed to be saved.
      */
     private void showErrorDialog(Exception e, File file) {

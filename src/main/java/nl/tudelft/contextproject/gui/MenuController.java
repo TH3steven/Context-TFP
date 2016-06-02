@@ -20,7 +20,8 @@ import java.io.IOException;
 
 /**
  * Controller class for the main menu. This class controls the actions to be taken
- * when one of the menu buttons is clicked.
+ * when one of the menu buttons is clicked. Additionally, this class is responsible
+ * for the displaying of the logo and the label that indicates the active script.
  * 
  * @since 0.1
  */
@@ -42,15 +43,11 @@ public class MenuController {
     @FXML private void initialize() {
         final String name = ContextTFP.getScript().getName();
 
-        if (name.equals("") || name == null) {
+        if (name.equals("")) {
             setLabel("None");
         } else {
             setLabel(name);
         }
-
-        btnCreateScript.setOnAction(event -> {
-            CreateScriptController.show();
-        });
 
         btnLoadScript.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
@@ -66,32 +63,61 @@ public class MenuController {
                     
                     ContextTFP.setScript(LoadScript.load());
                     ContextTFP.getScript().setName(file.getName());
-
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Info Dialog");
-                    alert.setHeaderText("Loading script was succesful!");
-                    alert.setContentText("Succesful load of script: " + file.getName());
-
                     setLabel(file.getName());
 
-                    alert.showAndWait();
-                    
+                    showSuccessDialog(file);
                     ContextTFP.getScript().showValid(2);
-                    
                 } catch (Exception e) {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle(e.getMessage());
-                    alert.setHeaderText("Loading script was unsuccesful!");
-                    alert.setContentText("Error when trying to load script at location: " 
-                            + file.getAbsolutePath()
-                            + "\n\nError: "
-                            + e.getCause());
-
-                    alert.showAndWait();
+                    showErrorDialog(e, file);
                 }
             }
         });
+        
+        initOtherButtons();
+    }
+    
+    /**
+     * Shows the dialog that notifies the user that the loading
+     * of a script was successful.
+     * 
+     * @param file The location of the script that was loaded.
+     */
+    private void showSuccessDialog(File file) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Info Dialog");
+        alert.setHeaderText("Loading script was succesful!");
+        alert.setContentText("Successful load of script: " + file.getName());
+        
+        alert.showAndWait();
+    }
+    
+    /**
+     * Displays an error dialog when saving of the script
+     * was unsuccessful.
+     * 
+     * @param e The exception that was thrown.
+     * @param file The file that was supposed to be saved.
+     */
+    private void showErrorDialog(Exception e, File file) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(e.getMessage());
+        alert.setHeaderText("Loading script was unsuccesful!");
+        alert.setContentText("Error when trying to load script at location: " 
+                + file.getAbsolutePath()
+                + "\n\nError: "
+                + e.getCause());
 
+        alert.showAndWait();
+    }
+    
+    /**
+     * Initializes the rest of the buttons.
+     */
+    private void initOtherButtons() {
+        btnCreateScript.setOnAction(event -> {
+            CreateScriptController.show();
+        });
+        
         btnPreview.setOnAction(event -> {
             PreviewController.show();
         });
@@ -101,11 +127,11 @@ public class MenuController {
         });
 
         btnDirector.setOnAction(event -> {
-            CameraLiveController.show();
+            DirectorLiveController.show();
         });
         
         btnCameraman.setOnAction((event) -> {
-            CameramanUIController.show();
+            CameramanLiveController.show();
         });
 
         btnEditScript.setOnAction(event -> {
