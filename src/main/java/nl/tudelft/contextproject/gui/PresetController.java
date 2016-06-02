@@ -84,7 +84,7 @@ public class PresetController {
         
         System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
         Platform.runLater(() -> {
-            updateStream2("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8");
+            updateStream("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8");
         });
     }
     
@@ -97,6 +97,7 @@ public class PresetController {
         }        
     }
     
+    //Test with imageViews isntead of canvas.
     /**
      * Updates the camera stream to the stream referenced by the specified link.
      * @param streamLink the link to the video stream to be played next.
@@ -106,20 +107,8 @@ public class PresetController {
             streamHandle.stop();
         }
         streamHandle = new LiveStreamHandler();
-        vBox.getChildren().clear();
-        vBox.getChildren().add(streamHandle.createCanvas(streamLink, vBox.getWidth(), vBox.getHeight()));
-        streamHandle.start();
-        currentStream = streamLink;
-    }
-    
-    //Test with imageViews isntead of canvas.
-    public void updateStream2(String streamLink) {
-        if (streamHandle != null) {
-            streamHandle.stop();
-        }
-        streamHandle = new LiveStreamHandler();
-        vBox.getChildren().clear();
         imageView = streamHandle.createImageView(streamLink, vBox.getWidth(), vBox.getHeight());
+        vBox.getChildren().clear();
         vBox.getChildren().add(imageView);
         streamHandle.start();
         currentStream = streamLink;
@@ -167,9 +156,9 @@ public class PresetController {
                 data.add(p);
             }
             if (cam.hasConnection()) {
-                updateStream2(cam.getConnection().getStreamLink());
+                updateStream(cam.getConnection().getStreamLink());
             } else {
-                updateStream2("http://www.formisimo.com/blog/wp-content/uploads/2014/04/error-mesage.png");
+                updateStream("http://www.formisimo.com/blog/wp-content/uploads/2014/04/error-mesage.png");
             }
         });
 
