@@ -53,7 +53,6 @@ public class PresetController {
 
     private LiveStreamHandler streamHandle;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
-    private String currentStream = "";
     private ImageView imageView;
 
     @FXML
@@ -65,7 +64,10 @@ public class PresetController {
         }
 
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
-        ContextTFP.getPrimaryStage().setOnCloseRequest(e -> stopStreaming());
+        ContextTFP.getPrimaryStage().setOnCloseRequest(e -> {
+            Platform.exit(); 
+            System.exit(0);
+        });
 
         applySettings();
         setFactories();
@@ -89,16 +91,6 @@ public class PresetController {
     }
     
     /**
-     * Stops the camera livestream.
-     */
-    private void stopStreaming() {
-        if (streamHandle != null) {
-            streamHandle.stop();
-        }        
-    }
-    
-    //Test with imageViews isntead of canvas.
-    /**
      * Updates the camera stream to the stream referenced by the specified link.
      * @param streamLink the link to the video stream to be played next.
      */
@@ -107,11 +99,13 @@ public class PresetController {
             streamHandle.stop();
         }
         streamHandle = new LiveStreamHandler();
-        imageView = streamHandle.createImageView(streamLink, vBox.getWidth(), vBox.getHeight());
+        imageView = streamHandle.createImageView(streamLink, 1920, 1080);
+        Platform.runLater(() -> {
+            fitImageViewSize((float) vBox.getWidth(), (float) vBox.getHeight());
+        });    
         vBox.getChildren().clear();
         vBox.getChildren().add(imageView);
         streamHandle.start();
-        currentStream = streamLink;
     }
 
     /**
@@ -147,7 +141,6 @@ public class PresetController {
             }
         });
 
-        //TODO: Update current view of camera with livefeed from camera
         cameraSelecter.setOnAction((event) -> {
             Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
@@ -173,32 +166,38 @@ public class PresetController {
         });
         
         vBox.widthProperty().addListener((observable, oldValue, newValue) -> {
-            fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
+            if (streamHandle != null) {
+                fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
+            }
         });
         
         vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
-            fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
+            if (streamHandle != null) {
+                fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
+            }
         });
     }
     
-    //Method to resize imageviews
+    /**
+     * Resizes the ImageView.
+     * @param width The new width of the ImageView.
+     * @param height The new height of the ImageView.
+     */
     private void fitImageViewSize(float width, float height) {
-        Platform.runLater(() -> {
-            FloatProperty videoSourceRatioProperty = streamHandle.getRatio();
-            float fitHeight = videoSourceRatioProperty.get() * width;
-            if (fitHeight > height) {
-                imageView.setFitHeight(height);
-                double fitWidth = height / videoSourceRatioProperty.get();
-                imageView.setFitWidth(fitWidth);
-                imageView.setX((width - fitWidth) / 2);
-                imageView.setY(0);
-            } else {
-                imageView.setFitWidth(width);
-                imageView.setFitHeight(fitHeight);
-                imageView.setY((height - fitHeight) / 2);
-                imageView.setX(0);
-            }
-        });        
+        FloatProperty videoSourceRatioProperty = streamHandle.getRatio();
+        float fitHeight = videoSourceRatioProperty.get() * width;
+        if (fitHeight > height) {
+            imageView.setFitHeight(height);
+            double fitWidth = height / videoSourceRatioProperty.get();
+            imageView.setFitWidth(fitWidth);
+            imageView.setX((width - fitWidth) / 2);
+            imageView.setY(0);
+        } else {
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(fitHeight);
+            imageView.setY((height - fitHeight) / 2);
+            imageView.setX(0);
+        }       
     }
 
     /**

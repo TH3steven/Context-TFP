@@ -35,7 +35,7 @@ public class LiveStreamHandler {
      * Creates a LiveStreamHandler object.
      */
     public LiveStreamHandler() {
-        videoSourceRatioProperty = new SimpleFloatProperty(0.4f);
+        videoSourceRatioProperty = new SimpleFloatProperty(0.5625f);
     }
     
     /**
@@ -74,21 +74,23 @@ public class LiveStreamHandler {
         }) {
             @Override
             public void display(DirectMediaPlayer mediaPlayer, Memory[] nativeBuffers, BufferFormat bufferFormat) {
-                Platform.runLater(() -> {
-                    Memory nativeBuffer = mediaPlayer.lock()[0];
-                    try {
-                        ByteBuffer byteBuffer = nativeBuffer.getByteBuffer(0, nativeBuffer.size());
-                        pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), 
-                                pixelFormat, byteBuffer, bufferFormat.getPitches()[0]);
-                    } finally {
-                        mediaPlayer.unlock();
-                    }
-                });
+                Memory nativeBuffer = mediaPlayer.lock()[0];
+                try {
+                    ByteBuffer byteBuffer = nativeBuffer.getByteBuffer(0, nativeBuffer.size());
+                    pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), 
+                            pixelFormat, byteBuffer, bufferFormat.getPitches()[0]);
+                } finally {
+                    mediaPlayer.unlock();
+                }
             }
         };
         return imageView;
     }
     
+    /**
+     * Returns the ratio of the media currently playing.
+     * @return Ratio of the media currently playing.
+     */
     public FloatProperty getRatio() {
         return videoSourceRatioProperty;
     }
