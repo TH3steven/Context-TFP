@@ -94,6 +94,8 @@ public class CameramanUIController {
         initializeMovements();
         initializeTextFields();
         initializeCurrentCam();
+        
+        descriptionField.setEditable(false);
     }
     
     /**
@@ -237,6 +239,7 @@ public class CameramanUIController {
             changeInfoTable(newV);
         });
         
+        //set initial current camera
         currentCam.setValue(Camera.getCamera(1));
     }
     
