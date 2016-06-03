@@ -17,6 +17,7 @@ import org.junit.Test;
 
 /**
  * This test only runs when there is an actual connection with a real camera.
+ * @since 0.4
  */
 public class LiveCameraConnectionTest {
     
