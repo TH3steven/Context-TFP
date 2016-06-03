@@ -120,9 +120,8 @@ public class Script implements Iterator<Shot> {
      * Loads the first presets of all the cameras.
      */
     private void initPresetLoading() {
-        Set<Integer> keys = timelines.keySet();
-        for (Integer i : keys) {
-            timelines.get(i).initPreset();
+        for (Timeline t : timelines.values()) {
+            t.initPreset();
         }
     }
 
