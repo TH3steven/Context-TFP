@@ -8,7 +8,10 @@ import nl.tudelft.contextproject.presets.Preset;
 import org.junit.After;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Class to test the Camera class. More tests should be

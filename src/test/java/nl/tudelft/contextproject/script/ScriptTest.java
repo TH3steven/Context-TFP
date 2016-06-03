@@ -1,5 +1,12 @@
 package nl.tudelft.contextproject.script;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -12,8 +19,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import static org.junit.Assert.*;
 
 /**
  * Class to test Script class. Test suite will be expanded
@@ -36,7 +41,6 @@ public class ScriptTest {
     private Script script1;
     private Script script2;
     private Timeline timeline1;
-    private Timeline timeline;
 
     /**
      * Initialises the above private variables before each test.
@@ -58,7 +62,6 @@ public class ScriptTest {
         los.add(shot3);
         script1 = new Script(los);
         script2 = new Script(los1);
-        timeline = new Timeline(cam1, los1);
         timeline1 = new Timeline(cam0, los1);
     }
     
@@ -163,6 +166,7 @@ public class ScriptTest {
         shots.add(shot2);
         shots.add(shot3);
         Script script = new Script(shots);
+        assertEquals(script.isValid(), shot3);
         assertNotNull(script.isValid());        
     }
     
@@ -176,6 +180,8 @@ public class ScriptTest {
         shots.add(shot1);
         Script script = new Script(shots);
         assertNull(script.isValid());
+        shots.clear();
+        assertNull(script1.isValid());
     }
 
     /**
