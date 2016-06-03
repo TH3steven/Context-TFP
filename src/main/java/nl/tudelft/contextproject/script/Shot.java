@@ -166,7 +166,7 @@ public class Shot {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Shot && o != null) {
+        if (o instanceof Shot) {
             Shot shot = (Shot) o;
 
             return getNumber() == shot.getNumber()
