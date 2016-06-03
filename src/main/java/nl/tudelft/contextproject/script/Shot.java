@@ -39,7 +39,7 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = description;
-        if (cam != null) {
+        if (cam != null && pres != null) {
             cam.addPreset(pres);
         }
         this.duration = -1;
@@ -76,12 +76,10 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = "";
-
-        if (cam != null) {
+        this.duration = -1;
+        if (cam != null && pres != null) {
             cam.addPreset(pres);
         }
-
-        duration = -1;
     }
 
     /**

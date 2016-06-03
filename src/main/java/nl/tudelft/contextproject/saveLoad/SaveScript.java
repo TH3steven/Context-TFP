@@ -6,7 +6,7 @@ import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.xml.stream.XMLEventFactory;
@@ -112,7 +112,7 @@ public final class SaveScript {
      */
     private static XMLEventWriter createWriter() {
         try {
-            return (XMLOutputFactory.newFactory()).createXMLEventWriter(new FileWriter(saveLocation));
+            return (XMLOutputFactory.newFactory()).createXMLEventWriter(new FileOutputStream(saveLocation), "UTF-8");
         } catch (IOException | XMLStreamException e) {
             throw new RuntimeException("Something went wrong in creating your save file", e);
         }
@@ -242,7 +242,9 @@ public final class SaveScript {
         writer.add(eventFactory.createCharacters(shot.getCamera().getNumber() + ""));
         writer.add(eventFactory.createEndElement("", "", TAG_CAMERAID));
         writer.add(eventFactory.createStartElement("", "", TAG_PRESETID));
-        writer.add(eventFactory.createCharacters(shot.getPreset().getId() + ""));
+        if (shot.getPreset() != null) {
+            writer.add(eventFactory.createCharacters(shot.getPreset().getId() + ""));
+        }
         writer.add(eventFactory.createEndElement("", "", TAG_PRESETID));
         writer.add(eventFactory.createEndElement("", "", TAG_SHOT));
     }
