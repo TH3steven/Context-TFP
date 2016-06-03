@@ -81,7 +81,6 @@ public class ScriptTest {
         assertEquals(script1.getShots().get(0).getCamera(), cam0);
         assertEquals(script1.getShots().get(0).getNumber(), 1);
         assertEquals(script1.getShots().get(0).getPreset(), pres);
-        assertFalse(script1.getTimeline(cam0.getNumber()) == script1.getTimeline(cam1.getNumber()));
         assertEquals(script1.getTimeline(cam0.getNumber()).getCamera(), cam0);
         assertNull(script1.getTimeline(4));
         assertEquals(script1.getTimeline(cam0.getNumber()).getShots().get(0), shot1);
