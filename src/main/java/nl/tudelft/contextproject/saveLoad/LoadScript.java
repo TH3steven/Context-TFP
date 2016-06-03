@@ -84,6 +84,7 @@ public final class LoadScript {
             Camera.clearAllCameras();
             List<Shot> shots = new LinkedList<Shot>();
             reader = createReader();
+            checkCorrectDocument();
             
             while (reader.hasNext()) {
                 XMLEvent event = reader.nextEvent();
@@ -99,6 +100,27 @@ public final class LoadScript {
             
             return new Script(shots);
         }
+    }
+    
+    /**
+     * Checks if the document to be read is actually a save file from our
+     * application. Does this by reading the first two events in the file,
+     * namely the start of the document and the first tag afterwards,
+     * which should be 'script'.
+     * @throws XMLStreamException When the save file is not correct.
+     */
+    private static void checkCorrectDocument() throws XMLStreamException {
+        if (reader.hasNext()) {
+            reader.nextEvent(); //skip start of document
+        }
+        if (reader.hasNext()) {
+            XMLEvent event = reader.nextEvent();
+            if (event.isStartElement() 
+                    && "script".equals(event.asStartElement().getName().getLocalPart())) {
+                return;
+            }
+        }
+        throw new XMLStreamException("This is not a savefile from our program.");
     }
 
     /**
