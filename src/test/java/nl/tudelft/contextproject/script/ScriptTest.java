@@ -5,9 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -47,6 +47,8 @@ public class ScriptTest {
     public void init() {
         cam0 = new Camera();
         cam1 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
+        cam1.setConnection(new MockedCameraConnection());
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
         pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);

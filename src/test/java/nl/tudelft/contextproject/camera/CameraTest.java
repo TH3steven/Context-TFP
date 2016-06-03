@@ -33,6 +33,7 @@ public class CameraTest {
     @Test
     public void testSetSettings() {
         Camera cam = new Camera();
+        cam.setConnection(new MockedCameraConnection());
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
         cam.setSettings(new CameraSettings(65, 65, 65, 65));
@@ -239,6 +240,7 @@ public class CameraTest {
         cam.removePreset(p2);
         assertTrue(cam.getAllPresets().isEmpty());
     }
+    
     /**
      * Simple test observer used to see if an observer was actually
      * called.

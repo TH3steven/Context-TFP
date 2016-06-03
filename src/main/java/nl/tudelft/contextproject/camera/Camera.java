@@ -98,7 +98,7 @@ public class Camera extends Observable {
      * @param settings Camera settings to set.
      */
     public void setSettings(CameraSettings settings) {
-        if (connection.isConnected()) {
+        if (hasConnection() && connection.isConnected()) {
             camSet = settings;
             setChanged();
             notifyObservers(settings);
