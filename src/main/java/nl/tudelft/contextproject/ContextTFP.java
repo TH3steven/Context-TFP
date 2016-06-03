@@ -90,7 +90,7 @@ public class ContextTFP extends Application {
     }
 
     /**
-     * Initializes the root layout of the application.
+     * Initialises the root layout of the application.
      */
     public void initRootLayout() {
         try {

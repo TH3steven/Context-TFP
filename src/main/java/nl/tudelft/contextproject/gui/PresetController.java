@@ -119,7 +119,10 @@ public class PresetController {
         tableView.setItems(data);
 
         btnBack.setOnAction((event) -> {
-            streamHandler.stop();
+            if (streamHandler != null) {
+                streamHandler.stop();
+            }
+
             MenuController.show();
         });
 

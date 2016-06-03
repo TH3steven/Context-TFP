@@ -3,9 +3,9 @@ package nl.tudelft.contextproject.script;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -60,6 +60,7 @@ public class TimelineTest {
     @Test
     public void testNextPreset() {
         Camera cam0 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
         Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);        
         Shot shot1 = new Shot(1, cam0, pres1);
@@ -78,6 +79,7 @@ public class TimelineTest {
     @Test
     public void testInitPreset() {
         Camera cam0 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
         Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);        
         Shot shot1 = new Shot(1, cam0, pres1);

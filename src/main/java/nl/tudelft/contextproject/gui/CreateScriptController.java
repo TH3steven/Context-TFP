@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -63,6 +62,7 @@ import java.util.regex.Pattern;
  */
 public class CreateScriptController {
 
+    private static final String REDBORDER = "-fx-border-color: red;";
     private static boolean fill = false;
 
     private ObjectProperty<TableRow<Shot>> lastSelectedRow;
@@ -100,7 +100,7 @@ public class CreateScriptController {
     @FXML private TextField editDescription;
 
     /**
-     * Initialize method used by JavaFX.
+     * Initialise method used by JavaFX.
      */
     @FXML private void initialize() {
 
@@ -168,6 +168,315 @@ public class CreateScriptController {
     }
 
     /**
+     * Fills the choiceboxes for selecting a camera, both the box that
+     * adds a new camera as the box that is shown when editing a shot.
+     */
+    private void initCamera() {
+        final List<Number> cameraList = new ArrayList<Number>();
+
+        for (int i = 0; i < Camera.getCameraAmount(); ++i) {
+            cameraList.add(i + 1);
+        }
+
+        addCamera.setItems(FXCollections.observableArrayList(cameraList));
+        editCamera.setItems(FXCollections.observableArrayList(cameraList));
+    }
+
+    /**
+     * Fills the choiceboxes for selecting a preset, given the selection
+     * of a certain camera.
+     */
+    private void initPreset(String prepend) {
+        final List<String> presetList = new ArrayList<String>();
+        final ChoiceBox<Number> cam = (prepend.equals("add")) ? addCamera : editCamera;
+        final ChoiceBox<String> preset = (prepend.equals("add")) ? addPreset : editPreset;
+
+        cam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            presetList.clear();
+            // None option disabled till it is implemented in the backend.
+            //TODO presetList.add("None");
+
+            if (newV != null) {
+                preset.setDisable(false);
+
+                for (int i = 0; i < Camera.
+                        getCamera(cam.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
+                    presetList.add(Integer.toString(i + 1));
+                }
+
+                preset.setItems(FXCollections.observableArrayList(presetList));
+            } else {
+                preset.setDisable(true);
+            }
+        });
+
+        addPreset.setDisable(true);
+    }
+
+    /**
+     * Sets the factories of the table columns, aka where they should
+     * get their value from.
+     */
+    private void setFactories() {
+        columnID.setCellValueFactory(
+            new PropertyValueFactory<Shot, Number>("number"));
+
+        columnShot.setCellValueFactory(
+            new PropertyValueFactory<Shot, String>("shotId"));
+
+        columnCamera.setCellValueFactory(cellData ->
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getCamera().getNumber() + 1));
+
+        columnPreset.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getPreset() == null) {
+                return new ReadOnlyObjectWrapper<>();
+            } else {
+                return new ReadOnlyObjectWrapper<>(
+                        Integer.toString(cellData.getValue().getPreset().getId() + 1));
+            }
+        });
+
+        columnDescription.setCellValueFactory(
+            new PropertyValueFactory<Shot, String>("description"));
+
+        columnAction.setCellValueFactory(cellData -> 
+            new ReadOnlyObjectWrapper<>(cellData.getValue()));
+
+        columnAction.setCellFactory(cellData -> new TableCell<Shot, Shot>() {
+            final Button btnRemove = new Button("Remove");
+
+            @Override
+            protected void updateItem(Shot shot, boolean empty) {
+                super.updateItem(shot, empty);
+
+                if (shot == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                setGraphic(btnRemove);
+
+                btnRemove.setOnAction(event -> {
+                    getTableView().getItems().remove(shot);
+                });
+            }
+        });
+    }
+
+    /**
+     * Sets the onAction for the add new camera button.
+     */
+    private void setAddButton() {
+        final ObservableList<Shot> data = FXCollections.observableArrayList();
+
+        tableEvents.setItems(data);
+
+        btnAdd.setOnAction(event -> {
+            if (isValidInput()) {
+                addCamera.setStyle("");
+                addPreset.setStyle("");
+                addDescription.setStyle("");
+
+                if (!validateScript(data)
+                        && !AlertDialog.confirmInvalidScriptAdding(
+                                addCamera.getSelectionModel().getSelectedItem())) {
+                    return;
+                }
+
+                Shot newShot = createNewShot();
+                data.add(newShot);
+
+                addShot.clear();
+                addCamera.getSelectionModel().clearSelection();
+                addPreset.getSelectionModel().clearSelection();
+                addDescription.clear();
+            }
+        });
+    }
+
+    /**
+     * Checks if the new shot being added to the script
+     * is valid.
+     * 
+     * @return True iff it has no errors.
+     */
+    private boolean isValidInput() {
+        boolean isValid = true;
+
+        if (addCamera.getSelectionModel().isEmpty()) {
+            addCamera.setStyle(REDBORDER);
+            isValid = false;
+        }
+
+        if (addPreset.getSelectionModel().isEmpty()) {
+            addPreset.setStyle(REDBORDER);
+            isValid = false;
+        }
+
+        if (addDescription.getText().isEmpty()) {
+            addDescription.setStyle(REDBORDER);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Checks if a newly created shot does not create an
+     * invalid script.
+     * 
+     * @param data The table data.
+     * @return True if the script is valid, false otherwise.
+     */
+    private boolean validateScript(List<Shot> data) {
+        if (data.isEmpty()) {
+            return true;
+        }
+        
+        Shot last = data.get(data.size() - 1);
+        
+        if (last.getCamera().getNumber() 
+                == addCamera.getSelectionModel().getSelectedIndex()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Creates a new shot based on the users' input.
+     * @return The newly created shot.
+     */
+    private Shot createNewShot() {
+        maximumId++;
+        
+        if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
+            final Shot newShot = new Shot(
+                    maximumId,
+                    addShot.getText(),
+                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
+                    addDescription.getText()
+                    );
+
+            return newShot;
+        } else {
+            final Shot newShot = new Shot(
+                    maximumId,
+                    addShot.getText(),
+                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
+                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
+                        .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
+                    addDescription.getText()
+                    );
+
+            return newShot;
+        }
+    }
+
+    /**
+     * Sets the onAction for the back button.
+     */
+    private void setBackButton() {
+        btnBack.setOnAction(event -> {
+            if (!tableEvents.getItems().isEmpty() && !AlertDialog.confirmExiting()) {
+                return;
+            }
+
+            Script backup = new Script(backupList);
+            backup.setName(ContextTFP.getScript().getName());
+
+            ContextTFP.setScript(backup);
+            MenuController.show();
+        });
+    }
+
+    /**
+     * Sets the onAction for the save buttons.
+     */
+    private void setSaveButton() {
+        if (backupList.isEmpty()) {
+            btnSave.setDisable(true);
+        }
+
+        btnSave.setOnAction(event -> {
+            setSaveAction(event, false);
+        });
+
+        btnSaveAs.setOnAction(event -> {
+            setSaveAction(event, true);
+        });
+    }
+
+    /**
+     * Handles the saving of a file.
+     */
+    private void setSaveAction(ActionEvent event, boolean showDialog) {
+        final Script script = new Script(tableEvents.getItems());
+
+        if (!showValid(script, 1)) {
+            return;
+        }
+
+        File file;
+
+        if (showDialog) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save script");
+            fileChooser.setInitialFileName("script");
+            fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
+
+            file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
+        } else {
+            file = new File(SaveScript.getSaveLocation());
+        }
+
+        if (file != null) {
+            try {
+                SaveScript.setSaveLocation(file.getAbsolutePath());
+                SaveScript.save(script);
+
+                script.setName(file.getName());
+                ContextTFP.setScript(script);
+
+                AlertDialog.confirmExitingAfterSaving(file);
+            } catch (Exception e) {
+                AlertDialog.errorSaveUnsuccesful(e, file);
+            }
+        }
+    }
+    
+    /**
+     * Checks if a script is valid and gives an error message when it isn't.
+     * 
+     * @param level The level of alert. Should be 1 for CONFIRMATION
+     *      or 2 for WARNING. Other values are ignored.
+     * @return True if the user wants to continue and ignore the error.
+     */
+    public static boolean showValid(Script script, int level) {
+        Shot error = script.isValid();
+
+        if (error != null) {
+            Alert alert = null;
+
+            if (level == 1) {
+                alert = AlertDialog.confirmInvalidScriptSaving(error);
+            } else if (level == 2) {
+                alert = AlertDialog.warningInvalidScriptLoading(error);
+            } else {
+                return true;
+            }
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.get() == ButtonType.CANCEL) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Allows for editable rows in the table. This method defines the
      * necessary components for row by row editing of the table.
      */
@@ -218,24 +527,24 @@ public class CreateScriptController {
      */
     private void initEditButtons() {
         btnEditConfirm.setOnAction(event -> {
-            boolean emptyField = false;
+            boolean isValid = true;
 
             if (editCamera.getSelectionModel().isEmpty()) {
-                editCamera.setStyle("-fx-border-color: red;");
-                emptyField = true;
+                editCamera.setStyle(REDBORDER);
+                isValid = false;
             }
 
             if (editPreset.getSelectionModel().isEmpty()) {
-                editPreset.setStyle("-fx-border-color: red;");
-                emptyField = true;
+                editPreset.setStyle(REDBORDER);
+                isValid = false;
             }
 
             if (editDescription.getText().isEmpty()) {
-                editDescription.setStyle("-fx-border-color: red;");
-                emptyField = true;
+                editDescription.setStyle(REDBORDER);
+                isValid = false;
             }
 
-            if (!emptyField) {
+            if (isValid) {
                 editCamera.setStyle("");
                 editPreset.setStyle("");
                 editDescription.setStyle("");
@@ -427,303 +736,6 @@ public class CreateScriptController {
             table.getItems().add(myIndex, table.getItems().remove(incomingIndex));
             event.setDropCompleted(true);
         };
-    }
-
-    /**
-     * Fills the choiceboxes for selecting a camera, both the box that
-     * adds a new camera as the box that is shown when editing a shot.
-     */
-    private void initCamera() {
-        final List<Number> cameraList = new ArrayList<Number>();
-
-        for (int i = 0; i < Camera.getCameraAmount(); ++i) {
-            cameraList.add(i + 1);
-        }
-
-        addCamera.setItems(FXCollections.observableArrayList(cameraList));
-        editCamera.setItems(FXCollections.observableArrayList(cameraList));
-    }
-
-    /**
-     * Fills the choiceboxes for selecting a preset, given the selection
-     * of a certain camera.
-     */
-    private void initPreset(String prepend) {
-        final List<String> presetList = new ArrayList<String>();
-        final ChoiceBox<Number> cam = (prepend.equals("add")) ? addCamera : editCamera;
-        final ChoiceBox<String> preset = (prepend.equals("add")) ? addPreset : editPreset;
-
-        cam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-            presetList.clear();
-            presetList.add("None");
-
-            if (newV != null) {
-                preset.setDisable(false);
-
-                for (int i = 0; i < Camera.
-                        getCamera(cam.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
-                    presetList.add(Integer.toString(i + 1));
-                }
-
-                preset.setItems(FXCollections.observableArrayList(presetList));
-            } else {
-                preset.setDisable(true);
-            }
-        });
-
-        addPreset.setDisable(true);
-    }
-
-    /**
-     * Sets the factories of the table columns, aka where they should
-     * get their value from.
-     */
-    private void setFactories() {
-        columnID.setCellValueFactory(
-            new PropertyValueFactory<Shot, Number>("number"));
-
-        columnShot.setCellValueFactory(
-            new PropertyValueFactory<Shot, String>("shotId"));
-
-        columnCamera.setCellValueFactory(cellData ->
-            new ReadOnlyObjectWrapper<>(cellData.getValue().getCamera().getNumber() + 1));
-
-        columnPreset.setCellValueFactory(cellData -> {
-            if (cellData.getValue().getPreset() == null) {
-                return new ReadOnlyObjectWrapper<>();
-            } else {
-                return new ReadOnlyObjectWrapper<>(
-                        Integer.toString(cellData.getValue().getPreset().getId() + 1));
-            }
-        });
-
-        columnDescription.setCellValueFactory(
-            new PropertyValueFactory<Shot, String>("description"));
-
-        columnAction.setCellValueFactory(cellData -> 
-            new ReadOnlyObjectWrapper<>(cellData.getValue()));
-
-        columnAction.setCellFactory(cellData -> new TableCell<Shot, Shot>() {
-            final Button btnRemove = new Button("Remove");
-
-            @Override
-            protected void updateItem(Shot shot, boolean empty) {
-                super.updateItem(shot, empty);
-
-                if (shot == null) {
-                    setGraphic(null);
-                    return;
-                }
-
-                setGraphic(btnRemove);
-
-                btnRemove.setOnAction(event -> {
-                    getTableView().getItems().remove(shot);
-                });
-            }
-        });
-    }
-
-    /**
-     * Sets the onAction for the add new camera button.
-     */
-    private void setAddButton() {
-        final ObservableList<Shot> data = FXCollections.observableArrayList();
-
-        tableEvents.setItems(data);
-
-        btnAdd.setOnAction(event -> {
-            if (isValidInput()) {
-                addCamera.setStyle("");
-                addPreset.setStyle("");
-                addDescription.setStyle("");
-
-                maximumId++;
-                createNewShot(data);
-
-                addShot.clear();
-                addCamera.getSelectionModel().clearSelection();
-                addPreset.getSelectionModel().clearSelection();
-                addDescription.clear();
-            }
-        });
-    }
-    
-    /**
-     * Checks if the new shot being added to the script
-     * is valid.
-     * 
-     * @return True if it has no errors.
-     */
-    private boolean isValidInput() {
-        boolean isValid = true;
-
-        if (addCamera.getSelectionModel().isEmpty()) {
-            addCamera.setStyle("-fx-border-color: red;");
-            isValid = false;
-        }
-
-        if (addPreset.getSelectionModel().isEmpty()) {
-            addPreset.setStyle("-fx-border-color: red;");
-            isValid = false;
-        }
-
-        if (addDescription.getText().isEmpty()) {
-            addDescription.setStyle("-fx-border-color: red;");
-            isValid = false;
-        }
-        
-        return isValid;
-    }
-    
-    /**
-     * Creates a new shot based on the users' input.
-     * 
-     * @param data The data already in the table.
-     */
-    private void createNewShot(ObservableList<Shot> data) {
-        if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
-            final Shot newShot = new Shot(
-                    maximumId,
-                    addShot.getText(),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                    addDescription.getText()
-                    );
-
-            data.add(newShot);
-        } else {
-            final Shot newShot = new Shot(
-                    maximumId,
-                    addShot.getText(),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
-                    addDescription.getText()
-                    );
-
-            data.add(newShot);
-        }
-    }
-
-    /**
-     * Sets the onAction for the back button.
-     */
-    private void setBackButton() {
-        btnBack.setOnAction(event -> {
-            if (!tableEvents.getItems().isEmpty()) {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Confirm quitting");
-                alert.setHeaderText("Exiting will erase any unsaved changes");
-                alert.setContentText("Are you sure you want to quit? Any unsaved changes "
-                        + "will not be kept.");
-
-                Optional<ButtonType> result = alert.showAndWait();
-
-                if (result.get() == ButtonType.CANCEL) {
-                    return;
-                }
-            }
-
-            Script backup = new Script(backupList);
-            backup.setName(ContextTFP.getScript().getName());
-
-            ContextTFP.setScript(backup);
-            MenuController.show();
-        });
-    }
-
-    /**
-     * Sets the onAction for the save buttons.
-     */
-    private void setSaveButton() {
-        if (backupList.isEmpty()) {
-            btnSave.setDisable(true);
-        }
-
-        btnSave.setOnAction(event -> {
-            setSavePopup(event, false);
-        });
-
-        btnSaveAs.setOnAction(event -> {
-            setSavePopup(event, true);
-        });
-    }
-
-    /**
-     * Handles the saving of a file.
-     */
-    private void setSavePopup(ActionEvent event, boolean showDialog) {
-        final Script script = new Script(tableEvents.getItems());
-
-        if (!script.showValid(1)) {
-            return;
-        }
-
-        File file;
-
-        if (showDialog) {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save script");
-            fileChooser.setInitialFileName("script");
-            fileChooser.getExtensionFilters().add(new ExtensionFilter("XML (*.xml)", "*.xml"));
-
-            file = fileChooser.showSaveDialog(((Node) event.getTarget()).getScene().getWindow());
-        } else {
-            file = new File(SaveScript.getSaveLocation());
-        }
-
-        if (file != null) {
-            try {
-                SaveScript.setSaveLocation(file.getAbsolutePath());
-                SaveScript.save(script);
-
-                script.setName(file.getName());
-                ContextTFP.setScript(script);
-
-                showConfirmExitDialog(file);
-            } catch (Exception e) {
-                showErrorDialog(e, file);
-            }
-        }
-    }
-
-    /**
-     * Displays a confirm to exit dialog when the 
-     * script has been saved.
-     * 
-     * @param file The file that has been saved.
-     */
-    private void showConfirmExitDialog(File file) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm exiting");
-        alert.setHeaderText("Saving script was succesful!");
-        alert.setContentText("Succesful save of script: " 
-                + file.getName()
-                + " Do you want to quit to menu?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            MenuController.show();
-        }
-    }
-
-    /**
-     * Displayes an error dialog when saving of the script
-     * was unsuccesful.
-     * 
-     * @param file The file that was supposed to be saved.
-     */
-    private void showErrorDialog(Exception e, File file) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle(e.getMessage());
-        alert.setHeaderText("Saving script was unsuccesful!");
-        alert.setContentText("Error when trying to save script at location: " 
-                + file.getAbsolutePath()
-                + "\n\nError: "
-                + e.getCause());
-
-        alert.showAndWait();
     }
 
     /**

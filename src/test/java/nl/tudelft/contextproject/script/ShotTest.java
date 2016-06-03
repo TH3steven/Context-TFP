@@ -1,9 +1,9 @@
 package nl.tudelft.contextproject.script;
 
 import static org.junit.Assert.assertEquals;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -63,6 +63,7 @@ public class ShotTest {
     @Test
     public void testExecute() {
         Camera cam0 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
         Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         Shot shot1 = new Shot(1, cam0, pres);
         shot1.execute();
