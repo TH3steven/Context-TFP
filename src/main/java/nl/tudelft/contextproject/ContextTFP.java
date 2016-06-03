@@ -13,9 +13,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.gui.MenuController;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.script.Script;
@@ -62,6 +63,17 @@ public class ContextTFP extends Application {
         Camera e = new Camera();
         Camera f = new Camera();
         
+        LiveCameraConnection live = new LiveCameraConnection("192.168.0.13");
+        live.setUpConnection();
+        a.setConnection(live);
+        
+        MockedCameraConnection mocked = new MockedCameraConnection();
+        b.setConnection(mocked);
+        
+        MockedCameraConnection mocked2 = new MockedCameraConnection();
+        mocked2.setStreamLink("http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8");
+        c.setConnection(mocked2);
+
         List<Camera> list = new ArrayList<Camera>();
         list.addAll(Arrays.asList(a, b, c, d, e, f)); 
 
