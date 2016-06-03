@@ -64,10 +64,6 @@ public class PresetController {
         }
 
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
-        ContextTFP.getPrimaryStage().setOnCloseRequest(e -> {
-            Platform.exit(); 
-            System.exit(0);
-        });
 
         applySettings();
         setFactories();
@@ -85,9 +81,6 @@ public class PresetController {
         vBox.getChildren().clear();
         
         System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
-        Platform.runLater(() -> {
-            updateStream("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8");
-        });
     }
     
     /**

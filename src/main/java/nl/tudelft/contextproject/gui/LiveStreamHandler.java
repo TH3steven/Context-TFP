@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 /**
  * Handler for streaming media into the GUI through VLC.
  * 
- * @since 0.5
+ * @since 0.6
  */
 public class LiveStreamHandler {
     

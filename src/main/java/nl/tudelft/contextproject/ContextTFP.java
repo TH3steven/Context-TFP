@@ -9,6 +9,7 @@
 package nl.tudelft.contextproject;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -43,7 +44,7 @@ public class ContextTFP extends Application {
     private static BorderPane rootLayout;
     private static Script script;
 
-    private static Stage primaryStage;
+    private Stage primaryStage;
 
     @Override
     public void start(Stage pStage) throws Exception {
@@ -83,7 +84,6 @@ public class ContextTFP extends Application {
             cam.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
             cam.addPreset(new InstantPreset(new CameraSettings(), 3, "wuq"));
         }
-        //
 
         initRootLayout();
         MenuController.show();
@@ -101,6 +101,10 @@ public class ContextTFP extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
+            primaryStage.setOnCloseRequest(e -> {
+                Platform.exit(); 
+                System.exit(0);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,7 +124,7 @@ public class ContextTFP extends Application {
      * 
      * @return The main stage
      */
-    public static Stage getPrimaryStage() {
+    public Stage getPrimaryStage() {
         return primaryStage;
     }
 
