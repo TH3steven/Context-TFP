@@ -20,6 +20,10 @@ import java.nio.ByteBuffer;
 /**
  * Handler for streaming media into the GUI through VLC.
  * 
+ * <p>Most credits to Mark Lee for creating this solution.
+ * 
+ * @see <a href="https://github.com/caprica/vlcj-javafx/tree/master/src/test/java/uk/co/caprica/vlcj/javafx/test">
+ * Github Repo</a>
  * @since 0.6
  */
 public class LiveStreamHandler {
