@@ -28,6 +28,7 @@ import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -433,34 +434,23 @@ public class PreviewController {
         if (shotSwitch) {
             switchHighlights(check);
         }
-
-        switch (check) {
-            case 1: 
-                viewOne.setImage(active);
-                viewTwo.setImage(getImageByNumber(shot, 0));
-                viewThree.setImage(getImageByNumber(shot, 1));
-                viewFour.setImage(getImageByNumber(shot, 2));
-                break;
-            case 2: 
-                viewOne.setImage(getImageByNumber(shot, -2));
-                viewTwo.setImage(active);
-                viewThree.setImage(getImageByNumber(shot, 0));
-                viewFour.setImage(getImageByNumber(shot, 1));
-                break;
-            case 3: 
-                viewOne.setImage(getImageByNumber(shot, -3));
-                viewTwo.setImage(getImageByNumber(shot, -2));
-                viewThree.setImage(active);
-                viewFour.setImage(getImageByNumber(shot, 0));
-                break;
-            case 4: 
-                viewOne.setImage(getImageByNumber(shot, -4));
-                viewTwo.setImage(getImageByNumber(shot, -3));
-                viewThree.setImage(getImageByNumber(shot, -2));
-                viewFour.setImage(active);
-                break;
-            default: return;
+        
+        List<ImageView> list = new ArrayList<ImageView>();
+        list.addAll(Arrays.asList(viewOne, viewTwo, viewThree, viewFour));
+        
+        List<Integer> offset = new ArrayList<Integer>();
+        offset.addAll(Arrays.asList(-1, 0, 1, 2));
+        
+        for (int i = 0; i < offset.size(); ++i) {
+            offset.set(i, offset.get(i) - (check - 1));
         }
+
+        viewOne.setImage(getImageByNumber(shot, offset.get(0)));
+        viewTwo.setImage(getImageByNumber(shot, offset.get(1)));
+        viewThree.setImage(getImageByNumber(shot, offset.get(2)));
+        viewFour.setImage(getImageByNumber(shot, offset.get(3)));
+
+        list.get(check - 1).setImage(active);
     }
 
     /**
