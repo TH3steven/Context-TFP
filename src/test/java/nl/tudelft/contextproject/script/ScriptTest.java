@@ -79,17 +79,32 @@ public class ScriptTest {
      */
     @Test
     public void testScript() {
-        assertEquals(script1.getShots().get(0), shot1);
-        assertFalse(script1.isEmpty());
-        assertNotNull(script1);
-        assertEquals(script1.getShots().get(0).getCamera(), cam0);
-        assertEquals(script1.getShots().get(0).getNumber(), 1);
-        assertEquals(script1.getShots().get(0).getPreset(), pres);
         assertNotEquals(script1.getTimeline(cam0.getNumber()), script1.getTimeline(cam1.getNumber()));
         assertEquals(script1.getTimeline(cam0.getNumber()).getCamera(), cam0);
         assertNull(script1.getTimeline(4));
         assertEquals(script1.getTimeline(cam0.getNumber()).getShots().get(0), shot1);
         assertEquals(script1.getTimeline(cam0.getNumber()).getShots().get(1), shot3);
+    }
+
+    /**
+     * Continuation of the script constructor test.
+     */
+    @Test
+    public void testScript_1() {
+        assertEquals(script1.getShots().get(0).getCamera(), cam0);
+        assertEquals(script1.getShots().get(0).getNumber(), 1);
+        assertEquals(script1.getShots().get(0).getPreset(), pres);
+    }
+
+    /**
+     * Test for the script constructor.
+     * Has been split to avoid PMD errors.
+     */
+    @Test
+    public void testScript_2() {
+        assertEquals(script1.getShots().get(0), shot1);
+        assertFalse(script1.isEmpty());
+        assertNotNull(script1);
     }
 
     /**
