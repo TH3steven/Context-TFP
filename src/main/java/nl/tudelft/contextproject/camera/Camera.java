@@ -391,4 +391,9 @@ public class Camera extends Observable {
     public Collection<Preset> getAllPresets() {
         return presets.values();
     }
+    
+    @Override
+    public String toString() {
+        return "Camera: " + camId;
+    }
 }
