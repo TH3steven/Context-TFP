@@ -1,6 +1,7 @@
 package nl.tudelft.contextproject.script;
 
 import static org.junit.Assert.assertEquals;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
@@ -8,6 +9,7 @@ import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -15,6 +17,30 @@ import org.junit.Test;
  * @since 0.2
  */
 public class ShotTest {
+
+    private Camera cam0;
+    private Camera cam1;
+    private Preset pres;
+    private Preset pres2;
+    private Shot shot1;
+    private Shot shot2;
+    private Shot shot3;
+
+    /**
+     * Initializes the above private variables before each test.
+     */
+    @Before
+    public void init() {
+        cam0 = new Camera();
+        cam1 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
+        cam1.setConnection(new MockedCameraConnection());
+        pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        pres2 = new InstantPreset(new CameraSettings(1, 2, 3, 4), 2);
+        shot1 = new Shot(1, cam0, pres);
+        shot2 = new Shot(0, null, null);
+        shot3 = new Shot(2, "2!", cam1, pres, "cover main podium");
+    }
     
     @After
     public void cleanUp() {
@@ -27,13 +53,6 @@ public class ShotTest {
      */
     @Test
     public  void testShot() {
-        Camera cam0 = new Camera();
-        Camera cam1 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 2, 3, 4), 2);
-        Shot shot1 = new Shot(1, cam0, pres);
-        Shot shot2 = new Shot(0, null, null);
-        Shot shot3 = new Shot(2, "2!", cam1, pres, "cover main podium");
         shot1.setDuration(5.0);
         shot2.setDuration(3.5);
         shot3.setDuration(1.5);
@@ -62,10 +81,6 @@ public class ShotTest {
      */
     @Test
     public void testExecute() {
-        Camera cam0 = new Camera();
-        cam0.setConnection(new MockedCameraConnection());
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Shot shot1 = new Shot(1, cam0, pres);
         shot1.execute();
         assertEquals(cam0.getSettings().getFocus(), 2);
         assertEquals(cam0.getSettings().getPan(), 1);
