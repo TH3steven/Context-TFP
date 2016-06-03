@@ -51,7 +51,7 @@ public class PresetController {
     @FXML private TableColumn<Preset, String> descColumn;
     @FXML private VBox vBox;
 
-    private LiveStreamHandler streamHandle;
+    private LiveStreamHandler streamHandler;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
     private ImageView imageView;
 
@@ -88,17 +88,17 @@ public class PresetController {
      * @param streamLink the link to the video stream to be played next.
      */
     public void updateStream(String streamLink) {
-        if (streamHandle != null) {
-            streamHandle.stop();
+        if (streamHandler != null) {
+            streamHandler.stop();
         }
-        streamHandle = new LiveStreamHandler();
-        imageView = streamHandle.createImageView(streamLink, 1920, 1080);
+        streamHandler = new LiveStreamHandler();
+        imageView = streamHandler.createImageView(streamLink, 1920, 1080);
         Platform.runLater(() -> {
             fitImageViewSize((float) vBox.getWidth(), (float) vBox.getHeight());
         });    
         vBox.getChildren().clear();
         vBox.getChildren().add(imageView);
-        streamHandle.start();
+        streamHandler.start();
     }
 
     /**
@@ -119,7 +119,7 @@ public class PresetController {
         tableView.setItems(data);
 
         btnBack.setOnAction((event) -> {
-            streamHandle.stop();
+            streamHandler.stop();
             MenuController.show();
         });
 
@@ -159,13 +159,13 @@ public class PresetController {
         });
         
         vBox.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (streamHandle != null) {
+            if (streamHandler != null) {
                 fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
             }
         });
         
         vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if (streamHandle != null) {
+            if (streamHandler != null) {
                 fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
             }
         });
@@ -177,7 +177,7 @@ public class PresetController {
      * @param height The new height of the ImageView.
      */
     private void fitImageViewSize(float width, float height) {
-        FloatProperty videoSourceRatioProperty = streamHandle.getRatio();
+        FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
         float fitHeight = videoSourceRatioProperty.get() * width;
         if (fitHeight > height) {
             imageView.setFitHeight(height);
