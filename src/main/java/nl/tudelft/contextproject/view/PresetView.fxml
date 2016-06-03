@@ -8,7 +8,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -25,11 +24,7 @@
         </columns>
       </TableView>
       <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Back" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
-      <VBox fx:id="vBox" layoutX="32.0" layoutY="115.0" minHeight="225.0" minWidth="400.0" AnchorPane.bottomAnchor="235.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="368.0" AnchorPane.topAnchor="115.0">
-         <children>
-            <ImageView fx:id="cameraView" fitHeight="225.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
+      <VBox fx:id="vBox" layoutX="32.0" layoutY="115.0" minHeight="225.0" minWidth="400.0" AnchorPane.bottomAnchor="235.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="368.0" AnchorPane.topAnchor="115.0" />
       <GridPane layoutX="35.0" layoutY="35.0" prefHeight="65.0" prefWidth="400.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="365.0" AnchorPane.topAnchor="35.0">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" minWidth="104.0" />
