@@ -1,15 +1,10 @@
 package nl.tudelft.contextproject.script;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -85,59 +80,6 @@ public class Script implements Iterator<Shot> {
         }
 
         return null;
-    }
-
-    /**
-     * Checks if a script is valid and gives an error message when it isn't.
-     * 
-     * @param level The level of alert. Should be 1 for CONFIRMATION
-     *      or 2 for WARNING. Other values are ignored.
-     * @return True if the user wants to continue and ignore the error.
-     */
-    public boolean showValid(int level) {
-        Shot error = isValid();
-
-        if (error != null) {
-            Alert alert = null;
-
-            if (level == 1) {
-                alert = showConfirmAlert(error);
-            } else if (level == 2) {
-                alert = showWarningAlert(error);
-            } else {
-                return true;
-            }
-
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if (result.get() == ButtonType.CANCEL) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private Alert showConfirmAlert(Shot error) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm saving");
-        alert.setHeaderText("Trying to save invalid script");
-        alert.setContentText("Error at shot ID: " + error.getNumber()
-            + "\nYou are trying to save an invalid script. "
-            + "Are you sure you want to continue?");
-
-        return alert;
-    }
-
-    private Alert showWarningAlert(Shot error) {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Script invalid");
-        alert.setHeaderText("Loaded an invalid script");
-        alert.setContentText("Error at shot ID: " + error.getNumber()
-            + "\nThe script you loaded is invalid. You can change "
-            + "it in the edit script menu");
-
-        return alert;
     }
 
     /**
@@ -253,7 +195,7 @@ public class Script implements Iterator<Shot> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Script && o != null) {
+        if (o instanceof Script) {
             Script script = (Script) o;
             return Objects.equals(getShots(), script.getShots());
         }

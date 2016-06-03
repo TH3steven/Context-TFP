@@ -346,7 +346,7 @@ public class PreviewController {
     }
 
     /**
-     * Ckecks if shot #i has an image. If not, set the image
+     * Checks if shot #i has an image. If not, set the image
      * to be displayed as the error image.
      * 
      * @param i The shot to be checked.

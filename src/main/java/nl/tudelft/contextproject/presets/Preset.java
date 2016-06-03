@@ -45,7 +45,7 @@ public abstract class Preset {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Preset && o != null) {
+        if (o instanceof Preset) {
             Preset preset = (Preset) o;
             return getId() == preset.getId()
                     && Objects.equals(getDescription(), preset.getDescription())

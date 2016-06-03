@@ -105,7 +105,7 @@ public class DirectorLiveController {
     }
 
     /**
-     * Initializes the methods.
+     * Initializes the swap and back onAction events.
      */
     private void initializeButtons() {
         btnSwap.setOnAction((event) -> {

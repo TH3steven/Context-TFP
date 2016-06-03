@@ -75,6 +75,7 @@ public class LiveCameraConnection extends CameraConnection {
                 autoFocus = hasAutoFocus == 1;
                 connected = true;
                 lastKnown = new CameraSettings();
+
                 return true;
             }
 
@@ -186,8 +187,9 @@ public class LiveCameraConnection extends CameraConnection {
 
     /**
      * Sets the auto focus setting on the camera to on (true) or off (false).
+     * 
      * @param autoFocus true for ON, false for OFF
-     * @return true iff the camera was set to the specified setting.
+     * @return True iff the camera was set to the specified setting.
      */
     public boolean setAutoFocus(boolean autoFocus) {
         if (this.autoFocus == autoFocus) {
@@ -368,7 +370,7 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     protected boolean absZoom(int value) {
         value = (value < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW :
-            (value > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : value;
+                (value > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : value;
         try {
             String res = sendRequest(buildPanTiltHeadControlURL("%23AXZ" 
                     + Integer.toHexString(0x1000 | value).substring(1).toUpperCase()
@@ -389,7 +391,7 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     protected boolean absFocus(int value) {
         value = (value < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
-            (value > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : value;
+                (value > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : value;
 
         try {
             if (autoFocus) {

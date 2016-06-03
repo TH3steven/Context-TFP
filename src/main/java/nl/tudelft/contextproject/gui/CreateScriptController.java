@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -279,7 +278,8 @@ public class CreateScriptController {
                 addDescription.setStyle("");
 
                 if (!validateScript(data)
-                        && !showInvalidScriptDialog(addCamera.getSelectionModel().getSelectedItem())) {
+                        && !AlertDialog.confirmInvalidScriptAdding(
+                                addCamera.getSelectionModel().getSelectedItem())) {
                     return;
                 }
 
@@ -328,7 +328,7 @@ public class CreateScriptController {
      * @param data The table data.
      * @return True if the script is valid, false otherwise.
      */
-    private boolean validateScript(ObservableList<Shot> data) {
+    private boolean validateScript(List<Shot> data) {
         if (data.isEmpty()) {
             return true;
         }
@@ -378,18 +378,8 @@ public class CreateScriptController {
      */
     private void setBackButton() {
         btnBack.setOnAction(event -> {
-            if (!tableEvents.getItems().isEmpty()) {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Confirm quitting");
-                alert.setHeaderText("Exiting will erase any unsaved changes");
-                alert.setContentText("Are you sure you want to quit? Any unsaved changes "
-                        + "will not be kept.");
-
-                Optional<ButtonType> result = alert.showAndWait();
-
-                if (result.get() == ButtonType.CANCEL) {
-                    return;
-                }
+            if (!tableEvents.getItems().isEmpty() && !AlertDialog.confirmExiting()) {
+                return;
             }
 
             Script backup = new Script(backupList);
@@ -423,7 +413,7 @@ public class CreateScriptController {
     private void setSaveAction(ActionEvent event, boolean showDialog) {
         final Script script = new Script(tableEvents.getItems());
 
-        if (!script.showValid(1)) {
+        if (!showValid(script, 1)) {
             return;
         }
 
@@ -448,76 +438,42 @@ public class CreateScriptController {
                 script.setName(file.getName());
                 ContextTFP.setScript(script);
 
-                showConfirmExitDialog(file);
+                AlertDialog.confirmExitingAfterSaving(file);
             } catch (Exception e) {
-                showErrorDialog(e, file);
+                AlertDialog.errorSaveUnsuccesful(e, file);
             }
         }
     }
-
+    
     /**
-     * Displays a confirm to exit dialog when the 
-     * script has been saved.
+     * Checks if a script is valid and gives an error message when it isn't.
      * 
-     * @param file The file that has been saved.
+     * @param level The level of alert. Should be 1 for CONFIRMATION
+     *      or 2 for WARNING. Other values are ignored.
+     * @return True if the user wants to continue and ignore the error.
      */
-    private void showConfirmExitDialog(File file) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm exiting");
-        alert.setHeaderText("Saving script was succesful!");
-        alert.setContentText("Succesful save of script: " 
-                + file.getName()
-                + " Do you want to quit to menu?");
+    public static boolean showValid(Script script, int level) {
+        Shot error = script.isValid();
 
-        Optional<ButtonType> result = alert.showAndWait();
+        if (error != null) {
+            Alert alert = null;
 
-        if (result.get() == ButtonType.OK) {
-            MenuController.show();
-        }
-    }
+            if (level == 1) {
+                alert = AlertDialog.confirmInvalidScriptSaving(error);
+            } else if (level == 2) {
+                alert = AlertDialog.warningInvalidScriptLoading(error);
+            } else {
+                return true;
+            }
 
-    /**
-     * Shows the dialog when an invalid script is detected.
-     * 
-     * @param number The camera that will have a consecutive shot.
-     * @return True if the user ignores the error, false otherwise.
-     */
-    private boolean showInvalidScriptDialog(Number number) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm adding shot");
-        alert.setHeaderText("Invalid script!");
-        alert.setContentText("Are you sure you want to add this "
-                + "shot? It will create an invalid script since "
-                + "camera "
-                + number
-                + " will have two presets in a row!");
+            Optional<ButtonType> result = alert.showAndWait();
 
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            return true;
+            if (result.get() == ButtonType.CANCEL) {
+                return false;
+            }
         }
 
-        return false;
-    }
-
-    /**
-     * Displays an error dialog when saving of the script
-     * was unsuccessful.
-     * 
-     * @param e The exception that was thrown.
-     * @param file The file that was supposed to be saved.
-     */
-    private void showErrorDialog(Exception e, File file) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle(e.getMessage());
-        alert.setHeaderText("Saving script was unsuccesful!");
-        alert.setContentText("Error when trying to save script at location: " 
-                + file.getAbsolutePath()
-                + "\n\nError: "
-                + e.getCause());
-
-        alert.showAndWait();
+        return true;
     }
 
     /**

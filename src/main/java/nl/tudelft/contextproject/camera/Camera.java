@@ -23,7 +23,7 @@ public class Camera extends Observable {
     private CameraSettings camSet;
     private HashMap<Integer, Preset> presets;
 
-    private int num;
+    private int camId;
 
     /**
      * Creates a Camera object with initial camera settings
@@ -31,9 +31,9 @@ public class Camera extends Observable {
      */
     public Camera() {
         camSet = new CameraSettings();
-        num = numCams++;
+        camId = numCams++;
         presets = new HashMap<Integer, Preset>();
-        CAMERAS.put(num, this);
+        CAMERAS.put(camId, this);
     }
 
     /**
@@ -44,9 +44,9 @@ public class Camera extends Observable {
      */
     public Camera(CameraSettings init) {
         camSet = init;
-        num = numCams++;
+        camId = numCams++;
         presets = new HashMap<Integer, Preset>();
-        CAMERAS.put(num, this);
+        CAMERAS.put(camId, this);
     }
 
     /**
@@ -62,8 +62,8 @@ public class Camera extends Observable {
     }
 
     /**
-     * Returns all cameras that are currently made.
-     * @return a collection of all cameras currently specified.
+     * Returns all cameras that have been made.
+     * @return A collection of all cameras currently specified.
      */
     public static Collection<Camera> getAllCameras() {
         return CAMERAS.values();
@@ -82,12 +82,12 @@ public class Camera extends Observable {
      * @return Camera number assigned to camera.
      */
     public int getNumber() {
-        return num;
+        return camId;
     }
 
     /**
      * Returns the camera settings attached to the camera.
-     * @return Camera settings
+     * @return Camera settings.
      */
     public CameraSettings getSettings() {
         return camSet;
@@ -107,7 +107,7 @@ public class Camera extends Observable {
      * Returns true iff the camera has a non-null CameraConnection
      * object.
      * 
-     * @return true iff the camera has a non-null CameraConnection
+     * @return True iff the camera has a non-null CameraConnection.
      */
     public boolean hasConnection() {
         return connection != null;
@@ -117,7 +117,7 @@ public class Camera extends Observable {
      * Returns the CameraConnection object used for communicating with
      * the actual camera. May be null if it has not yet been initialized.
      * 
-     * @return the CameraConnection object used for communicating with
+     * @return The CameraConnection object used for communicating with
      *      the actual camera.
      */
     public CameraConnection getConnection() {
@@ -130,7 +130,7 @@ public class Camera extends Observable {
      * and if there was a previous connection, removes the previous
      * connection as observer.
      * 
-     * @param connect the new connection to the camera.
+     * @param connect The new connection to the camera.
      */
     public void setConnection(CameraConnection connect) {
         if (hasConnection()) {
@@ -368,10 +368,10 @@ public class Camera extends Observable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Camera && obj != null) {
+        if (obj instanceof Camera) {
             Camera camera = (Camera) obj;
 
-            return num == camera.num
+            return camId == camera.camId
                     && Objects.equals(camSet, camera.camSet)
                     && Objects.equals(presets, camera.presets);
         }
@@ -381,12 +381,12 @@ public class Camera extends Observable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(num, camSet, presets);
+        return Objects.hash(camId, camSet, presets);
     }
 
     /**
      * Returns the list of presets currently registered to this camera.
-     * @return the list of presets registered to this camera.
+     * @return The list of presets registered to this camera.
      */
     public Collection<Preset> getAllPresets() {
         return presets.values();

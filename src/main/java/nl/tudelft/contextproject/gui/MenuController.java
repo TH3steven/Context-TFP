@@ -3,8 +3,6 @@ package nl.tudelft.contextproject.gui;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -50,9 +48,14 @@ public class MenuController {
         } else {
             setScriptLabel(name);
         }
-        
+
         setVersionLabel("0.6");
 
+        initLoadButton();
+        initOtherButtons();
+    }
+
+    private void initLoadButton() {
         btnLoadScript.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select script to use");
@@ -69,52 +72,13 @@ public class MenuController {
                     ContextTFP.getScript().setName(file.getName());
                     setScriptLabel(file.getName());
 
-                    showSuccessDialog(file);
-                    ContextTFP.getScript().showValid(2);
+                    AlertDialog.infoSuccesfulLoading(file);
+                    CreateScriptController.showValid(ContextTFP.getScript(), 2);
                 } catch (Exception e) {
-                    showErrorDialog(e, file);
+                    AlertDialog.errorSaveUnsuccesful(e, file);
                 }
             }
         });
-
-        initOtherButtons();
-    }
-
-    /**
-     * Shows the dialog that notifies the user that the loading
-     * of a script was successful.
-     * 
-     * @param file The location of the script that was loaded.
-     */
-    private void showSuccessDialog(File file) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Info Dialog");
-        alert.setHeaderText("Loading script was succesful!");
-        alert.setContentText("Successful load of script: " + file.getName());
-
-        alert.showAndWait();
-    }
-
-    /**
-     * Displays an error dialog when saving of the script
-     * was unsuccessful.
-     * 
-     * @param e The exception that was thrown.
-     * @param file The file that was supposed to be saved.
-     */
-    private void showErrorDialog(Exception e, File file) {
-        String c = (e.getCause() == null) ? "" : "\nCause: "  + e.getCause();
-        
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Unsuccesful load!");
-        alert.setHeaderText("Loading script was unsuccesful!");
-        alert.setContentText("Error when trying to load script at location: " 
-                + file.getAbsolutePath()
-                + "\n\nError: "
-                + e.getMessage()
-                + c);
-
-        alert.showAndWait();
     }
 
     /**
@@ -156,7 +120,7 @@ public class MenuController {
     private void setScriptLabel(String text) {
         lblScript.setText("Current script: " + text);
     }
-    
+
     /**
      * Sets the text of the version label on the menu.
      * 

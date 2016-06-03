@@ -143,8 +143,6 @@ public class ScriptTest {
     @Test
     public void testIsValidTrue() {
         assertNull(script1.isValid());
-        assertTrue(script1.showValid(1));
-        assertTrue(script1.showValid(2));
     }
     
     /**

@@ -151,7 +151,7 @@ public class CameraSettings {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof CameraSettings && obj != null) {
+        if (obj instanceof CameraSettings) {
             CameraSettings other = (CameraSettings) obj;
 
             return focus == other.focus
