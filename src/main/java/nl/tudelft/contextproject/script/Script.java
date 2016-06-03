@@ -13,38 +13,39 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Class to represent a script of presets.
- * Implements the Iterator interface so it can apply
+ * Class to represent a Script of {@link Shot Shots}.
+ * Implements the {@link Iterator} interface so it can apply
  * presets as the list of presets is being traversed.
  * 
  * @since 0.2
  */
 public class Script implements Iterator<Shot> {
-    
+
     /**
      * Contains the Timelines per camera number.
      */
     private HashMap<Integer, Timeline> timelines;
-    
+
     /**
      * Contains the actual script of shots, like the director defined
      * it on paper.
      */
     private List<Shot> shots;
-    
+
     /**
      * Keeps track of the current shot.
      */
     private int current;
-    
+
     /**
      * The name of the script as displayed on the ui.
      */
     private String name;
-    
+
     /**
      * Creates a script that starts from the beginning with specified shots.
      * Current is initialized with -1, so the first call of next() returns the first shot.
+     * 
      * @param shots The actual script of the different shots in order of appearance.
      */
     public Script(List<Shot> shots) {
@@ -63,12 +64,12 @@ public class Script implements Iterator<Shot> {
     public List<Shot> getShots() {
         return shots;
     }
-    
+
     /**
      * Valid means that one camera doesn't have two adjacent shots with different presets.
      * @return The first shot to cause an error.
      */
-    protected Shot isValid() {
+    public Shot isValid() {
         if (shots.size() <= 1) {
             return null;
         }
@@ -76,6 +77,7 @@ public class Script implements Iterator<Shot> {
         Shot prev = shots.get(0);
         for (int i = 1; i < shots.size(); i++) {
             Shot next = shots.get(i);
+
             if (next.getCamera().equals(prev.getCamera()) && !next.getPreset().equals(prev.getPreset())) {
                 return next;
             }
@@ -84,31 +86,26 @@ public class Script implements Iterator<Shot> {
 
         return null;
     }
-    
+
     /**
      * Checks if a script is valid and gives an error message when it isn't.
      * 
      * @param level The level of alert. Should be 1 for CONFIRMATION
-     *      or 2 for WARNING.
+     *      or 2 for WARNING. Other values are ignored.
      * @return True if the user wants to continue and ignore the error.
      */
     public boolean showValid(int level) {
         Shot error = isValid();
-        
+
         if (error != null) {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Confirm saving");
-            alert.setHeaderText("Trying to save invalid script");
-            
+            Alert alert = null;
+
             if (level == 1) {
-                alert.setContentText("Error at shot ID: " + error.getNumber()
-                    + "\nYou are trying to save an invalid script. "
-                    + "Are you sure you want to continue?");
+                alert = showConfirmAlert(error);
             } else if (level == 2) {
-                alert = new Alert(AlertType.WARNING);
-                alert.setContentText("Error at shot ID: " + error.getNumber()
-                    + "\nThe script you loaded is invalid. You can change "
-                    + "it in the edit script menu");
+                alert = showWarningAlert(error);
+            } else {
+                return true;
             }
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -117,12 +114,35 @@ public class Script implements Iterator<Shot> {
                 return false;
             }
         }
-        
+
         return true;
+    }
+
+    private Alert showConfirmAlert(Shot error) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm saving");
+        alert.setHeaderText("Trying to save invalid script");
+        alert.setContentText("Error at shot ID: " + error.getNumber()
+            + "\nYou are trying to save an invalid script. "
+            + "Are you sure you want to continue?");
+
+        return alert;
+    }
+
+    private Alert showWarningAlert(Shot error) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Script invalid");
+        alert.setHeaderText("Loaded an invalid script");
+        alert.setContentText("Error at shot ID: " + error.getNumber()
+            + "\nThe script you loaded is invalid. You can change "
+            + "it in the edit script menu");
+
+        return alert;
     }
 
     /**
      * Returns the timeline for a specific Camera.
+     * 
      * @param camNum is the camera number of the timeline to be returned.
      * @return the timeline for the camera number camNum.
      */
@@ -153,7 +173,7 @@ public class Script implements Iterator<Shot> {
             }
         }
     }
-    
+
     /**
      * Loads the first presets of all the cameras.
      */
@@ -163,7 +183,7 @@ public class Script implements Iterator<Shot> {
             timelines.get(i).initPreset();
         }
     }
-    
+
     /**
      * Adds a shot to the Script, also adds it to the timelines.
      * If the shot is associated to a camera that does not have
@@ -174,6 +194,7 @@ public class Script implements Iterator<Shot> {
      */
     public void addShot(Shot s) {
         shots.add(s);
+
         if (timelines.containsKey(s.getCamera().getNumber())) {
             timelines.get(s.getCamera().getNumber()).addShot(s);
         } else {
@@ -182,7 +203,7 @@ public class Script implements Iterator<Shot> {
             timelines.put(s.getCamera().getNumber(), t);
         }
     }
-    
+
     /**
      * Returns the current shot, null if there is no such shot.
      * @return Current shot.
@@ -194,7 +215,7 @@ public class Script implements Iterator<Shot> {
             return null;
         }
     }
-    
+
     /**
      * Returns the shot after the current shot, null if there is no such shot.
      * @return Shot after the current shot.
@@ -205,7 +226,7 @@ public class Script implements Iterator<Shot> {
         }
         return null;
     }
-    
+
     /**
      * Returns the name of the script. The name is set when a script is saved.
      * @return The name of the script.
@@ -213,7 +234,7 @@ public class Script implements Iterator<Shot> {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Sets the name of the script.
      * @param name The name of the script.
@@ -232,14 +253,12 @@ public class Script implements Iterator<Shot> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+        if (o instanceof Script && o != null) {
+            Script script = (Script) o;
+            return Objects.equals(getShots(), script.getShots());
         }
-        if (!(o instanceof Script)) {
-            return false;
-        }
-        Script script = (Script) o;
-        return Objects.equals(getShots(), script.getShots());
+
+        return false;  
     }
 
     @Override
@@ -258,11 +277,10 @@ public class Script implements Iterator<Shot> {
             Shot old = shots.get(current);
             timelines.get(old.getCamera().getNumber()).nextPreset(old);
         }
-        
+
         current++;
         Shot next = shots.get(current);
         next.execute();
         return next;
-
     }
 }

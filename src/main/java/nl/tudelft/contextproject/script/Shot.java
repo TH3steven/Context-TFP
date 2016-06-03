@@ -6,21 +6,27 @@ import nl.tudelft.contextproject.presets.Preset;
 import java.util.Objects;
 
 /**
- * Class to represent a shot to be taken by a Camera.
+ * Class to represent a shot to be taken by a {@link Camera}. A shot
+ * consists of an unique ID, a separate identifier, a camera that is
+ * assigned to a shot, an optional preset that is assigned to that camera,
+ * and a description of what should happen during the shot.
+ * 
  * @since 0.2
  */
 public class Shot {
 
-    private int number;
     private Camera camera;
     private Preset preset;
     private String shotId;
     private String description;
+
     private double duration;
+    private int number;
 
     /**
      * Creates a shot instance with each shot having a number,
      * camera and preset.
+     * 
      * @param num is the shot number
      * @param shotId The identifier for the shot.
      * @param cam is the camera used to make the shot.
@@ -38,7 +44,7 @@ public class Shot {
         }
         this.duration = -1;
     }
-    
+
     /**
      * Creates a shot instance with each shot having a number,
      * camera and no preset.
@@ -59,6 +65,7 @@ public class Shot {
     /**
      * Creates a shot instance with each shot having a number,
      * camera and preset.
+     * 
      * @param num is the shot number
      * @param cam is the camera used to make the shot.
      * @param pres is the preset used for the shot.
@@ -69,9 +76,11 @@ public class Shot {
         this.camera = cam;
         this.preset = pres;
         this.description = "";
+
         if (cam != null) {
             cam.addPreset(pres);
         }
+
         duration = -1;
     }
 
@@ -157,19 +166,17 @@ public class Shot {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+        if (o instanceof Shot && o != null) {
+            Shot shot = (Shot) o;
+
+            return getNumber() == shot.getNumber()
+                    && Objects.equals(getCamera(), shot.getCamera())
+                    && Objects.equals(getPreset(), shot.getPreset())
+                    && Objects.equals(getShotId(), shot.getShotId())
+                    && Objects.equals(getDescription(), shot.getDescription());
         }
-        if (!(o instanceof Shot)) {
-            return false;
-        }
-        Shot shot = (Shot) o;
-        boolean result = getNumber() == shot.getNumber()
-                && Objects.equals(getCamera(), shot.getCamera())
-                && Objects.equals(getPreset(), shot.getPreset())
-                && Objects.equals(getShotId(), shot.getShotId())
-                && Objects.equals(getDescription(), shot.getDescription());
-        return result;
+
+        return false;
     }
 
     @Override
