@@ -22,15 +22,19 @@ public class MockedCameraConnectionTest {
         Camera.clearAllCameras();
     }
 
+    /**
+     * Set up of the tests.
+     */
     @Before
     public void setUp() {
         camSet = new CameraSettings(30, 30, 30, 1365);
         mockedCam = new MockedCameraConnection();
         cam1 = new Camera();
     }
+    
     /**
      * Tests getCurrentCameraSettings method.
-     */
+     */    
     @Test
     public void testGetCurrentCameraSettings() {
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet);
@@ -75,6 +79,7 @@ public class MockedCameraConnectionTest {
         cam1.setSettings(camSet);
         assertEquals(mockedCam.getCurrentFocus(), camSet.getFocus());
     }
+    
     /**
      * Tests update method.
      */
