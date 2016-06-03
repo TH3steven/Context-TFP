@@ -22,7 +22,9 @@ public final class AlertDialog {
      * Abstract classes should not have a public constructor,
      * so defining it as private below.
      */
-    private AlertDialog() { }
+    private AlertDialog() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Shows a confirmation dialog when trying to save a {@link Script}, when
