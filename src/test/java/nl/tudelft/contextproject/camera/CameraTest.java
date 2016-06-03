@@ -33,6 +33,7 @@ public class CameraTest {
     @Test
     public void testSetSettings() {
         Camera cam = new Camera();
+        cam.setConnection(new MockedCameraConnection());
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
         cam.setSettings(new CameraSettings(65, 65, 65, 65));

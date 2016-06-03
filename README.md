@@ -19,3 +19,6 @@ The software is made for the Windows operating system and might not work as inte
 
 ###IDE
 This software can be developed with both Eclipse and IntelliJ, though they require a different process to set up.
+
+###Note about preset creation/editing
+For now, VLC is required to make the connection to the camera or to the mocked live feed. It is important to have the same VLC version as your java version, e.g. 32bit java requires 32bit VLC, and 64bit java requires 64bit VLC. Also, other systems than Windows are untested and might not work with the current implementation.

@@ -6,11 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /** 
- * Class to represent a timeline of shots for a single camera.
+ * Class to represent a timeline of shots for a single {@link Camera}.
+ * A timeline represents a list of shots that is ordered by timestamp.
+ * 
  * @since 0.2
  */
 public class Timeline {
-    
+
     private Camera camera;
     private List<Shot> shots;
 
@@ -20,7 +22,7 @@ public class Timeline {
     public Timeline() {
         this.shots = new LinkedList<Shot>();
     }
-    
+
     /**
      * Creates a Timeline object with a certain list of shots.
      *
@@ -31,7 +33,7 @@ public class Timeline {
         this.shots = shot1;
         this.camera = cam;
     }
-    
+
     /**
      * Returns the Camera object this Timeline applies to.
      * @return the Camera object this Timeline applies to.
@@ -39,7 +41,7 @@ public class Timeline {
     public Camera getCamera() {
         return camera;
     }
-    
+
     /**
      * Sets the camera this Timeline applies to.
      * @param cam Camera this Timeline applies to.
@@ -63,7 +65,7 @@ public class Timeline {
     public List<Shot> getShots() {
         return shots;
     }
-    
+
     /**
      * Loads the initial preset of the timeline, if shots is not empty.
      */
@@ -72,14 +74,14 @@ public class Timeline {
             shots.get(0).getPreset().applyTo(camera);  
         }
     }
-    
+
     /**
      * Loads the next preset for a camera, if there is one.
      * @param oldShot The shot that just finished.
      */
     public void nextPreset(Shot oldShot) {
         int oldIndex = shots.indexOf(oldShot);
-        
+
         if (oldIndex + 1 < shots.size()) {
             Shot nextShot = shots.get(oldIndex + 1);
             nextShot.getPreset().applyTo(camera);
@@ -98,6 +100,4 @@ public class Timeline {
             shot1.execute();
         }
     }
-
 }
-

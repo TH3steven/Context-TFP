@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -49,6 +50,8 @@ public class ScriptTest {
     public void init() {
         cam0 = new Camera();
         cam1 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
+        cam1.setConnection(new MockedCameraConnection());
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
         pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
@@ -90,7 +93,7 @@ public class ScriptTest {
      * Continuation of the script constructor test.
      */
     @Test
-    public void testScript_1() {
+    public void testScript1() {
         assertEquals(script1.getShots().get(0).getCamera(), cam0);
         assertEquals(script1.getShots().get(0).getNumber(), 1);
         assertEquals(script1.getShots().get(0).getPreset(), pres);
@@ -101,7 +104,7 @@ public class ScriptTest {
      * Has been split to avoid PMD errors.
      */
     @Test
-    public void testScript_2() {
+    public void testScript2() {
         assertEquals(script1.getShots().get(0), shot1);
         assertFalse(script1.isEmpty());
         assertNotNull(script1);
@@ -164,8 +167,6 @@ public class ScriptTest {
     @Test
     public void testIsValidTrue() {
         assertNull(script1.isValid());
-        assertTrue(script1.showValid(1));
-        assertTrue(script1.showValid(2));
     }
     
     /**

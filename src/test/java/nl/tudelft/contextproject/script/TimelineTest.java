@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -45,6 +46,10 @@ public class TimelineTest {
         cam0 = new Camera();
         cam1 = new Camera();
         cam2 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
+        cam1.setConnection(new MockedCameraConnection());
+        cam2.setConnection(new MockedCameraConnection());
+        
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);
         shot1 = new Shot(1, cam0, pres);
@@ -59,7 +64,6 @@ public class TimelineTest {
         timeline = new Timeline();
         timeline1 = new Timeline(cam0, los);
         timeline2 = new Timeline(cam1, los1);
-
     }
 
     @After
