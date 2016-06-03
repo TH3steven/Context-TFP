@@ -278,8 +278,13 @@ public class CreateScriptController {
                 addPreset.setStyle("");
                 addDescription.setStyle("");
 
-                maximumId++;
-                createNewShot(data);
+                if (!validateScript(data)
+                        && !showInvalidScriptDialog(addCamera.getSelectionModel().getSelectedItem())) {
+                    return;
+                }
+
+                Shot newShot = createNewShot();
+                data.add(newShot);
 
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
@@ -317,10 +322,34 @@ public class CreateScriptController {
     }
 
     /**
-     * Creates a new shot based on the users' input.
-     * @param data The data already in the table.
+     * Checks if a newly created shot does not create an
+     * invalid script.
+     * 
+     * @param data The table data.
+     * @return True if the script is valid, false otherwise.
      */
-    private void createNewShot(ObservableList<Shot> data) {
+    private boolean validateScript(ObservableList<Shot> data) {
+        if (data.isEmpty()) {
+            return true;
+        }
+        
+        Shot last = data.get(data.size() - 1);
+        
+        if (last.getCamera().getNumber() 
+                == addCamera.getSelectionModel().getSelectedIndex()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Creates a new shot based on the users' input.
+     * @return The newly created shot.
+     */
+    private Shot createNewShot() {
+        maximumId++;
+        
         if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
             final Shot newShot = new Shot(
                     maximumId,
@@ -329,7 +358,7 @@ public class CreateScriptController {
                     addDescription.getText()
                     );
 
-            data.add(newShot);
+            return newShot;
         } else {
             final Shot newShot = new Shot(
                     maximumId,
@@ -340,7 +369,7 @@ public class CreateScriptController {
                     addDescription.getText()
                     );
 
-            data.add(newShot);
+            return newShot;
         }
     }
 
@@ -445,6 +474,31 @@ public class CreateScriptController {
         if (result.get() == ButtonType.OK) {
             MenuController.show();
         }
+    }
+
+    /**
+     * Shows the dialog when an invalid script is detected.
+     * 
+     * @param number The camera that will have a consecutive shot.
+     * @return True if the user ignores the error, false otherwise.
+     */
+    private boolean showInvalidScriptDialog(Number number) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm adding shot");
+        alert.setHeaderText("Invalid script!");
+        alert.setContentText("Are you sure you want to add this "
+                + "shot? It will create an invalid script since "
+                + "camera "
+                + number
+                + " will have two presets in a row!");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
