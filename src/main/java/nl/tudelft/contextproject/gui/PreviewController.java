@@ -97,6 +97,7 @@ public class PreviewController {
         actualCam.fitHeightProperty().bind(imagePane.heightProperty());
         
         disableHighlight();
+        descArea.setEditable(false);
     }
 
     /**

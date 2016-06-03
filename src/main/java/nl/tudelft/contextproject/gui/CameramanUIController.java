@@ -1,9 +1,11 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -15,8 +17,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.CameraSettings;
-import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.MovementType;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
@@ -32,6 +32,8 @@ public class CameramanUIController {
 
     private static Script script;
     
+    @FXML private AnchorPane movementPane;
+    
     @FXML private TabPane tabs;
     
     @FXML private Button btnBack;
@@ -44,6 +46,8 @@ public class CameramanUIController {
     @FXML private Button moveSix;
     @FXML private Button moveSeven;
     @FXML private Button btnConfirm;
+    
+    @FXML private ChoiceBox<Camera> currentCam;
 
     @FXML private ImageView bigView;
     @FXML private ImageView smallView;
@@ -62,10 +66,9 @@ public class CameramanUIController {
     @FXML private Label movement;
     @FXML private Label infoLabel;
     
-    private int currentView;
+    private boolean live;
     
     private Camera liveCam;
-    private Camera currentCam;
     
     private int liveSpeed;
     private int currentSpeed;
@@ -76,31 +79,26 @@ public class CameramanUIController {
     @FXML private void initialize() {
         script = ContextTFP.getScript();
         
+        //set an initial live camera
+        liveCam = Camera.getCamera(0);
+        
         bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
         bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
         
         smallView.fitWidthProperty().bind(smallViewBox.widthProperty());
         smallView.fitHeightProperty().bind(smallViewBox.heightProperty());
         
-        currentView = 0;
-        
-        //Initialize dummy cameras and presets
-        liveCam = new Camera();
-        currentCam = new Camera();
-        
-        CameraSettings dummySettings = new CameraSettings();
-        
-        Preset presetOne = new InstantPreset(dummySettings, 1);
-        Preset presetTwo = new InstantPreset(dummySettings, 2);
-        
-        liveCam.addPreset(presetOne);
-        currentCam.addPreset(presetTwo);
+        live = true;
         
         initializeLabels();
         initializeViews();
         initializeButtons();
         initializeMovements();
         initializeTextFields();
+        initializeCurrentCam();
+        
+        movementPane.setDisable(true);
+        descriptionField.setEditable(false);
     }
     
     /**
@@ -164,7 +162,7 @@ public class CameramanUIController {
                 if (spd > 100) {
                     spd = 100;
                 }
-                if (live()) {                   
+                if (live) {                   
                     liveSpeed = spd;
                     speed.setText(String.valueOf(spd));
                 } else {
@@ -213,6 +211,8 @@ public class CameramanUIController {
             movement.setText(moveSeven.getText());
             setMovement(MovementType.CUSTOM);
         });
+        
+        
     }
     
     /**
@@ -234,13 +234,32 @@ public class CameramanUIController {
     }
     
     /**
+     * Initializes the choicebox of cameras to choose from.
+     */
+    private void initializeCurrentCam() {
+        currentCam.setItems(FXCollections.observableArrayList(Camera.getAllCameras()));
+        currentCam.setVisible(false);
+        
+        currentCam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> { 
+            changeInfoTable(newV);
+        });
+        
+        //set initial current camera
+        currentCam.setValue(Camera.getCamera(1));
+    }
+    
+    /**
      * Swap currentView.
      */
     private void swapCurrentView() {
-        if (live()) {
-            currentView = 1;
+        if (live) {
+            live = false;
+            currentCam.setVisible(true);
+            movementPane.setDisable(false);
         } else {
-            currentView = 0;
+            live = true;
+            currentCam.setVisible(false);
+            movementPane.setDisable(true);
         }
     }
     
@@ -248,28 +267,36 @@ public class CameramanUIController {
      * Swap info table according to the big view.
      */
     private void swapInfoTable() {
-        if (live()) {
-            Preset preset = liveCam.getPreset(1);
-            infoLabel.setText("Information about live camera");
-            cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
-            presetLabel.setText(String.valueOf(preset.getId()));
-            movement.setText(MovementType.getName(liveMovement));
-            descriptionField.setText(preset.getDescription());
+        if (live) {
+            setActualInfo();
         } else {
-            Preset preset = currentCam.getPreset(2);
-            infoLabel.setText("Information about current camera");
-            cameraNumberLabel.setText(String.valueOf(currentCam.getNumber()));
-            presetLabel.setText(String.valueOf(preset.getId()));
-            movement.setText(MovementType.getName(currentMovement));
-            descriptionField.setText(preset.getDescription());
+            setCurrentInfo();
         }
+    }
+    
+    /**
+     * Changes te info table according to the currently selected camera.
+     * @param newCam The new camera to switch the info to.
+     */
+    private void changeInfoTable(Camera newCam) {
+        Preset preset;
+        if (newCam.getPreset(1) == null) {
+            preset = newCam.getPreset(2);
+        } else {
+            preset = newCam.getPreset(1);
+        }
+        infoLabel.setText("Information about current camera");
+        cameraNumberLabel.setText(String.valueOf(newCam.getNumber()));
+        presetLabel.setText(String.valueOf(preset.getId()));
+        movement.setText(MovementType.getName(currentMovement));
+        descriptionField.setText(preset.getDescription());
     }
     
     /**
      * Swap speed according to the big view.
      */
     private void swapSpeed() {
-        if (live()) {
+        if (live) {
             if (liveSpeed > 0) {
                 speed.setText(String.valueOf(liveSpeed));
             } else {
@@ -289,7 +316,7 @@ public class CameramanUIController {
      * @param mt - the movement type to set.
      */
     private void setMovement(MovementType mt) {
-        if (live()) {
+        if (live) {
             liveMovement = mt;
         } else {
             currentMovement = mt;
@@ -297,15 +324,27 @@ public class CameramanUIController {
     }
     
     /**
-     * See what is currently on the big view.
-     * @return - whether it's the live camera on the view or the current camera.
+     * Set the table info to the actual camera info.
      */
-    private boolean live() {
-        if (currentView == 0) {
-            return true;
-        } else {
-            return false;
-        }
+    private void setActualInfo() {
+        Preset preset = liveCam.getPreset(1);
+        infoLabel.setText("Information about live camera");
+        cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
+        presetLabel.setText(String.valueOf(preset.getId()));
+        movement.setText(MovementType.getName(liveMovement));
+        descriptionField.setText(preset.getDescription());
+    }
+    
+    /**
+     * Set the table info to the current camera info.
+     */
+    private void setCurrentInfo() {
+        Preset preset = currentCam.getValue().getPreset(2);
+        infoLabel.setText("Information about current camera");
+        cameraNumberLabel.setText(String.valueOf(currentCam.getValue().getNumber()));
+        presetLabel.setText(String.valueOf(preset.getId()));
+        movement.setText(MovementType.getName(currentMovement));
+        descriptionField.setText(preset.getDescription());
     }
 
     /**
