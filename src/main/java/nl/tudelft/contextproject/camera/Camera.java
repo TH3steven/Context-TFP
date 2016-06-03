@@ -359,4 +359,8 @@ public class Camera extends Observable {
         return presets.values();
     }
     
+    public String toString() {
+        return "Camera: " + num;
+    }
+    
 }
