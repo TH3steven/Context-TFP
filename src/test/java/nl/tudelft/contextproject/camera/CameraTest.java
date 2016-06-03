@@ -1,7 +1,6 @@
 package nl.tudelft.contextproject.camera;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -10,6 +9,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,6 +33,7 @@ public class CameraTest {
     @Test
     public void testSetSettings() {
         Camera cam = new Camera();
+        cam.setConnection(new MockedCameraConnection());
         TestObserver testOb = new TestObserver();
         cam.addObserver(testOb);
         cam.setSettings(new CameraSettings(65, 65, 65, 65));
@@ -232,13 +233,32 @@ public class CameraTest {
         Preset p2 = new InstantPreset(new CameraSettings(35, 35, 35, 30), 2);
         cam.addPreset(p);
         cam.addPreset(p2);
-        assertTrue(cam.getAllPresets().contains(p));
+        assertEquals(cam.getPreset(1), p);
         cam.removePreset(p);
-        assertFalse(cam.getAllPresets().contains(p));
-        assertTrue(cam.getAllPresets().contains(p2));
+        assertEquals(cam.getPreset(2), p2);
         cam.removePreset(p2);
-        assertTrue(cam.getAllPresets().isEmpty());
+        assertTrue(cam.getPresets().isEmpty());
     }
+
+    /**
+     * Tests the getAllPresets method.
+     * Also tests the getPresetAmount method.
+     */
+    @Test
+    public void testGetAllPresets() {
+        Camera cam = new Camera(new CameraSettings(1, 10, 10, 10));
+        Preset p = new InstantPreset(new CameraSettings(65, 65, 65, 65), 1);
+        Preset p2 = new InstantPreset(new CameraSettings(35, 35, 35, 30), 2);
+        cam.addPreset(p);
+        cam.addPreset(p2);
+        HashMap<Integer, Preset> presetCollection = new HashMap<Integer, Preset>();
+        presetCollection.put(1, p);
+        presetCollection.put(2, p2);
+        assertTrue(cam.getAllPresets().containsAll(presetCollection.values()));
+        assertTrue(cam.getAllPresets().size() == presetCollection.values().size());
+        assertEquals(cam.getPresetAmount(), 2);
+    }
+
     /**
      * Simple test observer used to see if an observer was actually
      * called.

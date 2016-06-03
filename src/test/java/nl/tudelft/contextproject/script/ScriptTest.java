@@ -2,12 +2,14 @@ package nl.tudelft.contextproject.script;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -39,6 +41,7 @@ public class ScriptTest {
     private Shot shot3;
     private Script script1;
     private Script script2;
+    private Timeline timeline1;
 
     /**
      * Initialises the above private variables before each test.
@@ -47,6 +50,8 @@ public class ScriptTest {
     public void init() {
         cam0 = new Camera();
         cam1 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
+        cam1.setConnection(new MockedCameraConnection());
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
         pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
@@ -60,6 +65,7 @@ public class ScriptTest {
         los.add(shot3);
         script1 = new Script(los);
         script2 = new Script(los1);
+        timeline1 = new Timeline(cam0, los1);
     }
     
     @After
@@ -72,20 +78,36 @@ public class ScriptTest {
      * available in the script.
      * This tests initTimeline as well to check if the timelines
      * are well initialized.
+     * Also tests the getShots method.
      */
     @Test
     public void testScript() {
-        assertEquals(script1.getShots().get(0), shot1);
-        assertFalse(script1.isEmpty());
-        assertNotNull(script1);
-        assertEquals(script1.getShots().get(0).getCamera(), cam0);
-        assertEquals(script1.getShots().get(0).getNumber(), 1);
-        assertEquals(script1.getShots().get(0).getPreset(), pres);
-        assertFalse(script1.getTimeline(cam0.getNumber()) == script1.getTimeline(cam1.getNumber()));
+        assertNotEquals(script1.getTimeline(cam0.getNumber()), script1.getTimeline(cam1.getNumber()));
         assertEquals(script1.getTimeline(cam0.getNumber()).getCamera(), cam0);
         assertNull(script1.getTimeline(4));
         assertEquals(script1.getTimeline(cam0.getNumber()).getShots().get(0), shot1);
         assertEquals(script1.getTimeline(cam0.getNumber()).getShots().get(1), shot3);
+    }
+
+    /**
+     * Continuation of the script constructor test.
+     */
+    @Test
+    public void testScript1() {
+        assertEquals(script1.getShots().get(0).getCamera(), cam0);
+        assertEquals(script1.getShots().get(0).getNumber(), 1);
+        assertEquals(script1.getShots().get(0).getPreset(), pres);
+    }
+
+    /**
+     * Test for the script constructor.
+     * Has been split to avoid PMD errors.
+     */
+    @Test
+    public void testScript2() {
+        assertEquals(script1.getShots().get(0), shot1);
+        assertFalse(script1.isEmpty());
+        assertNotNull(script1);
     }
 
     /**
@@ -140,12 +162,11 @@ public class ScriptTest {
 
     /**
      * Tests the isValid() method with a valid script.
+     * Also tests the showValid() method with a valid script.
      */
     @Test
     public void testIsValidTrue() {
         assertNull(script1.isValid());
-        assertTrue(script1.showValid(1));
-        assertTrue(script1.showValid(2));
     }
     
     /**
@@ -161,6 +182,7 @@ public class ScriptTest {
         shots.add(shot2);
         shots.add(shot3);
         Script script = new Script(shots);
+        assertEquals(script.isValid(), shot3);
         assertNotNull(script.isValid());        
     }
     
@@ -174,5 +196,33 @@ public class ScriptTest {
         shots.add(shot1);
         Script script = new Script(shots);
         assertNull(script.isValid());
+        shots.clear();
+        assertNull(script1.isValid());
+    }
+
+    /**
+     * Tests the getShot method.
+     * Also checks isEmpty method.
+     */
+    @Test
+    public  void testGetShots() {
+        List<Shot> shots = new ArrayList<>();
+        shots.add(shot1);
+        shots.add(shot2);
+        shots.add(shot3);
+        assertEquals(script1.getShots(), shots);
+        assertFalse(script1.getShots().isEmpty());
+        assertTrue(script2.isEmpty());
+    }
+
+    /**
+     * Tests the addShot method.
+     */
+    @Test
+    public void testAddShot() {
+        los1.add(shot1);
+        script2.addShot(shot1);
+        assertEquals(script2.getShots(), los1);
+        assertTrue(timeline1.getShots().contains(shot1));
     }
 }

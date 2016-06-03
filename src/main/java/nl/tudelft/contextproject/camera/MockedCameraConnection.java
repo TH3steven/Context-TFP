@@ -3,13 +3,14 @@ package nl.tudelft.contextproject.camera;
 import java.util.Observable;
 
 /**
- * Class to represent a mocked camera. It mimics or mocks the behaviour of a specific camera
+ * Class to represent a mocked camera. It mimics or mocks the behavior of a specific camera
  * without having a real connection to the cameras.
  * 
  * @since 0.4
  */
 public class MockedCameraConnection extends CameraConnection {
     private CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
+    private String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
     
     @Override
     public boolean setUpConnection() {
@@ -23,7 +24,15 @@ public class MockedCameraConnection extends CameraConnection {
     
     @Override
     public String getStreamLink() {
-        return "placeholder_picture.jpg";
+        return streamLink;
+    }
+    
+    /**
+     * Sets the link to the 'live stream' of this mocked camera connection
+     * @param link Link to the 'live stream' of this mocked camera connection.
+     */
+    public void setStreamLink(String link) {
+        streamLink = link;
     }
 
     @Override
@@ -113,9 +122,9 @@ public class MockedCameraConnection extends CameraConnection {
         if (!(o instanceof Camera)) {
             return;
         }
+        
         if (arg instanceof CameraSettings) {
             camSet = (CameraSettings) arg;
         }
-
     }
 }

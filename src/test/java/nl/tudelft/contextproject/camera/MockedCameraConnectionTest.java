@@ -1,8 +1,10 @@
 package nl.tudelft.contextproject.camera;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -10,6 +12,10 @@ import org.junit.Test;
  * @since 0.4
  */
 public class MockedCameraConnectionTest {
+    private MockedCameraConnection mockedCam;
+    private CameraSettings camSet;
+    private Camera cam1;
+
 
     @After
     public void cleanUp() {
@@ -17,13 +23,61 @@ public class MockedCameraConnectionTest {
     }
 
     /**
-     * Tests getCurrentCameraSettings method.
+     * Set up of the tests.
      */
+    @Before
+    public void setUp() {
+        camSet = new CameraSettings(30, 30, 30, 1365);
+        mockedCam = new MockedCameraConnection();
+        cam1 = new Camera();
+    }
+    
+    /**
+     * Tests getCurrentCameraSettings method.
+     */    
     @Test
     public void testGetCurrentCameraSettings() {
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
-        CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet);
+    }
+
+    /**
+     * Tests the setUpConnection method to check if the connection
+     * is set up properly.
+     */
+    @Test
+    public void testSetUpConnection() {
+        mockedCam.setUpConnection();
+        assertTrue(mockedCam.isConnected());
+    }
+
+    /**
+     * Tests the getStreamLink method. This tests if the
+     * correct streamLink for the cam is gotten.
+     */
+    @Test
+    public void testGetStreamLink() {
+        String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
+        assertTrue(mockedCam.getStreamLink().equals(streamLink));
+    }
+    
+    /**
+     * Tests the getCurrentZoom method.
+     */
+    @Test
+    public void testGetCurrentZoom() {
+        cam1.setConnection(mockedCam);
+        cam1.setSettings(camSet);
+        assertEquals(mockedCam.getCurrentZoom(), camSet.getZoom());
+    }
+
+    /**
+     * Tests the getCurrentFocus method.
+     */
+    @Test
+    public void testGetCurrentFocus() {
+        cam1.setConnection(mockedCam);
+        cam1.setSettings(camSet);
+        assertEquals(mockedCam.getCurrentFocus(), camSet.getFocus());
     }
     
     /**
@@ -31,8 +85,6 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testUpdate() {
-        Camera cam1 = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         cam1.setConnection(mockedCam);
         CameraSettings camSet = new CameraSettings(60, 60, 60, 1365);
         cam1.setSettings(camSet);
@@ -45,8 +97,6 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testAbsPanTilt() {
-        Camera cam1 = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(45, 45, 30, 1365);
         cam1.setConnection(mockedCam);
         cam1.absPanTilt(45, 45);
@@ -60,11 +110,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testAbsPan() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(60, 30, 30, 1365);
-        cam.setConnection(mockedCam);
-        cam.absPan(60);
+        cam1.setConnection(mockedCam);
+        cam1.absPan(60);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
 
     }
@@ -75,11 +123,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testAbsTilt() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(30, 90, 30, 1365);
-        cam.setConnection(mockedCam);
-        cam.absTilt(90);
+        cam1.setConnection(mockedCam);
+        cam1.absTilt(90);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
@@ -89,11 +135,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testAbsZoom() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(30, 30, 60, 1365);
-        cam.setConnection(mockedCam);
-        cam.absZoom(60);
+        cam1.setConnection(mockedCam);
+        cam1.absZoom(60);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
@@ -103,11 +147,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testAbsFocus() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(30, 30, 30, 1800);
-        cam.setConnection(mockedCam);
-        cam.absFocus(1800);
+        cam1.setConnection(mockedCam);
+        cam1.absFocus(1800);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
@@ -117,11 +159,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testRelPan() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(90, 30, 30, 1365);
-        cam.setConnection(mockedCam);
-        cam.pan(60);
+        cam1.setConnection(mockedCam);
+        cam1.pan(60);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
@@ -131,11 +171,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testRelTilt() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(30, 90, 30, 1365);
-        cam.setConnection(mockedCam);
-        cam.tilt(60);
+        cam1.setConnection(mockedCam);
+        cam1.tilt(60);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
@@ -145,11 +183,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testRelZoom() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(30, 30, 90, 1365);
-        cam.setConnection(mockedCam);
-        cam.zoom(60);
+        cam1.setConnection(mockedCam);
+        cam1.zoom(60);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
@@ -159,11 +195,9 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testRelFocus() {
-        Camera cam = new Camera();
-        MockedCameraConnection mockedCam = new MockedCameraConnection();
         CameraSettings camSet2 = new CameraSettings(30, 30, 30, 1425);
-        cam.setConnection(mockedCam);
-        cam.focus(60);
+        cam1.setConnection(mockedCam);
+        cam1.focus(60);
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 

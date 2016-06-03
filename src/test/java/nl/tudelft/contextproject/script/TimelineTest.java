@@ -6,10 +6,12 @@ import static org.junit.Assert.assertNotNull;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,7 +23,49 @@ import java.util.List;
  * @since 0.2
  */
 public class TimelineTest {
-    
+
+    private Camera cam0;
+    private Camera cam1;
+    private Camera cam2;
+    private Preset pres;
+    private Preset pres1;
+    private Timeline timeline;
+    private Timeline timeline1;
+    private Timeline timeline2;
+    private List<Shot> los;
+    private List<Shot> los1;
+    private Shot shot1;
+    private Shot shot2;
+    private Shot shot3;
+
+    /**
+     * Initializes the above variables before each test.
+     */
+    @Before
+    public void init() {
+        cam0 = new Camera();
+        cam1 = new Camera();
+        cam2 = new Camera();
+        cam0.setConnection(new MockedCameraConnection());
+        cam1.setConnection(new MockedCameraConnection());
+        cam2.setConnection(new MockedCameraConnection());
+        
+        pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
+        pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);
+        shot1 = new Shot(1, cam0, pres);
+        shot2 = new Shot(2, cam0, pres1);
+        shot3 = new Shot(2, cam1, pres);
+        los = new ArrayList<>();
+        los1 = new ArrayList<>();
+        los.add(shot1);
+        los.add(shot2);
+        los1.add(shot1);
+        los1.add(shot3);
+        timeline = new Timeline();
+        timeline1 = new Timeline(cam0, los);
+        timeline2 = new Timeline(cam1, los1);
+    }
+
     @After
     public void cleanUp() {
         Camera.clearAllCameras();
@@ -33,17 +77,8 @@ public class TimelineTest {
      */
     @Test
     public void testTimeline() {
-        Camera cam0 = new Camera();
-        Camera cam1 = new Camera();
-        Camera cam2 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Shot shot1 = new Shot(1, cam0, pres);
-        Shot shot2 = new Shot(2, cam1, pres);
-        List<Shot> los = new ArrayList<>();
         los.add(shot1);
-        los.add(shot2);
-        Timeline timeline1 = new Timeline(cam0, los);
-        Timeline timeline2 = new Timeline(cam1, los);
+        los.add(shot3);
         assertEquals(timeline1.getCamera(), cam0);
         assertEquals(timeline2.getCamera(), cam1);
         assertNotNull(timeline1);
@@ -59,15 +94,6 @@ public class TimelineTest {
      */
     @Test
     public void testNextPreset() {
-        Camera cam0 = new Camera();
-        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);        
-        Shot shot1 = new Shot(1, cam0, pres1);
-        Shot shot2 = new Shot(2, cam0, pres2);
-        List<Shot> los = new ArrayList<>();
-        los.add(shot1);
-        los.add(shot2);
-        Timeline timeline1 = new Timeline(cam0, los);
         timeline1.nextPreset(shot1);
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 3));
     }
@@ -77,15 +103,6 @@ public class TimelineTest {
      */
     @Test
     public void testInitPreset() {
-        Camera cam0 = new Camera();
-        Preset pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Preset pres2 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);        
-        Shot shot1 = new Shot(1, cam0, pres1);
-        Shot shot2 = new Shot(2, cam0, pres2);
-        List<Shot> los = new ArrayList<>();
-        los.add(shot1);
-        los.add(shot2);
-        Timeline timeline1 = new Timeline(cam0, los);
         timeline1.initPreset();
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
     }
@@ -95,9 +112,8 @@ public class TimelineTest {
      */
     @Test
     public void testInitPresetEmpty() {
-        Timeline tl = new Timeline();
-        tl.initPreset();
-        assertEquals(tl.getShots().size(), 0);
+        timeline.initPreset();
+        assertEquals(timeline.getShots().size(), 0);
     }
 
     /**
@@ -107,16 +123,23 @@ public class TimelineTest {
      */
     @Test
     public void testAddShot() {
-        List<Shot> los = new ArrayList<>();
-        Camera cam0 = new Camera();
-        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        Shot shot1 = new Shot(1, cam0, pres);
-        Shot shot2 = new Shot(2, cam0, pres);
-        Timeline timeline1 = new Timeline(cam0, los);
         timeline1.addShot(shot1);
         timeline1.addShot(shot2);
         assertEquals(timeline1.getShots().get(0), shot1);
         assertEquals(timeline1.getShots().get(1), shot2);
     }
 
+    /**
+     * Test the executeScript method.
+     * Checks if the shots in a script are properly applied
+     * with the right settings per Camera.
+     */
+    @Test
+    public void testExecuteScript() {
+        timeline1.executeScript();
+        assertEquals(cam0.getSettings().getFocus(), 3);
+        assertEquals(cam0.getSettings().getPan(), 1);
+        assertEquals(cam0.getSettings().getTilt(), 1);
+        assertEquals(cam0.getSettings().getZoom(), 1);
+    }
 }

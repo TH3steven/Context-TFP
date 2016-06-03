@@ -9,13 +9,15 @@
 package nl.tudelft.contextproject;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.gui.MenuController;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.script.Script;
@@ -45,9 +47,11 @@ public class ContextTFP extends Application {
     private Stage primaryStage;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("TFP Camera Control");
+    public void start(Stage pStage) throws Exception {
+        primaryStage = pStage;
+        primaryStage.setTitle("TFP Camera Control");
+        primaryStage.minWidthProperty().set(800);
+        primaryStage.minHeightProperty().set(575);
 
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
@@ -60,6 +64,17 @@ public class ContextTFP extends Application {
         Camera e = new Camera();
         Camera f = new Camera();
         
+        LiveCameraConnection live = new LiveCameraConnection("192.168.0.13");
+        live.setUpConnection();
+        a.setConnection(live);
+        
+        MockedCameraConnection mocked = new MockedCameraConnection();
+        b.setConnection(mocked);
+        
+        MockedCameraConnection mocked2 = new MockedCameraConnection();
+        mocked2.setStreamLink("http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8");
+        c.setConnection(mocked2);
+
         List<Camera> list = new ArrayList<Camera>();
         list.addAll(Arrays.asList(a, b, c, d, e, f)); 
 
@@ -69,14 +84,13 @@ public class ContextTFP extends Application {
             cam.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
             cam.addPreset(new InstantPreset(new CameraSettings(), 3, "wuq"));
         }
-        //
 
         initRootLayout();
         MenuController.show();
     }
 
     /**
-     * Initializes the root layout of the application.
+     * Initialises the root layout of the application.
      */
     public void initRootLayout() {
         try {
@@ -87,6 +101,10 @@ public class ContextTFP extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
+            primaryStage.setOnCloseRequest(e -> {
+                Platform.exit(); 
+                System.exit(0);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

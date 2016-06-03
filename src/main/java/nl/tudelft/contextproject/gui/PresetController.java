@@ -1,5 +1,7 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,11 +17,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -42,7 +42,6 @@ public class PresetController {
     @FXML private ChoiceBox<Integer> cameraSelecter;
     @FXML private TextField presetID;
     @FXML private TextField description;
-    @FXML private ImageView cameraView;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
     @FXML private Button btnRemove;
@@ -52,7 +51,9 @@ public class PresetController {
     @FXML private TableColumn<Preset, String> descColumn;
     @FXML private VBox vBox;
 
+    private LiveStreamHandler streamHandler;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
+    private ImageView imageView;
 
     @FXML
     private void initialize() {
@@ -63,7 +64,6 @@ public class PresetController {
         }
 
         cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
-        cameraView.setImage(new Image("placeholder_picture.jpg"));
 
         applySettings();
         setFactories();
@@ -73,12 +73,32 @@ public class PresetController {
     }
 
     /**
-     * Applies javafx settings that can't be specified in the fxml.
+     * Applies JavaFX settings that can't be specified in the FXML.
      */
     private void applySettings() {
         vBox.setAlignment(Pos.CENTER);
-        cameraView.fitWidthProperty().bind(vBox.widthProperty());
-        cameraView.fitHeightProperty().bind(vBox.heightProperty());
+
+        vBox.getChildren().clear();
+        
+        System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
+    }
+    
+    /**
+     * Updates the camera stream to the stream referenced by the specified link.
+     * @param streamLink the link to the video stream to be played next.
+     */
+    public void updateStream(String streamLink) {
+        if (streamHandler != null) {
+            streamHandler.stop();
+        }
+        streamHandler = new LiveStreamHandler();
+        imageView = streamHandler.createImageView(streamLink, 1920, 1080);
+        Platform.runLater(() -> {
+            fitImageViewSize((float) vBox.getWidth(), (float) vBox.getHeight());
+        });    
+        vBox.getChildren().clear();
+        vBox.getChildren().add(imageView);
+        streamHandler.start();
     }
 
     /**
@@ -93,12 +113,16 @@ public class PresetController {
     }
 
     /**
-     * Adds all actions and listeners to the javafx components.
+     * Adds all actions and listeners to the JavaFX components.
      */
     private void setActions() {
         tableView.setItems(data);
 
         btnBack.setOnAction((event) -> {
+            if (streamHandler != null) {
+                streamHandler.stop();
+            }
+
             MenuController.show();
         });
 
@@ -113,13 +137,17 @@ public class PresetController {
             }
         });
 
-        //TODO: Update current view of camera with livefeed from camera
         cameraSelecter.setOnAction((event) -> {
             Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
             data.clear();
             for (Preset p : presets.values()) {
                 data.add(p);
+            }
+            if (cam.hasConnection()) {
+                updateStream(cam.getConnection().getStreamLink());
+            } else {
+                updateStream("http://www.formisimo.com/blog/wp-content/uploads/2014/04/error-mesage.png");
             }
         });
 
@@ -132,6 +160,40 @@ public class PresetController {
                 data.remove(selected);
             }
         });
+        
+        vBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (streamHandler != null) {
+                fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
+            }
+        });
+        
+        vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (streamHandler != null) {
+                fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
+            }
+        });
+    }
+    
+    /**
+     * Resizes the ImageView.
+     * @param width The new width of the ImageView.
+     * @param height The new height of the ImageView.
+     */
+    private void fitImageViewSize(float width, float height) {
+        FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
+        float fitHeight = videoSourceRatioProperty.get() * width;
+        if (fitHeight > height) {
+            imageView.setFitHeight(height);
+            double fitWidth = height / videoSourceRatioProperty.get();
+            imageView.setFitWidth(fitWidth);
+            imageView.setX((width - fitWidth) / 2);
+            imageView.setY(0);
+        } else {
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(fitHeight);
+            imageView.setY((height - fitHeight) / 2);
+            imageView.setX(0);
+        }       
     }
 
     /**

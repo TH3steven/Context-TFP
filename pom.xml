@@ -6,7 +6,7 @@
  
 	<groupId>nl.tudelft</groupId>
 	<artifactId>Context-TFP</artifactId>
-	<version>0.5</version>
+	<version>0.6</version>
 	<name>Team Free Pizza</name>
 	<description>TU Delft Contextproject Multi-Media 2016 from Team Free Pizza</description>
 
@@ -77,6 +77,18 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-jar-plugin</artifactId>
+			    <configuration>
+			        <archive>                   
+			            <manifest>
+			                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+			                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+			            </manifest>
+			        </archive>
+			    </configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -92,6 +104,26 @@
   			<artifactId>mockito-core</artifactId>
   			<version>2.0.53-beta</version>
   		</dependency>
+  		<dependency>
+    		<groupId>uk.co.caprica</groupId>
+    		<artifactId>vlcj</artifactId>
+    		<version>3.10.1</version>
+		</dependency>
+		<dependency>
+    		<groupId>net.java.dev.jna</groupId>
+    		<artifactId>jna-platform</artifactId>
+    		<version>4.2.2</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-api</artifactId>
+    		<version>1.7.21</version>
+		</dependency>
+		<dependency>
+    		<groupId>net.java.dev.jna</groupId>
+    		<artifactId>jna</artifactId>
+    		<version>4.2.2</version>
+		</dependency>
   	</dependencies>
 
   	<reporting>

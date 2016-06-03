@@ -30,6 +30,8 @@ import javax.xml.stream.events.XMLEvent;
  */
 public final class LoadScript {
 
+    private static final Object MUTEX = new Object();
+    
     /**
      * Location of the save file to load from.
      * This is set to savefile.xml per default.
@@ -41,8 +43,6 @@ public final class LoadScript {
      */
     private static XMLEventReader reader;
 
-    private static final Object MUTEX = new Object();
-
     /**
      * Since this is a utility class, the constructor may not be called.
      */
@@ -52,8 +52,7 @@ public final class LoadScript {
 
     /**
      * Returns the location of the save file this class loads from.
-     *
-     * @return the location of the save file this class loads from.
+     * @return The location of the save file this class loads from.
      */
     public static String getLoadLocation() {
         return loadLocation;
@@ -64,7 +63,7 @@ public final class LoadScript {
      * Also creates a new instance of {@link #reader} so it may load from the
      * new load location when {@link #load()} is called.
      *
-     * @param s the new location of the save file this class should load from.
+     * @param s The new location of the save file this class should load from.
      */
     public static void setLoadLocation(String s) {
         synchronized (MUTEX) {
@@ -77,13 +76,16 @@ public final class LoadScript {
      * {@link #loadLocation}.
      * It loads the cameras from the save file and puts them in {@link Camera#CAMERAS}.
      * It then loads the shots from the save file and returns them as a Script object.
-     * @return the loaded script
+     * 
+     * @return The loaded script
      */
     public static Script load() throws XMLStreamException {
         synchronized (MUTEX) {
             Camera.clearAllCameras();
             List<Shot> shots = new LinkedList<Shot>();
             reader = createReader();
+            checkCorrectDocument();
+            
             while (reader.hasNext()) {
                 XMLEvent event = reader.nextEvent();
                 if (event.isStartElement()) {
@@ -95,8 +97,30 @@ public final class LoadScript {
                     }
                 }
             }
+            
             return new Script(shots);
         }
+    }
+    
+    /**
+     * Checks if the document to be read is actually a save file from our
+     * application. Does this by reading the first two events in the file,
+     * namely the start of the document and the first tag afterwards,
+     * which should be 'script'.
+     * @throws XMLStreamException When the save file is not correct.
+     */
+    private static void checkCorrectDocument() throws XMLStreamException {
+        if (reader.hasNext()) {
+            reader.nextEvent(); //skip start of document
+        }
+        if (reader.hasNext()) {
+            XMLEvent event = reader.nextEvent();
+            if (event.isStartElement() 
+                    && "script".equals(event.asStartElement().getName().getLocalPart())) {
+                return;
+            }
+        }
+        throw new XMLStreamException("This is not a savefile from our program.");
     }
 
     /**
@@ -104,11 +128,11 @@ public final class LoadScript {
      * in {@link #loadLocation} for use as the loader class variable.
      * Throws a RuntimeException in the case the save file cannot be read.
      *
-     * @return an XMLEventWriter object for use as the writer class variable.
+     * @return An XMLEventWriter object for use as the writer class variable.
      */
     private static XMLEventReader createReader() {
         try {
-            return (XMLInputFactory.newFactory()).createXMLEventReader(new FileInputStream(loadLocation));
+            return (XMLInputFactory.newFactory()).createXMLEventReader(new FileInputStream(loadLocation), "UTF-8");
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
             throw new RuntimeException("Your save file could not be found or read.", e);
@@ -118,6 +142,7 @@ public final class LoadScript {
     /**
      * Reads the 'cameras' section of the XML file.
      * Assumes that the start element of this section has already been read.
+     * 
      * @throws XMLStreamException when an error occurs in the XML.
      */
     private static void loadCameras() throws XMLStreamException {
@@ -146,6 +171,7 @@ public final class LoadScript {
     /**
      * Reads a 'camera' section of the XML file.
      * Assumes that the start element of this section has already been read.
+     * 
      * @throws XMLStreamException when an error occurs in the XML.
      */
     private static void loadCamera() throws XMLStreamException {
@@ -173,8 +199,9 @@ public final class LoadScript {
      * Reads a 'cameraSettings' section of the XML file.
      * Assumes that the start element of this section has already been read
      * and is inserted into this method as the start parameter.
-     * @param start The start element of the 'cameraSettings' section.
-     * @return the loaded CameraSettings object.
+     * 
+     * @param Start The start element of the 'cameraSettings' section.
+     * @return The loaded CameraSettings object.
      * @throws XMLStreamException when an error occurs in the XML.
      */
     private static CameraSettings loadCameraSettings(StartElement start) {
@@ -183,13 +210,14 @@ public final class LoadScript {
                 Integer.parseInt(start.getAttributeByName(new QName("tilt")).getValue()),
                 Integer.parseInt(start.getAttributeByName(new QName("zoom")).getValue()),
                 Integer.parseInt(start.getAttributeByName(new QName("focus")).getValue())
-        );
+                );
     }
 
     /**
      * Reads a 'presets' section associated with a camera of the XML file and
      * adds these presets to the camera they belong to.
      * Assumes that the start element of this section has already been read.
+     * 
      * @param cam Camera object associated with this 'presets' section.
      * @throws XMLStreamException when an error occurs in the XML.
      */
@@ -214,8 +242,9 @@ public final class LoadScript {
      * Reads a 'preset' section of the XML file.
      * Assumes that the start element of this section has already been read
      * and is inserted into this method as the presetStart parameter.
+     * 
      * @param presetStart The start element of the 'preset' section.
-     * @return the loaded Preset object.
+     * @return The loaded Preset object.
      * @throws XMLStreamException when an error occurs in the XML.
      */
     private static Preset loadPreset(StartElement presetStart) throws XMLStreamException {
@@ -223,6 +252,7 @@ public final class LoadScript {
         String description = "";
         String imgLoc = "";
         AtomicReference<CameraSettings> toSet = new AtomicReference<CameraSettings>();
+        
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
@@ -248,6 +278,7 @@ public final class LoadScript {
                     toSet.set(loadCameraSettings(start));
                 }
             }
+            
             if (event.isEndElement()) {
                 EndElement end = event.asEndElement();
                 if ("preset".equals(end.getName().getLocalPart())) {
@@ -266,6 +297,7 @@ public final class LoadScript {
     /**
      * Gets the constructor from the right preset class as defined by parameter 'type' and
      * returns the Preset object instantiated with the rest of the arguments.
+     * 
      * @param type Full name of the preset class, as returned by {@link Class#getName()}
      * @param toSet CameraSettings to set in the preset.
      * @param id Id of the preset.
@@ -278,6 +310,7 @@ public final class LoadScript {
     private static Preset createPreset(String type, CameraSettings toSet, int id, 
             String description, String imgLoc) throws XMLStreamException {
         Preset preset;
+        
         try {
             Constructor<?> constructor = Class.forName(type).getConstructor(CameraSettings.class, int.class);
             preset = (Preset) constructor.newInstance(toSet, id);
@@ -285,6 +318,7 @@ public final class LoadScript {
             e.printStackTrace();
             throw new XMLStreamException("Instantiating preset failed.", e);
         }
+        
         preset.setDescription(description);
         preset.setImageLocation(imgLoc);
         return preset;
@@ -294,7 +328,8 @@ public final class LoadScript {
      * Reads the 'shots' section of the XML file and returns this as a list
      * of Shot objects.
      * Assumes that the start element of this section has already been read.
-     * @return the loaded list of shots.
+     * 
+     * @return The loaded list of shots.
      * @throws XMLStreamException when an error occurs in the XML.
      */
     private static List<Shot> loadShots() throws XMLStreamException {
@@ -326,7 +361,8 @@ public final class LoadScript {
      * Reads a 'shot' section of the XML file and returns this as a Shot object.
      * Assumes that the start element of this section has already been read and
      * is inserted into this method as the startShot parameter.
-     * @return the loaded shot.
+     * 
+     * @return The loaded shot.
      * @throws XMLStreamException when an error occurs in the XML.
      */
     private static Shot loadShot(StartElement startShot) throws XMLStreamException {
@@ -335,6 +371,7 @@ public final class LoadScript {
         int cameraId = -1;
         int presetId = -1;
         String description = "";
+        
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
@@ -360,8 +397,6 @@ public final class LoadScript {
                     XMLEvent presetIdEvent = reader.nextEvent();
                     if (presetIdEvent.isCharacters()) {
                         presetId = Integer.parseInt(presetIdEvent.asCharacters().getData());
-                    } else {
-                        throw new XMLStreamException("No preset id present in shot.");
                     }
                 }
             }
@@ -372,12 +407,12 @@ public final class LoadScript {
                 }
             }
         }
+        
         Camera cam = Camera.getCamera(cameraId);
-        if (cam != null && cam.getPreset(presetId) != null) {
+        if (cam != null) {
             return new Shot(id, shotId, cam, cam.getPreset(presetId), description);
         } else {
-            throw new XMLStreamException("Camera or preset cannot be found with camera id: " + cameraId
-                    + " and preset id: " + presetId);
+            throw new XMLStreamException("Camera cannot be found with camera id: " + cameraId);
         }
     }
 }

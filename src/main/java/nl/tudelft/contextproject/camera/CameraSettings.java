@@ -1,20 +1,21 @@
 package nl.tudelft.contextproject.camera;
 
 /**
- * Class to represent camera settings. Can be extended with colour
+ * Class to represent camera settings. Can be extended with color
  * settings etc.
+ * 
  * @since 0.2
  */
 public class CameraSettings {
-    
+
     private int pan;
     private int tilt;
     private int zoom;
     private int focus;
-    
+
     /**
      * Constructs a camera settings object with orientation,
-     * zoom level and focus level initialised to 0.
+     * zoom level and focus level initialized to 0.
      */
     public CameraSettings() {
         pan = 0;
@@ -22,10 +23,11 @@ public class CameraSettings {
         zoom = 0;
         focus = 0;
     }
-    
+
     /**
      * Constructs a camera settings object with a certain orientation, 
      * zoom level and focus.
+     * 
      * @param panPos Horizontal orientation level.
      * @param tiltPos Vertical orientation level.
      * @param zoomPos Zoom level.
@@ -37,7 +39,7 @@ public class CameraSettings {
         zoom = zoomPos;
         focus = focusPos;
     }
-    
+
     /**
      * Gets the pan level (horizontal orientation).
      * @return Pan level (horizontal orientation).
@@ -85,7 +87,7 @@ public class CameraSettings {
     public int getTilt() {
         return tilt;
     }
-    
+
     /**
      * Gets the zoom level.
      * @return Zoom level.
@@ -109,7 +111,7 @@ public class CameraSettings {
     protected void pan(int offset) {
         pan += offset;
     }
-    
+
     /**
      * Tilts the camera settings a certain offset.
      * @param offset The offset to tilt the camera.
@@ -117,7 +119,7 @@ public class CameraSettings {
     protected void tilt(int offset) {
         tilt += offset;
     }
-    
+
     /**
      * Zooms the camera settings a certain offset.
      * @param offset The offset to zoom the camera.
@@ -138,29 +140,26 @@ public class CameraSettings {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+
         result = prime * result + focus;
         result = prime * result + pan;
         result = prime * result + tilt;
         result = prime * result + zoom;
+
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        if (obj instanceof CameraSettings) {
+            CameraSettings other = (CameraSettings) obj;
+
+            return focus == other.focus
+                    && pan == other.pan
+                    && tilt == other.tilt
+                    && zoom == other.zoom;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof CameraSettings)) {
-            return false;
-        }
-        CameraSettings other = (CameraSettings) obj;
-        boolean result = focus == other.focus
-                && pan == other.pan
-                && tilt == other.tilt
-                && zoom == other.zoom;
-        return result;
+
+        return false;
     }
 }
