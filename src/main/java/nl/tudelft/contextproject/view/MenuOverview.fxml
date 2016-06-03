@@ -21,7 +21,7 @@
                   <Insets />
                </opaqueInsets>
             </Label>
-            <Label text="Current version: 0.5">
+            <Label fx:id="lblVersion" text="Current version: 0.1">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>

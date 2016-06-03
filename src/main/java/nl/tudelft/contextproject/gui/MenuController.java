@@ -36,6 +36,7 @@ public class MenuController {
     @FXML private Button btnPreview;
     @FXML private Button btnLoadScript;
 
+    @FXML private Label lblVersion;
     @FXML private Label lblScript;
 
     /**
@@ -45,10 +46,12 @@ public class MenuController {
         final String name = ContextTFP.getScript().getName();
 
         if (name.equals("")) {
-            setLabel("None");
+            setScriptLabel("None");
         } else {
-            setLabel(name);
+            setScriptLabel(name);
         }
+        
+        setVersionLabel("0.6");
 
         btnLoadScript.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
@@ -64,7 +67,7 @@ public class MenuController {
 
                     ContextTFP.setScript(LoadScript.load());
                     ContextTFP.getScript().setName(file.getName());
-                    setLabel(file.getName());
+                    setScriptLabel(file.getName());
 
                     showSuccessDialog(file);
                     ContextTFP.getScript().showValid(2);
@@ -100,13 +103,16 @@ public class MenuController {
      * @param file The file that was supposed to be saved.
      */
     private void showErrorDialog(Exception e, File file) {
+        String c = (e.getCause() == null) ? "" : "\nCause: "  + e.getCause();
+        
         Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle(e.getMessage());
+        alert.setTitle("Unsuccesful load!");
         alert.setHeaderText("Loading script was unsuccesful!");
         alert.setContentText("Error when trying to load script at location: " 
                 + file.getAbsolutePath()
                 + "\n\nError: "
-                + e.getCause());
+                + e.getMessage()
+                + c);
 
         alert.showAndWait();
     }
@@ -147,8 +153,18 @@ public class MenuController {
      * @param text The text to set to the label. This will be appended to the
      *      string: "Current script: " 
      */
-    public void setLabel(String text) {
+    private void setScriptLabel(String text) {
         lblScript.setText("Current script: " + text);
+    }
+    
+    /**
+     * Sets the text of the version label on the menu.
+     * 
+     * @param text The text to set to the label. This will be appended to the
+     *      string: "Current version: " 
+     */
+    private void setVersionLabel(String text) {
+        lblVersion.setText("Current version: " + text);
     }
 
     /**
