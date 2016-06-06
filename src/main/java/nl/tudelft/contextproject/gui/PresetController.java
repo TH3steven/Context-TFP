@@ -77,10 +77,7 @@ public class PresetController {
      */
     private void applySettings() {
         vBox.setAlignment(Pos.CENTER);
-
         vBox.getChildren().clear();
-        
-        System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
     }
     
     /**

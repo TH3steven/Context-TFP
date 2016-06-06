@@ -1,10 +1,19 @@
 package nl.tudelft.contextproject.gui;
 
+import static uk.co.caprica.vlcj.version.LibVlcVersion.getVersion;
+
+import com.sun.jna.NativeLibrary;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 import nl.tudelft.contextproject.script.Shot;
+
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 import java.io.File;
 import java.util.Optional;
@@ -186,5 +195,53 @@ public final class AlertDialog {
                 + c);
 
         alert.showAndWait();
+    }
+    
+    /**
+     * Displays an error dialog when a VLC installation cannot be found.
+     * 
+     * @param window Only used with 
+     *      {@link nl.tudelft.contextproject.ContextTFP#primaryStage ContextTFP.primaryStage}
+     */
+    public static void errorVlcNotFound(Window window) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("VLC not found!");
+        alert.setHeaderText("VLC installation could not be found.");
+        alert.setContentText(
+                "If you do have VLC installed, please select your VLC install directory. "
+                + "\n\nIf not, please install VLC to make use of live camera feeds.");
+        alert.showAndWait();
+        findVlc(window);
+    }
+    
+    /**
+     * Opens a file chooser dialog when a VLC installation cannot be found.
+     * 
+     * @param window Only used with 
+     *      {@link nl.tudelft.contextproject.ContextTFP#primaryStage ContextTFP.primaryStage}
+     */
+    private static void findVlc(Window window) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Locate VLC installation");
+        fileChooser.setInitialFileName("libvlc.dll");
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("LibVLC", "libvlc.dll"));
+        File libvlc = fileChooser.showOpenDialog(window);
+        
+        if (libvlc != null) {
+            NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), libvlc.getParent());
+            try {
+                getVersion();
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("VLC Found!");
+                alert.setHeaderText("VLC installation found!");
+                alert.setContentText("Press OK to continue");
+                alert.show();
+            } catch (UnsatisfiedLinkError e) {
+                e.printStackTrace();
+                errorVlcNotFound(window);
+            }
+        } else {
+            throw new RuntimeException("No VLC installed!");
+        }
     }
 }
