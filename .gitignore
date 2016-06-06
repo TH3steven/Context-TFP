@@ -4,3 +4,4 @@
 /target/
 /*.iml
 .pmd
+.eclipse-pmd

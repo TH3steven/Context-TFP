@@ -14,14 +14,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.LiveCameraConnection;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
+import nl.tudelft.contextproject.gui.AlertDialog;
 import nl.tudelft.contextproject.gui.MenuController;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
+
+import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,7 +44,7 @@ import java.util.List;
  * @since 0.1
  */
 public class ContextTFP extends Application {
-
+    
     private static BorderPane rootLayout;
     private static Script script;
 
@@ -86,6 +90,7 @@ public class ContextTFP extends Application {
         }
 
         initRootLayout();
+        Platform.runLater(() -> initVLCj());
         MenuController.show();
     }
 
@@ -107,6 +112,17 @@ public class ContextTFP extends Application {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Tries to load VLC using the VLC native discovery tactic.
+     * If it cannot find VLC installed, it will ask for the location of the
+     * VLC installation.
+     */
+    public void initVLCj() {
+        if (!new NativeDiscovery().discover()) {
+            AlertDialog.errorVlcNotFound(primaryStage);
         }
     }
 
