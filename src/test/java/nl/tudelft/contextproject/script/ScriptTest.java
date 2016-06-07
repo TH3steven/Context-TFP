@@ -135,9 +135,8 @@ public class ScriptTest {
      * Throws an exception is list is empty.
      */
     @Test
-    public  void testNext() throws NoSuchElementException {
+    public void testNext() throws NoSuchElementException {
         assertEquals(script1.next(), shot1);
-        assertFalse(script2.hasNext());
         assertEquals(script1.next(), shot2);
         script1.next();
         assertFalse(script1.hasNext());

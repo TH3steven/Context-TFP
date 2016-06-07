@@ -33,6 +33,7 @@ public class DirectorLiveController {
     private static Script script;
 
     @FXML private Button btnBack;
+    @FXML private Button btnNext;
     @FXML private Button btnSwap;
 
     @FXML private ImageView bigView;
@@ -129,8 +130,32 @@ public class DirectorLiveController {
         btnBack.setOnAction((event) -> {
             MenuController.show();
         });
+        
+        btnNext.setOnAction((event) -> {
+            script.next();
+            updateTables();
+        });
     }
 
+    /**
+     * Updates the table contents according to the current position in the script.
+     */
+    private void updateTables() {
+        if (script.getNextShot() != null) {
+            smallShotNumberLabel.setText(script.getNextShot().getShotId());
+            smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
+            smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
+            smallDescriptionField.setText(script.getNextShot().getDescription());
+        }
+
+        if (script.getCurrentShot() != null) {
+            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());
+            bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
+            bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
+            bigDescriptionField.setText(script.getCurrentShot().getDescription());
+        }
+    }
+    
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.

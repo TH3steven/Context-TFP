@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class to represent a Script of {@link Shot Shots}.
@@ -36,6 +37,11 @@ public class Script implements Iterator<Shot> {
      * The name of the script as displayed on the ui.
      */
     private String name;
+    
+    /**
+     * 
+     */
+    private Timer timer;
 
     /**
      * Creates a script that starts from the beginning with specified shots.
@@ -50,6 +56,7 @@ public class Script implements Iterator<Shot> {
         timelines = new HashMap<Integer, Timeline>();
         initTimelines();
         initPresetLoading();
+        initTimer();
     }
 
     /**
@@ -124,6 +131,13 @@ public class Script implements Iterator<Shot> {
             t.initPreset();
         }
     }
+    
+    /**
+     * Init the timer for calling updateOldCam() with a 1 second delay.
+     */
+    private void initTimer() {
+        timer = new Timer();
+    }
 
     /**
      * Adds a shot to the Script, also adds it to the timelines.
@@ -183,6 +197,16 @@ public class Script implements Iterator<Shot> {
     public void setName(String name) {
         this.name = name;
     }
+    
+    /**
+     * Calls the updateOldCam() method after a short delay.
+     * This is to give the post-production some extra footage to work with.
+     */
+    public synchronized void updateOldCamCaller() {
+        timer.cancel();
+        timer = new Timer();
+        timer.schedule(new UpdateTask(), 1000);
+    }
 
     /**
      * Returns true if there is a next shot, the +1 is used because we initialize with -1.
@@ -214,14 +238,25 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        if (current > -1) {
-            Shot old = shots.get(current);
-            timelines.get(old.getCamera().getNumber()).nextPreset(old);
-        }
+        updateOldCamCaller();
 
         current++;
         Shot next = shots.get(current);
         next.execute();
         return next;
+    }
+    
+    public class UpdateTask extends TimerTask {
+        /**
+         * Updates the old camera, which was live during the previous shot,
+         * to its next preset.
+         */
+        public void run() {
+            if (current > -1) {
+                Shot old = shots.get(current);
+                timelines.get(old.getCamera().getNumber()).nextPreset(old);
+            }
+            System.out.println("banaan");
+        }
     }
 }
