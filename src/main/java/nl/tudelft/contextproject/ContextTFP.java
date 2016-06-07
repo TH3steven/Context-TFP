@@ -45,6 +45,7 @@ import java.util.List;
  */
 public class ContextTFP extends Application {
     
+    private static boolean hasVLC;
     private static BorderPane rootLayout;
     private static Script script;
 
@@ -122,7 +123,14 @@ public class ContextTFP extends Application {
      */
     public void initVLCj() {
         if (!new NativeDiscovery().discover()) {
-            AlertDialog.errorVlcNotFound(primaryStage);
+            try {
+                AlertDialog.errorVlcNotFound(primaryStage);
+                hasVLC = true;
+            } catch (RuntimeException e) {
+                hasVLC = false;
+            }
+        } else {
+            hasVLC = true;
         }
     }
 
@@ -169,5 +177,9 @@ public class ContextTFP extends Application {
      */
     public static BorderPane getRootLayout() {
         return rootLayout;
+    }
+    
+    public static boolean hasVLC() {
+        return hasVLC;
     }
 }
