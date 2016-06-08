@@ -1,5 +1,9 @@
 package nl.tudelft.contextproject.script;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,11 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.CameraSettings;
-import nl.tudelft.contextproject.presets.InstantPreset;
-import nl.tudelft.contextproject.presets.Preset;
 
 /**
  * Class to represent a Script of {@link Shot Shots}.
@@ -174,7 +173,6 @@ public class Script implements Iterator<Shot> {
         } catch (Exception e) {
             Camera dummyCamera = new Camera();
             dummyCamera.setNumber(-1);
-            CameraSettings dummySettings = new CameraSettings();
             return new Shot(-1, "-1", dummyCamera, new InstantPreset(new CameraSettings(), -1), "No shot");
         }
     }

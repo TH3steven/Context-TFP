@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
