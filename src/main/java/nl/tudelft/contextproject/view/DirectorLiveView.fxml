@@ -131,6 +131,6 @@
             </VBox>
          </children>
       </GridPane>
-      <Button fx:id="btnNext" layoutX="243.0" layoutY="550.0" mnemonicParsing="false" text="TEMPORARY NEXT SHOT" />
+      <Button fx:id="btnNext" layoutX="340.0" layoutY="536.0" mnemonicParsing="false" text="Next shot" />
    </children>
 </AnchorPane>

@@ -8,6 +8,11 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.presets.Preset;
+
 /**
  * Class to represent a Script of {@link Shot Shots}.
  * Implements the {@link Iterator} interface so it can apply
@@ -167,7 +172,10 @@ public class Script implements Iterator<Shot> {
         try {
             return shots.get(current);
         } catch (Exception e) {
-            return null;
+            Camera dummyCamera = new Camera();
+            dummyCamera.setNumber(-1);
+            CameraSettings dummySettings = new CameraSettings();
+            return new Shot(-1, "-1", dummyCamera, new InstantPreset(new CameraSettings(), -1), "No shot");
         }
     }
 
@@ -256,7 +264,6 @@ public class Script implements Iterator<Shot> {
                 Shot old = shots.get(current);
                 timelines.get(old.getCamera().getNumber()).nextPreset(old);
             }
-            System.out.println("banaan");
         }
     }
 }

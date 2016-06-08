@@ -9,11 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 
@@ -53,12 +53,16 @@ public class DirectorLiveController {
 
     @FXML private VBox bigViewBox;
     @FXML private VBox smallViewBox;
+    
+    private boolean live;
 
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
+        
+        live = true;
 
         bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
         bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
@@ -124,6 +128,10 @@ public class DirectorLiveController {
                 smallStatusLabel.setStyle("");
                 bigStatusLabel.setStyle("-fx-text-fill: red;");
             }
+            
+            switchLive();
+            
+            updateTables(live);
         });
 
         btnBack.toFront();
@@ -133,26 +141,47 @@ public class DirectorLiveController {
         
         btnNext.setOnAction((event) -> {
             script.next();
-            updateTables();
+            updateTables(live);
         });
     }
 
     /**
      * Updates the table contents according to the current position in the script.
      */
-    private void updateTables() {
-        if (script.getNextShot() != null) {
-            smallShotNumberLabel.setText(script.getNextShot().getShotId());
-            smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
-            smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
-            smallDescriptionField.setText(script.getNextShot().getDescription());
+    private void updateTables(boolean live) {
+        Shot smallShot;
+        Shot bigShot;
+        if (live) {
+            smallShot = script.getNextShot();
+            bigShot = script.getCurrentShot();
+        } else {
+            smallShot = script.getCurrentShot();
+            bigShot = script.getNextShot();
+        }
+        
+        if (smallShot != null) {
+            smallShotNumberLabel.setText(smallShot.getShotId());
+            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber()));
+            smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
+            smallDescriptionField.setText(smallShot.getDescription());
         }
 
         if (script.getCurrentShot() != null) {
-            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());
-            bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
-            bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
-            bigDescriptionField.setText(script.getCurrentShot().getDescription());
+            bigShotNumberLabel.setText(bigShot.getShotId());
+            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber()));
+            bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
+            bigDescriptionField.setText(bigShot.getDescription());
+        }
+    }
+    
+    /**
+     * Sets live to false if it is true and to true if it is false.
+     */
+    private void switchLive() {
+        if (live) {
+            live = false;
+        } else {
+            live = true;
         }
     }
     
