@@ -71,10 +71,14 @@
                         <Label fx:id="bigCameraNumberLabel" layoutX="85.0" layoutY="37.0" text="-1" />
                         <Label fx:id="bigPresetLabel" layoutX="85.0" layoutY="63.0" text="-1" />
                         <Rectangle arcHeight="5.0" arcWidth="5.0" height="28.0" layoutX="240.0" stroke="BLACK" strokeType="INSIDE" width="1.0" />
+                        <Button fx:id="btnNext" layoutX="222.0" layoutY="182.0" mnemonicParsing="false" text="Next shot" />
                      </children>
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                   </AnchorPane>
                </children>
                <GridPane.margin>
@@ -131,6 +135,5 @@
             </VBox>
          </children>
       </GridPane>
-      <Button fx:id="btnNext" layoutX="340.0" layoutY="536.0" mnemonicParsing="false" text="Next shot" />
    </children>
 </AnchorPane>
