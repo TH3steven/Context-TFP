@@ -43,7 +43,7 @@ public class Script implements Iterator<Shot> {
     private String name;
     
     /**
-     * 
+     * The timer to delay moving of a camera.
      */
     private Timer timer;
 
@@ -57,10 +57,11 @@ public class Script implements Iterator<Shot> {
         this.shots = shots;
         current = -1;
         name = "";
+        timer = new Timer();
         timelines = new HashMap<Integer, Timeline>();
+        
         initTimelines();
-        initPresetLoading();
-        initTimer();
+        initPresetLoading();       
     }
 
     /**
@@ -134,13 +135,6 @@ public class Script implements Iterator<Shot> {
         for (Timeline t : timelines.values()) {
             t.initPreset();
         }
-    }
-    
-    /**
-     * Init the timer for calling updateOldCam() with a 1 second delay.
-     */
-    private void initTimer() {
-        timer = new Timer();
     }
 
     /**

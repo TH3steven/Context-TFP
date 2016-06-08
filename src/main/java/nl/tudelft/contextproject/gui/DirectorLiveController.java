@@ -85,7 +85,7 @@ public class DirectorLiveController {
         bigStatusLabel.setStyle("-fx-text-fill: red;");
         smallStatusLabel.setText("Up next");
 
-        updateTables(live);
+        updateTables();
     }
 
     /**
@@ -124,9 +124,9 @@ public class DirectorLiveController {
                 bigStatusLabel.setStyle("-fx-text-fill: red;");
             }
             
-            switchLive();
+            live = !live;
             
-            updateTables(live);
+            updateTables();
         });
 
         btnBack.toFront();
@@ -137,7 +137,7 @@ public class DirectorLiveController {
         btnNext.setOnAction((event) -> {
             if (!endReached) {
                 script.next();
-                updateTables(live);
+                updateTables();
             }
         });
     }
@@ -145,7 +145,7 @@ public class DirectorLiveController {
     /**
      * Updates the table contents according to the current position in the script.
      */
-    private void updateTables(boolean live) {
+    private void updateTables() {
         Shot smallShot;
         Shot bigShot;
         if (live) {
@@ -176,17 +176,6 @@ public class DirectorLiveController {
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
         } 
-    }
-    
-    /**
-     * Sets live to false if it is true and to true if it is false.
-     */
-    private void switchLive() {
-        if (live) {
-            live = false;
-        } else {
-            live = true;
-        }
     }
     
     /**
