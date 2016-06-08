@@ -179,9 +179,7 @@ public class Script implements Iterator<Shot> {
         try {
             return shots.get(current);
         } catch (Exception e) {
-            Camera dummyCamera = new Camera();
-            dummyCamera.setNumber(-1);
-            return new Shot(-1, "-1", dummyCamera, new InstantPreset(new CameraSettings(), -1), "No shot");
+            return new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
         }
     }
 
@@ -219,7 +217,15 @@ public class Script implements Iterator<Shot> {
     public synchronized void updateOldCamCaller() {
         timer.cancel();
         timer = new Timer();
-        timer.schedule(new UpdateTask(), 1000);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (current > -1) {
+                    Shot old = shots.get(current);
+                    timelines.get(old.getCamera().getNumber()).nextPreset(old);
+                }
+            }
+        }, 1000);
     }
 
     /**

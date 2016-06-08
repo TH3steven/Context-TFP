@@ -53,15 +53,13 @@ public class ScriptTest {
         cam1 = new Camera();
         cam0.setConnection(new MockedCameraConnection());
         cam1.setConnection(new MockedCameraConnection());
-        Camera dummyCamera = new Camera();
-        dummyCamera.setNumber(-1);
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
         pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(2, cam1, pres2);
         shot3 = new Shot(3, cam0, pres3);
-        dummyShot = new Shot(-1, "-1", dummyCamera, new InstantPreset(new CameraSettings(), -1), "No shot");
+        dummyShot = new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
         los = new ArrayList<>();
         los1 = new ArrayList<>();
         los.add(shot1);

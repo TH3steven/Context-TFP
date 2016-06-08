@@ -16,6 +16,11 @@ import java.util.Observable;
  */
 public class Camera extends Observable {
 
+    /**
+     * Dummy camera with camId -1.
+     */
+    public static final Camera DUMMY;
+    
     private static final HashMap<Integer, Camera> CAMERAS = new HashMap<Integer, Camera>();
     private static int numCams = 0;
 
@@ -24,6 +29,12 @@ public class Camera extends Observable {
     private HashMap<Integer, Preset> presets;
 
     private int camId;
+    
+    static {
+        DUMMY = new Camera();
+        DUMMY.camId = -1;
+        clearAllCameras();
+    }
 
     /**
      * Creates a Camera object with initial camera settings
@@ -83,14 +94,6 @@ public class Camera extends Observable {
      */
     public int getNumber() {
         return camId;
-    }
-    
-    /**
-     * Set the cameranumber, used for debugging and UI.
-     * @param i The number to set the camera number to.
-     */
-    public void setNumber(int i) {
-        camId = i;
     }
 
     /**
