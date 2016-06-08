@@ -1,5 +1,7 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -56,25 +58,71 @@ public class DirectorLiveController {
     
     private boolean endReached;
     private boolean live;
+    private boolean bigShowsLive;
+    
+    private LiveStreamHandler liveStreamHandler;
+    private LiveStreamHandler nextStreamHandler;
+    
 
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
-        
+        liveStreamHandler = new LiveStreamHandler();
+        nextStreamHandler = new LiveStreamHandler();
+
         endReached = false;
-        live = true;
+        bigShowsLive = true;
+        
+        if (!script.isEmpty()) {
+            script.next();
+            live = true;
+        } else {
+            live = false;
+        }
 
-        bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
-        bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
-
-        smallView.fitWidthProperty().bind(smallViewBox.widthProperty());
-        smallView.fitHeightProperty().bind(smallViewBox.heightProperty());
-
+        addListenersToBoxes();
         initializeLabels();
-        initializeViews();
-        initializeButtons();        
+        initializeButtons();
+        
+        if (live) {
+            initializeLiveViews();
+        } else {
+            initializeBlackViews(false);
+        }
+    }
+    
+    private void addListenersToBoxes() {
+        LiveStreamHandler smallStream;
+        LiveStreamHandler bigStream;
+        if (bigShowsLive) {
+            smallStream = nextStreamHandler;
+            bigStream = liveStreamHandler;
+        } else {
+            smallStream = liveStreamHandler;
+            bigStream = nextStreamHandler;
+        }
+        
+        smallViewBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize(newValue.floatValue(), (float) smallViewBox.getHeight(), 
+                    (ImageView) smallViewBox.getChildren().get(0), smallStream);
+        });
+        
+        smallViewBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize((float) smallViewBox.getWidth(), newValue.floatValue(), 
+                    (ImageView) smallViewBox.getChildren().get(0), smallStream);
+        });
+        
+        bigViewBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize(newValue.floatValue(), (float) bigViewBox.getHeight(), 
+                    (ImageView) bigViewBox.getChildren().get(0), bigStream);
+        });
+        
+        bigViewBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize((float) bigViewBox.getWidth(), newValue.floatValue(), 
+                    (ImageView) bigViewBox.getChildren().get(0), bigStream);
+        });
     }
 
     /**
@@ -89,19 +137,38 @@ public class DirectorLiveController {
     }
 
     /**
-     * Initializes the views.
+     * Initializes the live views.
      */
-    private void initializeViews() {
-        Image actual = new Image("placeholder_picture.jpg");
-        bigView.setImage(actual);
-        
-        Image next;
+    private void initializeLiveViews() {
+        createStream(script.getCurrentShot().getCamera().getConnection().getStreamLink(), 
+                liveStreamHandler, bigViewBox);
+
         if (script.getNextShot() != null) {
-            next = new Image("test3.jpg");
+            createStream(script.getNextShot().getCamera().getConnection().getStreamLink(), 
+                    nextStreamHandler, smallViewBox);
         } else {
-            next = new Image("black.png");
+            initializeBlackViews(true);
         }
-        smallView.setImage(next);
+    }
+    
+    /**
+     * Initializes the views with black screens,
+     * @param smallOnly True if only the small view needs a black screen.
+     */
+    private void initializeBlackViews(boolean smallOnly) {
+        ImageView img1 = new ImageView("black.png"); 
+        img1.fitWidthProperty().bind(smallViewBox.widthProperty());
+        img1.fitHeightProperty().bind(smallViewBox.heightProperty());
+        smallViewBox.getChildren().clear();
+        smallViewBox.getChildren().add(img1);
+        
+        if (!smallOnly) {
+            ImageView img2 = new ImageView("black.png"); 
+            img2.fitWidthProperty().bind(bigViewBox.widthProperty());
+            img2.fitHeightProperty().bind(bigViewBox.heightProperty());
+            bigViewBox.getChildren().clear();
+            bigViewBox.getChildren().add(img2);
+        }
     }
 
     /**
@@ -109,6 +176,7 @@ public class DirectorLiveController {
      */
     private void initializeButtons() {
         btnSwap.setOnAction((event) -> {
+            bigShowsLive = !bigShowsLive;
             Image three = bigView.getImage();
             bigView.setImage(smallView.getImage());
             smallView.setImage(three);
@@ -131,6 +199,8 @@ public class DirectorLiveController {
 
         btnBack.toFront();
         btnBack.setOnAction((event) -> {
+            liveStreamHandler.stop();
+            nextStreamHandler.stop();
             MenuController.show();
         });
         
@@ -176,6 +246,50 @@ public class DirectorLiveController {
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
         } 
+    }
+    
+    /**
+     * Creates a livestream in a VBox.
+     * @param streamLink The link of the livestream.
+     * @param streamHandler The LiveStreamHandler responsible for the stream.
+     * @param viewBox The VBox which will contain the stream.
+     */
+    private void createStream(String streamLink, LiveStreamHandler streamHandler, VBox viewBox) {
+        if (streamHandler != null) {
+            streamHandler.stop();
+        }
+        
+        viewBox.getChildren().clear();
+        ImageView imgView = streamHandler.createImageView(streamLink, 1920, 1080);
+        viewBox.getChildren().add(imgView);
+        Platform.runLater(() -> {
+            fitImageViewSize((float) viewBox.getWidth(), (float) viewBox.getHeight(), imgView, streamHandler);
+        });       
+        streamHandler.start();
+    }
+    
+    /**
+     * Resizes the ImageView.
+     * @param width The new width of the ImageView.
+     * @param height The new height of the ImageView.
+     * @param imageView The imageView that needs resizing.
+     * @param streamHandler The LiveStreamHandler responsible for the stream.
+     */
+    private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
+        FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
+        float fitHeight = videoSourceRatioProperty.get() * width;
+        if (fitHeight > height) {
+            imageView.setFitHeight(height);
+            double fitWidth = height / videoSourceRatioProperty.get();
+            imageView.setFitWidth(fitWidth);
+            imageView.setX((width - fitWidth) / 2);
+            imageView.setY(0);
+        } else {
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(fitHeight);
+            imageView.setY((height - fitHeight) / 2);
+            imageView.setX(0);
+        }       
     }
     
     /**
