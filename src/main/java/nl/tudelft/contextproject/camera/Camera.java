@@ -84,6 +84,14 @@ public class Camera extends Observable {
     public int getNumber() {
         return camId;
     }
+    
+    /**
+     * Set the cameranumber, used for debugging and UI.
+     * @param i The number to set the camera number to.
+     */
+    public void setNumber(int i) {
+        camId = i;
+    }
 
     /**
      * Returns the camera settings attached to the camera.
