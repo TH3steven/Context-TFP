@@ -9,11 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 
@@ -33,6 +33,7 @@ public class DirectorLiveController {
     private static Script script;
 
     @FXML private Button btnBack;
+    @FXML private Button btnNext;
     @FXML private Button btnSwap;
 
     @FXML private ImageView bigView;
@@ -52,12 +53,18 @@ public class DirectorLiveController {
 
     @FXML private VBox bigViewBox;
     @FXML private VBox smallViewBox;
+    
+    private boolean endReached;
+    private boolean live;
 
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
+        
+        endReached = false;
+        live = true;
 
         bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
         bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
@@ -78,19 +85,7 @@ public class DirectorLiveController {
         bigStatusLabel.setStyle("-fx-text-fill: red;");
         smallStatusLabel.setText("Up next");
 
-        if (script.getNextShot() != null) {
-            smallShotNumberLabel.setText(script.getNextShot().getShotId());
-            smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
-            smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
-            smallDescriptionField.setText(script.getNextShot().getDescription());
-        }
-
-        if (script.getCurrentShot() != null) {
-            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());
-            bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
-            bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
-            bigDescriptionField.setText(script.getCurrentShot().getDescription());
-        }
+        updateTables();
     }
 
     /**
@@ -99,9 +94,14 @@ public class DirectorLiveController {
     private void initializeViews() {
         Image actual = new Image("placeholder_picture.jpg");
         bigView.setImage(actual);
-
-        Image current = new Image("test3.jpg");
-        smallView.setImage(current);
+        
+        Image next;
+        if (script.getNextShot() != null) {
+            next = new Image("test3.jpg");
+        } else {
+            next = new Image("black.png");
+        }
+        smallView.setImage(next);
     }
 
     /**
@@ -123,14 +123,61 @@ public class DirectorLiveController {
                 smallStatusLabel.setStyle("");
                 bigStatusLabel.setStyle("-fx-text-fill: red;");
             }
+            
+            live = !live;
+            
+            updateTables();
         });
 
         btnBack.toFront();
         btnBack.setOnAction((event) -> {
             MenuController.show();
         });
+        
+        btnNext.setOnAction((event) -> {
+            if (!endReached) {
+                script.next();
+                updateTables();
+            }
+        });
     }
 
+    /**
+     * Updates the table contents according to the current position in the script.
+     */
+    private void updateTables() {
+        Shot smallShot;
+        Shot bigShot;
+        if (live) {
+            smallShot = script.getNextShot();
+            bigShot = script.getCurrentShot();
+        } else {
+            smallShot = script.getCurrentShot();
+            bigShot = script.getNextShot();
+        }
+        
+        if (smallShot != null) {
+            smallShotNumberLabel.setText(smallShot.getShotId());
+            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber()));
+            smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
+            smallDescriptionField.setText(smallShot.getDescription());
+        } else {
+            smallView.setImage(new Image("black.png"));
+            smallShotNumberLabel.setText("");
+            smallCameraNumberLabel.setText("");
+            smallPresetLabel.setText("");
+            smallDescriptionField.setText("End of script reached");
+            endReached = true;
+        }
+
+        if (bigShot != null) {
+            bigShotNumberLabel.setText(bigShot.getShotId());
+            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber()));
+            bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
+            bigDescriptionField.setText(bigShot.getDescription());
+        } 
+    }
+    
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.
