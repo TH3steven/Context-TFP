@@ -54,6 +54,7 @@ public class DirectorLiveController {
     @FXML private VBox bigViewBox;
     @FXML private VBox smallViewBox;
     
+    private boolean endReached;
     private boolean live;
 
     /**
@@ -62,6 +63,7 @@ public class DirectorLiveController {
     @FXML private void initialize() {
         script = ContextTFP.getScript();
         
+        endReached = false;
         live = true;
 
         bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
@@ -83,19 +85,7 @@ public class DirectorLiveController {
         bigStatusLabel.setStyle("-fx-text-fill: red;");
         smallStatusLabel.setText("Up next");
 
-        if (script.getNextShot() != null) {
-            smallShotNumberLabel.setText(script.getNextShot().getShotId());
-            smallCameraNumberLabel.setText(Integer.toString(script.getNextShot().getCamera().getNumber()));
-            smallPresetLabel.setText(Integer.toString(script.getNextShot().getPreset().getId()));
-            smallDescriptionField.setText(script.getNextShot().getDescription());
-        }
-
-        if (script.getCurrentShot() != null) {
-            bigShotNumberLabel.setText(script.getCurrentShot().getShotId());
-            bigCameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
-            bigPresetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
-            bigDescriptionField.setText(script.getCurrentShot().getDescription());
-        }
+        updateTables(live);
     }
 
     /**
@@ -104,9 +94,14 @@ public class DirectorLiveController {
     private void initializeViews() {
         Image actual = new Image("placeholder_picture.jpg");
         bigView.setImage(actual);
-
-        Image current = new Image("test3.jpg");
-        smallView.setImage(current);
+        
+        Image next;
+        if (script.getNextShot() != null) {
+            next = new Image("test3.jpg");
+        } else {
+            next = new Image("black.png");
+        }
+        smallView.setImage(next);
     }
 
     /**
@@ -140,8 +135,10 @@ public class DirectorLiveController {
         });
         
         btnNext.setOnAction((event) -> {
-            script.next();
-            updateTables(live);
+            if (!endReached) {
+                script.next();
+                updateTables(live);
+            }
         });
     }
 
@@ -164,14 +161,21 @@ public class DirectorLiveController {
             smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber()));
             smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
             smallDescriptionField.setText(smallShot.getDescription());
+        } else {
+            smallView.setImage(new Image("black.png"));
+            smallShotNumberLabel.setText("");
+            smallCameraNumberLabel.setText("");
+            smallPresetLabel.setText("");
+            smallDescriptionField.setText("End of script reached");
+            endReached = true;
         }
 
-        if (script.getCurrentShot() != null) {
+        if (bigShot != null) {
             bigShotNumberLabel.setText(bigShot.getShotId());
             bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber()));
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
-        }
+        } 
     }
     
     /**

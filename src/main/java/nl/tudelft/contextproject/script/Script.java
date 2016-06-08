@@ -162,6 +162,14 @@ public class Script implements Iterator<Shot> {
             timelines.put(s.getCamera().getNumber(), t);
         }
     }
+    
+    /**
+     * Returns the "current" variable of this class.
+     * @return current
+     */
+    public int getCurrent() {
+        return current;
+    }
 
     /**
      * Returns the current shot, null if there is no such shot.
@@ -250,18 +258,5 @@ public class Script implements Iterator<Shot> {
         Shot next = shots.get(current);
         next.execute();
         return next;
-    }
-    
-    public class UpdateTask extends TimerTask {
-        /**
-         * Updates the old camera, which was live during the previous shot,
-         * to its next preset.
-         */
-        public void run() {
-            if (current > -1) {
-                Shot old = shots.get(current);
-                timelines.get(old.getCamera().getNumber()).nextPreset(old);
-            }
-        }
     }
 }
