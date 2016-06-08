@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
@@ -39,6 +38,7 @@ public class ScriptTest {
     private Shot shot1;
     private Shot shot2;
     private Shot shot3;
+    private Shot dummyShot;
     private Script script1;
     private Script script2;
     private Timeline timeline1;
@@ -52,12 +52,15 @@ public class ScriptTest {
         cam1 = new Camera();
         cam0.setConnection(new MockedCameraConnection());
         cam1.setConnection(new MockedCameraConnection());
+        Camera dummyCamera = new Camera();
+        dummyCamera.setNumber(-1);
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
         pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(2, cam1, pres2);
         shot3 = new Shot(3, cam0, pres3);
+        dummyShot = new Shot(-1, "-1", dummyCamera, new InstantPreset(new CameraSettings(), -1), "No shot");
         los = new ArrayList<>();
         los1 = new ArrayList<>();
         los.add(shot1);
@@ -151,7 +154,7 @@ public class ScriptTest {
      */
     @Test
     public void testGetCurrentShot() {
-        assertNull(script1.getCurrentShot());
+        assertEquals(script1.getCurrentShot(), dummyShot);
         assertTrue(script1.hasNext());
         assertEquals(script1.getNextShot(), shot1);
         assertTrue(script1.hasNext());
