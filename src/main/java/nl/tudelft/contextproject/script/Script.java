@@ -43,7 +43,7 @@ public class Script implements Iterator<Shot> {
     private String name;
     
     /**
-     * 
+     * The timer to delay moving of a camera.
      */
     private Timer timer;
 
