@@ -16,6 +16,9 @@ import nl.tudelft.contextproject.script.Script;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Controller class for the main menu. This class controls the actions to be taken
@@ -30,12 +33,20 @@ public class MenuController {
     @FXML private Button btnCreateScript;
     @FXML private Button btnDirector;
     @FXML private Button btnEditScript;
+    @FXML private Button btnPre;
     @FXML private Button btnPresets;
     @FXML private Button btnPreview;
+    @FXML private Button btnLive;
     @FXML private Button btnLoadScript;
 
     @FXML private Label lblVersion;
     @FXML private Label lblScript;
+    
+    private List<Button> preButtons;
+    private List<Button> liveButtons;
+    
+    private boolean isPreVisible = false;
+    private boolean isLiveVisible = false;
 
     /**
      * Initialize method used by JavaFX.
@@ -49,7 +60,13 @@ public class MenuController {
             setScriptLabel(name);
         }
 
-        setVersionLabel("0.6");
+        setVersionLabel("0.7");
+        
+        preButtons = new ArrayList<Button>();
+        liveButtons = new ArrayList<Button>();
+        preButtons.addAll(Arrays.asList(btnCreateScript, 
+                btnEditScript, btnPresets, btnPreview, btnLoadScript));
+        liveButtons.addAll(Arrays.asList(btnCameraman, btnDirector));
 
         initLoadButton();
         initOtherButtons();
@@ -109,6 +126,43 @@ public class MenuController {
             CreateScriptController.setFill(true);
             CreateScriptController.show();
         });
+        
+        btnPre.setOnAction(event -> {
+            animate(true);
+            
+            toggleButtonVisibility(preButtons);
+            isPreVisible = !isPreVisible;
+        });
+        
+        btnLive.setOnAction(event -> {
+            animate(false);
+            
+            toggleButtonVisibility(liveButtons);
+            isLiveVisible = !isLiveVisible;
+        });
+    }
+    
+    private void animate(boolean pre) {
+        if (!isPreVisible && !isLiveVisible) {
+            Animation.animNodeUp(btnPre);
+            Animation.animNodeUp(btnLive);
+        } else if (isPreVisible && !isLiveVisible && pre) {
+            Animation.animNodeDown(btnPre);
+            Animation.animNodeDown(btnLive);
+        } else if (!isPreVisible && isLiveVisible && !pre) {
+            Animation.animNodeDown(btnPre);
+            Animation.animNodeDown(btnLive);
+        }
+    }
+    
+    private void toggleButtonVisibility(List<Button> list) {
+        for (Button b : list) {
+            if (b.isVisible()) {
+                Animation.animNodeOut(b);
+            } else {
+                Animation.animNodeIn(b);
+            }
+        }
     }
 
     /**
