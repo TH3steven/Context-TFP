@@ -100,6 +100,18 @@ public class LiveStreamHandler {
         return imageView;
     }
     
+    /**
+     * Returns true if there is an active MediaPlayer.
+     * @return True if there is an active MediaPlayer, otherwise false.
+     */
+    public boolean isPlaying() {
+        return this.mediaPlayer != null;
+    }
+    
+    /**
+     * Returns an ImageView displaying an error symbol.
+     * @return The created ImageView.
+     */
     public ImageView createErrorImageView() {
         return new ImageView("error.jpg");
     }
