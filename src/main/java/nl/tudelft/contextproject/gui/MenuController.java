@@ -42,8 +42,8 @@ public class MenuController {
     @FXML private Label lblVersion;
     @FXML private Label lblScript;
     
-    private List<Button> preButtons;
-    private List<Button> liveButtons;
+    private List<Node> preNodes;
+    private List<Node> liveNodes;
     
     private boolean isPreVisible = false;
     private boolean isLiveVisible = false;
@@ -62,13 +62,14 @@ public class MenuController {
 
         setVersionLabel("0.7");
         
-        preButtons = new ArrayList<Button>();
-        liveButtons = new ArrayList<Button>();
-        preButtons.addAll(Arrays.asList(btnCreateScript, 
+        preNodes = new ArrayList<Node>();
+        liveNodes = new ArrayList<Node>();
+        preNodes.addAll(Arrays.asList(btnCreateScript, 
                 btnEditScript, btnPresets, btnPreview, btnLoadScript));
-        liveButtons.addAll(Arrays.asList(btnCameraman, btnDirector));
+        liveNodes.addAll(Arrays.asList(btnCameraman, btnDirector));
 
         initLoadButton();
+        initSubButtons();
         initOtherButtons();
     }
 
@@ -96,6 +97,71 @@ public class MenuController {
                 }
             }
         });
+    }
+    
+    /**
+     * Initializes the onAction events for the buttons that display
+     * the sub menus.
+     */
+    private void initSubButtons() {
+        btnPre.setOnAction(event -> {
+            animate(true);
+
+            isPreVisible = !isPreVisible;
+            isLiveVisible = false;
+            
+            toggleNodeVisibility(preNodes, liveNodes);
+        });
+        
+        btnLive.setOnAction(event -> {
+            animate(false);
+            
+            isLiveVisible = !isLiveVisible;
+            isPreVisible = false;
+            
+            toggleNodeVisibility(liveNodes, preNodes);
+        });
+    }
+    
+    /**
+     * Animates the sub buttons up or down.
+     * 
+     * @param pre Should be true if the pre button was clicked,
+     *      false if the live button was clicked.
+     */
+    private void animate(boolean pre) {
+        if (!isPreVisible && !isLiveVisible) {
+            Animation.animNodeUp(btnPre);
+            Animation.animNodeUp(btnLive);
+        } else if (isPreVisible && !isLiveVisible && pre) {
+            Animation.animNodeDown(btnPre);
+            Animation.animNodeDown(btnLive);
+        } else if (!isPreVisible && isLiveVisible && !pre) {
+            Animation.animNodeDown(btnPre);
+            Animation.animNodeDown(btnLive);
+        }
+    }
+    
+    /**
+     * Toggles the visibility of the nodes of the sub menu.
+     * 
+     * @param clicked The nodes of the button the user clicked on.
+     * @param hidden The nodes of the button the user did not click on.
+     */
+    private void toggleNodeVisibility(List<Node> clicked, List<Node> hidden) {
+        for (Node b : clicked) {
+            if (b.isVisible()) {
+                Animation.animNodeOut(b);
+            } else {
+                Animation.animNodeIn(b);
+            }
+        }
+        
+        for (Node b : hidden) {
+            if (b.isVisible()) {
+                Animation.animNodeOut(b);
+            }
+        }
     }
 
     /**
@@ -126,43 +192,6 @@ public class MenuController {
             CreateScriptController.setFill(true);
             CreateScriptController.show();
         });
-        
-        btnPre.setOnAction(event -> {
-            animate(true);
-            
-            toggleButtonVisibility(preButtons);
-            isPreVisible = !isPreVisible;
-        });
-        
-        btnLive.setOnAction(event -> {
-            animate(false);
-            
-            toggleButtonVisibility(liveButtons);
-            isLiveVisible = !isLiveVisible;
-        });
-    }
-    
-    private void animate(boolean pre) {
-        if (!isPreVisible && !isLiveVisible) {
-            Animation.animNodeUp(btnPre);
-            Animation.animNodeUp(btnLive);
-        } else if (isPreVisible && !isLiveVisible && pre) {
-            Animation.animNodeDown(btnPre);
-            Animation.animNodeDown(btnLive);
-        } else if (!isPreVisible && isLiveVisible && !pre) {
-            Animation.animNodeDown(btnPre);
-            Animation.animNodeDown(btnLive);
-        }
-    }
-    
-    private void toggleButtonVisibility(List<Button> list) {
-        for (Button b : list) {
-            if (b.isVisible()) {
-                Animation.animNodeOut(b);
-            } else {
-                Animation.animNodeIn(b);
-            }
-        }
     }
 
     /**

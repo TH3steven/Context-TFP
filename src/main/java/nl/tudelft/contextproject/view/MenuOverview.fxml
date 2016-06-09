@@ -47,8 +47,8 @@
          <children>
             <Pane GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Button fx:id="btnDirector" layoutX="60.0" layoutY="463.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as director" visible="false" />
-                  <Button fx:id="btnCameraman" layoutX="265.0" layoutY="463.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as cameraman" visible="false" />
+                  <Button fx:id="btnDirector" layoutX="60.0" layoutY="332.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as director" visible="false" />
+                  <Button fx:id="btnCameraman" layoutX="265.0" layoutY="332.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as cameraman" visible="false" />
                   <Button fx:id="btnPresets" layoutX="93.0" layoutY="322.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit presets" visible="false" />
                   <Button fx:id="btnPreview" layoutX="93.0" layoutY="376.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Preview shots" visible="false" />
                   <Button fx:id="btnCreateScript" layoutX="288.0" layoutY="322.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Create new script" visible="false" />
@@ -59,8 +59,8 @@
                         <Image url="logo-TFP.png" />
                      </image>
                   </ImageView>
-                  <Button fx:id="btnPre" layoutX="38.0" layoutY="332.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" styleClass="subButtons" text="Pre-production ↧" />
-                  <Button fx:id="btnLive" layoutX="288.0" layoutY="332.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" styleClass="subButtons" text="Live-production ↧" />
+                  <Button fx:id="btnPre" layoutX="38.0" layoutY="332.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" styleClass="subButton" text="Pre-production ↧" />
+                  <Button fx:id="btnLive" layoutX="288.0" layoutY="332.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" styleClass="subButton" text="Live-production ↧" />
                </children>
             </Pane>
          </children>

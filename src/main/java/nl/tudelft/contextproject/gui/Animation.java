@@ -6,9 +6,16 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
+/**
+ * This class is responsible for all animations made by the
+ * gui. It handles all translations, fades and other visually
+ * appealing effects that the end user can see.
+ * 
+ * @since 0.7
+ */
 public final class Animation {
 
-    private static final int DURATION_FADE = 700;
+    private static final int DURATION_FADE = 500;
     private static final int DURATION_TRANS = 300;
     private static final int OFFSET_Y = 80;
 
@@ -36,7 +43,15 @@ public final class Animation {
         animNodeUpDown(n, false);
     }
 
+    /**
+     * Move a {@link Node} up or down.
+     * 
+     * @param n The Node to move.
+     * @param up True if the animation is up, false if down.
+     */
     private static void animNodeUpDown(Node n, boolean up) {
+        n.setDisable(true);
+        
         TranslateTransition tt = new TranslateTransition(Duration.millis(DURATION_TRANS), n);
 
         if (up) {
@@ -47,6 +62,9 @@ public final class Animation {
 
         tt.setInterpolator(Interpolator.EASE_OUT);
         tt.play();
+        tt.setOnFinished(event -> {
+            n.setDisable(false);
+        });
     }
 
     /**
@@ -67,7 +85,7 @@ public final class Animation {
      * @param n The Node to animate.
      */
     protected static void animNodeOut(Node n) {
-        FadeTransition ft = new FadeTransition(Duration.millis(DURATION_FADE / 4), n);
+        FadeTransition ft = new FadeTransition(Duration.millis(DURATION_FADE / 3), n);
         ft.setFromValue(1.0);
         ft.setToValue(0.0);
         
