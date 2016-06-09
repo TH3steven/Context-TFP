@@ -5,42 +5,80 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.net.URL;
 
 /**
  * This test only runs when there is an actual connection with a real camera.
  * @since 0.4
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(LiveCameraConnection.class)
 public class LiveCameraConnectionTest {
     
-    private static boolean doTests = true;
+    private static boolean doTests = false;
+    private static boolean testLive;
     private static final int MAX_MOV_OFFSET = 5;
+    private static final String CAMERA_IP = "192.168.10.101";
     
-    private LiveCameraConnection connection;
+    private static LiveCameraConnection connection;
     
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        connection = new LiveCameraConnection(CAMERA_IP);
+        testLive = connection.setUpConnection();
+    }
+    
+    /**
+     * Sets up the connection for testing. Uses a partial PowerMockito mock
+     * for the connection. Sets some standard mocking rules for the 
+     * {@link LiveCameraConnection#sendRequest(URL)} method if there is no
+     * live connection.
+     * 
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
+     */
     @Before
-    public void setUp() throws Exception {
-        connection = new LiveCameraConnection("192.168.10.101");
-        doTests = doTests ? connection.setUpConnection() : doTests;
+    public void setUpTest() throws Exception {
+        connection = spy(new LiveCameraConnection(CAMERA_IP));
+        if (!testLive) {
+            URL cameraModelURL = connection.buildCamControlURL("QID");
+            URL autoFocusURL = connection.buildPanTiltHeadControlURL("%23D1");
+            URL absPanTiltURL = connection.buildPanTiltHeadControlURL("%23APC");
+            URL zoomURL = connection.buildPanTiltHeadControlURL("%23GZ");
+            URL focusURL = connection.buildPanTiltHeadControlURL("%23GF");
+            PowerMockito.doReturn("OID:AW-HE130").when(connection, "sendRequest", cameraModelURL);
+            PowerMockito.doReturn("d11").when(connection, "sendRequest", autoFocusURL);
+            PowerMockito.doReturn("aPC80008000").when(connection, "sendRequest", absPanTiltURL);
+            PowerMockito.doReturn("gz555").when(connection, "sendRequest", zoomURL);
+            PowerMockito.doReturn("gf555").when(connection, "sendRequest", focusURL);
+        }
+        connection.setUpConnection();
     }
 
     /**
      * Tests whether the connection was set up properly.
      */
     @Test
-    public void testSetUpConnection() {
-        if (doTests) {
-            assertTrue(connection.isConnected());
-            assertTrue(connection.hasAutoFocus());
+    public void testSetUpConnection() throws Exception {
+        if (!testLive) {
+            connection.setUpConnection();
+            assertEquals(new CameraSettings(32768, 32768, 1365, -1), connection.getLastKnownSettings());
         }
+        assertTrue(connection.isConnected());
+        assertTrue(connection.hasAutoFocus());
     }
 
     /**
@@ -49,11 +87,9 @@ public class LiveCameraConnectionTest {
      */
     @Test
     public void testGetCurrentCameraSettings() {
-        if (doTests) {
-            CameraSettings curSet = connection.getCurrentCameraSettings();
-            assertNotNull(curSet);
-            assertEquals(curSet, connection.getLastKnownSettings());
-        }
+        CameraSettings curSet = connection.getCurrentCameraSettings();
+        assertNotNull(curSet);
+        assertEquals(curSet, connection.getLastKnownSettings());
     }
 
     /**
@@ -246,7 +282,7 @@ public class LiveCameraConnectionTest {
     @Test
     public void testUpdateAll() {
         Camera c = new Camera();
-        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        connection = spy(new LiveCameraConnection(CAMERA_IP));
         doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
         doReturn(true).when(connection).absPanTilt(1965, 65);
         doReturn(true).when(connection).absZoom(650);
@@ -265,7 +301,7 @@ public class LiveCameraConnectionTest {
     @Test
     public void testUpdatePanTiltOnly() {
         Camera c = new Camera();
-        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        connection = spy(new LiveCameraConnection(CAMERA_IP));
         doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
         doReturn(true).when(connection).absPanTilt(1965, 65);
         connection.update(c, new CameraSettings(1965, 65, 0, 0));
@@ -282,7 +318,7 @@ public class LiveCameraConnectionTest {
     @Test
     public void testUpdateZoomOnly() {
         Camera c = new Camera();
-        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        connection = spy(new LiveCameraConnection(CAMERA_IP));
         doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
         doReturn(true).when(connection).absZoom(1965);
         connection.update(c, new CameraSettings(0, 0, 1965, 0));
@@ -299,7 +335,7 @@ public class LiveCameraConnectionTest {
     @Test
     public void testUpdateFocusOnly() {
         Camera c = new Camera();
-        connection = spy(new LiveCameraConnection("192.168.10.101"));
+        connection = spy(new LiveCameraConnection(CAMERA_IP));
         doReturn(new CameraSettings(0, 0, 0, 0)).when(connection).getCurrentCameraSettings();
         doReturn(true).when(connection).absFocus(1965);
         connection.update(c, new CameraSettings(0, 0, 0, 1965));
