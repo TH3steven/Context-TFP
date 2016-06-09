@@ -121,6 +121,14 @@ public class LiveStreamHandler {
      * @return Ratio of the media currently playing.
      */
     public FloatProperty getRatio() {
-        return videoSourceRatioProperty;
+        return this.videoSourceRatioProperty;
+    }
+    
+    /**
+     * Returns the URL of the stream that is currently played.
+     * @return The URL of the stream that is currently played.
+     */
+    public String getStreamLink() {
+        return this.streamLink;
     }
 }

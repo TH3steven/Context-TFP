@@ -208,6 +208,7 @@ public class DirectorLiveController {
             if (!endReached) {
                 script.next();
                 updateTables();
+                nextViews();
             }
         });
     }
@@ -317,6 +318,37 @@ public class DirectorLiveController {
     }
     
     /**
+     * Updates the live views of the cameras when you go to the next shot.
+     */
+    private void nextViews() {
+        Shot nextShot = script.getNextShot();
+        
+        liveStreamHandler = nextStreamHandler;
+        
+        if (bigShowsLive) {
+            bigViewBox.getChildren().clear();
+            createStream(liveStreamHandler.getStreamLink(), liveStreamHandler, bigViewBox);
+            smallViewBox.getChildren().clear();
+            if (nextShot != null) {
+                createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, smallViewBox);
+            } else {
+                initializeBlackViews(true);
+                nextStreamHandler.stop();
+            }
+        } else {
+            smallViewBox.getChildren().clear();
+            createStream(liveStreamHandler.getStreamLink(), liveStreamHandler, smallViewBox);
+            bigViewBox.getChildren().clear();
+            if (nextShot != null) {
+                createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, bigViewBox);
+            } else {
+                initializeBlackViews(true);
+                nextStreamHandler.stop();
+            }
+        }      
+    }
+    
+    /**
      * Creates a livestream in a VBox.
      * @param streamLink The link of the livestream.
      * @param streamHandler The LiveStreamHandler responsible for the stream.
@@ -326,7 +358,7 @@ public class DirectorLiveController {
         if (streamHandler != null) {
             streamHandler.stop();
         }
-        
+
         viewBox.getChildren().clear();
         ImageView imgView = streamHandler.createImageView(streamLink, 1920, 1080);
         viewBox.getChildren().add(imgView);
