@@ -57,7 +57,7 @@ public class ContextTFP extends Application {
         primaryStage.setTitle("TFP Camera Control");
         primaryStage.minWidthProperty().set(800);
         primaryStage.minHeightProperty().set(575);
-
+        
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
 

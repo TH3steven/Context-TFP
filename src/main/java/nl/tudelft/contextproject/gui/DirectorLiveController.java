@@ -1,5 +1,7 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -9,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -41,9 +44,6 @@ public class DirectorLiveController /*implements Observer*/ {
     
     @FXML private CheckBox automaticCheck;
 
-    @FXML private ImageView bigView;
-    @FXML private ImageView smallView;
-
     @FXML private Label bigCameraNumberLabel;
     @FXML private Label bigShotNumberLabel;
     @FXML private Label bigPresetLabel;
@@ -67,27 +67,84 @@ public class DirectorLiveController /*implements Observer*/ {
     
     private boolean endReached;
     private boolean live;
+    
+    /**
+     * True if the big screen shows the live view, otherwise false.
+     */
+    private boolean bigShowsLive;
+    
+    private LiveStreamHandler liveStreamHandler;
+    private LiveStreamHandler nextStreamHandler;
+    
 
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
-        
+
+        liveStreamHandler = new LiveStreamHandler();
+        nextStreamHandler = new LiveStreamHandler();
+
         endReached = false;
-        live = true;
+        bigShowsLive = true;
         
-        
-        bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
-        bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
+        if (!script.isEmpty()) {
+            if (script.getCurrent() == -1) {
+                script.next();
+            }
+            live = true;
+        } else {
+            live = false;
+        }
 
-        smallView.fitWidthProperty().bind(smallViewBox.widthProperty());
-        smallView.fitHeightProperty().bind(smallViewBox.heightProperty());
-
+        addListenersToBoxes();
         initializeLabels();
-        initializeViews();
         initializeButtons();
         initializeCheckbox();
+        
+        if (live) {
+            initializeLiveViews();
+        } else {
+            initializeBlackView(smallViewBox);
+            initializeBlackView(bigViewBox);
+        }
+    }
+    
+    /**
+     * Adds the listeners to the viewboxes in order to get scalability.
+     */
+    private void addListenersToBoxes() {
+        LiveStreamHandler smallStream;
+        LiveStreamHandler bigStream;
+        
+        if (bigShowsLive) {
+            smallStream = nextStreamHandler;
+            bigStream = liveStreamHandler;
+        } else {
+            smallStream = liveStreamHandler;
+            bigStream = nextStreamHandler;
+        }
+        
+        smallViewBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize(newValue.floatValue(), (float) smallViewBox.getHeight(), 
+                    (ImageView) smallViewBox.getChildren().get(0), smallStream);
+        });
+        
+        smallViewBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize((float) smallViewBox.getWidth(), newValue.floatValue(), 
+                    (ImageView) smallViewBox.getChildren().get(0), smallStream);
+        });
+        
+        bigViewBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize(newValue.floatValue(), (float) bigViewBox.getHeight(), 
+                    (ImageView) bigViewBox.getChildren().get(0), bigStream);
+        });
+        
+        bigViewBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            fitImageViewSize((float) bigViewBox.getWidth(), newValue.floatValue(), 
+                    (ImageView) bigViewBox.getChildren().get(0), bigStream);
+        });
     }
 
     /**
@@ -102,19 +159,40 @@ public class DirectorLiveController /*implements Observer*/ {
     }
 
     /**
-     * Initializes the views.
+     * Initializes the live views.
      */
-    private void initializeViews() {
-        Image actual = new Image("placeholder_picture.jpg");
-        bigView.setImage(actual);
-        
-        Image next;
+    private void initializeLiveViews() {
+        createStream(script.getCurrentShot().getCamera().getConnection().getStreamLink(), 
+                liveStreamHandler, bigViewBox);
+
         if (script.getNextShot() != null) {
-            next = new Image("test3.jpg");
+            createStream(script.getNextShot().getCamera().getConnection().getStreamLink(), 
+                    nextStreamHandler, smallViewBox);
         } else {
-            next = new Image("black.png");
+            initializeBlackView(smallViewBox);
         }
-        smallView.setImage(next);
+    }
+    
+    /**
+     * Adds a black ImageView to a VBox.
+     * @param VBox The vBox to which the created black ImageView should be added.
+     */
+    private void initializeBlackView(VBox vBox) {
+        ImageView img1 = new ImageView("black.png"); 
+        bindImageToBox(img1, vBox);
+        vBox.getChildren().clear();
+        vBox.getChildren().add(img1);
+    }
+    
+    /**
+     * Binds the width and height properties of an ImageView to the properties of a VBox..
+     * 
+     * @param imgView The ImageView whose properties should be bound.
+     * @param box The target whose properties will be used.
+     */
+    private void bindImageToBox(ImageView imgView, VBox box) {
+        imgView.fitWidthProperty().bind(box.widthProperty());
+        imgView.fitHeightProperty().bind(box.heightProperty());        
     }
 
     /**
@@ -122,28 +200,14 @@ public class DirectorLiveController /*implements Observer*/ {
      */
     private void initializeButtons() {
         btnSwap.setOnAction((event) -> {
-            Image three = bigView.getImage();
-            bigView.setImage(smallView.getImage());
-            smallView.setImage(three);
-            String text = bigStatusLabel.getText();
-            bigStatusLabel.setText(smallStatusLabel.getText());
-            smallStatusLabel.setText(text);
-
-            if (text.equals("LIVE")) {
-                smallStatusLabel.setStyle("-fx-text-fill: red;");
-                bigStatusLabel.setStyle("");
-            } else {
-                smallStatusLabel.setStyle("");
-                bigStatusLabel.setStyle("-fx-text-fill: red;");
-            }
-            
-            live = !live;
-            
-            updateTables();
+            swapAction();
         });
 
         btnBack.toFront();
         btnBack.setOnAction((event) -> {
+            liveStreamHandler.stop();
+            nextStreamHandler.stop();
+            live = false;
             MenuController.show();
         });
         
@@ -155,8 +219,77 @@ public class DirectorLiveController /*implements Observer*/ {
                     script.next(false);
                 }
                 updateTables();
+                nextViews();
             }
         });
+    }
+    
+    /**
+     * Performs the action to swap the two views.
+     */
+    private void swapAction() {
+        bigShowsLive = !bigShowsLive;
+        
+        swapViews();
+
+        String text = bigStatusLabel.getText();
+        bigStatusLabel.setText(smallStatusLabel.getText());
+        smallStatusLabel.setText(text);
+
+        if (text.equals("LIVE")) {
+            smallStatusLabel.setStyle("-fx-text-fill: red;");
+            bigStatusLabel.setStyle("");
+        } else {
+            smallStatusLabel.setStyle("");
+            bigStatusLabel.setStyle("-fx-text-fill: red;");
+        }
+        
+        updateTables();
+    }
+    
+    /**
+     * Swaps the small and big view.
+     */
+    private void swapViews() {
+        ImageView newBig = (ImageView) smallViewBox.getChildren().get(0);
+        ImageView newSmall = (ImageView) bigViewBox.getChildren().get(0);
+        smallViewBox.getChildren().clear();
+        smallViewBox.getChildren().add(newSmall);
+        bigViewBox.getChildren().clear();
+        bigViewBox.getChildren().add(newBig); 
+        bigViewBox.getChildren().get(0);
+        swapScalability(newSmall, newBig);
+    }
+    
+    /**
+     * Implements the scalability after the views have been swapped.
+     * 
+     * @param small The ImageView that is displayed in the smallViewBox.
+     * @param big The ImageView that is displayed in the bigViewBox.
+     */
+    private void swapScalability(ImageView small, ImageView big) {
+        LiveStreamHandler smallStream;
+        LiveStreamHandler bigStream;
+        
+        if (bigShowsLive) {
+            smallStream = nextStreamHandler;
+            bigStream = liveStreamHandler;
+        } else {
+            smallStream = liveStreamHandler;
+            bigStream = nextStreamHandler;
+        }
+        
+        if (big.getImage() instanceof WritableImage) {
+            fitImageViewSize((float) bigViewBox.getWidth(), (float) bigViewBox.getHeight(), big, bigStream);
+        } else {
+            bindImageToBox(big, bigViewBox);
+        }
+        
+        if (small.getImage() instanceof WritableImage) {
+            fitImageViewSize((float) smallViewBox.getWidth(), (float) smallViewBox.getHeight(), small, smallStream);
+        } else {
+            bindImageToBox(small, smallViewBox);
+        }
     }
 
     private void initializeCheckbox() {
@@ -173,7 +306,7 @@ public class DirectorLiveController /*implements Observer*/ {
     private void updateTables() {
         Shot smallShot;
         Shot bigShot;
-        if (live) {
+        if (bigShowsLive) {
             smallShot = script.getNextShot();
             bigShot = script.getCurrentShot();
         } else {
@@ -183,16 +316,17 @@ public class DirectorLiveController /*implements Observer*/ {
         
         if (smallShot != null) {
             smallShotNumberLabel.setText(smallShot.getShotId());
-            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber()));
+            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber() + 1));
             smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
             smallDescriptionField.setText(smallShot.getDescription());
         } else {
-            endOfScript(false);
+            initializeBlackView(smallViewBox);
+            endOfScript(false);            
         }
 
         if (bigShot != null) {
             bigShotNumberLabel.setText(bigShot.getShotId());
-            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber()));
+            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber() + 1));
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
         } else {
@@ -202,19 +336,93 @@ public class DirectorLiveController /*implements Observer*/ {
     
     private void endOfScript(boolean big) {
         if (big) {
-            bigView.setImage(new Image("black.png"));
             bigShotNumberLabel.setText("");
             bigCameraNumberLabel.setText("");
             bigPresetLabel.setText("");
             bigDescriptionField.setText("End of script reached");
             endReached = true;
         } else {
-            smallView.setImage(new Image("black.png"));
             smallShotNumberLabel.setText("");
             smallCameraNumberLabel.setText("");
             smallPresetLabel.setText("");
             smallDescriptionField.setText("End of script reached");
             endReached = true;
+        }
+    }
+    
+    /**
+     * Updates the live views of the cameras when you go to the next shot.
+     */
+    private void nextViews() {
+        Shot nextShot = script.getNextShot();
+        Shot currentShot = script.getCurrentShot();
+        
+        if (bigShowsLive) {
+            bigViewBox.getChildren().clear();
+            createStream(currentShot.getCamera().getConnection().getStreamLink(), liveStreamHandler, bigViewBox);
+            smallViewBox.getChildren().clear();
+            if (nextShot != null) {
+                createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, smallViewBox);
+            } else {
+                initializeBlackView(smallViewBox);
+                nextStreamHandler.stop();
+            }
+        } else {
+            smallViewBox.getChildren().clear();
+            createStream(currentShot.getCamera().getConnection().getStreamLink(), liveStreamHandler, smallViewBox);
+            bigViewBox.getChildren().clear();
+            if (nextShot != null) {
+                createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, bigViewBox);
+            } else {
+                initializeBlackView(bigViewBox);
+                nextStreamHandler.stop();
+            }
+        }      
+    }
+    
+    /**
+     * Creates a livestream in a VBox.
+     * @param streamLink The link of the livestream.
+     * @param streamHandler The LiveStreamHandler responsible for the stream.
+     * @param viewBox The VBox which will contain the stream.
+     */
+    private void createStream(String streamLink, LiveStreamHandler streamHandler, VBox viewBox) {
+        if (streamHandler != null) {
+            streamHandler.stop();
+        }
+
+        viewBox.getChildren().clear();
+        ImageView imgView = streamHandler.createImageView(streamLink, 1920, 1080);
+        viewBox.getChildren().add(imgView);
+        Platform.runLater(() -> {
+            fitImageViewSize((float) viewBox.getWidth(), (float) viewBox.getHeight(), imgView, streamHandler);
+        });       
+        streamHandler.start();
+    }
+    
+    /**
+     * Resizes the ImageView.
+     * @param width The new width of the ImageView.
+     * @param height The new height of the ImageView.
+     * @param imageView The imageView that needs resizing.
+     * @param streamHandler The LiveStreamHandler responsible for the stream.
+     */
+    private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
+        if (imageView.getImage() instanceof WritableImage && streamHandler.isPlaying()) {
+            FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
+            float fitHeight = videoSourceRatioProperty.get() * width;
+            if (fitHeight > height) {
+                imageView.setFitHeight(height);
+                double fitWidth = height / videoSourceRatioProperty.get();
+                imageView.setFitWidth(fitWidth);
+                imageView.setX((width - fitWidth) / 2);
+                imageView.setY(0);
+            } else {
+                imageView.setFitWidth(width);
+                imageView.setFitHeight(fitHeight);
+                imageView.setY((height - fitHeight) / 2);
+                imageView.setX(0);
+            } 
         }
     }
     

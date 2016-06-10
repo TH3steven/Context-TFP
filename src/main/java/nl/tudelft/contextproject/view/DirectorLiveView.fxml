@@ -5,7 +5,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -30,9 +29,6 @@
             <VBox alignment="CENTER" GridPane.hgrow="ALWAYS">
                <children>
                   <VBox fx:id="bigViewBox" alignment="CENTER" minHeight="149.0" minWidth="187.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <ImageView fx:id="bigView" fitHeight="292.0" fitWidth="512.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
                      <padding>
                         <Insets right="5.0" />
                      </padding>
@@ -93,9 +89,6 @@
             <VBox alignment="CENTER" GridPane.columnIndex="1">
                <children>
                   <VBox fx:id="smallViewBox" alignment="CENTER" maxHeight="400.0" minHeight="136.0" minWidth="240.0" VBox.vgrow="SOMETIMES">
-                     <children>
-                        <ImageView fx:id="smallView" fitHeight="136.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
                      <padding>
                         <Insets left="5.0" />
                      </padding>
