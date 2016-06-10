@@ -4,14 +4,11 @@ import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Observable;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,7 +20,7 @@ import java.util.TimerTask;
  * 
  * @since 0.2
  */
-public class Script extends Observable implements Iterator<Shot> {
+public class Script implements Iterator<Shot> {
 
     /**
      * Contains the Timelines per camera number.
@@ -281,7 +278,6 @@ public class Script extends Observable implements Iterator<Shot> {
     public Shot next() {
         current++;
         Shot next = shots.get(current);
-        next.execute();
         
         updateOldCamCaller();
 

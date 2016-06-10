@@ -10,14 +10,15 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
+
+import nl.tudelft.contextproject.ContextTFP;
+
 import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 import java.nio.ByteBuffer;
-
-import nl.tudelft.contextproject.ContextTFP;
 
 /**
  * Handler for streaming media into the GUI through VLC.

@@ -9,7 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
@@ -34,7 +33,7 @@ import java.io.IOException;
  * 
  * @since 0.3
  */
-public class DirectorLiveController /*implements Observer*/ {
+public class DirectorLiveController {
 
     private static Script script;
 
