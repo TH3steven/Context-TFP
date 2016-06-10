@@ -161,14 +161,18 @@ public class DirectorLiveController {
      * Initializes the live views.
      */
     private void initializeLiveViews() {
-        createStream(script.getCurrentShot().getCamera().getConnection().getStreamLink(), 
-                liveStreamHandler, bigViewBox);
-
-        if (script.getNextShot() != null) {
+        if (script.getCurrentShot().getCamera().getConnection() == null) {
+            initializeBlackView(bigViewBox);
+        } else {
+            createStream(script.getCurrentShot().getCamera().getConnection().getStreamLink(), 
+                    liveStreamHandler, bigViewBox);
+        }
+        
+        if (script.getNextShot() == null || script.getNextShot().getCamera().getConnection() == null) {
+            initializeBlackView(smallViewBox);           
+        } else {
             createStream(script.getNextShot().getCamera().getConnection().getStreamLink(), 
                     nextStreamHandler, smallViewBox);
-        } else {
-            initializeBlackView(smallViewBox);
         }
     }
     
