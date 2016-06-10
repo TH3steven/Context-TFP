@@ -5,13 +5,15 @@ import javafx.beans.property.FloatProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
@@ -38,6 +40,8 @@ public class DirectorLiveController {
     @FXML private Button btnBack;
     @FXML private Button btnNext;
     @FXML private Button btnSwap;
+    
+    @FXML private CheckBox automaticCheck;
 
     @FXML private Label bigCameraNumberLabel;
     @FXML private Label bigShotNumberLabel;
@@ -50,9 +54,15 @@ public class DirectorLiveController {
 
     @FXML private TextArea bigDescriptionField;
     @FXML private TextArea smallDescriptionField;
+    
+    @FXML private TableColumn<Shot, Number> numberColumn;
+    @FXML private TableColumn<Shot, String> idColumn;
+    @FXML private TableColumn<Shot, Button> btnColumn;
 
     @FXML private VBox bigViewBox;
     @FXML private VBox smallViewBox;
+    @FXML private VBox vboxButtons;
+    @FXML private VBox vboxLabels;
     
     private boolean endReached;
     private boolean live;
@@ -71,6 +81,7 @@ public class DirectorLiveController {
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
+
         liveStreamHandler = new LiveStreamHandler();
         nextStreamHandler = new LiveStreamHandler();
 
@@ -89,6 +100,7 @@ public class DirectorLiveController {
         addListenersToBoxes();
         initializeLabels();
         initializeButtons();
+        initializeCheckbox();
         
         if (live) {
             initializeLiveViews();
@@ -200,7 +212,7 @@ public class DirectorLiveController {
         
         btnNext.setOnAction((event) -> {
             if (!endReached) {
-                script.next();
+                script.next(automaticCheck.isSelected());
                 updateTables();
                 nextViews();
             }
@@ -275,6 +287,14 @@ public class DirectorLiveController {
         }
     }
 
+    private void initializeCheckbox() {
+        automaticCheck.selectedProperty().addListener((obs, oldV, newV) -> {
+            if (newV && script.getCurrent() > -1) {
+                script.adjustAllCameras();
+            }
+        });
+    }
+    
     /**
      * Updates the table contents according to the current position in the script.
      */
@@ -296,11 +316,7 @@ public class DirectorLiveController {
             smallDescriptionField.setText(smallShot.getDescription());
         } else {
             initializeBlackView(smallViewBox);
-            smallShotNumberLabel.setText("");
-            smallCameraNumberLabel.setText("");
-            smallPresetLabel.setText("");
-            smallDescriptionField.setText("End of script reached");
-            endReached = true;
+            endOfScript(false);            
         }
 
         if (bigShot != null) {
@@ -308,7 +324,25 @@ public class DirectorLiveController {
             bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber() + 1));
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
-        } 
+        } else {
+            endOfScript(true);
+        }
+    }
+    
+    private void endOfScript(boolean big) {
+        if (big) {
+            bigShotNumberLabel.setText("");
+            bigCameraNumberLabel.setText("");
+            bigPresetLabel.setText("");
+            bigDescriptionField.setText("End of script reached");
+            endReached = true;
+        } else {
+            smallShotNumberLabel.setText("");
+            smallCameraNumberLabel.setText("");
+            smallPresetLabel.setText("");
+            smallDescriptionField.setText("End of script reached");
+            endReached = true;
+        }
     }
     
     /**

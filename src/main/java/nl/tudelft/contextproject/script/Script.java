@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -221,6 +222,29 @@ public class Script implements Iterator<Shot> {
             }
         }, 1000);
     }
+    
+    /**
+     * Moves all cameras to their preset, except the one
+     * that is live.
+     */
+    public void adjustAllCameras() {
+        Set<Integer> cameras = timelines.keySet();
+        int liveCamera = shots.get(current).getCamera().getNumber();
+        
+        Shot shot;
+        
+        for (int i = current + 1; i < shots.size(); i++) {
+            shot = shots.get(i);
+            int camNum = shot.getCamera().getNumber();
+            if (cameras.contains(camNum) && camNum != liveCamera) {
+                shot.execute();
+                cameras.remove(camNum);
+            }
+            if (cameras.size() == 1) {
+                break;
+            }
+        }
+    }
 
     /**
      * Returns true if there is a next shot, the +1 is used because we initialize with -1.
@@ -252,11 +276,29 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        updateOldCamCaller();
-
         current++;
         Shot next = shots.get(current);
-        next.execute();
+        
+        updateOldCamCaller();
+
+        return next;
+    }
+    
+    /**
+     * Go to the next shot.
+     * Depending on boolean skip, cameras are adjusted or not.
+     * 
+     * @param skip Determines whether cameras should be adjusted.
+     * @return The next shot
+     */
+    public Shot next(boolean skip) {
+        if (!skip) {
+            updateOldCamCaller();
+        } 
+        
+        current++;
+        Shot next = shots.get(current);
+        
         return next;
     }
 }

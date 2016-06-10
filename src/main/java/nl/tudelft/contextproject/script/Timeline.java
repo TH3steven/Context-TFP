@@ -87,6 +87,22 @@ public class Timeline {
             nextShot.getPreset().applyTo(camera);
         }
     }
+    
+    /**
+     * Return the next shot of the timeline starting from an old shot
+     * 
+     * @param oldShot The old shot to get the next shot from.
+     * @return The next shot.
+     */
+    public Shot getNextShot(Shot oldShot) {
+        int oldIndex = shots.indexOf(oldShot);
+
+        if (oldIndex + 1 < shots.size()) {
+            return shots.get(oldIndex + 1);
+        }
+        
+        return null;
+    }
 
     /**
      * This method is responsible for the execution of the shots present on our script.
