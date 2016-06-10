@@ -212,11 +212,7 @@ public class DirectorLiveController {
         
         btnNext.setOnAction((event) -> {
             if (!endReached) {
-                if (automaticCheck.isSelected()) {
-                    script.next(true);
-                } else {
-                    script.next(false);
-                }
+                script.next(automaticCheck.isSelected());
                 updateTables();
                 nextViews();
             }
