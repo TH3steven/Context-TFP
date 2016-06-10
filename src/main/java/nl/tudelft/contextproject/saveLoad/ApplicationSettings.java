@@ -158,10 +158,10 @@ public final class ApplicationSettings {
     
     /**
      * Returns true iff the current settings are valid, that is iff:
-     * <blockquote>{@link resX} != 0
-     *      <br>{@link resY} != 0
-     *      <br>{@link vlcLocation} != null
-     *      <br>{@link cameraIPs} != null
+     * <blockquote>{@link #resX} != 0
+     *      <br>{@link #resY} != 0
+     *      <br>{@link #vlcLocation} != null
+     *      <br>{@link #cameraIPs} != null
      * </blockquote>
      * @return true iff the current settings are valid.
      */
@@ -199,7 +199,7 @@ public final class ApplicationSettings {
                         resY = sc.hasNextInt() ? sc.nextInt() : DEFAULT_RESY;
                         break;
                     case "vlcLocation":
-                        vlcLocation = sc.hasNext() ? sc.next() : vlcLocation;
+                        vlcLocation = sc.hasNext() ? sc.nextLine().trim() : vlcLocation;
                         break;
                     case "cameraIPs":
                         loadCameraIPs(sc);
