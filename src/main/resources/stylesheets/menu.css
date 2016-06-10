@@ -20,6 +20,6 @@
     -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 0, 0.0 , 0 , 1);
 }
 
-.editBox {
-	-fx-background-color: #ddd
+.subButton {
+	-fx-font-size: 15px;
 }

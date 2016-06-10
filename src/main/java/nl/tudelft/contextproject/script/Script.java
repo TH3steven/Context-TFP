@@ -1,11 +1,17 @@
 package nl.tudelft.contextproject.script;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.presets.InstantPreset;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class to represent a Script of {@link Shot Shots}.
@@ -36,6 +42,11 @@ public class Script implements Iterator<Shot> {
      * The name of the script as displayed on the ui.
      */
     private String name;
+    
+    /**
+     * The timer to delay moving of a camera.
+     */
+    private Timer timer;
 
     /**
      * Creates a script that starts from the beginning with specified shots.
@@ -47,9 +58,11 @@ public class Script implements Iterator<Shot> {
         this.shots = shots;
         current = -1;
         name = "";
+        timer = new Timer();
         timelines = new HashMap<Integer, Timeline>();
+        
         initTimelines();
-        initPresetLoading();
+        initPresetLoading();       
     }
 
     /**
@@ -144,6 +157,14 @@ public class Script implements Iterator<Shot> {
             timelines.put(s.getCamera().getNumber(), t);
         }
     }
+    
+    /**
+     * Returns the "current" variable of this class.
+     * @return current
+     */
+    public int getCurrent() {
+        return current;
+    }
 
     /**
      * Returns the current shot, null if there is no such shot.
@@ -153,7 +174,7 @@ public class Script implements Iterator<Shot> {
         try {
             return shots.get(current);
         } catch (Exception e) {
-            return null;
+            return new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
         }
     }
 
@@ -182,6 +203,47 @@ public class Script implements Iterator<Shot> {
      */
     public void setName(String name) {
         this.name = name;
+    }
+    
+    /**
+     * Calls the updateOldCam() method after a short delay.
+     * This is to give the post-production some extra footage to work with.
+     */
+    public synchronized void updateOldCamCaller() {
+        timer.cancel();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (current > -1) {
+                    Shot old = shots.get(current);
+                    timelines.get(old.getCamera().getNumber()).nextPreset(old);
+                }
+            }
+        }, 1000);
+    }
+    
+    /**
+     * Moves all cameras to their preset, except the one
+     * that is live.
+     */
+    public void adjustAllCameras() {
+        Set<Integer> cameras = timelines.keySet();
+        int liveCamera = shots.get(current).getCamera().getNumber();
+        
+        Shot shot;
+        
+        for (int i = current + 1; i < shots.size(); i++) {
+            shot = shots.get(i);
+            int camNum = shot.getCamera().getNumber();
+            if (cameras.contains(camNum) && camNum != liveCamera) {
+                shot.execute();
+                cameras.remove(camNum);
+            }
+            if (cameras.size() == 1) {
+                break;
+            }
+        }
     }
 
     /**
@@ -214,14 +276,29 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        if (current > -1) {
-            Shot old = shots.get(current);
-            timelines.get(old.getCamera().getNumber()).nextPreset(old);
-        }
-
         current++;
         Shot next = shots.get(current);
-        next.execute();
+        
+        updateOldCamCaller();
+
+        return next;
+    }
+    
+    /**
+     * Go to the next shot.
+     * Depending on boolean skip, cameras are adjusted or not.
+     * 
+     * @param skip Determines whether cameras should be adjusted.
+     * @return The next shot
+     */
+    public Shot next(boolean skip) {
+        if (!skip) {
+            updateOldCamCaller();
+        } 
+        
+        current++;
+        Shot next = shots.get(current);
+        
         return next;
     }
 }

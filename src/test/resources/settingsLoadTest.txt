@@ -1,0 +1,6 @@
+resX 1965
+resY 420
+vlcLocation D:\program files
+cameraIPs
+1 65.65.65.65
+3 420.420.420.420

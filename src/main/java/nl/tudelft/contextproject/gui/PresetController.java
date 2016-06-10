@@ -77,17 +77,14 @@ public class PresetController {
      */
     private void applySettings() {
         vBox.setAlignment(Pos.CENTER);
-
         vBox.getChildren().clear();
-        
-        System.setProperty("jna.library.path", "C:\\Program Files\\VideoLAN\\VLC");
     }
     
     /**
      * Updates the camera stream to the stream referenced by the specified link.
      * @param streamLink the link to the video stream to be played next.
      */
-    public void updateStream(String streamLink) {
+    private void updateStream(String streamLink) {
         if (streamHandler != null) {
             streamHandler.stop();
         }
@@ -193,7 +190,7 @@ public class PresetController {
             imageView.setFitHeight(fitHeight);
             imageView.setY((height - fitHeight) / 2);
             imageView.setX(0);
-        }       
+        }   
     }
 
     /**

@@ -10,6 +10,9 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
+
+import nl.tudelft.contextproject.ContextTFP;
+
 import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
@@ -46,15 +49,20 @@ public class LiveStreamHandler {
      * Starts playing the media.
      */
     public void start() {
-        mediaPlayer.getMediaPlayer().playMedia(streamLink);
+        if (mediaPlayer != null) {
+            mediaPlayer.getMediaPlayer().playMedia(streamLink);
+        }
     }
     
     /**
      * Stops playing the media and release associated resources.
      */
     public void stop() {
-        mediaPlayer.getMediaPlayer().stop();
-        mediaPlayer.getMediaPlayer().release();
+        if (mediaPlayer != null) {
+            mediaPlayer.getMediaPlayer().stop();
+            mediaPlayer.getMediaPlayer().release();
+            mediaPlayer = null;
+        }
     }
     
     /**
@@ -65,6 +73,9 @@ public class LiveStreamHandler {
      * @return a ImageView object displaying the stream.
      */
     public ImageView createImageView(String streamLink, double width, double height) {
+        if (!ContextTFP.hasVLC()) {
+            return createErrorImageView();
+        }
         WritableImage writableImage = new WritableImage((int) width, (int) height);
         imageView = new ImageView(writableImage);
         this.streamLink = streamLink;
@@ -92,10 +103,34 @@ public class LiveStreamHandler {
     }
     
     /**
+     * Returns true if there is an active MediaPlayer.
+     * @return True if there is an active MediaPlayer, otherwise false.
+     */
+    public boolean isPlaying() {
+        return this.mediaPlayer != null;
+    }
+    
+    /**
+     * Returns an ImageView displaying an error symbol.
+     * @return The created ImageView.
+     */
+    public ImageView createErrorImageView() {
+        return new ImageView("error.jpg");
+    }
+    
+    /**
      * Returns the ratio of the media currently playing.
      * @return Ratio of the media currently playing.
      */
     public FloatProperty getRatio() {
-        return videoSourceRatioProperty;
+        return this.videoSourceRatioProperty;
+    }
+    
+    /**
+     * Returns the URL of the stream that is currently played.
+     * @return The URL of the stream that is currently played.
+     */
+    public String getStreamLink() {
+        return this.streamLink;
     }
 }

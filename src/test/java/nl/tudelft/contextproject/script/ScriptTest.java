@@ -39,6 +39,7 @@ public class ScriptTest {
     private Shot shot1;
     private Shot shot2;
     private Shot shot3;
+    private Shot dummyShot;
     private Script script1;
     private Script script2;
     private Timeline timeline1;
@@ -58,6 +59,7 @@ public class ScriptTest {
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(2, cam1, pres2);
         shot3 = new Shot(3, cam0, pres3);
+        dummyShot = new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
         los = new ArrayList<>();
         los1 = new ArrayList<>();
         los.add(shot1);
@@ -135,9 +137,8 @@ public class ScriptTest {
      * Throws an exception is list is empty.
      */
     @Test
-    public  void testNext() throws NoSuchElementException {
+    public void testNext() throws NoSuchElementException {
         assertEquals(script1.next(), shot1);
-        assertFalse(script2.hasNext());
         assertEquals(script1.next(), shot2);
         script1.next();
         assertFalse(script1.hasNext());
@@ -152,12 +153,12 @@ public class ScriptTest {
      */
     @Test
     public void testGetCurrentShot() {
-        assertNull(script1.getCurrentShot());
+        assertEquals(script1.getCurrentShot(), dummyShot);
         assertTrue(script1.hasNext());
         assertEquals(script1.getNextShot(), shot1);
         assertTrue(script1.hasNext());
         script1.next();
-        assertEquals(script1.getNextShot(), shot2);
+        assertEquals(script1.getCurrentShot(), shot1);
     }
 
     /**
@@ -224,5 +225,13 @@ public class ScriptTest {
         script2.addShot(shot1);
         assertEquals(script2.getShots(), los1);
         assertTrue(timeline1.getShots().contains(shot1));
+    }
+    
+    @Test
+    public void testGetCurrent() {
+        assertEquals(-1, script1.getCurrent());
+        script1.next();
+        script1.next();
+        assertEquals(1, script1.getCurrent());
     }
 }
