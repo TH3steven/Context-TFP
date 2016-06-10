@@ -60,6 +60,7 @@ public class LiveStreamHandler {
         if (mediaPlayer != null) {
             mediaPlayer.getMediaPlayer().stop();
             mediaPlayer.getMediaPlayer().release();
+            mediaPlayer = null;
         }
     }
     
@@ -100,6 +101,18 @@ public class LiveStreamHandler {
         return imageView;
     }
     
+    /**
+     * Returns true if there is an active MediaPlayer.
+     * @return True if there is an active MediaPlayer, otherwise false.
+     */
+    public boolean isPlaying() {
+        return this.mediaPlayer != null;
+    }
+    
+    /**
+     * Returns an ImageView displaying an error symbol.
+     * @return The created ImageView.
+     */
     public ImageView createErrorImageView() {
         return new ImageView("error.jpg");
     }
@@ -109,6 +122,14 @@ public class LiveStreamHandler {
      * @return Ratio of the media currently playing.
      */
     public FloatProperty getRatio() {
-        return videoSourceRatioProperty;
+        return this.videoSourceRatioProperty;
+    }
+    
+    /**
+     * Returns the URL of the stream that is currently played.
+     * @return The URL of the stream that is currently played.
+     */
+    public String getStreamLink() {
+        return this.streamLink;
     }
 }
