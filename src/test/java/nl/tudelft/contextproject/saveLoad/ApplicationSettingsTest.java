@@ -84,6 +84,12 @@ public class ApplicationSettingsTest {
         assertFalse(settings.isLoaded());
     }
     
+    /**
+     * Tests {@link ApplicationSettings#load()}. Loads a full settings file.
+     * 
+     * <p>Uses @SuppressWarnings to suppress the warning about a hardcoded IP,
+     * which isn't meant to be an actual IP.
+     */
     @Test
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     public void testLoadFull() throws Exception {
@@ -98,7 +104,6 @@ public class ApplicationSettingsTest {
         assertEquals(420, settings.getRenderResY());
         assertEquals("D:\\program files", settings.getVlcLocation());
         assertEquals(expectedIPs, settings.getAllCameraIPs());
-        
     }
 
     /**
