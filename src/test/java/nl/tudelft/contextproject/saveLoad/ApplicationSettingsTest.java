@@ -23,10 +23,14 @@ import java.util.Scanner;
 /**
  * Test for the ApplicationSettings class.
  * 
+ * <p>Uses @SuppressWarnings to suppress the PMD warning, because using JUnit and
+ * PowerMock(ito) brings a lot of static imports, but they do not decrease
+ * the readability of the code. 
  * @since 0.7
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ApplicationSettings.class)
+@SuppressWarnings("PMD.TooManyStaticImports")
 public class ApplicationSettingsTest {
     
     /**
@@ -42,6 +46,7 @@ public class ApplicationSettingsTest {
 
     /**
      * Tests {@link ApplicationSettings#isLoaded()}.
+     * Loads two different files.
      */
     @Test
     public void testIsLoaded() throws Exception {
@@ -98,9 +103,15 @@ public class ApplicationSettingsTest {
 
     /**
      * Tests {@link ApplicationSettings#save()}.
+     * 
+     * <p>Uses @SuppressWarnings to suppress the warning about a hardcoded IP,
+     * which isn't meant to be an actual IP. The 'resource' warning is due to
+     * the PrintWriter in the doReturn statement. This resource is closed, because
+     * it's technically injected in the save method, which closes the writer it
+     * uses.
      */
     @Test
-    @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
+    @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", "resource" })
     public void testSave() throws Exception {
         ApplicationSettings settings = spy(ApplicationSettings.getInstance());
         File actual = new File("src/test/resources/settingsSaveActual.txt");
