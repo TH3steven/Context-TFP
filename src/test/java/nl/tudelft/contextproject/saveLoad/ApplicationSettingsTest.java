@@ -91,7 +91,7 @@ public class ApplicationSettingsTest {
         expectedIPs.put(3, "420.420.420.420");
         assertEquals(1965, settings.getRenderResX());
         assertEquals(420, settings.getRenderResY());
-        assertEquals("", settings.getVlcLocation());
+        assertEquals("D:\\program files", settings.getVlcLocation());
         assertEquals(expectedIPs, settings.getAllCameraIPs());
         
     }
