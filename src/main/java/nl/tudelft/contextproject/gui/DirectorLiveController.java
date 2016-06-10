@@ -297,7 +297,7 @@ public class DirectorLiveController {
         
         if (smallShot != null) {
             smallShotNumberLabel.setText(smallShot.getShotId());
-            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber()));
+            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber() + 1));
             smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
             smallDescriptionField.setText(smallShot.getDescription());
         } else {
@@ -311,7 +311,7 @@ public class DirectorLiveController {
 
         if (bigShot != null) {
             bigShotNumberLabel.setText(bigShot.getShotId());
-            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber()));
+            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber() + 1));
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
         } 
