@@ -93,7 +93,8 @@ public class DirectorLiveController {
         if (live) {
             initializeLiveViews();
         } else {
-            initializeBlackViews(false);
+            initializeBlackView(smallViewBox);
+            initializeBlackView(bigViewBox);
         }
     }
     
@@ -155,26 +156,19 @@ public class DirectorLiveController {
             createStream(script.getNextShot().getCamera().getConnection().getStreamLink(), 
                     nextStreamHandler, smallViewBox);
         } else {
-            initializeBlackViews(true);
+            initializeBlackView(smallViewBox);
         }
     }
     
     /**
-     * Initializes the views with black screens,
-     * @param smallOnly True if only the small view needs a black screen.
+     * Adds a black ImageView to a VBox.
+     * @param VBox The vBox to which the created black ImageView should be added.
      */
-    private void initializeBlackViews(boolean smallOnly) {
+    private void initializeBlackView(VBox vBox) {
         ImageView img1 = new ImageView("black.png"); 
-        bindImageToBox(img1, smallViewBox);
-        smallViewBox.getChildren().clear();
-        smallViewBox.getChildren().add(img1);
-        
-        if (!smallOnly) {
-            ImageView img2 = new ImageView("black.png"); 
-            bindImageToBox(img2, bigViewBox);
-            bigViewBox.getChildren().clear();
-            bigViewBox.getChildren().add(img2);
-        }
+        bindImageToBox(img1, vBox);
+        vBox.getChildren().clear();
+        vBox.getChildren().add(img1);
     }
     
     /**
@@ -301,7 +295,7 @@ public class DirectorLiveController {
             smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
             smallDescriptionField.setText(smallShot.getDescription());
         } else {
-            initializeBlackViews(true);
+            initializeBlackView(smallViewBox);
             smallShotNumberLabel.setText("");
             smallCameraNumberLabel.setText("");
             smallPresetLabel.setText("");
@@ -331,7 +325,7 @@ public class DirectorLiveController {
             if (nextShot != null) {
                 createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, smallViewBox);
             } else {
-                initializeBlackViews(true);
+                initializeBlackView(smallViewBox);
                 nextStreamHandler.stop();
             }
         } else {
@@ -341,7 +335,7 @@ public class DirectorLiveController {
             if (nextShot != null) {
                 createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, bigViewBox);
             } else {
-                initializeBlackViews(true);
+                initializeBlackView(bigViewBox);
                 nextStreamHandler.stop();
             }
         }      
