@@ -22,8 +22,16 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.net.URL;
 
 /**
- * This test only runs when there is an actual connection with a real camera.
- * @since 0.4
+ * Class to test LiveCameraConnection. It will first check if it
+ * can be run with a real connection to the camera with the specified IP.
+ * If it cannot, then it will use PowerMock to mock the 
+ * {@link LiveCameraConnection#sendRequest(URL)} method.
+ * 
+ * <p>Uses @SuppressWarnings for some PMD warnings. Using JUnit and
+ * PowerMock(ito) brings a lot of static imports, but they do not decrease
+ * the readability of the code. The duplicate literals warning is of no
+ * interest to this class.
+ * @since 0.4, modified heavily for 0.7
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(LiveCameraConnection.class)
@@ -74,6 +82,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests whether the connection was set up properly.
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testSetUpConnection() throws Exception {
@@ -98,7 +107,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests {@link LiveCameraConnection#absPanTilt(int, int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testAbsPanTilt() throws Exception {
@@ -119,7 +128,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests {@link LiveCameraConnection#absPan(int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testAbsPan() throws Exception {
@@ -141,7 +150,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests {@link LiveCameraConnection#absTilt(int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testAbsTilt() throws Exception {
@@ -163,7 +172,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests {@link LiveCameraConnection#absZoom(int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testAbsZoom() throws Exception {
@@ -182,8 +191,9 @@ public class LiveCameraConnectionTest {
     }
 
     /**
-     * Tests {@link LiveCameraConnection#absFocus(int)} when autofocus
+     * Tests {@link LiveCameraConnection#absFocus(int)} when auto focus
      * is turned off.
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testAbsFocusNoAutoFocus() throws Exception {
@@ -202,7 +212,7 @@ public class LiveCameraConnectionTest {
     }
     
     /**
-     * Tests {@link LiveCameraConnection#absFocus(int)} when autofocus
+     * Tests {@link LiveCameraConnection#absFocus(int)} when auto focus
      * is turned on.
      */
     @Test
@@ -215,7 +225,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests {@link LiveCameraConnection#relPanTilt(int, int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testRelPanTilt() throws Exception {
@@ -236,8 +246,9 @@ public class LiveCameraConnectionTest {
     }
 
     /**
-     * Tests {@link LiveCameraConnection#relPan(int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * Tests {@link LiveCameraConnection#relPan(int)}. Since this method
+     * delegates to {@link LiveCameraConnection#relPanTilt(int, int)}, we
+     * only need to check if the delegation happens correctly.
      */
     @Test
     public void testRelPan() {
@@ -247,8 +258,9 @@ public class LiveCameraConnectionTest {
     }
 
     /**
-     * Tests {@link LiveCameraConnection#relTilt(int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * Tests {@link LiveCameraConnection#relTilt(int)}. Since this method
+     * delegates to {@link LiveCameraConnection#relPanTilt(int, int)}, we
+     * only need to check if the delegation happens correctly.
      */
     @Test
     public void testRelTilt() {
@@ -258,25 +270,25 @@ public class LiveCameraConnectionTest {
     }
 
     /**
-     * Tests {@link LiveCameraConnection#relZoom(int)}.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * Tests {@link LiveCameraConnection#relZoom(int)}. Since this method
+     * delegates to {@link LiveCameraConnection#absZoom(int)}, we
+     * only need to check if the delegation happens correctly.
      */
     @Test
-    public void testRelZoom() throws InterruptedException {
+    public void testRelZoom() {
         doReturn(true).when(connection).absZoom(1430);
         assertTrue(connection.relZoom(65));
         verify(connection).absZoom(1430);
     }
 
     /**
-     * Tests {@link LiveCameraConnection#relFocus(int)} with autofocus
-     * turned off. Since that method uses {@link LiveCameraConnection#absFocus(int)}, 
-     * there is no need to test this with auto focus turned on, since 
-     * that has already been tested.
-     * @throws InterruptedException Due to {@link Thread#sleep(long)}
+     * Tests {@link LiveCameraConnection#relFocus(int)} with auto focus
+     * turned off. Since that method delegates to 
+     * {@link LiveCameraConnection#absFocus(int)}, we only need to check
+     * if the delegation happens correctly.
      */
     @Test
-    public void testRelFocus() throws InterruptedException {
+    public void testRelFocus() {
         connection.setAutoFocus(false);
         doReturn(true).when(connection).absFocus(1430);
         assertTrue(connection.relFocus(65));
@@ -285,6 +297,7 @@ public class LiveCameraConnectionTest {
 
     /**
      * Tests setAutoFocus method.
+     * @throws Exception See {@link PowerMockito#when(Object, String, Object...)}
      */
     @Test
     public void testSetAutoFocus() throws Exception {
@@ -300,6 +313,8 @@ public class LiveCameraConnectionTest {
     /**
      * Tests update method:
      * All camera settings have been changed.
+     * <p>Uses @SuppressWarnings to suppress the PMD warning, because this
+     * test uses Mockito's verify method.
      */
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
@@ -320,6 +335,9 @@ public class LiveCameraConnectionTest {
     /**
      * Tests update method:
      * Only pan and tilt values have been changed.
+     * 
+     * <p>Uses @SuppressWarnings to suppress the PMD warning, because this
+     * test uses Mockito's verify method.
      */
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
@@ -338,6 +356,9 @@ public class LiveCameraConnectionTest {
     /**
      * Tests update method:
      * Only the zoom value has been changed.
+     * 
+     * <p>Uses @SuppressWarnings to suppress the PMD warning, because this
+     * test uses Mockito's verify method.
      */
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
@@ -356,6 +377,9 @@ public class LiveCameraConnectionTest {
     /**
      * Tests update method:
      * Only the focus value has been changed.
+     * 
+     * <p>Uses @SuppressWarnings to suppress the PMD warning, because this
+     * test uses Mockito's verify method.
      */
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")

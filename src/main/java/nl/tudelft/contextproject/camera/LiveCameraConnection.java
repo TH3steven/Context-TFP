@@ -105,9 +105,8 @@ public class LiveCameraConnection extends CameraConnection {
         if (command != null) {
             URL url = new URL("http://" + address + "/cgi-bin/aw_ptz?cmd=" + command + "&res=1");
             return url;
-        } else {
-            throw new MalformedURLException("Given command is null");
         }
+        throw new MalformedURLException("Given command is null");
     }
 
     /**
@@ -122,13 +121,12 @@ public class LiveCameraConnection extends CameraConnection {
         if (command != null) {
             URL url = new URL("http://" + address + "/cgi-bin/aw_cam?cmd=" + command + "&res=1");
             return url;
-        } else {
-            throw new MalformedURLException("Given command is null");
         }
+        throw new MalformedURLException("Given command is null");
     }
 
     /**
-     * Sends the HTTP request specified in the URL as a POST request.
+     * Sends the HTTP request specified in the URL as a GET request.
      * It waits for a response from the server until a response is
      * received or until the connection times out, which happens after
      * the amount of milliseconds specified in {@link #READ_TIMEOUT}.
