@@ -102,6 +102,9 @@ public final class Animation {
      * @param n The Node to animate.
      * @param bMakeInvisible True if the Node should be made invisible 
      *      after the animation.
+     * @return Returns the FadeTransition itself so it can be modified
+     *      by an external class. This can be used to set an action after the
+     *      completion of the animation.
      */
     protected static FadeTransition animNodeOut(Node n, boolean bMakeInvisible) {
         int dur;
