@@ -322,12 +322,11 @@ public class DirectorLiveController {
      */
     private void nextViews() {
         Shot nextShot = script.getNextShot();
-        
-        liveStreamHandler = nextStreamHandler;
+        Shot currentShot = script.getCurrentShot();
         
         if (bigShowsLive) {
             bigViewBox.getChildren().clear();
-            createStream(liveStreamHandler.getStreamLink(), liveStreamHandler, bigViewBox);
+            createStream(currentShot.getCamera().getConnection().getStreamLink(), liveStreamHandler, bigViewBox);
             smallViewBox.getChildren().clear();
             if (nextShot != null) {
                 createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, smallViewBox);
@@ -337,7 +336,7 @@ public class DirectorLiveController {
             }
         } else {
             smallViewBox.getChildren().clear();
-            createStream(liveStreamHandler.getStreamLink(), liveStreamHandler, smallViewBox);
+            createStream(currentShot.getCamera().getConnection().getStreamLink(), liveStreamHandler, smallViewBox);
             bigViewBox.getChildren().clear();
             if (nextShot != null) {
                 createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, bigViewBox);
