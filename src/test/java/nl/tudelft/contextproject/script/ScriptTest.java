@@ -158,7 +158,7 @@ public class ScriptTest {
         assertEquals(script1.getNextShot(), shot1);
         assertTrue(script1.hasNext());
         script1.next();
-        assertEquals(script1.getNextShot(), shot2);
+        assertEquals(script1.getCurrentShot(), shot1);
     }
 
     /**
@@ -225,5 +225,13 @@ public class ScriptTest {
         script2.addShot(shot1);
         assertEquals(script2.getShots(), los1);
         assertTrue(timeline1.getShots().contains(shot1));
+    }
+    
+    @Test
+    public void testGetCurrent() {
+        assertEquals(-1, script1.getCurrent());
+        script1.next();
+        script1.next();
+        assertEquals(1, script1.getCurrent());
     }
 }

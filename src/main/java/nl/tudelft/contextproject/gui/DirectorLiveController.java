@@ -1,19 +1,17 @@
 package nl.tudelft.contextproject.gui;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
@@ -21,9 +19,6 @@ import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * This class controls the screen that shows the live view
@@ -57,13 +52,13 @@ public class DirectorLiveController /*implements Observer*/ {
     @FXML private Label smallPresetLabel;
     @FXML private Label smallShotNumberLabel;
     @FXML private Label smallStatusLabel;
-    
-    @FXML private TableView test;
-    public static final ObservableList names = 
-            FXCollections.observableArrayList();
 
     @FXML private TextArea bigDescriptionField;
     @FXML private TextArea smallDescriptionField;
+    
+    @FXML private TableColumn<Shot, Number> numberColumn;
+    @FXML private TableColumn<Shot, String> idColumn;
+    @FXML private TableColumn<Shot, Button> btnColumn;
 
     @FXML private VBox bigViewBox;
     @FXML private VBox smallViewBox;
@@ -82,8 +77,7 @@ public class DirectorLiveController /*implements Observer*/ {
         endReached = false;
         live = true;
         
-        names.addAll(new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"));
-        test.setItems(names);
+        
         bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
         bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
 
@@ -92,7 +86,8 @@ public class DirectorLiveController /*implements Observer*/ {
 
         initializeLabels();
         initializeViews();
-        initializeButtons();        
+        initializeButtons();
+        initializeCheckbox();
     }
 
     /**
@@ -158,13 +153,20 @@ public class DirectorLiveController /*implements Observer*/ {
                     script.next(true);
                 } else {
                     script.next(false);
-//                    updateExecuteButtons();
                 }
                 updateTables();
             }
         });
     }
 
+    private void initializeCheckbox() {
+        automaticCheck.selectedProperty().addListener((obs, oldV, newV) -> {
+            if (newV && script.getCurrent() > -1) {
+                script.adjustAllCameras();
+            }
+        });
+    }
+    
     /**
      * Updates the table contents according to the current position in the script.
      */
@@ -216,12 +218,6 @@ public class DirectorLiveController /*implements Observer*/ {
         }
     }
     
-//    private void updateExecuteButtons() {
-//        for (int i = 0; i < script.getSkippedShots().size()) {
-//            
-//        }
-//    }
-    
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.
@@ -237,23 +233,4 @@ public class DirectorLiveController /*implements Observer*/ {
             e.printStackTrace();
         }
     }
-
-//    @Override
-//    public void update(Observable o, Object arg) {
-//        List<Shot> skipped = script.getSkippedShots();
-//        <vboxLabels>.clear();
-//        <vboxButtons>.clear();
-//        
-//        for (Shot sk : skipped) {
-//            Label label = new Label(sk.toString());
-//            Button execute = new Button("Execute");
-//            
-//            execute.setOnAction((event) -> {
-//                script.removeSkippedShot(sk);
-//            });
-//            
-//            vboxLabels.add(label);
-//            vboxButtons.add(execute);
-//        }
-//    }
 }

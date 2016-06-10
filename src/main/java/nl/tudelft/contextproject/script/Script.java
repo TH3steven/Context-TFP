@@ -5,12 +5,14 @@ import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,11 +35,6 @@ public class Script extends Observable implements Iterator<Shot> {
      * it on paper.
      */
     private List<Shot> shots;
-    
-    /**
-     * A list of skipped shots yet to come.
-     */
-    private List<Shot> skippedShots;
 
     /**
      * Keeps track of the current shot.
@@ -53,11 +50,6 @@ public class Script extends Observable implements Iterator<Shot> {
      * The timer to delay moving of a camera.
      */
     private Timer timer;
-    
-    /**
-     * 
-     */
-    private boolean lastAlterationSkipped;
 
     /**
      * Creates a script that starts from the beginning with specified shots.
@@ -67,7 +59,6 @@ public class Script extends Observable implements Iterator<Shot> {
      */
     public Script(List<Shot> shots) {
         this.shots = shots;
-        skippedShots = new ArrayList<Shot>();
         current = -1;
         name = "";
         timer = new Timer();
@@ -83,40 +74,6 @@ public class Script extends Observable implements Iterator<Shot> {
      */
     public List<Shot> getShots() {
         return shots;
-    }
-    
-    /**
-     * Gets all the shots of which the preset was not
-     * automatically loaded and still yet to come.
-     * 
-     * @return The skipped shots.
-     */
-    public List<Shot> getSkippedShots() {
-        return skippedShots;
-    }
-    
-    /**
-     * Add a shot to the skipped shots list and notify observers. 
-     * 
-     * @param shot The shot to be added.
-     */
-    public void addSkippedShot(Shot shot) {
-        skippedShots.add(shot);
-        lastAlterationSkipped = true;
-        setChanged();
-        notifyObservers(shot);
-    }
-    
-    /**
-     * Remove a shot from the skipped shots list and notify observers.
-     * 
-     * @param shot The shot to be added.
-     */
-    public void removeSkippedShot(Shot shot) {
-        skippedShots.remove(shot);
-        lastAlterationSkipped = true;
-        setChanged();
-        notifyObservers();
     }
 
     /**
@@ -242,16 +199,6 @@ public class Script extends Observable implements Iterator<Shot> {
     public String getName() {
         return name;
     }
-    
-    /**
-     * Returns the lastAlterationSkipped boolean.
-     * Shows if the last alteration to skippedShots was an addition or removal.
-     * 
-     * @return The  boolean lastAlterationSkipped.
-     */
-    public boolean getLastAlteration() {
-        return lastAlterationSkipped;
-    }
 
     /**
      * Sets the name of the script.
@@ -271,17 +218,35 @@ public class Script extends Observable implements Iterator<Shot> {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (current > 0) {
-                    Shot old = shots.get(current - 1);
+                if (current > -1) {
+                    Shot old = shots.get(current);
                     timelines.get(old.getCamera().getNumber()).nextPreset(old);
                 }
             }
         }, 1000);
     }
     
-    public void applyShot(int i) {
-        skippedShots.get(i).execute();
-        skippedShots.remove(i);
+    /**
+     * Moves all cameras to their preset, except the one
+     * that is live.
+     */
+    public void adjustAllCameras() {
+        Set<Integer> cameras = timelines.keySet();
+        int liveCamera = shots.get(current).getCamera().getNumber();
+        
+        Shot shot;
+        
+        for (int i = current + 1; i < shots.size(); i++) {
+            shot = shots.get(i);
+            int camNum = shot.getCamera().getNumber();
+            if (cameras.contains(camNum) && camNum != liveCamera) {
+                shot.execute();
+                cameras.remove(camNum);
+            }
+            if (cameras.size() == 1) {
+                break;
+            }
+        }
     }
 
     /**
@@ -326,35 +291,17 @@ public class Script extends Observable implements Iterator<Shot> {
     /**
      * Go to the next shot.
      * Depending on boolean skip, cameras are adjusted or not.
-     * Keeps track of which shots are skipped.
      * 
      * @param skip Determines whether cameras should be adjusted.
      * @return The next shot
      */
     public Shot next(boolean skip) {
-        current++;
-        Shot next = shots.get(current);
-        Shot old = null;
-        
         if (!skip) {
             updateOldCamCaller();
-
-            next.execute();
-        } else {
-            skippedShots.add(next);
-            Shot skipped = null;
-            
-            if (current > 0) {
-                old = shots.get(current - 1);
-                skipped = timelines.get(old.getCamera().getNumber()).getNextShot(old);
-            } 
-            
-            if (skipped != null) {
-                addSkippedShot(skipped);
-                System.out.println(skippedShots);
-            }
-        }
-        removeSkippedShot(next);
+        } 
+        
+        current++;
+        Shot next = shots.get(current);
         
         return next;
     }
