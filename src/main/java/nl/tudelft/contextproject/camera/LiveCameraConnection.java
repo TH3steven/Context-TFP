@@ -68,17 +68,14 @@ public class LiveCameraConnection extends CameraConnection {
     public boolean setUpConnection() {
         try {
             String cameraModel = sendRequest(buildCamControlURL("QID"));
-
+            
             if (cameraModel.equals("OID:" + CAMERA_MODEL)) {
-                String autoFocusResponse = sendRequest(buildPanTiltHeadControlURL("%23D1"));
-                int hasAutoFocus = Integer.parseInt(autoFocusResponse.substring(2));
-                autoFocus = hasAutoFocus == 1;
                 connected = true;
                 lastKnown = new CameraSettings();
-
+                lastKnown = getCurrentCameraSettings();
+                hasAutoFocus();
                 return true;
             }
-
             return false;
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,7 +101,7 @@ public class LiveCameraConnection extends CameraConnection {
      * @return The formed URL, according to the {@link #address} and the command.
      * @throws MalformedURLException if the parameter command is null.
      */
-    private URL buildPanTiltHeadControlURL(String command) throws MalformedURLException {
+    protected URL buildPanTiltHeadControlURL(String command) throws MalformedURLException {
         if (command != null) {
             URL url = new URL("http://" + address + "/cgi-bin/aw_ptz?cmd=" + command + "&res=1");
             return url;
@@ -121,7 +118,7 @@ public class LiveCameraConnection extends CameraConnection {
      * @return The formed URL, according to the {@link #address} and the command.
      * @throws MalformedURLException if the parameter command is null.
      */
-    private URL buildCamControlURL(String command) throws MalformedURLException {
+    protected URL buildCamControlURL(String command) throws MalformedURLException {
         if (command != null) {
             URL url = new URL("http://" + address + "/cgi-bin/aw_cam?cmd=" + command + "&res=1");
             return url;
@@ -135,13 +132,12 @@ public class LiveCameraConnection extends CameraConnection {
      * It waits for a response from the server until a response is
      * received or until the connection times out, which happens after
      * the amount of milliseconds specified in {@link #READ_TIMEOUT}.
+     * An empty string is returned if there was no response.
      * 
      * @param url The URL containing the full HTTP request 
      * @return The response of the server. 
      * @throws IOException when something goes wrong in opening the
      *      the connection or reading the response from the server.
-     * @throws java.net.ConnectException when a timeout has
-     *      occurred while connecting to the camera.
      */
     private String sendRequest(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -181,7 +177,6 @@ public class LiveCameraConnection extends CameraConnection {
                 return autoFocus;
             }
         }
-
         return autoFocus;
     }
 
@@ -194,21 +189,20 @@ public class LiveCameraConnection extends CameraConnection {
     public boolean setAutoFocus(boolean autoFocus) {
         if (this.autoFocus == autoFocus) {
             return true;
-        } else {
-            try {
-                int set = autoFocus ? 1 : 0;
-                String autoFocusRes = sendRequest(buildPanTiltHeadControlURL("%23D1" + set));
+        }
+        try {
+            int set = autoFocus ? 1 : 0;
+            String autoFocusRes = sendRequest(buildPanTiltHeadControlURL("%23D1" + set));
 
-                if (autoFocusRes.equals("d1" + set)) {
-                    this.autoFocus = autoFocus;
-                    return true;
-                } else {
-                    throw new IOException(errorString + autoFocusRes);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+            if (autoFocusRes.equals("d1" + set)) {
+                this.autoFocus = autoFocus;
+                return true;
             }
+            throw new IOException(errorString + autoFocusRes);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -255,7 +249,6 @@ public class LiveCameraConnection extends CameraConnection {
         int[] panTilt = getCurrentPanTilt();
         int zoom = getCurrentZoom();
         int focus = getCurrentFocus();
-
         lastKnown = new CameraSettings(panTilt[0], panTilt[1], zoom, focus);
         return lastKnown;
     }
@@ -272,9 +265,8 @@ public class LiveCameraConnection extends CameraConnection {
                 lastKnown.setTilt(tilt);
 
                 return new int[]{pan, tilt};
-            } else {
-                throw new IOException(errorString + panTiltRes);
             }
+            throw new IOException(errorString + panTiltRes);
         } catch (IOException e) {
             e.printStackTrace();
             return new int[]{lastKnown.getPan(), lastKnown.getTilt()};
@@ -291,9 +283,8 @@ public class LiveCameraConnection extends CameraConnection {
                 lastKnown.setZoom(zoom);
 
                 return zoom;
-            } else {
-                throw new IOException(errorString + zoomRes);
             }
+            throw new IOException(errorString + zoomRes);
         } catch (IOException e) {
             e.printStackTrace();
             return lastKnown.getZoom();
@@ -304,21 +295,20 @@ public class LiveCameraConnection extends CameraConnection {
     public int getCurrentFocus() {
         if (autoFocus) {
             return -1;
-        } else {
-            try {
-                String focusRes = sendRequest(buildPanTiltHeadControlURL("%23GF"));
-
-                if (focusRes.startsWith("gf")) {
-                    int focus = Integer.parseInt(focusRes.substring(2), 16);
-                    return focus;
-                } else {
-                    throw new IOException(errorString + focusRes);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return lastKnown.getFocus();
-            }
         }
+        try {
+            String focusRes = sendRequest(buildPanTiltHeadControlURL("%23GF"));
+
+            if (focusRes.startsWith("gf")) {
+                int focus = Integer.parseInt(focusRes.substring(2), 16);
+                return focus;
+            }
+            throw new IOException(errorString + focusRes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return lastKnown.getFocus();
+        }
+        
     }
 
     @Override

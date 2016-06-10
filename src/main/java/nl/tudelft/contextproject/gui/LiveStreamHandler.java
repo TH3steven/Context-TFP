@@ -17,6 +17,8 @@ import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 import java.nio.ByteBuffer;
 
+import nl.tudelft.contextproject.ContextTFP;
+
 /**
  * Handler for streaming media into the GUI through VLC.
  * 
@@ -46,15 +48,19 @@ public class LiveStreamHandler {
      * Starts playing the media.
      */
     public void start() {
-        mediaPlayer.getMediaPlayer().playMedia(streamLink);
+        if (mediaPlayer != null) {
+            mediaPlayer.getMediaPlayer().playMedia(streamLink);
+        }
     }
     
     /**
      * Stops playing the media and release associated resources.
      */
     public void stop() {
-        mediaPlayer.getMediaPlayer().stop();
-        mediaPlayer.getMediaPlayer().release();
+        if (mediaPlayer != null) {
+            mediaPlayer.getMediaPlayer().stop();
+            mediaPlayer.getMediaPlayer().release();
+        }
     }
     
     /**
@@ -65,6 +71,9 @@ public class LiveStreamHandler {
      * @return a ImageView object displaying the stream.
      */
     public ImageView createImageView(String streamLink, double width, double height) {
+        if (!ContextTFP.hasVLC()) {
+            return createErrorImageView();
+        }
         WritableImage writableImage = new WritableImage((int) width, (int) height);
         imageView = new ImageView(writableImage);
         this.streamLink = streamLink;
@@ -89,6 +98,10 @@ public class LiveStreamHandler {
             }
         };
         return imageView;
+    }
+    
+    public ImageView createErrorImageView() {
+        return new ImageView("error.jpg");
     }
     
     /**

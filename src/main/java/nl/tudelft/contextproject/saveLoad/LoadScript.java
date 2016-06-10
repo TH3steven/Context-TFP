@@ -200,7 +200,7 @@ public final class LoadScript {
      * Assumes that the start element of this section has already been read
      * and is inserted into this method as the start parameter.
      * 
-     * @param Start The start element of the 'cameraSettings' section.
+     * @param start The start element of the 'cameraSettings' section.
      * @return The loaded CameraSettings object.
      * @throws XMLStreamException when an error occurs in the XML.
      */
