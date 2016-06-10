@@ -110,7 +110,7 @@ public final class Animation {
         int dur;
         
         if (bMakeInvisible) {
-            dur = DURATION_FADE / 2;
+            dur = DURATION_FADE / 3;
         } else {
             dur = DURATION_FADE / 4;
         }
@@ -139,11 +139,7 @@ public final class Animation {
      * @param dur The duration of the timeout.
      */
     private static void animTimeout(int dur) {
-        Timeline timeout = 
-                new Timeline(
-                        new KeyFrame(
-                                Duration.millis(dur)));
-
+        Timeline timeout = new Timeline(new KeyFrame(Duration.millis(dur)));
         timeout.play();
     }
 }
