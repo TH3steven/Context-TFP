@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -39,6 +41,10 @@ public class MenuController {
     @FXML private Button btnLive;
     @FXML private Button btnLoadScript;
 
+    @FXML private ImageView settings;
+
+    @FXML private Label lblPre;
+    @FXML private Label lblLive;
     @FXML private Label lblVersion;
     @FXML private Label lblScript;
     
@@ -64,13 +70,14 @@ public class MenuController {
         
         preNodes = new ArrayList<Node>();
         liveNodes = new ArrayList<Node>();
-        preNodes.addAll(Arrays.asList(btnCreateScript, 
+        preNodes.addAll(Arrays.asList(lblPre, btnCreateScript, 
                 btnEditScript, btnPresets, btnPreview, btnLoadScript));
-        liveNodes.addAll(Arrays.asList(btnCameraman, btnDirector));
+        liveNodes.addAll(Arrays.asList(lblLive, btnCameraman, btnDirector));
 
         initLoadButton();
         initSubButtons();
         initOtherButtons();
+        initSettingsImg();
     }
 
     private void initLoadButton() {
@@ -209,6 +216,19 @@ public class MenuController {
                 CreateScriptController.show();
                 Animation.animNodeIn(ContextTFP.getRootLayout());
             });
+        });
+    }
+
+    /**
+     * Sets the hover and click action for the settings icon.
+     */
+    private void initSettingsImg() {
+        settings.setOnMouseEntered(event -> {
+            settings.setImage(new Image("settings_active.png"));
+        });
+        
+        settings.setOnMouseExited(event -> {
+            settings.setImage(new Image("settings.png"));
         });
     }
 
