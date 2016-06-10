@@ -18,7 +18,6 @@ import javafx.util.Duration;
 public final class Animation {
 
     private static final int DURATION_FADE = 500;
-    private static final int DURATION_TIMEOUT = 1000;
     private static final int DURATION_TRANS = 300;
     private static final int OFFSET_Y = 80;
 
@@ -97,19 +96,20 @@ public final class Animation {
     /**
      * Animation for a {@link Node}. Makes the Node fade out. Uses a 
      * {@link FadeTransition} to create the fade animation. The duration of the
-     * fade is {@link #DURATION_FADE} / 5 when bMakeInvisible is false, or
-     * {@link #DURATION_FADE} / 3 when bMakeInvisible is true.
+     * fade is {@link #DURATION_FADE} / 4 when bMakeInvisible is false, or
+     * {@link #DURATION_FADE} / 2 when bMakeInvisible is true.
      * 
      * @param n The Node to animate.
-     * @param bMakeInvisible If the Node should be made invisible after the animation.
+     * @param bMakeInvisible True if the Node should be made invisible 
+     *      after the animation.
      */
     protected static FadeTransition animNodeOut(Node n, boolean bMakeInvisible) {
         int dur;
         
         if (bMakeInvisible) {
-            dur = DURATION_FADE / 5;
+            dur = DURATION_FADE / 2;
         } else {
-            dur = DURATION_FADE / 3;
+            dur = DURATION_FADE / 4;
         }
         
         FadeTransition ft = new FadeTransition(Duration.millis(dur), n);
@@ -123,7 +123,7 @@ public final class Animation {
                 n.setVisible(false);
             });
         } else {
-            animTimeout();
+            animTimeout(dur);
         }
         
         return ft;
@@ -132,12 +132,14 @@ public final class Animation {
     /**
      * Sets a timeout to prevent the window from being changed when a fade out
      * animation is still playing. Only called from {@link #animNodeOut(Node, boolean)}
+     * 
+     * @param dur The duration of the timeout.
      */
-    private static void animTimeout() {
+    private static void animTimeout(int dur) {
         Timeline timeout = 
                 new Timeline(
                         new KeyFrame(
-                                Duration.millis(DURATION_TIMEOUT)));
+                                Duration.millis(dur)));
 
         timeout.play();
     }

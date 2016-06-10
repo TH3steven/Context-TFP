@@ -262,7 +262,10 @@ public class MenuController {
             loader.setLocation(ContextTFP.class.getResource("view/MenuOverview.fxml"));
             AnchorPane menuOverview = (AnchorPane) loader.load();
 
-            ContextTFP.getRootLayout().setCenter(menuOverview);
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                ContextTFP.getRootLayout().setCenter(menuOverview);
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
