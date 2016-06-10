@@ -189,21 +189,20 @@ public class LiveCameraConnection extends CameraConnection {
     public boolean setAutoFocus(boolean autoFocus) {
         if (this.autoFocus == autoFocus) {
             return true;
-        } else {
-            try {
-                int set = autoFocus ? 1 : 0;
-                String autoFocusRes = sendRequest(buildPanTiltHeadControlURL("%23D1" + set));
+        }
+        try {
+            int set = autoFocus ? 1 : 0;
+            String autoFocusRes = sendRequest(buildPanTiltHeadControlURL("%23D1" + set));
 
-                if (autoFocusRes.equals("d1" + set)) {
-                    this.autoFocus = autoFocus;
-                    return true;
-                } else {
-                    throw new IOException(errorString + autoFocusRes);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+            if (autoFocusRes.equals("d1" + set)) {
+                this.autoFocus = autoFocus;
+                return true;
             }
+            throw new IOException(errorString + autoFocusRes);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -266,9 +265,8 @@ public class LiveCameraConnection extends CameraConnection {
                 lastKnown.setTilt(tilt);
 
                 return new int[]{pan, tilt};
-            } else {
-                throw new IOException(errorString + panTiltRes);
             }
+            throw new IOException(errorString + panTiltRes);
         } catch (IOException e) {
             e.printStackTrace();
             return new int[]{lastKnown.getPan(), lastKnown.getTilt()};
@@ -285,9 +283,8 @@ public class LiveCameraConnection extends CameraConnection {
                 lastKnown.setZoom(zoom);
 
                 return zoom;
-            } else {
-                throw new IOException(errorString + zoomRes);
             }
+            throw new IOException(errorString + zoomRes);
         } catch (IOException e) {
             e.printStackTrace();
             return lastKnown.getZoom();
@@ -298,21 +295,20 @@ public class LiveCameraConnection extends CameraConnection {
     public int getCurrentFocus() {
         if (autoFocus) {
             return -1;
-        } else {
-            try {
-                String focusRes = sendRequest(buildPanTiltHeadControlURL("%23GF"));
-
-                if (focusRes.startsWith("gf")) {
-                    int focus = Integer.parseInt(focusRes.substring(2), 16);
-                    return focus;
-                } else {
-                    throw new IOException(errorString + focusRes);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return lastKnown.getFocus();
-            }
         }
+        try {
+            String focusRes = sendRequest(buildPanTiltHeadControlURL("%23GF"));
+
+            if (focusRes.startsWith("gf")) {
+                int focus = Integer.parseInt(focusRes.substring(2), 16);
+                return focus;
+            }
+            throw new IOException(errorString + focusRes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return lastKnown.getFocus();
+        }
+        
     }
 
     @Override

@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 import org.junit.Before;
@@ -27,9 +27,9 @@ import java.net.URL;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(LiveCameraConnection.class)
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyStaticImports"})
 public class LiveCameraConnectionTest {
     
-    private static boolean doTests = false;
     private static boolean testLive;
     private static final int MAX_MOV_OFFSET = 5;
     private static final String CAMERA_IP = "192.168.10.101";
@@ -59,11 +59,15 @@ public class LiveCameraConnectionTest {
             URL absPanTiltURL = connection.buildPanTiltHeadControlURL("%23APC");
             URL zoomURL = connection.buildPanTiltHeadControlURL("%23GZ");
             URL focusURL = connection.buildPanTiltHeadControlURL("%23GF");
-            PowerMockito.doReturn("OID:AW-HE130").when(connection, "sendRequest", cameraModelURL);
-            PowerMockito.doReturn("d11").when(connection, "sendRequest", autoFocusURL);
-            PowerMockito.doReturn("aPC80008000").when(connection, "sendRequest", absPanTiltURL);
-            PowerMockito.doReturn("gz555").when(connection, "sendRequest", zoomURL);
-            PowerMockito.doReturn("gf555").when(connection, "sendRequest", focusURL);
+            URL autoFocusOffURL = connection.buildPanTiltHeadControlURL("%23D10");
+            URL autoFocusOnURL = connection.buildPanTiltHeadControlURL("%23D11");
+            doReturn("OID:AW-HE130").when(connection, "sendRequest", cameraModelURL);
+            doReturn("d11").when(connection, "sendRequest", autoFocusURL);
+            doReturn("aPC80008000").when(connection, "sendRequest", absPanTiltURL);
+            doReturn("gz555").when(connection, "sendRequest", zoomURL);
+            doReturn("gf555").when(connection, "sendRequest", focusURL);
+            doReturn("d10").when(connection, "sendRequest", autoFocusOffURL);
+            doReturn("d11").when(connection, "sendRequest", autoFocusOnURL);
         }
         connection.setUpConnection();
     }
@@ -97,14 +101,20 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testAbsPanTilt() throws InterruptedException {
-        if (doTests) {
-            assertTrue(connection.absPanTilt(29965, 28965));
-            Thread.sleep(4000);
-            int[] curSet = connection.getCurrentPanTilt();
-            assertWithinMaxOffset(29965, curSet[0]);
-            assertWithinMaxOffset(28965, curSet[1]);
+    public void testAbsPanTilt() throws Exception {
+        if (!testLive) {
+            URL absPanTiltURL = connection.buildPanTiltHeadControlURL("%23APS750D71251D2");
+            URL curPanTiltURL = connection.buildPanTiltHeadControlURL("%23APC");
+            doReturn("aPS750D71251D2").when(connection, "sendRequest", absPanTiltURL);
+            doReturn("aPC750D7125").when(connection, "sendRequest", curPanTiltURL);
         }
+        assertTrue(connection.absPanTilt(29965, 28965));
+        if (testLive) {
+            Thread.sleep(4000);
+        }
+        int[] curSet = connection.getCurrentPanTilt();
+        assertWithinMaxOffset(29965, curSet[0]);
+        assertWithinMaxOffset(28965, curSet[1]);
     }
 
     /**
@@ -112,15 +122,21 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testAbsPan() throws InterruptedException {
-        if (doTests) {
-            int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.absPan(31965));
-            Thread.sleep(4000);
-            int[] after = connection.getCurrentPanTilt();
-            assertWithinMaxOffset(before[1], after[1]);
-            assertWithinMaxOffset(31965, after[0]);
+    public void testAbsPan() throws Exception {
+        int[] before = connection.getCurrentPanTilt();
+        if (!testLive) {
+            URL absPanTiltURL = connection.buildPanTiltHeadControlURL("%23APS7CDD80001D2");
+            URL getPanTiltURL = connection.buildPanTiltHeadControlURL("%23APC");
+            doReturn("aPS").when(connection, "sendRequest", absPanTiltURL);
+            doReturn("aPC7CDD8000").when(connection, "sendRequest", getPanTiltURL);
         }
+        assertTrue(connection.absPan(31965));
+        if (testLive) {
+            Thread.sleep(4000);
+        }
+        int[] after = connection.getCurrentPanTilt();
+        assertWithinMaxOffset(before[1], after[1]);
+        assertWithinMaxOffset(31965, after[0]);
     }
 
     /**
@@ -128,15 +144,21 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testAbsTilt() throws InterruptedException {
-        if (doTests) {
-            int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.absTilt(31965));
-            Thread.sleep(4000);
-            int[] after = connection.getCurrentPanTilt();
-            assertWithinMaxOffset(before[0], after[0]);
-            assertWithinMaxOffset(31965, after[1]);
+    public void testAbsTilt() throws Exception {
+        int[] before = connection.getCurrentPanTilt();
+        if (!testLive) {
+            URL absPanTiltURL = connection.buildPanTiltHeadControlURL("%23APS80007CDD1D2");
+            URL getPanTiltURL = connection.buildPanTiltHeadControlURL("%23APC");
+            doReturn("aPS").when(connection, "sendRequest", absPanTiltURL);
+            doReturn("aPC80007CDD").when(connection, "sendRequest", getPanTiltURL);
         }
+        assertTrue(connection.absTilt(31965));
+        if (testLive) {
+            Thread.sleep(4000);
+        }
+        int[] after = connection.getCurrentPanTilt();
+        assertWithinMaxOffset(before[0], after[0]);
+        assertWithinMaxOffset(31965, after[1]);
     }
 
     /**
@@ -144,13 +166,19 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testAbsZoom() throws InterruptedException {
-        if (doTests) {
-            assertTrue(connection.absZoom(1965));
-            Thread.sleep(2000);
-            int newZoom = connection.getCurrentZoom();
-            assertWithinMaxOffset(1965, newZoom);
+    public void testAbsZoom() throws Exception {
+        if (!testLive) {
+            URL getZoomURL = connection.buildPanTiltHeadControlURL("%23GZ");
+            URL zoomURL = connection.buildPanTiltHeadControlURL("%23AXZ7AD");
+            doReturn("axz7AD").when(connection, "sendRequest", zoomURL);
+            doReturn("gz7AD").when(connection, "sendRequest", getZoomURL);
         }
+        assertTrue(connection.absZoom(1965));
+        if (testLive) {
+            Thread.sleep(2000);
+        }
+        int newZoom = connection.getCurrentZoom();
+        assertWithinMaxOffset(1965, newZoom);
     }
 
     /**
@@ -158,13 +186,19 @@ public class LiveCameraConnectionTest {
      * is turned off.
      */
     @Test
-    public void testAbsFocusNoAutoFocus() {
-        if (doTests) {
-            assertTrue(connection.setAutoFocus(false));
-            assertTrue(connection.absFocus(1965));
-            int newFocus = connection.getCurrentFocus();
-            assertWithinMaxOffset(1965, newFocus);
+    public void testAbsFocusNoAutoFocus() throws Exception {
+        if (!testLive) {
+            URL autoFocusOffURL = connection.buildPanTiltHeadControlURL("%23D10");
+            URL focusURL = connection.buildPanTiltHeadControlURL("%23AXF7AD");
+            URL getFocusURL = connection.buildPanTiltHeadControlURL("%23GF");
+            doReturn("d10").when(connection, "sendRequest", autoFocusOffURL);
+            doReturn("axf7AD").when(connection, "sendRequest", focusURL);
+            doReturn("gf7AD").when(connection, "sendRequest", getFocusURL);
         }
+        assertTrue(connection.setAutoFocus(false));
+        assertTrue(connection.absFocus(1965));
+        int newFocus = connection.getCurrentFocus();
+        assertWithinMaxOffset(1965, newFocus);
     }
     
     /**
@@ -173,12 +207,10 @@ public class LiveCameraConnectionTest {
      */
     @Test
     public void testAbsFocusWithAutoFocus() {
-        if (doTests) {
-            assertTrue(connection.setAutoFocus(true));
-            assertFalse(connection.absFocus(1965));
-            int newFocus = connection.getCurrentFocus();
-            assertEquals(-1, newFocus);
-        }
+        assertTrue(connection.setAutoFocus(true));
+        assertFalse(connection.absFocus(1965));
+        int newFocus = connection.getCurrentFocus();
+        assertEquals(-1, newFocus);
     }
 
     /**
@@ -186,15 +218,21 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testRelPanTilt() throws InterruptedException {
-        if (doTests) {
-            int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.relPanTilt(-420, 420));
-            Thread.sleep(2000);
-            int[] after = connection.getCurrentPanTilt();
-            assertWithinMaxOffset(before[0] - 420, after[0]);
-            assertWithinMaxOffset(before[1] + 420, after[1]);
+    public void testRelPanTilt() throws Exception {
+        int[] before = connection.getCurrentPanTilt();
+        if (!testLive) {
+            URL relPanTiltURL = connection.buildPanTiltHeadControlURL("%23RPC7E5C81A4");
+            URL getPanTiltURL = connection.buildPanTiltHeadControlURL("%23APC");
+            doReturn("rPC7E5C81A4").when(connection, "sendRequest", relPanTiltURL);
+            doReturn("aPC7E5C81A4").when(connection, "sendRequest", getPanTiltURL);
         }
+        assertTrue(connection.relPanTilt(-420, 420));
+        if (!testLive) {
+            Thread.sleep(2000);
+        }
+        int[] after = connection.getCurrentPanTilt();
+        assertWithinMaxOffset(before[0] - 420, after[0]);
+        assertWithinMaxOffset(before[1] + 420, after[1]);
     }
 
     /**
@@ -202,15 +240,10 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testRelPan() throws InterruptedException {
-        if (doTests) {
-            int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.relPan(420));
-            Thread.sleep(2000);
-            int[] after = connection.getCurrentPanTilt();
-            assertWithinMaxOffset(before[0] + 420, after[0]);
-            assertWithinMaxOffset(before[1], after[1]);
-        }
+    public void testRelPan() {
+        doReturn(true).when(connection).relPanTilt(420, 0);
+        assertTrue(connection.relPan(420));
+        verify(connection).relPanTilt(420, 0);
     }
 
     /**
@@ -218,15 +251,10 @@ public class LiveCameraConnectionTest {
      * @throws InterruptedException Due to {@link Thread#sleep(long)}
      */
     @Test
-    public void testRelTilt() throws InterruptedException {
-        if (doTests) {
-            int[] before = connection.getCurrentPanTilt();
-            assertTrue(connection.relTilt(420));
-            Thread.sleep(2000);
-            int[] after = connection.getCurrentPanTilt();
-            assertWithinMaxOffset(before[0], after[0]);
-            assertWithinMaxOffset(before[1] + 420, after[1]);
-        }
+    public void testRelTilt() {
+        doReturn(true).when(connection).relPanTilt(0, 420);
+        assertTrue(connection.relTilt(420));
+        verify(connection).relPanTilt(0, 420);
     }
 
     /**
@@ -235,13 +263,9 @@ public class LiveCameraConnectionTest {
      */
     @Test
     public void testRelZoom() throws InterruptedException {
-        if (doTests) {
-            int oldZoom = connection.getCurrentZoom();
-            assertTrue(connection.relZoom(65));
-            Thread.sleep(1000);
-            int newZoom = connection.getCurrentZoom();
-            assertWithinMaxOffset(oldZoom + 65, newZoom);
-        }
+        doReturn(true).when(connection).absZoom(1430);
+        assertTrue(connection.relZoom(65));
+        verify(connection).absZoom(1430);
     }
 
     /**
@@ -253,26 +277,24 @@ public class LiveCameraConnectionTest {
      */
     @Test
     public void testRelFocus() throws InterruptedException {
-        if (doTests) {
-            assertTrue(connection.setAutoFocus(false));
-            int oldFocus = connection.getCurrentFocus();
-            assertTrue(connection.relFocus(65));
-            Thread.sleep(1000);
-            int newFocus = connection.getCurrentFocus();
-            assertWithinMaxOffset(oldFocus + 65, newFocus);
-        }
+        connection.setAutoFocus(false);
+        doReturn(true).when(connection).absFocus(1430);
+        assertTrue(connection.relFocus(65));
+        verify(connection).absFocus(1430);
     }
 
     /**
      * Tests setAutoFocus method.
      */
     @Test
-    public void testSetAutoFocus() {
-        if (doTests) {
-            boolean currentAutoFocus = connection.hasAutoFocus();
-            connection.setAutoFocus(!currentAutoFocus);
-            assertEquals(!currentAutoFocus, connection.hasAutoFocus());
+    public void testSetAutoFocus() throws Exception {
+        boolean currentAutoFocus = connection.hasAutoFocus();
+        if (!testLive) {
+            URL autoFocusURL = connection.buildPanTiltHeadControlURL("%23D1");
+            doReturn("d1" + (currentAutoFocus ? 0 : 1)).when(connection, "sendRequest", autoFocusURL);
         }
+        connection.setAutoFocus(!currentAutoFocus);
+        assertEquals(!currentAutoFocus, connection.hasAutoFocus());
     }
 
     /**
@@ -280,6 +302,7 @@ public class LiveCameraConnectionTest {
      * All camera settings have been changed.
      */
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testUpdateAll() {
         Camera c = new Camera();
         connection = spy(new LiveCameraConnection(CAMERA_IP));
@@ -299,6 +322,7 @@ public class LiveCameraConnectionTest {
      * Only pan and tilt values have been changed.
      */
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testUpdatePanTiltOnly() {
         Camera c = new Camera();
         connection = spy(new LiveCameraConnection(CAMERA_IP));
@@ -316,6 +340,7 @@ public class LiveCameraConnectionTest {
      * Only the zoom value has been changed.
      */
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testUpdateZoomOnly() {
         Camera c = new Camera();
         connection = spy(new LiveCameraConnection(CAMERA_IP));
@@ -333,6 +358,7 @@ public class LiveCameraConnectionTest {
      * Only the focus value has been changed.
      */
     @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     public void testUpdateFocusOnly() {
         Camera c = new Camera();
         connection = spy(new LiveCameraConnection(CAMERA_IP));
