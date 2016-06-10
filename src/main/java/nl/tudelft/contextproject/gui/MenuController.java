@@ -151,7 +151,7 @@ public class MenuController {
     private void toggleNodeVisibility(List<Node> clicked, List<Node> hidden) {
         for (Node b : clicked) {
             if (b.isVisible()) {
-                Animation.animNodeOut(b);
+                Animation.animNodeOut(b, true);
             } else {
                 Animation.animNodeIn(b);
             }
@@ -159,7 +159,7 @@ public class MenuController {
         
         for (Node b : hidden) {
             if (b.isVisible()) {
-                Animation.animNodeOut(b);
+                Animation.animNodeOut(b, true);
             }
         }
     }
@@ -169,28 +169,46 @@ public class MenuController {
      */
     private void initOtherButtons() {
         btnCreateScript.setOnAction(event -> {
-            CreateScriptController.show();
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                CreateScriptController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         });
 
         btnPreview.setOnAction(event -> {
-            PreviewController.show();
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                PreviewController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         });
 
         btnPresets.setOnAction(event -> {
-            PresetController.show();
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                PresetController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         });
 
         btnDirector.setOnAction(event -> {
-            DirectorLiveController.show();
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                DirectorLiveController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         });
 
         btnCameraman.setOnAction(event -> {
-            CameramanLiveController.show();
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                CameramanLiveController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         });
 
         btnEditScript.setOnAction(event -> {
-            CreateScriptController.setFill(true);
-            CreateScriptController.show();
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                CreateScriptController.setFill(true);
+                CreateScriptController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
         });
     }
 
