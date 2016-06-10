@@ -1,0 +1,6 @@
+resX 420
+resY 65
+vlcLocation C:\Test
+cameraIPs
+1 420.420.420.420
+3 65.65.65.65

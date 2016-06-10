@@ -102,6 +102,14 @@ public final class ApplicationSettings {
     }
     
     /**
+     * Sets {@link #vlcLocation}.
+     * @param loc New {@link #vlcLocation}
+     */
+    public void setVlcLocation(String loc) {
+        vlcLocation = loc;
+    }
+    
+    /**
      * Returns the IP of the camera with camera id camId
      * or null if unknown.
      * @return the IP of the camera with camera id camId
@@ -111,8 +119,22 @@ public final class ApplicationSettings {
         return cameraIPs.get(camId);
     }
     
+    /**
+     * Returns a HashMap containing all currently specified IPs for
+     * a given camera number.
+     * @return a HashMap that maps a camera number to an IP address.
+     */
     protected HashMap<Integer, String> getAllCameraIPs() {
         return cameraIPs;
+    }
+    
+    /**
+     * Adds a camera IP to a camera number.
+     * @param camId Id of camera
+     * @param ip IP of the camera with id camId.
+     */
+    public void addCameraIP(int camId, String ip) {
+        cameraIPs.put(camId, ip);
     }
     
     /**
