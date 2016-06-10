@@ -1,9 +1,14 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +21,9 @@ import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * This class controls the screen that shows the live view
@@ -28,13 +36,15 @@ import java.io.IOException;
  * 
  * @since 0.3
  */
-public class DirectorLiveController {
+public class DirectorLiveController /*implements Observer*/ {
 
     private static Script script;
 
     @FXML private Button btnBack;
     @FXML private Button btnNext;
     @FXML private Button btnSwap;
+    
+    @FXML private CheckBox automaticCheck;
 
     @FXML private ImageView bigView;
     @FXML private ImageView smallView;
@@ -47,12 +57,18 @@ public class DirectorLiveController {
     @FXML private Label smallPresetLabel;
     @FXML private Label smallShotNumberLabel;
     @FXML private Label smallStatusLabel;
+    
+    @FXML private TableView test;
+    public static final ObservableList names = 
+            FXCollections.observableArrayList();
 
     @FXML private TextArea bigDescriptionField;
     @FXML private TextArea smallDescriptionField;
 
     @FXML private VBox bigViewBox;
     @FXML private VBox smallViewBox;
+    @FXML private VBox vboxButtons;
+    @FXML private VBox vboxLabels;
     
     private boolean endReached;
     private boolean live;
@@ -65,7 +81,9 @@ public class DirectorLiveController {
         
         endReached = false;
         live = true;
-
+        
+        names.addAll(new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"), new Label("test"));
+        test.setItems(names);
         bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
         bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
 
@@ -136,7 +154,12 @@ public class DirectorLiveController {
         
         btnNext.setOnAction((event) -> {
             if (!endReached) {
-                script.next();
+                if (automaticCheck.isSelected()) {
+                    script.next(true);
+                } else {
+                    script.next(false);
+//                    updateExecuteButtons();
+                }
                 updateTables();
             }
         });
@@ -162,12 +185,7 @@ public class DirectorLiveController {
             smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
             smallDescriptionField.setText(smallShot.getDescription());
         } else {
-            smallView.setImage(new Image("black.png"));
-            smallShotNumberLabel.setText("");
-            smallCameraNumberLabel.setText("");
-            smallPresetLabel.setText("");
-            smallDescriptionField.setText("End of script reached");
-            endReached = true;
+            endOfScript(false);
         }
 
         if (bigShot != null) {
@@ -175,8 +193,34 @@ public class DirectorLiveController {
             bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber()));
             bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
             bigDescriptionField.setText(bigShot.getDescription());
-        } 
+        } else {
+            endOfScript(true);
+        }
     }
+    
+    private void endOfScript(boolean big) {
+        if (big) {
+            bigView.setImage(new Image("black.png"));
+            bigShotNumberLabel.setText("");
+            bigCameraNumberLabel.setText("");
+            bigPresetLabel.setText("");
+            bigDescriptionField.setText("End of script reached");
+            endReached = true;
+        } else {
+            smallView.setImage(new Image("black.png"));
+            smallShotNumberLabel.setText("");
+            smallCameraNumberLabel.setText("");
+            smallPresetLabel.setText("");
+            smallDescriptionField.setText("End of script reached");
+            endReached = true;
+        }
+    }
+    
+//    private void updateExecuteButtons() {
+//        for (int i = 0; i < script.getSkippedShots().size()) {
+//            
+//        }
+//    }
     
     /**
      * Calling this method shows this view in the middle of the rootLayout,
@@ -193,4 +237,23 @@ public class DirectorLiveController {
             e.printStackTrace();
         }
     }
+
+//    @Override
+//    public void update(Observable o, Object arg) {
+//        List<Shot> skipped = script.getSkippedShots();
+//        <vboxLabels>.clear();
+//        <vboxButtons>.clear();
+//        
+//        for (Shot sk : skipped) {
+//            Label label = new Label(sk.toString());
+//            Button execute = new Button("Execute");
+//            
+//            execute.setOnAction((event) -> {
+//                script.removeSkippedShot(sk);
+//            });
+//            
+//            vboxLabels.add(label);
+//            vboxButtons.add(execute);
+//        }
+//    }
 }
