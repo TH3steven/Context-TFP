@@ -60,6 +60,7 @@ public class LiveStreamHandler {
         if (mediaPlayer != null) {
             mediaPlayer.getMediaPlayer().stop();
             mediaPlayer.getMediaPlayer().release();
+            mediaPlayer = null;
         }
     }
     

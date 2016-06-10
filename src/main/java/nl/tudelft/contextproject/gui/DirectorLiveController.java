@@ -376,7 +376,7 @@ public class DirectorLiveController {
      * @param streamHandler The LiveStreamHandler responsible for the stream.
      */
     private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
-        if (streamHandler.isPlaying()) {
+        if (imageView.getImage() instanceof WritableImage && streamHandler.isPlaying()) {
             FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
             float fitHeight = videoSourceRatioProperty.get() * width;
             if (fitHeight > height) {
