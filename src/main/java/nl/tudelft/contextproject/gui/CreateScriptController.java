@@ -97,7 +97,8 @@ public class CreateScriptController {
 
     @FXML private TextField addShot;
     @FXML private TextField addDescription;
-    @FXML private TextField addAction;
+    @FXML private TextField addShotAction;
+    @FXML private TextField editShotAction;
     @FXML private TextField editShot;
     @FXML private TextField editDescription;
 
@@ -280,7 +281,7 @@ public class CreateScriptController {
                 addCamera.setStyle("");
                 addPreset.setStyle("");
                 addDescription.setStyle("");
-                addAction.setStyle("");
+                addShotAction.setStyle("");
 
                 if (!validateScript(data)
                         && !AlertDialog.confirmInvalidScriptAdding(
@@ -295,7 +296,7 @@ public class CreateScriptController {
                 addCamera.getSelectionModel().clearSelection();
                 addPreset.getSelectionModel().clearSelection();
                 addDescription.clear();
-                addAction.clear();
+                addShotAction.clear();
             }
         });
     }
@@ -362,7 +363,7 @@ public class CreateScriptController {
                     addShot.getText(),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                     addDescription.getText(),
-                    addAction.getText()
+                    addShotAction.getText()
                     );
 
             return newShot;
@@ -374,7 +375,7 @@ public class CreateScriptController {
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
                         .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
                     addDescription.getText(),
-                    addAction.getText()
+                    addShotAction.getText()
                     );
 
             return newShot;
@@ -484,7 +485,7 @@ public class CreateScriptController {
         return true;
     }
 
-    /**
+    /** Changed here
      * Allows for editable rows in the table. This method defines the
      * necessary components for row by row editing of the table.
      */
@@ -524,11 +525,12 @@ public class CreateScriptController {
         editCamera.setOnKeyReleased(addResourceHandler);
         editPreset.setOnKeyReleased(addResourceHandler);
         editDescription.setOnKeyReleased(addResourceHandler);
+        editShotAction.setOnKeyReleased(addResourceHandler);
 
         initTable();
     }
 
-    /**
+    /** Changed here.
      * Sets the onAction for the edit confirm and
      * edit remove buttons that show up when editing
      * a shot.
@@ -552,6 +554,11 @@ public class CreateScriptController {
                 isValid = false;
             }
 
+            if (editShotAction.getText().isEmpty()) {
+                editShotAction.setStyle(REDBORDER);
+                isValid = false;
+            }
+
             if (isValid) {
                 editCamera.setStyle("");
                 editPreset.setStyle("");
@@ -569,7 +576,7 @@ public class CreateScriptController {
         });
     }
 
-    /**
+    /**Changed here
      * Sets listeners and actions on the table.
      */
     private void initTable() {
@@ -583,6 +590,7 @@ public class CreateScriptController {
                     editPreset.getSelectionModel().select(0);
                 }
                 editDescription.setText(nv.getDescription());
+                editShotAction.setText(nv.getAction());
 
                 if (ov != nv && ov != null) {
                     editDoneAction();
@@ -621,6 +629,7 @@ public class CreateScriptController {
             shot.setPreset(null);
         }
         shot.setDescription(editDescription.getText());
+        shot.setAction(editShotAction.getText());
 
         if (lastSelectedRow.get().getIndex() < backupList.size()) {
             backupList.set(lastSelectedRow.get().getIndex(), backup);
