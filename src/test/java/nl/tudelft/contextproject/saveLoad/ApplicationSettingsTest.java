@@ -42,7 +42,7 @@ public class ApplicationSettingsTest {
         assertEquals(ApplicationSettings.DEFAULT_RESY, settings.getRenderResY());
         assertEquals(ApplicationSettings.DEFAULT_VLC_LOC, settings.getVlcLocation());
         assertEquals(ApplicationSettings.DEFAULT_DB_PORT, settings.getDatabasePort());
-        assertEquals(ApplicationSettings.DEFAULT_JDBC_DRIVER, settings.getJDBCDriver());
+        assertEquals(ApplicationSettings.DEFAULT_JDBC_DRIVER, settings.getJdbcDriver());
         assertEquals(new HashMap<Integer, String>(), settings.getAllCameraIPs());
     }
 
@@ -112,7 +112,7 @@ public class ApplicationSettingsTest {
         assertEquals("script2", settings.getDatabaseTableScript());
         assertEquals("presetTables", settings.getDatabaseTablePreset());
         assertEquals("counters", settings.getDatabaseTableCounter());
-        assertEquals("com.mysql.jdbc.Test", settings.getJDBCDriver());
+        assertEquals("com.mysql.jdbc.Test", settings.getJdbcDriver());
     }
 
     /**

@@ -38,49 +38,49 @@ public final class ApplicationSettings {
     private int resY;
     
     /**
-     * Port of used for the database connection.
-     */
-    private int database_Port;
-    
-    /**
      * Location of the VLC installation if this is non-default.
      */
     private String vlcLocation;
     
     /**
-     * URL of the database used for synchronization.
+     * URL of the database used for synchronisation.
      */
-    private String database_Url;
+    private String databaseUrl;
+    
+    /**
+     * Port of used for the database connection.
+     */
+    private int databasePort;
     
     /**
      * Name of the table used for storing the script.
      */
-    private String database_Table_Script;
+    private String databaseTableScript;
     
     /**
      * Name of the table used for storing the presets.
      */
-    private String database_Table_Preset;
+    private String databaseTablePreset;
     
     /**
      * Name of the table used for storing the counter.
      */
-    private String database_Table_Counter;
+    private String databaseTableCounter;
     
     /**
      * Username of the database.
      */
-    private String database_Username;
+    private String databaseUsername;
     
     /**
      * Password of the database.
      */
-    private String database_Password;
+    private String databasePassword;
     
     /**
      * Location of the JDBC driver used for the database connection.
      */
-    private String JDBC_Driver;
+    private String jdbcDriver;
     
     /**
      * Map that maps camera IDs to known camera IPs.
@@ -124,99 +124,99 @@ public final class ApplicationSettings {
     }
     
     /**
-     * Returns {@link #database_Port}.
-     * @return {@link #database_Port}
+     * Returns {@link #databasePort}.
+     * @return {@link #databasePort}
      */
     public int getDatabasePort() {
-        return database_Port;
+        return databasePort;
     }
     
     /**
-     * Return {@link #database_Url}.
-     * @return {@link #database_Url}
+     * Return {@link #databaseUrl}.
+     * @return {@link #databaseUrl}
      */
     public String getDatabaseUrl() {
-        return database_Url;
+        return databaseUrl;
     }
 
     /**
-     * Return {@link #database_Username}.
-     * @return {@link #database_Username}
+     * Return {@link #databaseUsername}.
+     * @return {@link #databaseUsername}
      */
     public String getDatabaseUsername() {
-        return database_Username;
+        return databaseUsername;
     }
     
     /**
-     * Return {@link #database_Password}.
-     * @return {@link #database_Password}
+     * Return {@link #databasePassword}.
+     * @return {@link #databasePassword}
      */
     public String getDatabasePassword() {
-        return database_Password;
+        return databasePassword;
     }
 
     /**
-     * Return {@link #database_Table_Script}.
-     * @return {@link #database_Table_Script}
+     * Return {@link #databaseTableScript}.
+     * @return {@link #databaseTableScript}
      */
     public String getDatabaseTableScript() {
-        return database_Table_Script;
+        return databaseTableScript;
     }
 
     /**
-     * Return {@link #database_Table_Preset}.
-     * @return {@link #database_Table_Preset}
+     * Return {@link #databaseTablePreset}.
+     * @return {@link #databaseTablePreset}
      */
     public String getDatabaseTablePreset() {
-        return database_Table_Preset;
+        return databaseTablePreset;
     }
     
     /**
-     * Return {@link #database_Table_Counter}.
-     * @return {@link #database_Table_Counter}
+     * Return {@link #databaseTableCounter}.
+     * @return {@link #databaseTableCounter}
      */
     public String getDatabaseTableCounter() {
-        return database_Table_Counter;
+        return databaseTableCounter;
     }
     
     /**
-     * Return {@link #JDBC_Driver}.
-     * @return {@link #JDBC_Driver}
+     * Return {@link #jdbcDriver}.
+     * @return {@link #jdbcDriver}
      */
-    public String getJDBCDriver() {
-        return JDBC_Driver;
+    public String getJdbcDriver() {
+        return jdbcDriver;
     }
     
     /**
      * Updates the information required for a database connection.
      * 
-     * @param url The url of the database.
+     * @param url The URL of the database.
      * @param port The port of the database.
      * @param username The username to access the database.
      * @param password The password to access the database.
      */
     public void updateDatabase(String url, int port, String username, String password) {
-        this.database_Url = url;
-        this.database_Port = port;
-        this.database_Username = username;
-        this.database_Password = password;
+        this.databaseUrl = url;
+        this.databasePort = port;
+        this.databaseUsername = username;
+        this.databasePassword = password;
     }
     
     /**
      * Updates the tables that should be used from the database.
      * 
-     * @param script {@link #database_Table_Script}
-     * @param preset {@link #database_Table_Preset}
-     * @param counter {@link #database_Table_Counter}
+     * @param script {@link #databaseTableScript}
+     * @param preset {@link #databaseTablePreset}
+     * @param counter {@link #databaseTableCounter}
      */
     public void updateDatabaseTables(String script, String preset, String counter) {
-        this.database_Table_Script = script;
-        this.database_Table_Preset = preset;
-        this.database_Table_Counter = counter;
+        this.databaseTableScript = script;
+        this.databaseTablePreset = preset;
+        this.databaseTableCounter = counter;
     }
     
-    public void setJDBCDriver(String driver) {
-        this.JDBC_Driver = driver;
+    public void setJdbcDriver(String driver) {
+        this.jdbcDriver = driver;
     }
     
     /**
@@ -313,14 +313,14 @@ public final class ApplicationSettings {
     public void reset() {
         resX = DEFAULT_RESX;
         resY = DEFAULT_RESY;
-        database_Port = DEFAULT_DB_PORT;
-        database_Url = "";
-        database_Username = "";
-        database_Password = "";
-        database_Table_Script = "";
-        database_Table_Preset = "";
-        database_Table_Counter = "";
-        JDBC_Driver = DEFAULT_JDBC_DRIVER;
+        databasePort = DEFAULT_DB_PORT;
+        databaseUrl = "";
+        databaseUsername = "";
+        databasePassword = "";
+        databaseTableScript = "";
+        databaseTablePreset = "";
+        databaseTableCounter = "";
+        jdbcDriver = DEFAULT_JDBC_DRIVER;
         vlcLocation = DEFAULT_VLC_LOC;
         cameraIPs = new HashMap<Integer, String>();
     }
@@ -350,26 +350,26 @@ public final class ApplicationSettings {
                     case "cameraIPs":
                         loadCameraIPs(sc);
                         break;
-                    case "database_Url":
-                        database_Url = sc.hasNext() ? sc.nextLine().trim() : database_Url;
+                    case "databaseUrl":
+                        databaseUrl = sc.hasNext() ? sc.nextLine().trim() : databaseUrl;
                         break;
-                    case "database_Port":
-                        database_Port = sc.hasNextInt() ? sc.nextInt() : DEFAULT_DB_PORT;
+                    case "databasePort":
+                        databasePort = sc.hasNextInt() ? sc.nextInt() : DEFAULT_DB_PORT;
                         break;
-                    case "database_Username":
-                        database_Username = sc.hasNext() ? sc.nextLine().trim() : database_Username;
+                    case "databaseUsername":
+                        databaseUsername = sc.hasNext() ? sc.nextLine().trim() : databaseUsername;
                         break;
-                    case "database_Table_Script":
-                        database_Table_Script = sc.hasNext() ? sc.nextLine().trim() : database_Table_Script;
+                    case "databaseTableScript":
+                        databaseTableScript = sc.hasNext() ? sc.nextLine().trim() : databaseTableScript;
                         break;
-                    case "database_Table_Preset":
-                        database_Table_Preset = sc.hasNext() ? sc.nextLine().trim() : database_Table_Preset;
+                    case "databaseTablePreset":
+                        databaseTablePreset = sc.hasNext() ? sc.nextLine().trim() : databaseTablePreset;
                         break;
-                    case "database_Table_Counter":
-                        database_Table_Counter = sc.hasNext() ? sc.nextLine().trim() : database_Table_Counter;
+                    case "databaseTableCounter":
+                        databaseTableCounter = sc.hasNext() ? sc.nextLine().trim() : databaseTableCounter;
                         break;
-                    case "JDBC_Driver":
-                        JDBC_Driver = sc.hasNext() ? sc.nextLine().trim() : DEFAULT_JDBC_DRIVER;
+                    case "jdbcDriver":
+                        jdbcDriver = sc.hasNext() ? sc.nextLine().trim() : DEFAULT_JDBC_DRIVER;
                         break;
                     default:
                         break;
@@ -425,12 +425,12 @@ public final class ApplicationSettings {
      * @param writer The writer that should be used for saving.
      */
     private void saveDatabaseInformation(PrintWriter writer) {
-        writer.println("database_Url " + database_Url);
-        writer.println("database_Port " + database_Port);
-        writer.println("database_Username " + database_Username);
-        writer.println("database_Table_Script " + database_Table_Script);
-        writer.println("database_Table_Preset " + database_Table_Preset);
-        writer.println("database_Table_Counter " + database_Table_Counter);
-        writer.println("JDBC_Driver " + JDBC_Driver);
+        writer.println("databaseUrl " + databaseUrl);
+        writer.println("databasePort " + databasePort);
+        writer.println("databaseUsername " + databaseUsername);
+        writer.println("databaseTableScript " + databaseTableScript);
+        writer.println("databaseTablePreset " + databaseTablePreset);
+        writer.println("databaseTableCounter " + databaseTableCounter);
+        writer.println("jdbcDriver " + jdbcDriver);
     }
 }

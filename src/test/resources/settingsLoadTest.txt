@@ -4,10 +4,10 @@ vlcLocation D:\program files
 cameraIPs
 1 65.65.65.65
 3 420.420.420.420
-database_Url google.nl
-database_Port 1996
-database_Username henk
-database_Table_Script script2
-database_Table_Preset presetTables
-database_Table_Counter counters
-JDBC_Driver com.mysql.jdbc.Test
+databaseUrl google.nl
+databasePort 1996
+databaseUsername henk
+databaseTableScript script2
+databaseTablePreset presetTables
+databaseTableCounter counters
+jdbcDriver com.mysql.jdbc.Test
