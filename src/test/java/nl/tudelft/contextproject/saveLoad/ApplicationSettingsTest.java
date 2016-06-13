@@ -104,6 +104,10 @@ public class ApplicationSettingsTest {
         assertEquals(420, settings.getRenderResY());
         assertEquals("D:\\program files", settings.getVlcLocation());
         assertEquals(expectedIPs, settings.getAllCameraIPs());
+        assertEquals("google.nl", settings.getDatabaseUrl());
+        assertEquals(1996, settings.getDatabasePort());
+        assertEquals("henk", settings.getDatabaseUsername());
+        assertEquals("com.mysql.jdbc.Test", settings.getJDBCDriver());
     }
 
     /**
@@ -126,6 +130,7 @@ public class ApplicationSettingsTest {
         settings.setVlcLocation("C:\\Test");
         settings.addCameraIP(1, "420.420.420.420");
         settings.addCameraIP(3, "65.65.65.65");
+        settings.updateDatabase("url", 1337, "pieter", "password");
         settings.save();
         assertTrue(actual.exists());
         String eof = "\\A";

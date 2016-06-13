@@ -20,6 +20,8 @@ public final class ApplicationSettings {
     
     public static final int DEFAULT_RESX = 1920;
     public static final int DEFAULT_RESY = 1080;
+    public static final int DEFAULT_DB_PORT = 3306;
+    public static final String DEFAULT_JDBC_DRIVER = "com.mysql.jdbc.Driver";
     public static final String DEFAULT_VLC_LOC = "";
 
     private static final ApplicationSettings INSTANCE = new ApplicationSettings();
@@ -36,9 +38,34 @@ public final class ApplicationSettings {
     private int resY;
     
     /**
+     * Port of used for the database connection.
+     */
+    private int database_Port;
+    
+    /**
      * Location of the VLC installation if this is non-default.
      */
     private String vlcLocation;
+    
+    /**
+     * URL of the database used for synchronization.
+     */
+    private String database_Url;
+    
+    /**
+     * Username of the database.
+     */
+    private String database_Username;
+    
+    /**
+     * Password of the database.
+     */
+    private String database_Password;
+    
+    /**
+     * Location of the JDBC driver used for the database connection.
+     */
+    private String JDBC_Driver;
     
     /**
      * Map that maps camera IDs to known camera IPs.
@@ -79,6 +106,65 @@ public final class ApplicationSettings {
      */
     public int getRenderResY() {
         return resY;
+    }
+    
+    /**
+     * Returns {@link #database_Port}.
+     * @return {@link #database_Port}
+     */
+    public int getDatabasePort() {
+        return database_Port;
+    }
+    
+    /**
+     * Return {@link #database_Url}.
+     * @return {@link #database_Url}
+     */
+    public String getDatabaseUrl() {
+        return database_Url;
+    }
+
+    /**
+     * Return {@link #database_Username}.
+     * @return {@link #database_Username}
+     */
+    public String getDatabaseUsername() {
+        return database_Username;
+    }
+    
+    /**
+     * Return {@link #database_Password}.
+     * @return {@link #database_Password}
+     */
+    public String getDatabasePassword() {
+        return database_Password;
+    }
+    
+    /**
+     * Return {@link #JDBC_Driver}.
+     * @return {@link #JDBC_Driver}
+     */
+    public String getJDBCDriver() {
+        return JDBC_Driver;
+    }
+    
+    /**
+     * Updates the information required for a database connection.
+     * 
+     * @param url The url of the database.
+     * @param port The port of the database.
+     * @param username The username to access the database.
+     * @param password The password to access the database.
+     */
+    public void updateDatabase(String url, int port, String username, String password) {
+        this.database_Url = url;
+        this.database_Port = port;
+        this.database_Username = username;
+        this.database_Password = password;
+    }
+    
+    public void setJDBCDriver(String driver) {
+        this.JDBC_Driver = driver;
     }
     
     /**
@@ -175,6 +261,11 @@ public final class ApplicationSettings {
     public void reset() {
         resX = DEFAULT_RESX;
         resY = DEFAULT_RESY;
+        database_Port = DEFAULT_DB_PORT;
+        database_Url = "";
+        database_Username = "";
+        database_Password = "";
+        JDBC_Driver = DEFAULT_JDBC_DRIVER;
         vlcLocation = DEFAULT_VLC_LOC;
         cameraIPs = new HashMap<Integer, String>();
     }
@@ -203,6 +294,18 @@ public final class ApplicationSettings {
                         break;
                     case "cameraIPs":
                         loadCameraIPs(sc);
+                        break;
+                    case "database_Url":
+                        database_Url = sc.hasNext() ? sc.nextLine().trim() : database_Url;
+                        break;
+                    case "database_Port":
+                        database_Port = sc.hasNextInt() ? sc.nextInt() : DEFAULT_DB_PORT;
+                        break;
+                    case "database_Username":
+                        database_Username = sc.hasNext() ? sc.nextLine().trim() : database_Username;
+                        break;
+                    case "JDBC_Driver":
+                        JDBC_Driver = sc.hasNext() ? sc.nextLine().trim() : DEFAULT_JDBC_DRIVER;
                         break;
                     default:
                         break;
@@ -248,7 +351,19 @@ public final class ApplicationSettings {
         for (int key : cameraIPs.keySet()) {
             writer.println(key + " " + cameraIPs.get(key));
         }
+        saveDatabaseInformation(writer);
         writer.flush();
         writer.close();
+    }
+    
+    /**
+     * Saves the database information to a file using a writer.
+     * @param writer The writer that should be used for saving.
+     */
+    private void saveDatabaseInformation(PrintWriter writer) {
+        writer.println("database_Url " + database_Url);
+        writer.println("database_Port " + database_Port);
+        writer.println("database_Username " + database_Username);
+        writer.println("JDBC_Driver " + JDBC_Driver);
     }
 }
