@@ -53,6 +53,21 @@ public final class ApplicationSettings {
     private String database_Url;
     
     /**
+     * Name of the table used for storing the script.
+     */
+    private String database_Table_Script;
+    
+    /**
+     * Name of the table used for storing the presets.
+     */
+    private String database_Table_Preset;
+    
+    /**
+     * Name of the table used for storing the counter.
+     */
+    private String database_Table_Counter;
+    
+    /**
      * Username of the database.
      */
     private String database_Username;
@@ -139,6 +154,30 @@ public final class ApplicationSettings {
     public String getDatabasePassword() {
         return database_Password;
     }
+
+    /**
+     * Return {@link #database_Table_Script}.
+     * @return {@link #database_Table_Script}
+     */
+    public String getDatabaseTableScript() {
+        return database_Table_Script;
+    }
+
+    /**
+     * Return {@link #database_Table_Preset}.
+     * @return {@link #database_Table_Preset}
+     */
+    public String getDatabaseTablePreset() {
+        return database_Table_Preset;
+    }
+    
+    /**
+     * Return {@link #database_Table_Counter}.
+     * @return {@link #database_Table_Counter}
+     */
+    public String getDatabaseTableCounter() {
+        return database_Table_Counter;
+    }
     
     /**
      * Return {@link #JDBC_Driver}.
@@ -161,6 +200,19 @@ public final class ApplicationSettings {
         this.database_Port = port;
         this.database_Username = username;
         this.database_Password = password;
+    }
+    
+    /**
+     * Updates the tables that should be used from the database.
+     * 
+     * @param script {@link #database_Table_Script}
+     * @param preset {@link #database_Table_Preset}
+     * @param counter {@link #database_Table_Counter}
+     */
+    public void updateDatabaseTables(String script, String preset, String counter) {
+        this.database_Table_Script = script;
+        this.database_Table_Preset = preset;
+        this.database_Table_Counter = counter;
     }
     
     public void setJDBCDriver(String driver) {
@@ -265,6 +317,9 @@ public final class ApplicationSettings {
         database_Url = "";
         database_Username = "";
         database_Password = "";
+        database_Table_Script = "";
+        database_Table_Preset = "";
+        database_Table_Counter = "";
         JDBC_Driver = DEFAULT_JDBC_DRIVER;
         vlcLocation = DEFAULT_VLC_LOC;
         cameraIPs = new HashMap<Integer, String>();
@@ -303,6 +358,15 @@ public final class ApplicationSettings {
                         break;
                     case "database_Username":
                         database_Username = sc.hasNext() ? sc.nextLine().trim() : database_Username;
+                        break;
+                    case "database_Table_Script":
+                        database_Table_Script = sc.hasNext() ? sc.nextLine().trim() : database_Table_Script;
+                        break;
+                    case "database_Table_Preset":
+                        database_Table_Preset = sc.hasNext() ? sc.nextLine().trim() : database_Table_Preset;
+                        break;
+                    case "database_Table_Counter":
+                        database_Table_Counter = sc.hasNext() ? sc.nextLine().trim() : database_Table_Counter;
                         break;
                     case "JDBC_Driver":
                         JDBC_Driver = sc.hasNext() ? sc.nextLine().trim() : DEFAULT_JDBC_DRIVER;
@@ -364,6 +428,9 @@ public final class ApplicationSettings {
         writer.println("database_Url " + database_Url);
         writer.println("database_Port " + database_Port);
         writer.println("database_Username " + database_Username);
+        writer.println("database_Table_Script " + database_Table_Script);
+        writer.println("database_Table_Preset " + database_Table_Preset);
+        writer.println("database_Table_Counter " + database_Table_Counter);
         writer.println("JDBC_Driver " + JDBC_Driver);
     }
 }
