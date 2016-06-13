@@ -7,4 +7,7 @@ cameraIPs
 database_Url url
 database_Port 1337
 database_Username pieter
+database_Table_Script script1
+database_Table_Preset presetTable
+database_Table_Counter counter
 JDBC_Driver com.mysql.jdbc.Driver
