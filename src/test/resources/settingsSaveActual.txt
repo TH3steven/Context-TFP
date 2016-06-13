@@ -4,10 +4,10 @@ vlcLocation C:\Test
 cameraIPs
 1 420.420.420.420
 3 65.65.65.65
-database_Url url
-database_Port 1337
-database_Username pieter
-database_Table_Script script1
-database_Table_Preset presetTable
-database_Table_Counter counter
-JDBC_Driver com.mysql.jdbc.Driver
+databaseUrl url
+databasePort 1337
+databaseUsername pieter
+databaseTableScript script1
+databaseTablePreset presetTable
+databaseTableCounter counter
+jdbcDriver com.mysql.jdbc.Driver
