@@ -4,3 +4,7 @@ vlcLocation C:\Test
 cameraIPs
 1 420.420.420.420
 3 65.65.65.65
+database_Url url
+database_Port 1337
+database_Username pieter
+JDBC_Driver com.mysql.jdbc.Driver
