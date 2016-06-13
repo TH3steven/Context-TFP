@@ -23,3 +23,11 @@
 .subButton {
 	-fx-font-size: 15px;
 }
+
+.settingsBack {
+	-fx-background-color: #888;
+}
+
+.settingsPopup {
+	-fx-background-color: #ccc;
+}
