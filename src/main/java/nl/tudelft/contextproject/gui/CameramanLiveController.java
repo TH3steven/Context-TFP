@@ -20,8 +20,9 @@ import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * This class controls the screen that shows the live view of
@@ -33,7 +34,7 @@ import java.util.List;
  * 
  * @since 0.8
  */
-public class CameramanLiveController {
+public class CameramanLiveController implements Observer {
 
     private Script script;
 
@@ -60,7 +61,6 @@ public class CameramanLiveController {
 
         initCameraSelector();
         initButtons();
-        initShotListener();
         setFactories();
 
         tableShots.getItems().addAll(script.getShots());
@@ -113,10 +113,6 @@ public class CameramanLiveController {
         return listShots;
     }
 
-    private void initShotListener() {
-        //
-    }
-
     private void setFactories() {
         columnID.setCellValueFactory(new PropertyValueFactory<Shot, Number>("number"));
 
@@ -137,6 +133,13 @@ public class CameramanLiveController {
                 cellData.getValue().getCamera().getNumber() + 1));
     }
 
+    @Override
+    public void update(Observable obs, Object current) {
+        Shot cur = tableShots.getItems().get((int) current);
+        
+        //tableShots
+    }
+    
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.

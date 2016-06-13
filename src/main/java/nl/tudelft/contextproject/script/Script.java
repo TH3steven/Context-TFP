@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Observable;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,7 +21,7 @@ import java.util.TimerTask;
  * 
  * @since 0.2
  */
-public class Script implements Iterator<Shot> {
+public class Script extends Observable implements Iterator<Shot> {
 
     /**
      * Contains the Timelines per camera number.
@@ -276,12 +277,7 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        current++;
-        Shot next = shots.get(current);
-        
-        updateOldCamCaller();
-
-        return next;
+        return next(false);
     }
     
     /**
@@ -298,6 +294,9 @@ public class Script implements Iterator<Shot> {
         
         current++;
         Shot next = shots.get(current);
+        
+        setChanged();
+        notifyObservers(current);
         
         return next;
     }
