@@ -215,7 +215,7 @@ public class CreateScriptController {
         addPreset.setDisable(true);
     }
 
-    /** Changed here.
+    /**
      * Sets the factories of the table columns, aka where they should
      * get their value from.
      */
@@ -268,7 +268,7 @@ public class CreateScriptController {
         });
     }
 
-    /** Changed here -> addAction.clear and addAction.setStyle("").
+    /**
      * Sets the onAction for the add new camera button.
      */
     private void setAddButton() {
@@ -350,7 +350,7 @@ public class CreateScriptController {
         return true;
     }
 
-    /** Changed here -> addaction.getText
+    /**
      * Creates a new shot based on the users' input.
      * @return The newly created shot.
      */
@@ -485,7 +485,7 @@ public class CreateScriptController {
         return true;
     }
 
-    /** Changed here
+    /**
      * Allows for editable rows in the table. This method defines the
      * necessary components for row by row editing of the table.
      */
@@ -530,7 +530,7 @@ public class CreateScriptController {
         initTable();
     }
 
-    /** Changed here.
+    /**
      * Sets the onAction for the edit confirm and
      * edit remove buttons that show up when editing
      * a shot.
@@ -576,7 +576,7 @@ public class CreateScriptController {
         });
     }
 
-    /**Changed here
+    /**
      * Sets listeners and actions on the table.
      */
     private void initTable() {
@@ -612,7 +612,7 @@ public class CreateScriptController {
         });
     }
 
-    /** Changed here.
+    /**
      * Sets the action to be taken when an edit is complete.
      * @param shot The shot that is edited.
      */
