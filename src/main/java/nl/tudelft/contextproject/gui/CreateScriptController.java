@@ -89,6 +89,7 @@ public class CreateScriptController {
     @FXML private TableColumn<Shot, Shot> columnAction;
     @FXML private TableColumn<Shot, Number> columnCamera;
     @FXML private TableColumn<Shot, String> columnDescription;
+    @FXML private TableColumn<Shot, String> columnShotAction;
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, Image> columnReorder;
@@ -96,6 +97,7 @@ public class CreateScriptController {
 
     @FXML private TextField addShot;
     @FXML private TextField addDescription;
+    @FXML private TextField addAction;
     @FXML private TextField editShot;
     @FXML private TextField editDescription;
 
@@ -212,7 +214,7 @@ public class CreateScriptController {
         addPreset.setDisable(true);
     }
 
-    /**
+    /** Changed here.
      * Sets the factories of the table columns, aka where they should
      * get their value from.
      */
@@ -238,6 +240,9 @@ public class CreateScriptController {
         columnDescription.setCellValueFactory(
             new PropertyValueFactory<Shot, String>("description"));
 
+        columnShotAction.setCellValueFactory(
+            new PropertyValueFactory<Shot, String>("action"));
+
         columnAction.setCellValueFactory(cellData -> 
             new ReadOnlyObjectWrapper<>(cellData.getValue()));
 
@@ -262,7 +267,7 @@ public class CreateScriptController {
         });
     }
 
-    /**
+    /** Changed here -> addAction.clear and addAction.setStyle("").
      * Sets the onAction for the add new camera button.
      */
     private void setAddButton() {
@@ -275,6 +280,7 @@ public class CreateScriptController {
                 addCamera.setStyle("");
                 addPreset.setStyle("");
                 addDescription.setStyle("");
+                addAction.setStyle("");
 
                 if (!validateScript(data)
                         && !AlertDialog.confirmInvalidScriptAdding(
@@ -289,6 +295,7 @@ public class CreateScriptController {
                 addCamera.getSelectionModel().clearSelection();
                 addPreset.getSelectionModel().clearSelection();
                 addDescription.clear();
+                addAction.clear();
             }
         });
     }
@@ -342,7 +349,7 @@ public class CreateScriptController {
         return true;
     }
 
-    /**
+    /** Changed here -> addaction.getText
      * Creates a new shot based on the users' input.
      * @return The newly created shot.
      */
@@ -354,7 +361,8 @@ public class CreateScriptController {
                     maximumId,
                     addShot.getText(),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                    addDescription.getText()
+                    addDescription.getText(),
+                    addAction.getText()
                     );
 
             return newShot;
@@ -365,7 +373,8 @@ public class CreateScriptController {
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
                         .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
-                    addDescription.getText()
+                    addDescription.getText(),
+                    addAction.getText()
                     );
 
             return newShot;
@@ -595,13 +604,13 @@ public class CreateScriptController {
         });
     }
 
-    /**
+    /** Changed here.
      * Sets the action to be taken when an edit is complete.
      * @param shot The shot that is edited.
      */
     private void editConfirmAction(Shot shot) {
         Shot backup = new Shot(shot.getNumber(), shot.getShotId(), 
-                shot.getCamera(), shot.getPreset(), shot.getDescription());
+                shot.getCamera(), shot.getPreset(), shot.getDescription(), shot.getAction());
 
         shot.setShotId(editShot.getText());
         shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));

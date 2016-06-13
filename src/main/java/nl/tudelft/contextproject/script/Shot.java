@@ -19,6 +19,7 @@ public class Shot {
     private Preset preset;
     private String shotId;
     private String description;
+    private String action;
 
     private double duration;
     private int number;
@@ -32,8 +33,9 @@ public class Shot {
      * @param cam is the camera used to make the shot.
      * @param pres is the preset used for the shot.
      * @param description The description of what happens during the shot.
+     * @param action The action associated to the shot.
      */
-    public Shot(int num, String shotId, Camera cam, Preset pres, String description) {
+    public Shot(int num, String shotId, Camera cam, Preset pres, String description, String action) {
         this.number = num;
         this.shotId = shotId;
         this.camera = cam;
@@ -42,6 +44,7 @@ public class Shot {
         if (cam != null && pres != null) {
             cam.addPreset(pres);
         }
+        this.action = action;
         this.duration = -1;
     }
 
@@ -53,12 +56,14 @@ public class Shot {
      * @param shotId The identifier for the shot.
      * @param cam is the camera used to make the shot.
      * @param description The description of what happens during the shot.
+     * @param action The action associated to the shot.
      */
-    public Shot(int num, String shotId, Camera cam, String description) {
+    public Shot(int num, String shotId, Camera cam, String description, String action) {
         this.number = num;
         this.shotId = shotId;
         this.camera = cam;
         this.description = description;
+        this.action = action;
         this.duration = -1;
     }
 
@@ -171,7 +176,8 @@ public class Shot {
                     && Objects.equals(getCamera(), shot.getCamera())
                     && Objects.equals(getPreset(), shot.getPreset())
                     && Objects.equals(getShotId(), shot.getShotId())
-                    && Objects.equals(getDescription(), shot.getDescription());
+                    && Objects.equals(getDescription(), shot.getDescription())
+                    && Objects.equals(getAction(), shot.getAction());
         }
 
         return false;
@@ -179,7 +185,7 @@ public class Shot {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getNumber(), getCamera(), getPreset(), getShotId(), getDescription());
+        return Objects.hash(getNumber(), getCamera(), getPreset(), getShotId(), getDescription(), getAction());
     }
 
     /**
@@ -196,6 +202,22 @@ public class Shot {
      */
     public double getDuration() {
         return duration;
+    }
+
+    /**
+     * Gets the action to be performed by this shot.
+     * @return the action to be performed by the shot
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * Sets the action to be performed by this shot.
+     * @param action The precise action performed by the shot.
+     */
+    public void setAction(String action) {
+        this.action = action;
     }
 
     /**
