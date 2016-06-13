@@ -82,6 +82,7 @@ public class Shot {
         this.preset = pres;
         this.description = "";
         this.duration = -1;
+        this.action = "";
         if (cam != null && pres != null) {
             cam.addPreset(pres);
         }
