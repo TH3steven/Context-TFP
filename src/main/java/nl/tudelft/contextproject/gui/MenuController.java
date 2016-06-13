@@ -5,9 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -24,12 +26,15 @@ import java.util.List;
 
 /**
  * Controller class for the main menu. This class controls the actions to be taken
- * when one of the menu buttons is clicked. Additionally, this class is responsible
+ * when one of the menu buttons is clicked. Additionally, this class is responsvible
  * for the displaying of the logo and the label that indicates the active {@link Script}.
  * 
  * @since 0.1
  */
 public class MenuController {
+
+    @FXML private AnchorPane settingsFront;
+    @FXML private AnchorPane settingsBack;
 
     @FXML private Button btnCameraman;
     @FXML private Button btnCreateScript;
@@ -41,7 +46,7 @@ public class MenuController {
     @FXML private Button btnLive;
     @FXML private Button btnLoadScript;
 
-    @FXML private ImageView settings;
+    @FXML private ImageView imgSettings;
 
     @FXML private Label lblPre;
     @FXML private Label lblLive;
@@ -223,15 +228,32 @@ public class MenuController {
      * Sets the hover and click action for the settings icon.
      */
     private void initSettingsImg() {
-        settings.setOnMouseEntered(event -> {
-            settings.setImage(new Image("settings_active.png"));
+        imgSettings.setOnMouseEntered(event -> {
+            imgSettings.setImage(new Image("settings_active.png"));
         });
         
-        settings.setOnMouseExited(event -> {
-            settings.setImage(new Image("settings.png"));
+        imgSettings.setOnMouseExited(event -> {
+            imgSettings.setImage(new Image("settings.png"));
+        });
+        
+        imgSettings.setOnMouseClicked(event -> {
+            settingsOnClick();
+        });
+        
+        settingsFront.setOnMouseClicked(event -> {
+            settingsFront.setVisible(false);
+            settingsBack.setVisible(false);
         });
     }
 
+    private void settingsOnClick() {
+        BoxBlur boxBlur = new BoxBlur(15, 10, 3);
+        settingsBack.setEffect(boxBlur);
+        
+        settingsFront.setVisible(true);
+        settingsBack.setVisible(true);
+    }
+    
     /**
      * Sets the text of the script label on the menu.
      * 
