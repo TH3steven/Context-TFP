@@ -136,6 +136,20 @@ public final class AlertDialog {
 
         alert.showAndWait();
     }
+    
+    /**
+     * Displays an error when saving of the settings was unsuccessful.
+     * @param e The exception that was thrown.
+     */
+    public static void errorSavingSettings(Exception e) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Saving settings failed!");
+        alert.setHeaderText("Error when trying to save the settings to file");
+        alert.setContentText("An error occurred when trying to save the settings to "
+                + "'settings.tfp'. \n\nError: "
+                + e.getCause());
+        alert.showAndWait();
+    }
 
     /**
      * Shows a dialog when exiting a screen without saving, thus

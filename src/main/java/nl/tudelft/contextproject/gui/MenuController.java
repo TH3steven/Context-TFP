@@ -81,6 +81,7 @@ public class MenuController {
 
     @FXML private PasswordField settingsDbPassword;
     @FXML private TextField settingsDbAddress;
+    @FXML private TextField settingsDbName;
     @FXML private TextField settingsDbPort;
     @FXML private TextField settingsDbUsername;
     @FXML private TextField settingsVlcLoc;
@@ -269,36 +270,43 @@ public class MenuController {
         });
         
         imgSettings.setOnMouseClicked(event -> {
-            settingsOnClick();
+            if (settingsFront.isVisible()) {
+                settingsOnClose();
+            } else {
+                settingsOnOpen();
+            }
         });
         
         clickPane.setOnMouseClicked(event -> {
-            settingsFront.setVisible(false);
-            settingsBack.setVisible(false);
-            settingsGrid.disableProperty().set(true);
             settingsOnClose();
         });
     }
-
-    private void settingsOnClick() {
-        BoxBlur boxBlur = new BoxBlur(15, 10, 3);
-        settingsBack.setEffect(boxBlur);
-        
-        settingsGrid.disableProperty().set(false);
-        settingsFront.setVisible(true);
-        settingsBack.setVisible(true);
-        
-        settingsOnOpen();
-    }
     
     private void settingsOnOpen() {
+        BoxBlur boxBlur = new BoxBlur(15, 10, 3);
+        settingsBack.setEffect(boxBlur);
+        settingsBack.setVisible(true);
+        settingsFront.setVisible(true);
+        settingsGrid.disableProperty().set(false); 
+        
         ApplicationSettings settings = ApplicationSettings.getInstance();
         settingsInitVlcSettings(settings);
         settingsInitDbSettings(settings);
         settingsInitIpTable(settings); 
+        
+        btnSettingsSave.setOnAction(event -> {
+            try {
+                settings.save();
+            } catch (IOException e) {
+                AlertDialog.errorSavingSettings(e);
+            }
+        });
     }
     
     private void settingsOnClose() {
+        settingsFront.setVisible(false);
+        settingsBack.setVisible(false);
+        settingsGrid.disableProperty().set(true);
         btnSettingsTest.fire();
     }
     
@@ -338,7 +346,7 @@ public class MenuController {
             try {
                 AlertDialog.findVlc(((Node) event.getTarget()).getScene().getWindow());
             } catch (RuntimeException e) {
-               //No VLC has been set.
+                //No VLC has been set.
             }
         });
     }
@@ -346,11 +354,13 @@ public class MenuController {
     private void settingsInitDbSettings(ApplicationSettings settings) {
         settingsDbAddress.setTooltip(new Tooltip("Address of the database used for synchronisation"));
         settingsDbPort.setTooltip(new Tooltip("Port associated with the address"));
+        settingsDbName.setTooltip(new Tooltip("Name of the database"));
         settingsDbUsername.setTooltip(new Tooltip("Username used to log in to database"));
         settingsDbPassword.setTooltip(new Tooltip("Password used to log in to database"));
         
         settingsDbAddress.setText(settings.getDatabaseUrl());
         settingsDbPort.setText(settings.getDatabasePort() + "");
+        settingsDbName.setText(settings.getDatabaseName());
         settingsDbUsername.setText(settings.getDatabaseUsername());
         settingsDbPassword.setText(settings.getDatabasePassword());
         
@@ -361,11 +371,11 @@ public class MenuController {
         });
         
         btnSettingsTest.setOnAction(event -> {
-            //Test DB connection, keep old settings if incorrect.
+            //TODO: Test DB connection, keep old settings if incorrect.
             settings.setDatabaseInfo(
                     settingsDbAddress.getText(), 
                     Integer.parseInt(settingsDbPort.getText()),
-                    "",
+                    settingsDbName.getText(),
                     settingsDbUsername.getText(), 
                     settingsDbPassword.getText());
         });
