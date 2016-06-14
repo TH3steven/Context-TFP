@@ -20,6 +20,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import nl.tudelft.contextproject.ContextTFP;
@@ -44,8 +46,12 @@ import java.util.List;
  */
 public class MenuController {
 
-    @FXML private AnchorPane settingsFront;
+    @FXML private Pane settingsFront;
+    @FXML private Pane clickPane;
+    
     @FXML private AnchorPane settingsBack;
+    
+    @FXML private GridPane settingsGrid;
 
     @FXML private Button btnCameraman;
     @FXML private Button btnCreateScript;
@@ -266,9 +272,10 @@ public class MenuController {
             settingsOnClick();
         });
         
-        settingsFront.setOnMouseClicked(event -> {
+        clickPane.setOnMouseClicked(event -> {
             settingsFront.setVisible(false);
             settingsBack.setVisible(false);
+            settingsGrid.disableProperty().set(true);
             settingsOnClose();
         });
     }
@@ -277,6 +284,7 @@ public class MenuController {
         BoxBlur boxBlur = new BoxBlur(15, 10, 3);
         settingsBack.setEffect(boxBlur);
         
+        settingsGrid.disableProperty().set(false);
         settingsFront.setVisible(true);
         settingsBack.setVisible(true);
         
