@@ -1,0 +1,10 @@
+resX 1920
+resY 1080
+vlcLocation This is not a path 
+cameraIPs
+2 420.420.420.420
+databaseUrl 
+databasePort 3306
+databaseUsername 
+databaseName 
+jdbcDriver com.mysql.jdbc.Driver

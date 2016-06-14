@@ -7,7 +7,5 @@ cameraIPs
 databaseUrl google.nl
 databasePort 1996
 databaseUsername henk
-databaseTableScript script2
-databaseTablePreset presetTables
-databaseTableCounter counters
+databaseName ingrid
 jdbcDriver com.mysql.jdbc.Test
