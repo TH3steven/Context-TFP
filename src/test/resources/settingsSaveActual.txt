@@ -7,7 +7,5 @@ cameraIPs
 databaseUrl url
 databasePort 1337
 databaseUsername pieter
-databaseTableScript script1
-databaseTablePreset presetTable
-databaseTableCounter counter
+databaseName SwekJeweled
 jdbcDriver com.mysql.jdbc.Driver

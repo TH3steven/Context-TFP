@@ -109,9 +109,7 @@ public class ApplicationSettingsTest {
         assertEquals("google.nl", settings.getDatabaseUrl());
         assertEquals(1996, settings.getDatabasePort());
         assertEquals("henk", settings.getDatabaseUsername());
-        assertEquals("script2", settings.getDatabaseTableScript());
-        assertEquals("presetTables", settings.getDatabaseTablePreset());
-        assertEquals("counters", settings.getDatabaseTableCounter());
+        assertEquals("ingrid", settings.getDatabaseName());
         assertEquals("com.mysql.jdbc.Test", settings.getJdbcDriver());
     }
 
@@ -135,8 +133,8 @@ public class ApplicationSettingsTest {
         settings.setVlcLocation("C:\\Test");
         settings.addCameraIP(1, "420.420.420.420");
         settings.addCameraIP(3, "65.65.65.65");
-        settings.updateDatabase("url", 1337, "pieter", "password");
-        settings.updateDatabaseTables("script1", "presetTable", "counter");
+        settings.setDatabaseInfo("url", 1337, "pieter", "password");
+        settings.setDatabaseName("SwekJeweled");
         settings.save();
         assertTrue(actual.exists());
         String eof = "\\A";
@@ -147,6 +145,23 @@ public class ApplicationSettingsTest {
         assertEquals(sc2.next(), sc.next());
         sc.close();
         sc2.close();
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void testSaveLoad() throws Exception {
+        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
+        File file = new File("src/test/resources/settingsSaveLoad.txt");
+        doReturn(new PrintWriter(new FileWriter(file))).when(settings, "getWriter");
+        doReturn(new Scanner(file)).when(settings, "getScanner");
+        settings.reset();
+        settings.setVlcLocation("This is not a path ");
+        settings.addCameraIP(2, "420.420.420.420");
+        settings.save();
+        settings.load();
+        assertEquals("This is not a path", settings.getVlcLocation());
+        assertEquals("420.420.420.420", settings.getCameraIP(2));
+        assertEquals("", settings.getDatabaseName());
     }
 
 }

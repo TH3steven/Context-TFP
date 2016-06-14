@@ -53,19 +53,9 @@ public final class ApplicationSettings {
     private int databasePort;
     
     /**
-     * Name of the table used for storing the script.
+     * Name of the database.
      */
-    private String databaseTableScript;
-    
-    /**
-     * Name of the table used for storing the presets.
-     */
-    private String databaseTablePreset;
-    
-    /**
-     * Name of the table used for storing the counter.
-     */
-    private String databaseTableCounter;
+    private String databaseName;
     
     /**
      * Username of the database.
@@ -94,9 +84,24 @@ public final class ApplicationSettings {
      * Private constructor since this is a singleton class.
      */
     private ApplicationSettings() {
-        if (!load()) {
-            reset();
-        }
+        reset();
+        load();
+    }
+    
+    /**
+     * Resets the settings their default values.
+     */
+    public void reset() {
+        resX = DEFAULT_RESX;
+        resY = DEFAULT_RESY;
+        databasePort = DEFAULT_DB_PORT;
+        databaseUrl = "";
+        databaseUsername = "";
+        databasePassword = "";
+        databaseName = "";
+        jdbcDriver = DEFAULT_JDBC_DRIVER;
+        vlcLocation = DEFAULT_VLC_LOC;
+        cameraIPs = new HashMap<Integer, String>();
     }
     
     /**
@@ -124,6 +129,18 @@ public final class ApplicationSettings {
     }
     
     /**
+     * Sets the render resolution setting with which VLC will will render 
+     * live camera views to the specified settings.
+     * 
+     * @param resX Resolution in X direction
+     * @param resY Resolution in Y direction
+     */
+    public void setRenderResolution(int resX, int resY) {
+        this.resX = resX;
+        this.resY = resY;
+    }
+    
+    /**
      * Returns {@link #databasePort}.
      * @return {@link #databasePort}
      */
@@ -132,11 +149,27 @@ public final class ApplicationSettings {
     }
     
     /**
+     * Sets {@link #databasePort}.
+     * @param port See {@link #databasePort}
+     */
+    public void setDatabasePort(int port) {
+        this.databasePort = port;
+    }
+    
+    /**
      * Return {@link #databaseUrl}.
      * @return {@link #databaseUrl}
      */
     public String getDatabaseUrl() {
         return databaseUrl;
+    }
+    
+    /**
+     * Sets {@link #databaseUrl}.
+     * @param url See {@link #databaseUrl}
+     */
+    public void setDatabaseUrl(String url) {
+        this.databaseUrl = url;
     }
 
     /**
@@ -156,27 +189,19 @@ public final class ApplicationSettings {
     }
 
     /**
-     * Return {@link #databaseTableScript}.
-     * @return {@link #databaseTableScript}
+     * Return {@link #databaseName}.
+     * @return {@link #databaseName}
      */
-    public String getDatabaseTableScript() {
-        return databaseTableScript;
-    }
-
-    /**
-     * Return {@link #databaseTablePreset}.
-     * @return {@link #databaseTablePreset}
-     */
-    public String getDatabaseTablePreset() {
-        return databaseTablePreset;
+    public String getDatabaseName() {
+        return databaseName;
     }
     
     /**
-     * Return {@link #databaseTableCounter}.
-     * @return {@link #databaseTableCounter}
+     * Sets {@link #databaseName}.
+     * @param name See {@link #databaseName}
      */
-    public String getDatabaseTableCounter() {
-        return databaseTableCounter;
+    public void setDatabaseName(String name) {
+        this.databaseName = name;
     }
     
     /**
@@ -188,6 +213,14 @@ public final class ApplicationSettings {
     }
     
     /**
+     * Sets {@link #jdbcDriver}.
+     * @param driver See {@link #jdbcDriver}
+     */
+    public void setJdbcDriver(String driver) {
+        this.jdbcDriver = driver;
+    }
+    
+    /**
      * Updates the information required for a database connection.
      * 
      * @param url The URL of the database.
@@ -195,40 +228,11 @@ public final class ApplicationSettings {
      * @param username The username to access the database.
      * @param password The password to access the database.
      */
-    public void updateDatabase(String url, int port, String username, String password) {
+    public void setDatabaseInfo(String url, int port, String username, String password) {
         this.databaseUrl = url;
         this.databasePort = port;
         this.databaseUsername = username;
         this.databasePassword = password;
-    }
-    
-    /**
-     * Updates the tables that should be used from the database.
-     * 
-     * @param script {@link #databaseTableScript}
-     * @param preset {@link #databaseTablePreset}
-     * @param counter {@link #databaseTableCounter}
-     */
-    public void updateDatabaseTables(String script, String preset, String counter) {
-        this.databaseTableScript = script;
-        this.databaseTablePreset = preset;
-        this.databaseTableCounter = counter;
-    }
-    
-    public void setJdbcDriver(String driver) {
-        this.jdbcDriver = driver;
-    }
-    
-    /**
-     * Sets the render resolution setting with which VLC will will render 
-     * live camera views to the specified settings.
-     * 
-     * @param resX Resolution in X direction
-     * @param resY Resolution in Y direction
-     */
-    public void setRenderResolution(int resX, int resY) {
-        this.resX = resX;
-        this.resY = resY;
     }
     
     /**
@@ -308,24 +312,6 @@ public final class ApplicationSettings {
     }
     
     /**
-     * Resets the settings their default values.
-     */
-    public void reset() {
-        resX = DEFAULT_RESX;
-        resY = DEFAULT_RESY;
-        databasePort = DEFAULT_DB_PORT;
-        databaseUrl = "";
-        databaseUsername = "";
-        databasePassword = "";
-        databaseTableScript = "";
-        databaseTablePreset = "";
-        databaseTableCounter = "";
-        jdbcDriver = DEFAULT_JDBC_DRIVER;
-        vlcLocation = DEFAULT_VLC_LOC;
-        cameraIPs = new HashMap<Integer, String>();
-    }
-    
-    /**
      * Loads settings from the settings file, returns
      * true was successful, returns false iff not.
      * @return true iff settings were loaded from the
@@ -334,15 +320,13 @@ public final class ApplicationSettings {
     public boolean load() {
         try {
             Scanner sc = getScanner();
-            vlcLocation = DEFAULT_VLC_LOC;
-            cameraIPs = new HashMap<Integer, String>();
             while (sc.hasNext()) {
                 switch (sc.next()) {
                     case "resX":
-                        resX = sc.hasNextInt() ? sc.nextInt() : DEFAULT_RESX;
+                        resX = sc.hasNextInt() ? sc.nextInt() : resX;
                         break;
                     case "resY":
-                        resY = sc.hasNextInt() ? sc.nextInt() : DEFAULT_RESY;
+                        resY = sc.hasNextInt() ? sc.nextInt() : resY;
                         break;
                     case "vlcLocation":
                         vlcLocation = sc.hasNext() ? sc.nextLine().trim() : vlcLocation;
@@ -354,22 +338,16 @@ public final class ApplicationSettings {
                         databaseUrl = sc.hasNext() ? sc.nextLine().trim() : databaseUrl;
                         break;
                     case "databasePort":
-                        databasePort = sc.hasNextInt() ? sc.nextInt() : DEFAULT_DB_PORT;
+                        databasePort = sc.hasNextInt() ? sc.nextInt() : databasePort;
                         break;
                     case "databaseUsername":
                         databaseUsername = sc.hasNext() ? sc.nextLine().trim() : databaseUsername;
                         break;
-                    case "databaseTableScript":
-                        databaseTableScript = sc.hasNext() ? sc.nextLine().trim() : databaseTableScript;
-                        break;
-                    case "databaseTablePreset":
-                        databaseTablePreset = sc.hasNext() ? sc.nextLine().trim() : databaseTablePreset;
-                        break;
-                    case "databaseTableCounter":
-                        databaseTableCounter = sc.hasNext() ? sc.nextLine().trim() : databaseTableCounter;
+                    case "databaseName":
+                        databaseName = sc.hasNext() ? sc.nextLine().trim() : databaseName;
                         break;
                     case "jdbcDriver":
-                        jdbcDriver = sc.hasNext() ? sc.nextLine().trim() : DEFAULT_JDBC_DRIVER;
+                        jdbcDriver = sc.hasNext() ? sc.nextLine().trim() : jdbcDriver;
                         break;
                     default:
                         break;
@@ -428,9 +406,7 @@ public final class ApplicationSettings {
         writer.println("databaseUrl " + databaseUrl);
         writer.println("databasePort " + databasePort);
         writer.println("databaseUsername " + databaseUsername);
-        writer.println("databaseTableScript " + databaseTableScript);
-        writer.println("databaseTablePreset " + databaseTablePreset);
-        writer.println("databaseTableCounter " + databaseTableCounter);
+        writer.println("databaseName " + databaseName);
         writer.println("jdbcDriver " + jdbcDriver);
     }
 }
