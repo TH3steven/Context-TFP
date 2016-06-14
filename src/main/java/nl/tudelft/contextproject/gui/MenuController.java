@@ -365,6 +365,7 @@ public class MenuController {
             settings.setDatabaseInfo(
                     settingsDbAddress.getText(), 
                     Integer.parseInt(settingsDbPort.getText()),
+                    "",
                     settingsDbUsername.getText(), 
                     settingsDbPassword.getText());
         });
