@@ -6,6 +6,7 @@ cameraIPs
 3 65.65.65.65
 databaseUrl url
 databasePort 1337
-databaseUsername pieter
-databaseName SwekJeweled
+databaseUsername pjejnis
+databasePassword rEuO+Szjw2uSjFfu7eNnPA==
+databaseName pieter
 jdbcDriver com.mysql.jdbc.Driver

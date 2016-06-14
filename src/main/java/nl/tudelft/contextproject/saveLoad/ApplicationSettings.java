@@ -6,8 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Scanner;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 
 /**
  * Class to hold settings for the application.
@@ -23,6 +30,8 @@ public final class ApplicationSettings {
     public static final int DEFAULT_DB_PORT = 3306;
     public static final String DEFAULT_JDBC_DRIVER = "com.mysql.jdbc.Driver";
     public static final String DEFAULT_VLC_LOC = "";
+    
+    private static final byte[] KEY = "a0@!a650".getBytes(StandardCharsets.UTF_8);
 
     private static final ApplicationSettings INSTANCE = new ApplicationSettings();
     private static final String PATH = "settings.tfp";
@@ -225,12 +234,14 @@ public final class ApplicationSettings {
      * 
      * @param url The URL of the database.
      * @param port The port of the database.
+     * @param name The name of the database.
      * @param username The username to access the database.
      * @param password The password to access the database.
      */
-    public void setDatabaseInfo(String url, int port, String username, String password) {
+    public void setDatabaseInfo(String url, int port, String name, String username, String password) {
         this.databaseUrl = url;
         this.databasePort = port;
+        this.databaseName = name;
         this.databaseUsername = username;
         this.databasePassword = password;
     }
@@ -277,6 +288,54 @@ public final class ApplicationSettings {
      */
     public void addCameraIP(int camId, String ip) {
         cameraIPs.put(camId, ip);
+    }
+    
+    /**
+     * Encrypts a password.
+     * @param password the password to encrypt.
+     * @return the encrypted password.
+     */
+    private String encrypt(String password) {
+        try {
+            final String meth = "PBEWithMD5AndDES";
+            char[] spec = new char[]{'!', '6', 'j', '9', 'n', 'R', 'b', 'S', 'n', '%'};
+            Cipher pbeCipher = Cipher.getInstance(meth);
+            for (int i = 0; i < spec.length; i++) {
+                spec[i / 2 + 3] += 2;
+            }
+            pbeCipher.init(Cipher.ENCRYPT_MODE, 
+                    SecretKeyFactory.getInstance(meth)
+                    .generateSecret(new PBEKeySpec(spec)),
+                    new PBEParameterSpec(KEY, 20));
+            return Base64.getEncoder().encodeToString(pbeCipher.doFinal(password.getBytes("UTF-8")));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Decrypts a password.
+     * @param password password to decrypt.
+     * @return the decrypted password.
+     */
+    private String decrypt(String password) {
+        try {
+            final String meth = "PBEWithMD5AndDES";
+            char[] ciph = new char[]{'!', '6', 'j', '9', 'n', 'R', 'b', 'S', 'n', '%'};
+            Cipher pbeCipher = Cipher.getInstance(meth);
+            for (int i = 0; i < ciph.length; i++) {
+                ciph[i / 2 + 3] += 2;
+            }
+            pbeCipher.init(Cipher.DECRYPT_MODE, 
+                    SecretKeyFactory.getInstance(meth)
+                    .generateSecret(new PBEKeySpec(ciph)),
+                    new PBEParameterSpec(KEY, 20));
+            return new String(pbeCipher.doFinal(Base64.getDecoder().decode(password)), "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     /**
@@ -343,6 +402,9 @@ public final class ApplicationSettings {
                     case "databaseUsername":
                         databaseUsername = sc.hasNext() ? sc.nextLine().trim() : databaseUsername;
                         break;
+                    case "databasePassword":
+                        databasePassword = sc.hasNext() ? decrypt(sc.nextLine().trim()) : databasePassword;
+                        break;
                     case "databaseName":
                         databaseName = sc.hasNext() ? sc.nextLine().trim() : databaseName;
                         break;
@@ -406,6 +468,7 @@ public final class ApplicationSettings {
         writer.println("databaseUrl " + databaseUrl);
         writer.println("databasePort " + databasePort);
         writer.println("databaseUsername " + databaseUsername);
+        writer.println("databasePassword " + encrypt(databasePassword));
         writer.println("databaseName " + databaseName);
         writer.println("jdbcDriver " + jdbcDriver);
     }

@@ -6,5 +6,6 @@ cameraIPs
 databaseUrl 
 databasePort 3306
 databaseUsername 
-databaseName 
+databasePassword MhVDYjLt/TA=
+databaseName SwekJeweled
 jdbcDriver com.mysql.jdbc.Driver

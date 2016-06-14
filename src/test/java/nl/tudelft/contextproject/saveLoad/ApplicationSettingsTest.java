@@ -10,6 +10,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -31,6 +32,7 @@ import java.util.Scanner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ApplicationSettings.class)
 @SuppressWarnings("PMD.TooManyStaticImports")
+@PowerMockIgnore("javax.crypto.*")
 public class ApplicationSettingsTest {
     
     /**
@@ -133,8 +135,7 @@ public class ApplicationSettingsTest {
         settings.setVlcLocation("C:\\Test");
         settings.addCameraIP(1, "420.420.420.420");
         settings.addCameraIP(3, "65.65.65.65");
-        settings.setDatabaseInfo("url", 1337, "pieter", "password");
-        settings.setDatabaseName("SwekJeweled");
+        settings.setDatabaseInfo("url", 1337, "pieter", "pjejnis", "password");
         settings.save();
         assertTrue(actual.exists());
         String eof = "\\A";
@@ -156,12 +157,15 @@ public class ApplicationSettingsTest {
         doReturn(new Scanner(file)).when(settings, "getScanner");
         settings.reset();
         settings.setVlcLocation("This is not a path ");
+        settings.setDatabaseInfo("", 3306, "SwekJeweled", "", "pass");
         settings.addCameraIP(2, "420.420.420.420");
         settings.save();
         settings.load();
         assertEquals("This is not a path", settings.getVlcLocation());
         assertEquals("420.420.420.420", settings.getCameraIP(2));
-        assertEquals("", settings.getDatabaseName());
+        assertEquals("SwekJeweled", settings.getDatabaseName());
+        assertEquals(3306, settings.getDatabasePort());
+        assertEquals("pass", settings.getDatabasePassword());
     }
 
 }
