@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" stylesheets="stylesheets/scriptcreation.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CameraFeedsController">
    <children>
-      <Button layoutX="328.0" layoutY="288.0" mnemonicParsing="false" text="Banaan" />
+      <VBox alignment="CENTER" layoutX="78.0" layoutY="86.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="100.0">
+         <children>
+            <ChoiceBox fx:id="camChoiceOne" prefWidth="150.0">
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </ChoiceBox>
+            <ImageView fx:id="tempOne" fitHeight="240.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true" />
+            <Label text="View 1" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" layoutX="88.0" layoutY="96.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="100.0">
+         <children>
+            <ChoiceBox fx:id="camChoiceTwo" prefWidth="150.0">
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </ChoiceBox>
+            <ImageView fx:id="tempTwo" fitHeight="240.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true" />
+            <Label text="View 2" />
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
