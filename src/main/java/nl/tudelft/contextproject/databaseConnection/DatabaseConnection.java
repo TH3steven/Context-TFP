@@ -35,8 +35,8 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, a SQLException will be thrown.
      */
     public void connect() throws SQLException {
-        String url = "jdbc:mysql://" + settings.getDatabaseUrl() + ":" + settings.getDatabasePort() + "/pmacjhdy_test";
-        //TODO add DB name to url
+        String url = "jdbc:mysql://" + settings.getDatabaseUrl() + ":" 
+                + settings.getDatabasePort() + "/" + settings.getDatabaseName();
         conn = DriverManager.getConnection(url, settings.getDatabaseUsername(), settings.getDatabasePassword());
     }
     
