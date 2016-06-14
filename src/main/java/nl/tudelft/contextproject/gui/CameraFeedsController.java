@@ -43,8 +43,8 @@ public class CameraFeedsController {
      * These will get replaces by camera live feeds.
      */
     private void initImages() {
-        tempOne.setImage(new Image("black.png"));
-        tempTwo.setImage(new Image("black.png"));
+        tempOne.setImage(loadImage("black.png"));
+        tempTwo.setImage(loadImage("black.png"));
     }
     
     /**
@@ -53,6 +53,7 @@ public class CameraFeedsController {
      */
     private void initChoiceBoxes() {
         ObservableList<Camera> choices = FXCollections.observableArrayList();
+        choices.add(Camera.DUMMY);
         Iterator<Camera> it = cameras.iterator();
         while (it.hasNext()) {
             choices.add(it.next());
@@ -60,6 +61,22 @@ public class CameraFeedsController {
 
         camChoiceOne.setItems(choices);
         camChoiceTwo.setItems(choices);
+        
+        camChoiceOne.setValue(Camera.DUMMY);
+        camChoiceTwo.setValue(Camera.DUMMY);
+        
+        addListener(camChoiceOne);
+        addListener(camChoiceTwo);
+    }
+    
+    /**
+     * Add a changelistener to the choicebox.
+     * @param cb the choicebox to add the listener to.
+     */
+    private void addListener(ChoiceBox<Camera> cb) {
+        cb.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            System.out.println("Temporary stream print: " + newV.getConnection().toString());
+        });
     }
     
     /**

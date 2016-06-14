@@ -11,7 +11,7 @@
    <children>
       <VBox alignment="CENTER" layoutX="78.0" layoutY="86.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="100.0">
          <children>
-            <ChoiceBox fx:id="camChoiceOne" prefWidth="150.0">
+            <ChoiceBox fx:id="camChoiceOne" prefHeight="30.0" prefWidth="105.0">
                <VBox.margin>
                   <Insets bottom="20.0" />
                </VBox.margin>
@@ -22,7 +22,7 @@
       </VBox>
       <VBox alignment="CENTER" layoutX="88.0" layoutY="96.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="100.0">
          <children>
-            <ChoiceBox fx:id="camChoiceTwo" prefWidth="150.0">
+            <ChoiceBox fx:id="camChoiceTwo" prefHeight="30.0" prefWidth="105.0">
                <VBox.margin>
                   <Insets bottom="20.0" />
                </VBox.margin>
