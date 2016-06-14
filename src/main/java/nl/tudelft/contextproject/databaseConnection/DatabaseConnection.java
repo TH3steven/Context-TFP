@@ -9,9 +9,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseConnection {
+    
+    private static final String COUNTER_TABLE = "counter";
+    private static final String SCRIPT_TABLE = "script";
+    private static final String PRESET_TABLE = "preset";
 
     private Connection conn = null;
-    private ApplicationSettings settings;
+    private ApplicationSettings settings; 
     
     /**
      * Initializes a database connection object.
@@ -31,8 +35,9 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, a SQLException will be thrown.
      */
     public void connect() throws SQLException {
-        conn = DriverManager.getConnection(settings.getDatabaseUrl(), 
-                settings.getDatabaseUsername(), settings.getDatabasePassword());
+        String url = "jdbc:mysql://" + settings.getDatabaseUrl() + ":" + settings.getDatabasePort() + "/pmacjhdy_test";
+        //TODO add DB name to url
+        conn = DriverManager.getConnection(url, settings.getDatabaseUsername(), settings.getDatabasePassword());
     }
     
     /**
@@ -95,7 +100,7 @@ public class DatabaseConnection {
         }
         
         Statement stmt = conn.createStatement();
-        String query = "UPDATE " + settings.getDatabaseTableCounter() + " set number='" + number + "'";
+        String query = "UPDATE " + COUNTER_TABLE + " set number='" + number + "'";
         stmt.executeUpdate(query);
         stmt.close();
     }
@@ -112,7 +117,7 @@ public class DatabaseConnection {
         }
         
         Statement stmt = conn.createStatement();
-        String query = "SELECT number FROM " + settings.getDatabaseTableCounter();
+        String query = "SELECT number FROM " + COUNTER_TABLE;
         ResultSet rs = stmt.executeQuery(query);
         int id = rs.getInt("number");
         rs.close();
