@@ -14,7 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.LiveCameraConnection;
@@ -22,9 +21,9 @@ import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.gui.AlertDialog;
 import nl.tudelft.contextproject.gui.MenuController;
 import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
-
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.IOException;
@@ -60,6 +59,8 @@ public class ContextTFP extends Application {
         
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
+        
+        ApplicationSettings.getInstance();
 
         //TEMP
         Camera a = new Camera();
@@ -72,6 +73,7 @@ public class ContextTFP extends Application {
         LiveCameraConnection live = new LiveCameraConnection("192.168.0.13");
         live.setUpConnection();
         a.setConnection(live);
+        ApplicationSettings.getInstance().addCameraIP(0, "192.168.0.13");
         
         MockedCameraConnection mocked = new MockedCameraConnection();
         b.setConnection(mocked);

@@ -10,9 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
-
+import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Shot;
-
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 import java.io.File;
@@ -220,7 +219,7 @@ public final class AlertDialog {
      * @param window Only used with 
      *      {@link nl.tudelft.contextproject.ContextTFP#primaryStage ContextTFP.primaryStage}
      */
-    private static void findVlc(Window window) {
+    public static void findVlc(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Locate VLC installation");
         fileChooser.setInitialFileName("libvlc.dll");
@@ -231,6 +230,7 @@ public final class AlertDialog {
             NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), libvlc.getParent());
             try {
                 getVersion();
+                ApplicationSettings.getInstance().setVlcLocation(libvlc.getParent());
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("VLC Found!");
                 alert.setHeaderText("VLC installation found!");
