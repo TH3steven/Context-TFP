@@ -280,8 +280,6 @@ public class CreateScriptController {
             if (isValidInput()) {
                 addCamera.setStyle("");
                 addPreset.setStyle("");
-                addSubject.setStyle("");
-                addAction.setStyle("");
 
                 if (!validateScript(data)
                         && !AlertDialog.confirmInvalidScriptAdding(
@@ -317,11 +315,6 @@ public class CreateScriptController {
 
         if (addPreset.getSelectionModel().isEmpty()) {
             addPreset.setStyle(REDBORDER);
-            isValid = false;
-        }
-
-        if (addSubject.getText().isEmpty()) {
-            addSubject.setStyle(REDBORDER);
             isValid = false;
         }
 
@@ -549,20 +542,9 @@ public class CreateScriptController {
                 isValid = false;
             }
 
-            if (editSubject.getText().isEmpty()) {
-                editSubject.setStyle(REDBORDER);
-                isValid = false;
-            }
-
-            if (editAction.getText().isEmpty()) {
-                editAction.setStyle(REDBORDER);
-                isValid = false;
-            }
-
             if (isValid) {
                 editCamera.setStyle("");
                 editPreset.setStyle("");
-                editSubject.setStyle("");
 
                 editConfirmAction(lastSelectedRow.get().getItem());
             }
