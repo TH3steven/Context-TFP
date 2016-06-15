@@ -22,3 +22,11 @@ This software can be developed with both Eclipse and IntelliJ, though they requi
 
 ###Note about preset creation/editing
 For now, VLC is required to make the connection to the camera or to the mocked live feed. It is important to have the same VLC version as your java version, e.g. 32bit java requires 32bit VLC, and 64bit java requires 64bit VLC. Also, other systems than Windows are untested and might not work with the current implementation.
+
+###Database
+In order to allow synchronization a MySQL database with the following 3 tables is needed:
+counter(number : INT)
+preset(**id : INT**, **camera : INT**, description : TEXT, imageLocation : TEXT, pan : INT, tilt : INT, zoom : INT, focus : INT, type : TEXT)
+script(**number : INT**, shotId : INT, camera : INT, preset : INT, description : TEXT, action : TEXT)
+
+The bold attributes represent the primary keys.
