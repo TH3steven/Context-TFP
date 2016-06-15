@@ -74,6 +74,7 @@ public class MenuController {
     @FXML private Label lblLive;
     @FXML private Label lblVersion;
     @FXML private Label lblScript;
+    @FXML private Label lblDbSettingStatus;
     
     @FXML private TableView<Camera> settingsIpTable;
     @FXML private TableColumn<Camera, Integer> settingsIdColumn;
@@ -372,12 +373,21 @@ public class MenuController {
         
         btnSettingsTest.setOnAction(event -> {
             //TODO: Test DB connection, keep old settings if incorrect.
-            settings.setDatabaseInfo(
-                    settingsDbAddress.getText(), 
-                    Integer.parseInt(settingsDbPort.getText()),
-                    settingsDbName.getText(),
-                    settingsDbUsername.getText(), 
-                    settingsDbPassword.getText());
+            if (/*connection is good*/ true) {
+                lblDbSettingStatus.setText("Connection Verified!");
+                lblDbSettingStatus.setStyle("-fx-text-fill: green");
+                lblDbSettingStatus.setVisible(true);
+                settings.setDatabaseInfo(
+                        settingsDbAddress.getText(), 
+                        Integer.parseInt(settingsDbPort.getText()),
+                        settingsDbName.getText(),
+                        settingsDbUsername.getText(), 
+                        settingsDbPassword.getText());
+            } else {
+                lblDbSettingStatus.setText("Connection Failed!");
+                lblDbSettingStatus.setStyle("-fx-text-fill: red");
+                lblDbSettingStatus.setVisible(true);
+            }
         });
     }
     
