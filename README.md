@@ -25,8 +25,8 @@ For now, VLC is required to make the connection to the camera or to the mocked l
 
 ###Database
 In order to allow synchronization a MySQL database with the following 3 tables is needed:
-counter(number : INT)
-preset(**id : INT**, **camera : INT**, description : TEXT, imageLocation : TEXT, pan : INT, tilt : INT, zoom : INT, focus : INT, type : TEXT)
-script(**number : INT**, shotId : INT, camera : INT, preset : INT, description : TEXT, action : TEXT)
+- counter(number : INT)
+- preset(**id : INT**, **camera : INT**, description : TEXT, imageLocation : TEXT, pan : INT, tilt : INT, zoom : INT, focus : INT, type : TEXT)
+- script(**number : INT**, shotId : INT, camera : INT, preset : INT, description : TEXT, action : TEXT)
 
 The bold attributes represent the primary keys.
