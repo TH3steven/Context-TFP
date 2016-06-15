@@ -156,7 +156,7 @@ public class DatabaseConnection {
             sBuilder.append("'" + shot.getCamera() + "',");
             sBuilder.append("'" + shot.getPreset() + "',");
             sBuilder.append("'" + shot.getDescription() + "',");
-            //sBuilder.append("'" + shot.getAction() + "');");
+            sBuilder.append("'" + shot.getAction() + "');");
             stmt.executeUpdate(sBuilder.toString());
         }
         stmt.close();
