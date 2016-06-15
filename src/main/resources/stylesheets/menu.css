@@ -23,3 +23,7 @@
 .subButton {
 	-fx-font-size: 15px;
 }
+
+.table-row-cell:current {
+	-fx-background-color: #0c3;
+}
