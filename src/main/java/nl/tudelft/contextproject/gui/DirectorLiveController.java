@@ -56,6 +56,8 @@ public class DirectorLiveController implements Observer {
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
+    
+    @FXML private VBox thumbnailBox;
 
     private boolean live;
 
