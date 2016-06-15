@@ -1,5 +1,8 @@
 package nl.tudelft.contextproject.databaseConnection;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -9,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class DatabaseConnection {
@@ -79,8 +83,8 @@ public class DatabaseConnection {
      * If there is no valid connection, reconnect.
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
-    private void checkValid() throws SQLException {
-        if (conn == null || !isValid(100)) {
+    private void revalidate() throws SQLException {
+        if (conn == null || !isValid(200)) {
             connect();
         }
     }
@@ -90,7 +94,7 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
     public void updateCounter() throws SQLException {
-        checkValid();
+        revalidate();
         setCounter(getCounter() + 1);
     }
     
@@ -99,7 +103,7 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
     public void resetCounter() throws SQLException {
-        checkValid();
+        revalidate();
         setCounter(0);    
     }
     
@@ -110,7 +114,7 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
     private void setCounter(int number) throws SQLException {
-        checkValid();
+        revalidate();
         
         Statement stmt = conn.createStatement();
         String query = "UPDATE " + COUNTER_TABLE + " set number='" + number + "'";
@@ -125,7 +129,7 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
     public int getCounter() throws SQLException {
-        checkValid();
+        revalidate();
         
         Statement stmt = conn.createStatement();
         String query = "SELECT number FROM " + COUNTER_TABLE;
@@ -143,7 +147,7 @@ public class DatabaseConnection {
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
     public void uploadScript(Script script) throws SQLException {
-        checkValid();
+        revalidate();
         clearScript();
         
         Statement stmt = conn.createStatement();
@@ -171,5 +175,113 @@ public class DatabaseConnection {
         String query = "DELETE FROM " + SCRIPT_TABLE;
         stmt.executeUpdate(query);
         stmt.close();
+    }
+    
+    /**
+     * Returns the script currently stored in the database.
+     * 
+     * @return The script currently stored in the database.
+     * @throws SQLException When no connection can be made, this exception will be thrown.
+     */
+    public Script getScript() throws SQLException {
+        Script script = new Script(new ArrayList<Shot>());
+        revalidate();
+        Statement stmt = conn.createStatement();
+        
+        String query = "SELECT * FROM " + SCRIPT_TABLE;
+        ResultSet rs = stmt.executeQuery(query);
+        
+        while (rs.next()) {
+            int number = rs.getInt("number");
+            String shotId = rs.getString("shotId");
+            int cameraId = rs.getInt("camera");
+            int presetId = rs.getInt("preset");
+            String description = rs.getString("description");
+            String action = rs.getString("action");
+            Camera cam = Camera.getCamera(cameraId);
+            Preset preset = cam.getPreset(presetId);
+            Shot shot = new Shot(number, shotId, cam, preset, description, action);
+            script.addShot(shot);
+        }
+        
+        stmt.close();
+        return script;
+    }
+    
+    /**
+     * Upload a preset to the database.
+     * 
+     * @param preset The preset to upload.
+     * @param camera The camera of the preset.
+     * @throws SQLException When no connection can be made, this exception will be thrown.
+     */
+    public void uploadPreset(Preset preset, Camera camera) throws SQLException {
+        revalidate();
+        
+        Statement stmt = conn.createStatement();
+        String query = "SELECT * FROM " + PRESET_TABLE + " WHERE id='" + preset.getId() 
+                + "' AND camera='" + camera.getNumber() + "';";
+        ResultSet rs = stmt.executeQuery(query);
+                
+        if (!rs.next()) {
+            stmt.executeUpdate(insertPreset(preset, camera));
+        } else {
+            stmt.executeUpdate(updatePreset(preset, camera));
+        }
+        
+        stmt.close();
+    }
+    
+    /**
+     * Creates the query to insert a preset in the database.
+     * 
+     * @param preset The preset to create the query for.
+     * @param camera The camera of the preset.
+     * @return A query inserting the preset in the database.
+     */
+    private String insertPreset(Preset preset, Camera camera) {
+        String type = "";
+        if (preset instanceof InstantPreset) {
+            type = "InstantPreset";
+        }
+        
+        StringBuilder sBuilder = new StringBuilder("INSERT INTO " + PRESET_TABLE + " VALUES " + "(");
+        sBuilder.append("'" + preset.getId() + "',");
+        sBuilder.append("'" + camera.getNumber() + "',");
+        sBuilder.append("'" + type + "',");
+        sBuilder.append("'" + preset.getDescription() + "',");
+        sBuilder.append("'" + preset.getImage() + "',");
+        sBuilder.append("'" + preset.getToSet().getPan() + "',");
+        sBuilder.append("'" + preset.getToSet().getTilt() + "',");
+        sBuilder.append("'" + preset.getToSet().getZoom() + "',");
+        sBuilder.append("'" + preset.getToSet().getFocus() + "');");
+        return sBuilder.toString();
+    }
+    
+    /**
+     * Creates the query to update (overwrite) an already existing preset in the database.
+     * 
+     * @param preset The preset to create the query for.
+     * @param camera The camera of the preset.
+     * @return A query updating the preset in the database.
+     */
+    private String updatePreset(Preset preset, Camera camera) {
+        String type = "";
+        if (preset instanceof InstantPreset) {
+            type = "InstantPreset";
+        }
+        
+        StringBuilder sBuilder = new StringBuilder("UPDATE " + PRESET_TABLE + " SET ");
+        sBuilder.append("id='" + preset.getId() + "',");
+        sBuilder.append("camera='" + camera.getNumber() + "',");
+        sBuilder.append("type='" + type + "',");
+        sBuilder.append("description='" + preset.getDescription() + "',");
+        sBuilder.append("imageLocation='" + preset.getImage() + "',");
+        sBuilder.append("pan='" + preset.getToSet().getPan() + "',");
+        sBuilder.append("tilt='" + preset.getToSet().getTilt() + "',");
+        sBuilder.append("zoom='" + preset.getToSet().getZoom() + "',");
+        sBuilder.append("focus='" + preset.getToSet().getFocus() + "' ");
+        sBuilder.append("WHERE id='" + preset.getId() + "' AND camera='" + camera.getNumber() + "';");
+        return sBuilder.toString();
     }
 }
