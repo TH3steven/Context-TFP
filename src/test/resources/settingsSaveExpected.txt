@@ -8,4 +8,4 @@ databaseUrl url
 databasePort 1337
 databaseUsername pieter
 databaseName SwekJeweled
-jdbcDriver com.mysql.jdbc.Driver
+jdbcDriver com.mysql.cj.jdbc.Driver

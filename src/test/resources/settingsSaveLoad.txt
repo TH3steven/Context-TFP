@@ -7,4 +7,4 @@ databaseUrl
 databasePort 3306
 databaseUsername 
 databaseName 
-jdbcDriver com.mysql.jdbc.Driver
+jdbcDriver com.mysql.cj.jdbc.Driver

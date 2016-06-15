@@ -69,7 +69,9 @@ public final class DatabaseConnection {
      */
     public void updateSettings() throws SQLException {
         settings = ApplicationSettings.getInstance();
-        conn.close();
+        if (conn != null) {
+            conn.close();
+        }
         connect();
     }
     
@@ -150,6 +152,7 @@ public final class DatabaseConnection {
         Statement stmt = conn.createStatement();
         String query = "SELECT number FROM " + COUNTER_TABLE;
         ResultSet rs = stmt.executeQuery(query);
+        rs.next();
         int id = rs.getInt("number");
         rs.close();
         stmt.close();
@@ -173,8 +176,8 @@ public final class DatabaseConnection {
             StringBuilder sBuilder = new StringBuilder("INSERT INTO " + SCRIPT_TABLE + " VALUES " + "(");
             sBuilder.append("'" + shot.getNumber() + "',");
             sBuilder.append("'" + shot.getShotId() + "',");
-            sBuilder.append("'" + shot.getCamera() + "',");
-            sBuilder.append("'" + shot.getPreset() + "',");
+            sBuilder.append("'" + shot.getCamera().getNumber() + "',");
+            sBuilder.append("'" + shot.getPreset().getId() + "',");
             sBuilder.append("'" + shot.getDescription() + "',");
             sBuilder.append("'" + shot.getAction() + "');");
             stmt.executeUpdate(sBuilder.toString());
