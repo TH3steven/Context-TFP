@@ -15,19 +15,27 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class DatabaseConnection {
+/**
+ * Class to create a database connection. 
+ * The connection information is stored in the application settings.
+ * 
+ * @since 0.8
+ */
+public final class DatabaseConnection {
     
     private static final String COUNTER_TABLE = "counter";
     private static final String SCRIPT_TABLE = "script";
     private static final String PRESET_TABLE = "preset";
-
+    private static final DatabaseConnection INSTANCE = new DatabaseConnection();
+    
     private Connection conn = null;
     private ApplicationSettings settings; 
     
     /**
-     * Initializes a database connection object.
+     * Initializes a database connection object. 
+     * Private constructor since this is a singeleton class.
      */
-    public DatabaseConnection() {
+    private DatabaseConnection() {
         settings = ApplicationSettings.getInstance();
         
         try {
@@ -35,6 +43,14 @@ public class DatabaseConnection {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Returns the singleton instance of this class.
+     * @return the singleton instance of this class.
+     */
+    public DatabaseConnection getInstance() {
+        return INSTANCE;
     }
     
     /**
