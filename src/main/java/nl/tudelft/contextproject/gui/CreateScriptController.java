@@ -641,6 +641,7 @@ public class CreateScriptController {
                     setOnDragDetected(createDragDetectedHandler(this));
                     setOnDragOver(createDragOverHandler(this, tableEvents));
                     setOnDragDropped(createDragDroppedHandler(this, tableEvents));
+                    fixIds();
                 }
 
                 @Override
@@ -735,6 +736,17 @@ public class CreateScriptController {
             table.getItems().add(myIndex, table.getItems().remove(incomingIndex));
             event.setDropCompleted(true);
         };
+    }
+    
+    /**
+     * Makes sure the IDs of the shots are always in ascending order.
+     */
+    private void fixIds() {
+        for (int i = 0; i < tableEvents.getItems().size(); ++i) {
+            tableEvents.getItems().get(i).setNumber(i + 1);
+        }
+        
+        tableEvents.refresh();
     }
 
     /**

@@ -1,17 +1,19 @@
 package nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
+import javafx.util.Callback;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
@@ -21,8 +23,6 @@ import nl.tudelft.contextproject.script.Shot;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * This class controls the screen that shows the live view of
@@ -34,11 +34,12 @@ import java.util.Observer;
  * 
  * @since 0.8
  */
-public class CameramanLiveController implements Observer {
+public class CameramanLiveController {
 
     private Script script;
 
     @FXML private Button btnBack;
+    @FXML private Button btnNext;
     
     @FXML private TableView<Shot> tableShots;
     @FXML private TableColumn<Shot, Number> columnCamera;
@@ -61,6 +62,7 @@ public class CameramanLiveController implements Observer {
 
         initCameraSelector();
         initButtons();
+        initRowFactory();
         setFactories();
 
         tableShots.getItems().addAll(script.getShots());
@@ -93,6 +95,12 @@ public class CameramanLiveController implements Observer {
         btnBack.setOnAction(event -> {
             MenuController.show();
         });
+        
+        //TODO remove temp button
+        btnNext.setOnAction(event -> {
+            ContextTFP.getScript().next();
+            tableShots.refresh();
+        });
     }
 
     /**
@@ -111,6 +119,22 @@ public class CameramanLiveController implements Observer {
         }
 
         return listShots;
+    }
+    
+    private void initRowFactory() {
+        final PseudoClass currentPseudoClass = PseudoClass.getPseudoClass("current");
+
+        tableShots.setRowFactory(table -> new TableRow<Shot>() {
+            
+            @Override
+            protected void updateItem(Shot s, boolean b) {
+                super.updateItem(s, b);
+                if (s != null) {
+                    boolean current = s.getNumber() - 1 == ContextTFP.getScript().getCurrent();
+                    pseudoClassStateChanged(currentPseudoClass, current);
+                }
+            }
+        });
     }
 
     private void setFactories() {
@@ -131,13 +155,6 @@ public class CameramanLiveController implements Observer {
 
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
                 cellData.getValue().getCamera().getNumber() + 1));
-    }
-
-    @Override
-    public void update(Observable obs, Object current) {
-        Shot cur = tableShots.getItems().get((int) current);
-        
-        //tableShots
     }
     
     /**
