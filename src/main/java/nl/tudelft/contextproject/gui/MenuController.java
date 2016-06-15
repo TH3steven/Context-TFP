@@ -250,10 +250,6 @@ public class MenuController {
                 Scene scene = new Scene(rootLayout);
                 secondaryStage.setScene(scene);
                 secondaryStage.show();
-                secondaryStage.setOnCloseRequest(e -> {
-                    Platform.exit(); 
-                    System.exit(0);
-                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
