@@ -49,7 +49,7 @@ public final class DatabaseConnection {
      * Returns the singleton instance of this class.
      * @return the singleton instance of this class.
      */
-    public DatabaseConnection getInstance() {
+    public static DatabaseConnection getInstance() {
         return INSTANCE;
     }
     
