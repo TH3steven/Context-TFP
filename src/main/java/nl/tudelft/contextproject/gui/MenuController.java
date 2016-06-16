@@ -63,6 +63,8 @@ public class MenuController {
     @FXML private Button btnLive;
     @FXML private Button btnLoadScript;
     @FXML private Button btnChangeVlcLoc;
+    @FXML private Button btnSettingsAddCamera;
+    @FXML private Button btnSettingsClearCameras;
     @FXML private Button btnSettingsSave;
     @FXML private Button btnSettingsTest;
     
@@ -296,19 +298,21 @@ public class MenuController {
         settingsInitIpTable(settings); 
         
         btnSettingsSave.setOnAction(event -> {
-            try {
-                settings.save();
-            } catch (IOException e) {
-                AlertDialog.errorSavingSettings(e);
-            }
+            settingsOnClose();
         });
     }
     
     private void settingsOnClose() {
-        settingsFront.setVisible(false);
-        settingsBack.setVisible(false);
-        settingsGrid.disableProperty().set(true);
-        btnSettingsTest.fire();
+        try {
+            btnSettingsTest.fire();
+            ApplicationSettings.getInstance().save();
+            settingsFront.setVisible(false);
+            settingsBack.setVisible(false);
+            settingsGrid.disableProperty().set(true);
+        } catch (IOException e) {
+            AlertDialog.errorSavingSettings(e);
+        }
+        
     }
     
     private void settingsInitVlcSettings(ApplicationSettings settings) {
@@ -392,6 +396,19 @@ public class MenuController {
     }
     
     private void settingsInitIpTable(ApplicationSettings settings) {
+        btnSettingsAddCamera.setTooltip(new Tooltip("Adds a camera to the table"));
+        btnSettingsAddCamera.setOnAction(event -> {
+            settingsIpTable.getItems().add(new Camera());
+        });
+        btnSettingsClearCameras.setTooltip(new Tooltip("Clears all cameras from the table"));
+        btnSettingsClearCameras.setOnAction(event -> {
+            if (AlertDialog.confirmClearCameras()) {
+                settingsIpTable.getItems().clear();
+                Camera.clearAllCameras();
+                ApplicationSettings.getInstance().clearAllCameraIPs();
+            }
+        });
+        
         settingsIdColumn.setCellValueFactory(cellData ->
             new ReadOnlyObjectWrapper<Integer>(cellData.getValue().getNumber() + 1)
         );
@@ -404,6 +421,8 @@ public class MenuController {
                     .get(editEvent.getTablePosition().getRow()).getNumber();
             settings.addCameraIP(camId, editEvent.getNewValue());
         });
+        
+        settingsIpTable.setPlaceholder(new Label("No cameras in settings. Add one!"));
         settingsIpTable.getItems().clear();
         settingsIpTable.getItems().addAll(Camera.getAllCameras());
     }

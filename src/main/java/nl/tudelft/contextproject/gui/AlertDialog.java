@@ -258,4 +258,17 @@ public final class AlertDialog {
             throw new RuntimeException("No VLC installed!");
         }
     }
+    
+    /**
+     * Shows a dialog asking whether the user is sure if he or she
+     * wants to clear all cameras.
+     * @return true iff the user wants to clear, false otherwise.
+     */
+    public static boolean confirmClearCameras() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm clearing");
+        alert.setHeaderText("Are you sure you want to clear all cameras?");
+        alert.setContentText("It may not be possible to ever retrieve these settings");
+        return alert.showAndWait().get() == ButtonType.OK;
+    }
 }

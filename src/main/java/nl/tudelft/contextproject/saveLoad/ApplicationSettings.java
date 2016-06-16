@@ -16,6 +16,10 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
+
 /**
  * Class to hold settings for the application.
  * Can write these settings to the settings file using {@link #save()}
@@ -98,7 +102,7 @@ public final class ApplicationSettings {
     }
     
     /**
-     * Resets the settings their default values.
+     * Resets the settings to their default values.
      */
     public void reset() {
         resX = DEFAULT_RESX;
@@ -111,6 +115,7 @@ public final class ApplicationSettings {
         jdbcDriver = DEFAULT_JDBC_DRIVER;
         vlcLocation = DEFAULT_VLC_LOC;
         cameraIPs = new HashMap<Integer, String>();
+        Camera.clearAllCameras();
     }
     
     /**
@@ -291,6 +296,13 @@ public final class ApplicationSettings {
     }
     
     /**
+     * Clears all camera IPs.
+     */
+    public void clearAllCameraIPs() {
+        cameraIPs.clear();
+    }
+    
+    /**
      * Encrypts a password.
      * @param password the password to encrypt.
      * @return the encrypted password.
@@ -431,8 +443,9 @@ public final class ApplicationSettings {
     private void loadCameraIPs(Scanner sc) {
         while (sc.hasNextInt()) {
             int camId = sc.nextInt();
-            if (sc.hasNext()) {
-                cameraIPs.put(camId, sc.next());
+            Camera cam = new Camera();
+            if (sc.hasNextLine() && camId - 1 == cam.getNumber()) {
+                cameraIPs.put(camId - 1, sc.nextLine().trim());
             }
         }
     }
@@ -452,8 +465,10 @@ public final class ApplicationSettings {
             writer.println("vlcLocation " + vlcLocation);
         }
         writer.println("cameraIPs");
-        for (int key : cameraIPs.keySet()) {
-            writer.println(key + " " + cameraIPs.get(key));
+        for (Camera cam : Camera.getAllCameras()) {
+            int key = cam.getNumber();
+            String ip = cameraIPs.get(key) == null ? "" : cameraIPs.get(key);
+            writer.println((key + 1) + " " + ip);
         }
         saveDatabaseInformation(writer);
         writer.flush();
@@ -467,9 +482,9 @@ public final class ApplicationSettings {
     private void saveDatabaseInformation(PrintWriter writer) {
         writer.println("databaseUrl " + databaseUrl);
         writer.println("databasePort " + databasePort);
+        writer.println("databaseName " + databaseName);
         writer.println("databaseUsername " + databaseUsername);
         writer.println("databasePassword " + encrypt(databasePassword));
-        writer.println("databaseName " + databaseName);
         writer.println("jdbcDriver " + jdbcDriver);
     }
 }

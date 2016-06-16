@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraConnection;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.LiveCameraConnection;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
@@ -61,7 +62,7 @@ public class ContextTFP extends Application {
         script = new Script(new ArrayList<Shot>());
         
         ApplicationSettings.getInstance();
-
+        /*
         //TEMP
         Camera a = new Camera();
         Camera b = new Camera();
@@ -91,9 +92,11 @@ public class ContextTFP extends Application {
             cam.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
             cam.addPreset(new InstantPreset(new CameraSettings(), 3, "wuq"));
         }
-
+        */
         initRootLayout();
-        Platform.runLater(() -> initVLCj());
+        new Thread(() -> initVLCj()).start();
+        new Thread(() -> initCameraConnections()).start();
+        
         MenuController.show();
     }
 
@@ -110,11 +113,38 @@ public class ContextTFP extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
             primaryStage.setOnCloseRequest(e -> {
+                try {
+                    ApplicationSettings.getInstance().save();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 Platform.exit(); 
                 System.exit(0);
             });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Initialises the camera connections for every loaded camera.
+     * If an IP was loaded for a camera, then it will check if it
+     * can make a connection to this camera. If it can, then it will
+     * set its connection to a LiveCameraConnection. If it cannot,
+     * then it sets a MockedCameraConnection. 
+     */
+    public void initCameraConnections() {
+        ApplicationSettings settings = ApplicationSettings.getInstance();
+        for (Camera cam : Camera.getAllCameras()) {
+            String camIp = settings.getCameraIP(cam.getNumber());
+            if (camIp != null && !camIp.equals("")) {
+                CameraConnection connect = new LiveCameraConnection(camIp);
+                if (connect.setUpConnection()) {
+                    cam.setConnection(connect);
+                    break;
+                }
+            }
+            cam.setConnection(new MockedCameraConnection());
         }
     }
     
