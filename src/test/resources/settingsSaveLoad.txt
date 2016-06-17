@@ -8,4 +8,4 @@ databasePort 3306
 databaseName SwekJeweled
 databaseUsername 
 databasePassword MhVDYjLt/TA=
-jdbcDriver com.mysql.jdbc.Driver
+jdbcDriver com.mysql.cj.jdbc.Driver

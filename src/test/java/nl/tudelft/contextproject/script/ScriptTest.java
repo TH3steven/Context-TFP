@@ -59,7 +59,7 @@ public class ScriptTest {
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(2, cam1, pres2);
         shot3 = new Shot(3, cam0, pres3);
-        dummyShot = new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
+        dummyShot = new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot", "No action");
         los = new ArrayList<>();
         los1 = new ArrayList<>();
         los.add(shot1);

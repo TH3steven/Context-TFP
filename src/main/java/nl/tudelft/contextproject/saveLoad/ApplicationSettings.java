@@ -32,7 +32,7 @@ public final class ApplicationSettings {
     public static final int DEFAULT_RESX = 1920;
     public static final int DEFAULT_RESY = 1080;
     public static final int DEFAULT_DB_PORT = 3306;
-    public static final String DEFAULT_JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    public static final String DEFAULT_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final String DEFAULT_VLC_LOC = "";
     
     private static final byte[] KEY = "a0@!a650".getBytes(StandardCharsets.UTF_8);

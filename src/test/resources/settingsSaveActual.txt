@@ -9,4 +9,4 @@ databasePort 1337
 databaseName pieter
 databaseUsername pjejnis
 databasePassword rEuO+Szjw2uSjFfu7eNnPA==
-jdbcDriver com.mysql.jdbc.Driver
+jdbcDriver com.mysql.cj.jdbc.Driver
