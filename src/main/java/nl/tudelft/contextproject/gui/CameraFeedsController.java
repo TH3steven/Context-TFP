@@ -150,6 +150,8 @@ public class CameraFeedsController {
         vBox.getChildren().add(newView);
         
         streamHandler.start();
+        
+        vBox.setStyle("-fx-border-color: transparent");
     }
     
     /**

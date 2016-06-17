@@ -65,7 +65,6 @@
                   <Label fx:id="lblLive" layoutX="191.0" layoutY="329.0" text="Live-production menu" visible="false" />
                </children>
             </Pane>
-            <Button fx:id="btnCameras" mnemonicParsing="false" text="Camera views" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <ImageView fx:id="settings" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
@@ -73,5 +72,6 @@
             <Image url="settings.png" />
          </image>
       </ImageView>
+      <Button fx:id="btnCameras" layoutX="350.0" layoutY="530.0" mnemonicParsing="false" text="Camera views" />
    </children>
 </AnchorPane>
