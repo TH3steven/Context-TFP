@@ -31,6 +31,8 @@ import java.util.List;
  * This class is a control class for the preset creation screen. It
  * enables the creation and modification of presets for different cameras.
  * 
+ * <p>The view section is defined under view/PresetView.fxml
+ * 
  * @since 0.2
  */
 public class PresetController {
@@ -278,6 +280,7 @@ public class PresetController {
     /**
      * Because the preset id might not be the same as the position in the list, 
      * this method is required to remove a preset.
+     * 
      * @param id The id of the preset to remove.
      */
     private void removePreset(int id) {
@@ -293,6 +296,7 @@ public class PresetController {
     /**
      * Sets the toCameramanView, that sets the back button to
      * go back to the cameraman view if the user came from there.
+     * 
      * @param bSet True iff the back button should go to the
      *      CameramanLiveView.
      */
