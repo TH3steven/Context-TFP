@@ -407,6 +407,6 @@ public class Camera extends Observable {
     
     @Override
     public String toString() {
-        return Integer.toString(camId + 1);
+        return this.equals(DUMMY) ? "None" : String.valueOf(camId + 1);
     }
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="575.0" prefWidth="800.0" stylesheets="stylesheets/scriptcreation.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CameraFeedsController">
+   <children>
+      <GridPane alignment="TOP_CENTER" minHeight="575.0" minWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="10000.0" minWidth="400.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="10000.0" minWidth="400.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <VBox alignment="CENTER" spacing="5.0" GridPane.hgrow="ALWAYS">
+               <children>
+                  <ChoiceBox fx:id="camChoiceOne" prefHeight="30.0" prefWidth="105.0">
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="100.0" />
+                     </VBox.margin>
+                  </ChoiceBox>
+                  <VBox fx:id="streamBoxOne" alignment="CENTER" minHeight="240.0" minWidth="308.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <ImageView fx:id="viewOne" fitHeight="240.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </ImageView>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="50.0" right="50.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <Label text="View 1">
+                     <VBox.margin>
+                        <Insets bottom="150.0" top="4.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" minHeight="326.0" minWidth="308.0" spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+               <children>
+                  <ChoiceBox fx:id="camChoiceTwo" prefHeight="30.0" prefWidth="105.0">
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="100.0" />
+                     </VBox.margin>
+                  </ChoiceBox>
+                  <VBox fx:id="streamBoxTwo" alignment="CENTER" minHeight="240.0" minWidth="308.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <ImageView fx:id="viewTwo" fitHeight="240.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="50.0" right="50.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <Label text="View 2">
+                     <VBox.margin>
+                        <Insets top="4.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="150.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>

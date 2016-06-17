@@ -12,25 +12,22 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.camera.CameraConnection;
 import nl.tudelft.contextproject.camera.LiveCameraConnection;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.gui.AlertDialog;
 import nl.tudelft.contextproject.gui.MenuController;
-import nl.tudelft.contextproject.presets.InstantPreset;
+import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
-
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is the main file for the Multi-Media Contextproject of Team Free Pizza.
@@ -57,41 +54,19 @@ public class ContextTFP extends Application {
         primaryStage.setTitle("TFP Camera Control");
         primaryStage.minWidthProperty().set(800);
         primaryStage.minHeightProperty().set(575);
+        primaryStage.getIcons().add(new Image(ContextTFP.class.getResourceAsStream("/icon.png")));
         
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
-
-        //TEMP
-        Camera a = new Camera();
-        Camera b = new Camera();
-        Camera c = new Camera();
-        Camera d = new Camera();
-        Camera e = new Camera();
-        Camera f = new Camera();
         
-        LiveCameraConnection live = new LiveCameraConnection("192.168.0.13");
-        live.setUpConnection();
-        a.setConnection(live);
+        // Statically initialise ApplicationSettings class.
+        ApplicationSettings.getInstance();
         
-        MockedCameraConnection mocked = new MockedCameraConnection();
-        b.setConnection(mocked);
-        
-        MockedCameraConnection mocked2 = new MockedCameraConnection();
-        mocked2.setStreamLink("http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8");
-        c.setConnection(mocked2);
-
-        List<Camera> list = new ArrayList<Camera>();
-        list.addAll(Arrays.asList(a, b, c, d, e, f)); 
-
-        for (Camera cam : list) {
-            cam.addPreset(new InstantPreset(new CameraSettings(), 0, "wow"));
-            cam.addPreset(new InstantPreset(new CameraSettings(), 1, "nice"));
-            cam.addPreset(new InstantPreset(new CameraSettings(), 2, "awesome"));
-            cam.addPreset(new InstantPreset(new CameraSettings(), 3, "wuq"));
-        }
-
         initRootLayout();
-        Platform.runLater(() -> initVLCj());
+        
+        new Thread(() -> initVLCj()).start();
+        new Thread(() -> initCameraConnections()).start();
+        
         MenuController.show();
     }
 
@@ -108,11 +83,38 @@ public class ContextTFP extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
             primaryStage.setOnCloseRequest(e -> {
+                try {
+                    ApplicationSettings.getInstance().save();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 Platform.exit(); 
                 System.exit(0);
             });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Initialises the camera connections for every loaded camera.
+     * If an IP was loaded for a camera, then it will check if it
+     * can make a connection to this camera. If it can, then it will
+     * set its connection to a LiveCameraConnection. If it cannot,
+     * then it sets a MockedCameraConnection. 
+     */
+    public void initCameraConnections() {
+        ApplicationSettings settings = ApplicationSettings.getInstance();
+        for (Camera cam : Camera.getAllCameras()) {
+            String camIp = settings.getCameraIP(cam.getNumber());
+            if (camIp != null && !camIp.equals("")) {
+                CameraConnection connect = new LiveCameraConnection(camIp);
+                if (connect.setUpConnection()) {
+                    cam.setConnection(connect);
+                    break;
+                }
+            }
+            cam.setConnection(new MockedCameraConnection());
         }
     }
     

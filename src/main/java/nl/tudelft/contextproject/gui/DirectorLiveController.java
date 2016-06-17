@@ -279,7 +279,7 @@ public class DirectorLiveController {
      * Initialize the UI in the case when the script is empty.
      */
     private void emptyInitialization() {
-        updateShotInfo(new Shot(0, "", Camera.DUMMY, ""));
+        updateShotInfo(new Shot(0, "", Camera.DUMMY, null, "", ""));
         actionTxt.setText("No shots");
     }
     

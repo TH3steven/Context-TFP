@@ -335,12 +335,7 @@ public class CreateScriptController {
         
         Shot last = data.get(data.size() - 1);
         
-        if (last.getCamera().getNumber() 
-                == addCamera.getSelectionModel().getSelectedIndex()) {
-            return false;
-        }
-
-        return true;
+        return last.getCamera().getNumber() != addCamera.getSelectionModel().getSelectedIndex();
     }
 
     /**
@@ -641,6 +636,8 @@ public class CreateScriptController {
                     setOnDragDetected(createDragDetectedHandler(this));
                     setOnDragOver(createDragOverHandler(this, tableEvents));
                     setOnDragDropped(createDragDroppedHandler(this, tableEvents));
+                    fixIds();
+                    tableEvents.refresh();
                 }
 
                 @Override
@@ -735,6 +732,17 @@ public class CreateScriptController {
             table.getItems().add(myIndex, table.getItems().remove(incomingIndex));
             event.setDropCompleted(true);
         };
+    }
+    
+    /**
+     * Makes sure the IDs of the shots are always in ascending order.
+     */
+    private void fixIds() {
+        for (int i = 0; i < tableEvents.getItems().size(); ++i) {
+            tableEvents.getItems().get(i).setNumber(i + 1);
+        }
+        
+        tableEvents.refresh();
     }
 
     /**

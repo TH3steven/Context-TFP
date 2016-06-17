@@ -97,7 +97,7 @@ public final class Animation {
      * Animation for a {@link Node}. Makes the Node fade out. Uses a 
      * {@link FadeTransition} to create the fade animation. The duration of the
      * fade is {@link #DURATION_FADE} / 4 when bMakeInvisible is false, or
-     * {@link #DURATION_FADE} / 2 when bMakeInvisible is true.
+     * {@link #DURATION_FADE} / 3 when bMakeInvisible is true.
      * 
      * @param n The Node to animate.
      * @param bMakeInvisible True if the Node should be made invisible 

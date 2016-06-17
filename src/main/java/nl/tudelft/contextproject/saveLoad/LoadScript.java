@@ -26,6 +26,10 @@ import javax.xml.stream.events.XMLEvent;
  * The location this file is to be loaded from is stored in the private
  * variable {@link #loadLocation}, which can be set using {@link #setLoadLocation}.
  * 
+ * <p>This class has a high cyclomatic complexity due to the load methods.
+ * We did not find any good way to get around this, without sacrificing
+ * code readability.
+ * 
  * @since 0.3
  */
 public final class LoadScript {
@@ -160,10 +164,10 @@ public final class LoadScript {
                 EndElement end = event.asEndElement();
                 if ("cameras".equals(end.getName().getLocalPart())) {
                     return;
-                } else {
-                    throw new XMLStreamException("Unexpected end tag in cameras section: "
-                            + end.getName().getLocalPart());
                 }
+                throw new XMLStreamException("Unexpected end tag in cameras section: "
+                        + end.getName().getLocalPart());
+                
             }
         }
     }
@@ -289,9 +293,8 @@ public final class LoadScript {
         if (toSet.get() != null) {
             String type = presetStart.getAttributeByName(new QName("type")).getValue();
             return createPreset(type, toSet.get(), id, description, imgLoc);
-        } else {
-            throw new XMLStreamException("No camera settings found in preset");
         }
+        throw new XMLStreamException("No camera settings found in preset");
     }
     
     /**
@@ -348,10 +351,10 @@ public final class LoadScript {
                 EndElement end = event.asEndElement();
                 if ("shots".equals(end.getName().getLocalPart())) {
                     break;
-                } else {
-                    throw new XMLStreamException("Unexpected end tag in shots section: "
-                            + end.getName().getLocalPart());
                 }
+                throw new XMLStreamException("Unexpected end tag in shots section: "
+                        + end.getName().getLocalPart());
+                
             }
         }
         return shots;
@@ -417,8 +420,7 @@ public final class LoadScript {
         Camera cam = Camera.getCamera(cameraId);
         if (cam != null) {
             return new Shot(id, shotId, cam, cam.getPreset(presetId), description, action);
-        } else {
-            throw new XMLStreamException("Camera cannot be found with camera id: " + cameraId);
         }
+        throw new XMLStreamException("Camera cannot be found with camera id: " + cameraId);
     }
 }
