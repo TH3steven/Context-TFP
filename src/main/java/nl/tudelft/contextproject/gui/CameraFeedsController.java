@@ -21,19 +21,17 @@ import java.util.Iterator;
 
 
 public class CameraFeedsController {
+    
+    private static LiveStreamHandler leftStreamHandler;
+    private static LiveStreamHandler rightStreamHandler;
+    
     @FXML private ChoiceBox<Camera> camChoiceOne;
     @FXML private ChoiceBox<Camera> camChoiceTwo;
-    
-    @FXML private ImageView viewOne;
-    @FXML private ImageView viewTwo;
     
     @FXML private VBox streamBoxOne;
     @FXML private VBox streamBoxTwo;
     
     private Collection<Camera> cameras;
-    
-    private LiveStreamHandler leftStreamHandler;
-    private LiveStreamHandler rightStreamHandler;
     
     /**
      * Initialize method used by JavaFX.
@@ -70,8 +68,7 @@ public class CameraFeedsController {
         addChoiceListener(camChoiceTwo);
     }
     
-    private void initStreams() {
-        
+    private void initStreams() {        
         addStreamListeners();
     }
     
@@ -99,34 +96,35 @@ public class CameraFeedsController {
     }
     
     private void addStreamListeners() {
-        ImageView leftView = (ImageView) streamBoxOne.getChildren().get(0);
-        ImageView rightView = (ImageView) streamBoxTwo.getChildren().get(0);
-        
         streamBoxOne.widthProperty().addListener((observable, oldValue, newValue) -> {
             if (leftStreamHandler != null) {
                 fitImageViewSize(newValue.floatValue(), 
-                        (float) streamBoxOne.getHeight(), leftView, leftStreamHandler);
+                        (float) streamBoxOne.getHeight(), 
+                            (ImageView) streamBoxOne.getChildren().get(0), leftStreamHandler);
             }
         });
 
         streamBoxTwo.widthProperty().addListener((observable, oldValue, newValue) -> {
             if (rightStreamHandler != null) {
                 fitImageViewSize(newValue.floatValue(), 
-                        (float) streamBoxTwo.getHeight(), rightView, rightStreamHandler);
+                        (float) streamBoxTwo.getHeight(), 
+                            (ImageView) streamBoxTwo.getChildren().get(0), rightStreamHandler);
             }
         });
         
         streamBoxOne.heightProperty().addListener((observable, oldValue, newValue) -> {
             if (leftStreamHandler != null) {
                 fitImageViewSize((float) streamBoxOne.getWidth(), 
-                        newValue.floatValue(), leftView, leftStreamHandler);
+                        newValue.floatValue(), 
+                            (ImageView) streamBoxOne.getChildren().get(0), leftStreamHandler);
             }
         });
         
         streamBoxTwo.heightProperty().addListener((observable, oldValue, newValue) -> {
             if (rightStreamHandler != null) {
                 fitImageViewSize((float) streamBoxTwo.getWidth(), 
-                        newValue.floatValue(), rightView, rightStreamHandler);
+                        newValue.floatValue(), 
+                            (ImageView) streamBoxTwo.getChildren().get(0), rightStreamHandler);
             }
         });
     }
@@ -163,6 +161,7 @@ public class CameraFeedsController {
      */
     private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
         if (imageView.getImage() instanceof WritableImage && streamHandler.isPlaying()) {
+
             FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
             float fitHeight = videoSourceRatioProperty.get() * width;
             if (fitHeight > height) {
@@ -177,6 +176,19 @@ public class CameraFeedsController {
                 imageView.setY((height - fitHeight) / 2);
                 imageView.setX(0);
             } 
+        }
+    }
+    
+    /**
+     * Close the streams.
+     */
+    public static void closeStreams() {
+        if (leftStreamHandler != null) {
+            leftStreamHandler.stop();
+        }
+        
+        if (rightStreamHandler != null) {
+            rightStreamHandler.stop();
         }
     }
     

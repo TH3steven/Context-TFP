@@ -250,10 +250,12 @@ public class MenuController {
                 Scene scene = new Scene(rootLayout);
                 secondaryStage.setScene(scene);
                 secondaryStage.show();
+                secondaryStage.setOnCloseRequest(e -> {
+                    CameraFeedsController.closeStreams();
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Clicked!");
         });
     }
 
