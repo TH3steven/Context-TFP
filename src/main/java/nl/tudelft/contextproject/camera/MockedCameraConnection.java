@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import javax.imageio.ImageIO;
+
 /**
  * Class to represent a mocked camera. It mimics or mocks the behavior of a specific camera
  * without having a real connection to the cameras.

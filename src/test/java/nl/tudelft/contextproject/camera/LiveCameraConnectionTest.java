@@ -31,6 +31,7 @@ import java.net.URL;
  * PowerMock(ito) brings a lot of static imports, but they do not decrease
  * the readability of the code. The duplicate literals warning is of no
  * interest to this class.
+ * 
  * @since 0.4, modified heavily for 0.7
  */
 @RunWith(PowerMockRunner.class)
@@ -313,6 +314,7 @@ public class LiveCameraConnectionTest {
     /**
      * Tests update method:
      * All camera settings have been changed.
+     * 
      * <p>Uses @SuppressWarnings to suppress the PMD warning, because this
      * test uses Mockito's verify method.
      */

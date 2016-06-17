@@ -213,6 +213,7 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+
     /**
      * Zooms the camera a certain offset. Cannot zoom past
      * the zoom limits.

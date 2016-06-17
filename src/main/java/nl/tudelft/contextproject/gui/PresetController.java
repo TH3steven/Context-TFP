@@ -19,7 +19,6 @@ import javafx.scene.layout.VBox;
 
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.LiveCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 

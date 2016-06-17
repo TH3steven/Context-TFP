@@ -138,6 +138,7 @@ public class TimelineTest {
         assertEquals(timeline1.getNextShot(shot1), shot2);
         assertNull(timeline.getNextShot(shot1));
     }
+
     /**
      * Test the executeScript method.
      * Checks if the shots in a script are properly applied
