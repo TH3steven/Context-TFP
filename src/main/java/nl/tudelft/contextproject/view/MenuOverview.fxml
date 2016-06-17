@@ -149,5 +149,6 @@
             <Image url="settings.png" />
          </image>
       </ImageView>
+      <Button fx:id="btnCameras" layoutX="350.0" layoutY="530.0" mnemonicParsing="false" text="Camera views" />
    </children>
 </AnchorPane>

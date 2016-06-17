@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -24,6 +25,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
@@ -55,6 +58,7 @@ public class MenuController {
     @FXML private GridPane settingsGrid;
 
     @FXML private Button btnCameraman;
+    @FXML private Button btnCameras;
     @FXML private Button btnCreateScript;
     @FXML private Button btnDirector;
     @FXML private Button btnEditScript;
@@ -121,6 +125,7 @@ public class MenuController {
         initSubButtons();
         initOtherButtons();
         initSettingsImg();
+        initCameraViewButton();
     }
 
     /**
@@ -267,6 +272,32 @@ public class MenuController {
             });
         });
     }
+    
+    /**
+     * Initialises the 'Camera views' button, which opens a new window 
+     * with live camera feeds.
+     */
+    private void initCameraViewButton() {
+        btnCameras.setOnAction(event -> {
+            Stage secondaryStage = new Stage();
+            secondaryStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(ContextTFP.class.getResource("view/CameraFeedsView.fxml"));
+
+                AnchorPane rootLayout = (AnchorPane) loader.load();
+
+                Scene scene = new Scene(rootLayout);
+                secondaryStage.setScene(scene);
+                secondaryStage.show();
+                secondaryStage.setOnCloseRequest(e -> {
+                    CameraFeedsController.closeStreams();
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     /**
      * Sets the hover and click action for the settings icon.
@@ -292,7 +323,7 @@ public class MenuController {
             settingsOnClose();
         });
     }
-    
+
     /**
      * Opens Settings menu.
      */
