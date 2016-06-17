@@ -28,7 +28,7 @@
                         <Insets bottom="20.0" top="100.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <VBox fx:id="streamBoxOne" alignment="CENTER" minHeight="240.0" minWidth="308.0" style="-fx-border-color: gray;" VBox.vgrow="ALWAYS">
+                  <VBox fx:id="streamBoxOne" alignment="CENTER" minHeight="240.0" minWidth="308.0" VBox.vgrow="ALWAYS">
                      <children>
                         <ImageView fx:id="viewOne" fitHeight="240.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true">
                            <VBox.margin>
@@ -54,7 +54,7 @@
                         <Insets bottom="20.0" top="100.0" />
                      </VBox.margin>
                   </ChoiceBox>
-                  <VBox fx:id="streamBoxTwo" alignment="CENTER" minHeight="240.0" minWidth="308.0" style="-fx-border-color: gray;" VBox.vgrow="ALWAYS">
+                  <VBox fx:id="streamBoxTwo" alignment="CENTER" minHeight="240.0" minWidth="308.0" VBox.vgrow="ALWAYS">
                      <children>
                         <ImageView fx:id="viewTwo" fitHeight="240.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true" />
                      </children>

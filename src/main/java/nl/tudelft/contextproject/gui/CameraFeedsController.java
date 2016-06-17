@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
@@ -28,6 +29,9 @@ public class CameraFeedsController {
     @FXML private ChoiceBox<Camera> camChoiceOne;
     @FXML private ChoiceBox<Camera> camChoiceTwo;
     
+    @FXML private ImageView viewOne;
+    @FXML private ImageView viewTwo;
+    
     @FXML private VBox streamBoxOne;
     @FXML private VBox streamBoxTwo;
     
@@ -43,7 +47,10 @@ public class CameraFeedsController {
         rightStreamHandler = new LiveStreamHandler();
         
         initChoiceBoxes();
-        initStreams();
+        initStreams();        
+        
+        viewOne.setImage(loadImage("black.png"));
+        viewTwo.setImage(loadImage("black.png"));
     }
     
     /**
@@ -78,10 +85,6 @@ public class CameraFeedsController {
      */
     private void addChoiceListener(ChoiceBox<Camera> cb) {
         cb.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-            String newStream = newV.getConnection().getStreamLink();
-            VBox outerBox = (VBox) cb.getParent();
-            VBox innerBox = (VBox) outerBox.getChildren().get(1);
-            ImageView oldStream = (ImageView) innerBox.getChildren().get(0);
             
             LiveStreamHandler streamHandler;
             
@@ -90,6 +93,17 @@ public class CameraFeedsController {
             } else {
                 streamHandler = rightStreamHandler;
             }
+            
+            VBox outerBox = (VBox) cb.getParent();
+            VBox innerBox = (VBox) outerBox.getChildren().get(1);
+            ImageView oldStream = (ImageView) innerBox.getChildren().get(0);
+            
+            if (newV.toString().equals("None")) {
+                blackView(oldStream, streamHandler);
+                return;
+            }
+           
+            String newStream = newV.getConnection().getStreamLink();           
             
             updateStream(newStream, oldStream, streamHandler);
         });
@@ -154,6 +168,11 @@ public class CameraFeedsController {
         vBox.setStyle("-fx-border-color: transparent");
     }
     
+    private void blackView(ImageView imgView, LiveStreamHandler streamHandler) {
+        streamHandler.stop();
+        imgView.setImage(loadImage("black.png"));
+    }
+    
     /**
      * Resizes the ImageView.
      * @param width The new width of the ImageView.
@@ -178,6 +197,20 @@ public class CameraFeedsController {
                 imageView.setY((height - fitHeight) / 2);
                 imageView.setX(0);
             } 
+        }
+    }
+    
+    /**
+     * Loads an image. Loads an error image if path is null or invalid.
+     * 
+     * @param path Image path.
+     * @return The newly loaded image.
+     */
+    public Image loadImage(String path) {
+        try {
+            return new Image(path);
+        } catch (IllegalArgumentException e) {
+            return new Image("error.jpg");
         }
     }
     
