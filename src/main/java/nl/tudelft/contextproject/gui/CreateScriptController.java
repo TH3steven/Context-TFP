@@ -335,12 +335,7 @@ public class CreateScriptController {
         
         Shot last = data.get(data.size() - 1);
         
-        if (last.getCamera().getNumber() 
-                == addCamera.getSelectionModel().getSelectedIndex()) {
-            return false;
-        }
-
-        return true;
+        return last.getCamera().getNumber() != addCamera.getSelectionModel().getSelectedIndex();
     }
 
     /**
