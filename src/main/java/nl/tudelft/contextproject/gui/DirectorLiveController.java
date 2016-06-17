@@ -103,6 +103,9 @@ public class DirectorLiveController {
         }
         setFactories();
         
+        thumbnail.fitWidthProperty().bind(thumbnailBox.widthProperty());
+        thumbnail.fitHeightProperty().bind(thumbnailBox.heightProperty());
+        
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
     
@@ -122,12 +125,12 @@ public class DirectorLiveController {
      */
     private void initializeButtons() {
         btnBack.toFront();
-        btnBack.setOnAction((event) -> {
+        btnBack.setOnAction(event -> {
             live = false;
             MenuController.show();
         });
         
-        btnNext.setOnAction((event) -> {
+        btnNext.setOnAction(event -> {
             initializeLive();
             live = true;
             btnNext.setText("Next shot");
@@ -138,7 +141,7 @@ public class DirectorLiveController {
      * Initializes the edit script buttons.
      */
     private void initializeEditButtons() {
-        btnUndo.setOnAction((event) -> {
+        btnUndo.setOnAction(event -> {
             updateShotInfo(tableShots.getSelectionModel().getSelectedItem());
         });
         
@@ -151,7 +154,7 @@ public class DirectorLiveController {
      * Initialize the button that handles going live.
      */
     private void initializeLive() {
-        btnNext.setOnAction((event) -> {
+        btnNext.setOnAction(event -> {
             if (!endReached()) {
                 script.next(automaticCheck.isSelected());
                 // TODO: Move the current shot highlight in the table.
