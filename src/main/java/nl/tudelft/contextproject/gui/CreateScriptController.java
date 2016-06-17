@@ -642,6 +642,7 @@ public class CreateScriptController {
                     setOnDragOver(createDragOverHandler(this, tableEvents));
                     setOnDragDropped(createDragDroppedHandler(this, tableEvents));
                     fixIds();
+                    tableEvents.refresh();
                 }
 
                 @Override
