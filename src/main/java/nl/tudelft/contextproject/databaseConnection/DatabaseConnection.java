@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Class to create a database connection. 
@@ -89,11 +88,7 @@ public final class DatabaseConnection {
         }
         
         try {
-            if (conn.isValid(timeout)) {
-                return true;
-            } else {
-                return false;
-            }
+            return conn.isValid(timeout);
         } catch (SQLException e) {
             return false;
         } 
@@ -156,6 +151,7 @@ public final class DatabaseConnection {
         ResultSet rs = stmt.executeQuery(query);
         rs.next();
         int id = rs.getInt("number");
+        
         rs.close();
         stmt.close();
         return id;
@@ -164,9 +160,13 @@ public final class DatabaseConnection {
     /**
      * Clears the script in the database and uploads a new script.
      * 
+     * <p>Uses @SuppressWarnings for the PMD warning about appending consecutive String
+     * literals. Fixing these would compromise the readability of the code.
+     * 
      * @param script The script to upload.
      * @throws SQLException When no connection can be made, this exception will be thrown.
      */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     public void uploadScript(Script script) throws SQLException {
         revalidate();
         clearScript();
@@ -175,12 +175,13 @@ public final class DatabaseConnection {
         Iterator<Shot> iterator = script.getShots().iterator();
         while (iterator.hasNext()) {
             Shot shot = iterator.next();
-            StringBuilder sBuilder = new StringBuilder("INSERT INTO " + SCRIPT_TABLE + " VALUES " + "(");
-            sBuilder.append("'" + shot.getNumber() + "',")
-            .append("'" + shot.getShotId() + "',")
-            .append("'" + shot.getCamera().getNumber() + "',")
-            .append("'" + shot.getPreset().getId() + "',")
-            .append("'" + shot.getDescription() + "',")
+            StringBuilder sBuilder = new StringBuilder(50);
+            sBuilder.append("INSERT INTO " + SCRIPT_TABLE + " VALUES (")
+                .append("'" + shot.getNumber() + "',")
+                .append("'" + shot.getShotId() + "',")
+                .append("'" + shot.getCamera().getNumber() + "',")
+                .append("'" + shot.getPreset().getId() + "',")
+                .append("'" + shot.getDescription() + "',")
                 .append("'" + shot.getAction() + "');");
             stmt.executeUpdate(sBuilder.toString());
         }
@@ -266,31 +267,37 @@ public final class DatabaseConnection {
             stmt.executeUpdate(updatePreset(preset, camera));
         }
         
+        rs.close();
         stmt.close();
     }
     
     /**
      * Creates the query to insert a preset in the database.
      * 
+     * <p>Uses @SuppressWarnings for the PMD warning about appending consecutive String
+     * literals. Fixing these would compromise the readability of the code.
+     * 
      * @param preset The preset to create the query for.
      * @param camera The camera of the preset.
      * @return A query inserting the preset in the database.
      */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private String insertPreset(Preset preset, Camera camera) {
         String type = "";
         if (preset instanceof InstantPreset) {
             type = "InstantPreset";
         }
         
-        StringBuilder sBuilder = new StringBuilder("INSERT INTO " + PRESET_TABLE + " VALUES " + "(");
-        sBuilder.append("'" + preset.getId() + "',")
-        .append("'" + camera.getNumber() + "',")
-        .append("'" + type + "',")
-        .append("'" + preset.getDescription() + "',")
-        .append("'" + preset.getImage() + "',")
-        .append("'" + preset.getToSet().getPan() + "',")
-        .append("'" + preset.getToSet().getTilt() + "',")
-        .append("'" + preset.getToSet().getZoom() + "',")
+        StringBuilder sBuilder = new StringBuilder(50);
+        sBuilder.append("INSERT INTO " + PRESET_TABLE + " VALUES (")
+            .append("'" + preset.getId() + "',")
+            .append("'" + camera.getNumber() + "',")
+            .append("'" + type + "',")
+            .append("'" + preset.getDescription() + "',")
+            .append("'" + preset.getImage() + "',")
+            .append("'" + preset.getToSet().getPan() + "',")
+            .append("'" + preset.getToSet().getTilt() + "',")
+            .append("'" + preset.getToSet().getZoom() + "',")
             .append("'" + preset.getToSet().getFocus() + "');");
         return sBuilder.toString();
     }
@@ -298,26 +305,32 @@ public final class DatabaseConnection {
     /**
      * Creates the query to update (overwrite) an already existing preset in the database.
      * 
+     * <p>Uses @SuppressWarnings for the PMD warning about appending consecutive String
+     * literals. Fixing these would compromise the readability of the code.
+     * 
      * @param preset The preset to create the query for.
      * @param camera The camera of the preset.
      * @return A query updating the preset in the database.
      */
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private String updatePreset(Preset preset, Camera camera) {
         String type = "";
         if (preset instanceof InstantPreset) {
             type = "InstantPreset";
         }
         
-        StringBuilder sBuilder = new StringBuilder("UPDATE " + PRESET_TABLE + " SET ");
-        sBuilder.append("id='" + preset.getId() + "',")
-        .append("camera='" + camera.getNumber() + "',")
-        .append("type='" + type + "',")
-        .append("description='" + preset.getDescription() + "',")
-        .append("imageLocation='" + preset.getImage() + "',")
-        .append("pan='" + preset.getToSet().getPan() + "',")
-        .append("tilt='" + preset.getToSet().getTilt() + "',")
-        .append("zoom='" + preset.getToSet().getZoom() + "',")
-        .append("focus='" + preset.getToSet().getFocus() + "' ")
+        StringBuilder sBuilder = new StringBuilder(130);
+        sBuilder
+            .append("UPDATE " + PRESET_TABLE + " SET ")
+            .append("id='" + preset.getId() + "',")
+            .append("camera='" + camera.getNumber() + "',")
+            .append("type='" + type + "',")
+            .append("description='" + preset.getDescription() + "',")
+            .append("imageLocation='" + preset.getImage() + "',")
+            .append("pan='" + preset.getToSet().getPan() + "',")
+            .append("tilt='" + preset.getToSet().getTilt() + "',")
+            .append("zoom='" + preset.getToSet().getZoom() + "',")
+            .append("focus='" + preset.getToSet().getFocus() + "' ")
             .append("WHERE id='" + preset.getId() + "' AND camera='" + camera.getNumber() + "';");
         return sBuilder.toString();
     }
