@@ -101,6 +101,8 @@ public class CameramanLiveController {
         });
         
         //TODO remove temp button
+        //Button is here to allow for easy demo-ing of
+        //the current shot highlight.
         btnNext.setOnAction(event -> {
             ContextTFP.getScript().next();
             tableShots.refresh();
