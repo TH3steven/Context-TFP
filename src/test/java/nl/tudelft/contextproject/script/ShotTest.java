@@ -105,6 +105,7 @@ public class ShotTest {
         assertEquals(shot2.getPreset(), pres2);
         assertEquals(shot4.getAction(), "Left");
     }
+
     /**
      * Test the execute method.
      * This tests if the preset settings are applied to a camera

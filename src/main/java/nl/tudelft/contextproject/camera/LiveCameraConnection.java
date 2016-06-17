@@ -4,9 +4,9 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+
 import nl.tudelft.contextproject.gui.LiveStreamHandler;
 
-import javax.imageio.ImageIO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Observable;
+import javax.imageio.ImageIO;
 
 /**
  * Class to represent a live connection with a camera. It is
@@ -51,6 +52,7 @@ public class LiveCameraConnection extends CameraConnection {
     private boolean autoFocus;
     private CameraSettings lastKnown;
     private String address;
+
     /**
      * Creates a LiveCameraConnection object. Assumes that the
      * address given is the correctly formulated IP address of the

@@ -122,6 +122,7 @@ public class CameraSettings {
 
     /**
      * Pans and Tilts the Camera Settings a certain pan and tilt offset.
+     *
      * @param panOffset The offset to pan the camera.
      * @param tiltOffset The offset to tilt the camera.
      */

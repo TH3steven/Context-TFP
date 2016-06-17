@@ -225,7 +225,7 @@ public class MockedCameraConnectionTest {
     }
 
     /**
-     * Tests the snapShot method. Powermock is
+     * Tests the snapShot method. PowerMock is
      * used here to verify the behavior of this method.
      */
     @Test

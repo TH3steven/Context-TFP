@@ -206,7 +206,7 @@ public class Camera extends Observable {
     public void panTilt(int panOffset, int tiltOffset) {
         camSet.panTilt(panOffset, tiltOffset);
 
-        if(hasConnection()) {
+        if (hasConnection()) {
             connection.relPanTilt(panOffset, tiltOffset);
         }
 

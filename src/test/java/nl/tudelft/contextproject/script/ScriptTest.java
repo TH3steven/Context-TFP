@@ -100,7 +100,7 @@ public class ScriptTest {
         assertEquals(script1.getShots().get(0).getNumber(), 1);
         assertEquals(script1.getShots().get(0).getPreset(), pres);
         assertNotEquals(script1, script2);
-        assertNotEquals(script1,los1);
+        assertNotEquals(script1, los1);
     }
 
     /**

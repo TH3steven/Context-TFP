@@ -56,7 +56,7 @@ public class CameraTest {
         cam2.setSettings(new CameraSettings(90, 90, 90, 90));
         Collection<Camera> camCollection = Camera.getAllCameras();
         assertEquals(Camera.getCamera(0), cam1);
-        assertTrue(camCollection.size() == 2);
+        assertEquals(camCollection.size(), 2);
         assertEquals(Camera.getCameraAmount(), 2);
     }
 
@@ -70,7 +70,7 @@ public class CameraTest {
         cam1.setSettings(new CameraSettings(65, 65, 65, 65));
         cam2.setSettings(new CameraSettings(90, 90, 90, 90));
         Camera.clearAllCameras();
-        assertTrue(Camera.getAllCameras().size() == 0);
+        assertEquals(Camera.getAllCameras().size(), 0);
     }
 
     /**

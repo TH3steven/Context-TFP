@@ -26,6 +26,9 @@ public class InstantPresetTest {
         Camera.clearAllCameras();
     }
 
+    /**
+     * Initialises the private parameters of the InstantPreset class.
+     */
     @Before
     public void init() {
         cam = new Camera();
@@ -36,6 +39,7 @@ public class InstantPresetTest {
         preset1 = new InstantPreset(camSet2, 1);
         preset2 = new InstantPreset(camSet, 2, "rotate camera to the left");
     }
+
     /**
      * Tests the only important method in this preset: {@link InstantPreset#applyTo(Camera)}.
      */
@@ -57,6 +61,6 @@ public class InstantPresetTest {
         preset2.applyTo(cam);
         assertEquals("rotate camera to the left", preset2.getDescription());
         assertEquals(2, preset2.getId());
-        assertNotEquals(preset1,preset2);
+        assertNotEquals(preset1, preset2);
     }
 }

@@ -1,5 +1,10 @@
 package nl.tudelft.contextproject.script;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
@@ -12,8 +17,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Class to test the Timeline Class. Test cases will be expanded
@@ -129,7 +132,6 @@ public class TimelineTest {
 
     /**
      * Tests the getNextShot method. Returns null is the timeline
-     * does not contain a shot from the given current shot.
      */
     @Test
     public void testGetNextShot() {
