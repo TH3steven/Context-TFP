@@ -1,16 +1,12 @@
 package nl.tudelft.contextproject.gui;
 
-import javafx.application.Platform;
 import javafx.beans.property.FloatProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
@@ -20,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -29,34 +26,43 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This class is a control class for the preset creation screen. It
  * enables the creation and modification of presets for different cameras.
  * 
+ * <p>The view section is defined under view/PresetView.fxml
+ * 
  * @since 0.2
  */
 public class PresetController {
 
+    private static boolean toCameramanView = false;
+
+    @FXML private CheckBox overwrite;
     @FXML private ChoiceBox<Integer> cameraSelecter;
-    @FXML private TextField presetID;
-    @FXML private TextField description;
+
     @FXML private Button btnBack;
     @FXML private Button btnSave;
     @FXML private Button btnRemove;
-    @FXML private CheckBox overwrite;
+
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
     @FXML private TableColumn<Preset, String> descColumn;
+
+    @FXML private TextField presetID;
+    @FXML private TextField description;
+
     @FXML private VBox vBox;
 
     private LiveStreamHandler streamHandler;
     private ObservableList<Preset> data = FXCollections.observableArrayList();
     private ImageView imageView;
 
-    @FXML
-    private void initialize() {
+    /**
+     * Initialize method for JavaFX.
+     */
+    @FXML private void initialize() {
         List<Integer> cameraList = new ArrayList<Integer>();
 
         for (int i = 0; i < Camera.getCameraAmount(); i++) {
@@ -68,7 +74,7 @@ public class PresetController {
         applySettings();
         setFactories();
         setActions();
-        
+
         sort();
     }
 
@@ -79,7 +85,7 @@ public class PresetController {
         vBox.setAlignment(Pos.CENTER);
         vBox.getChildren().clear();
     }
-    
+
     /**
      * Updates the camera stream to the stream referenced by the specified link.
      * @param streamLink the link to the video stream to be played next.
@@ -88,11 +94,13 @@ public class PresetController {
         if (streamHandler != null) {
             streamHandler.stop();
         }
+
         streamHandler = new LiveStreamHandler();
         imageView = streamHandler.createImageView(streamLink, 1920, 1080);
-        Platform.runLater(() -> {
+        new Thread(() -> {
             fitImageViewSize((float) vBox.getWidth(), (float) vBox.getHeight());
-        });    
+        }).start();
+
         vBox.getChildren().clear();
         vBox.getChildren().add(imageView);
         streamHandler.start();
@@ -103,10 +111,10 @@ public class PresetController {
      */
     private void setFactories() {
         presetColumn.setCellValueFactory(
-                new PropertyValueFactory<Preset, Integer>("id"));
+            new PropertyValueFactory<Preset, Integer>("id"));
 
         descColumn.setCellValueFactory(
-                new PropertyValueFactory<Preset, String>("description"));
+            new PropertyValueFactory<Preset, String>("description"));
     }
 
     /**
@@ -115,16 +123,40 @@ public class PresetController {
     private void setActions() {
         tableView.setItems(data);
 
-        btnBack.setOnAction((event) -> {
-            if (streamHandler != null) {
-                streamHandler.stop();
+        btnRemove.setOnAction(event -> {
+            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex >= 0) {
+                Preset selected = tableView.getItems().get(selectedIndex);
+                Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                cam.removePreset(selected);
+                data.remove(selected);
             }
-
-            MenuController.show();
         });
 
-        btnSave.setOnAction((event) -> {
+        vBox.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (streamHandler != null) {
+                fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
+            }
+        });
+
+        vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (streamHandler != null) {
+                fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
+            }
+        });
+
+        setSaveButton();
+        setBackButton();
+        setCameraSelector();
+    }
+
+    /**
+     * Sets the onAction for the save button.
+     */
+    private void setSaveButton() {
+        btnSave.setOnAction(event -> {
             int id = -1;
+
             try {
                 id = Integer.parseInt(presetID.getText());
                 presetID.setStyle("");
@@ -133,8 +165,33 @@ public class PresetController {
                 presetID.setStyle("-fx-border-color: red;");
             }
         });
+    }
 
-        cameraSelecter.setOnAction((event) -> {
+    /**
+     * Sets the onAction for the back button.
+     */
+    private void setBackButton() {
+        btnBack.setOnAction(event -> {
+            if (streamHandler != null) {
+                streamHandler.stop();
+            }
+
+            if (toCameramanView) {
+                Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                    CameramanLiveController.show();
+                    Animation.animNodeIn(ContextTFP.getRootLayout());
+                });
+            } else {
+                MenuController.show();
+            }
+        });
+    }
+
+    /**
+     * Sets the onAction for the camera selection choicebox.
+     */
+    private void setCameraSelector() {
+        cameraSelecter.setOnAction(event -> {
             Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
             data.clear();
@@ -147,38 +204,18 @@ public class PresetController {
                 updateStream("http://www.formisimo.com/blog/wp-content/uploads/2014/04/error-mesage.png");
             }
         });
-
-        btnRemove.setOnAction((event) -> {
-            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
-            if (selectedIndex >= 0) {
-                Preset selected = tableView.getItems().get(selectedIndex);
-                Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
-                cam.removePreset(selected);
-                data.remove(selected);
-            }
-        });
-        
-        vBox.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (streamHandler != null) {
-                fitImageViewSize(newValue.floatValue(), (float) vBox.getHeight());
-            }
-        });
-        
-        vBox.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if (streamHandler != null) {
-                fitImageViewSize((float) vBox.getWidth(), newValue.floatValue());
-            }
-        });
     }
-    
+
     /**
      * Resizes the ImageView.
+     * 
      * @param width The new width of the ImageView.
      * @param height The new height of the ImageView.
      */
     private void fitImageViewSize(float width, float height) {
         FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
         float fitHeight = videoSourceRatioProperty.get() * width;
+
         if (fitHeight > height) {
             imageView.setFitHeight(height);
             double fitWidth = height / videoSourceRatioProperty.get();
@@ -203,6 +240,9 @@ public class PresetController {
                 cam.getSettings(),
                 id,
                 description.getText());
+        String loc = String.format("CameraId%dPresetId%d", cam.getNumber(), newPreset.getId());
+        cam.getConnection().snapShot(loc);
+        newPreset.setImageLocation(loc);
 
         if (overwrite.isSelected()) {
             cam.overwritePreset(newPreset);
@@ -213,32 +253,16 @@ public class PresetController {
             if (cam.addPreset(newPreset)) {
                 addToTable(newPreset);
             } else {
-                confirmOverwrite(newPreset, cam);
+                if (AlertDialog.confirmPresetOverwrite(newPreset, cam)) {
+                    cam.overwritePreset(newPreset);
+                    int newId = newPreset.getId();
+                    removePreset(newId);  
+                    addToTable(newPreset);
+                }
             }
         }
     }
 
-    /**
-     * Shows a message box to confirm overwriting a preset.
-     * @param newPreset The preset which will overwrite another preset.
-     * @param cam The camera of the preset that will be overridden.
-     */
-    private void confirmOverwrite(Preset newPreset, Camera cam) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm overwriting");
-        alert.setHeaderText("You are about to overwrite a preset");
-        alert.setContentText("Are you sure you want to overwrite preset " + newPreset.getId() + "?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            cam.overwritePreset(newPreset);
-            int newId = newPreset.getId();
-            removePreset(newId);  
-            addToTable(newPreset);
-        }
-    }
-    
     /**
      * Used to add a preset to the table view.
      * @param p The preset to add.
@@ -247,7 +271,7 @@ public class PresetController {
         data.add(p);
         sort();
     }
-    
+
     /**
      * Sorts the tableview, ascending to preset id.
      */
@@ -255,10 +279,11 @@ public class PresetController {
         tableView.getSortOrder().clear();
         tableView.getSortOrder().add(presetColumn);
     }
-    
+
     /**
      * Because the preset id might not be the same as the position in the list, 
      * this method is required to remove a preset.
+     * 
      * @param id The id of the preset to remove.
      */
     private void removePreset(int id) {
@@ -270,9 +295,21 @@ public class PresetController {
             }
         }
     }
-    
+
     /**
-     * Shows this view.
+     * Sets the toCameramanView, that sets the back button to
+     * go back to the cameraman view if the user came from there.
+     * 
+     * @param bSet True iff the back button should go to the
+     *      CameramanLiveView.
+     */
+    public static void setToCameramanView(boolean bSet) {
+        toCameramanView = bSet;
+    }
+
+    /**
+     * Calling this method shows this view in the middle of the rootLayout,
+     * forcing the current view to disappear.
      */
     public static void show() {
         try {

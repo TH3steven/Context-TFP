@@ -46,6 +46,7 @@ public class CameraTest {
 
     /**
      * Tests getAllCameras method.
+     * Also tests the getCameraAmount method.
      */
     @Test
     public void testGetAllCameras() {
@@ -55,8 +56,8 @@ public class CameraTest {
         cam2.setSettings(new CameraSettings(90, 90, 90, 90));
         Collection<Camera> camCollection = Camera.getAllCameras();
         assertEquals(Camera.getCamera(0), cam1);
-        assertEquals(Camera.getCamera(1), cam2);
-        assertTrue(camCollection.size() == 2);
+        assertEquals(camCollection.size(), 2);
+        assertEquals(Camera.getCameraAmount(), 2);
     }
 
     /**
@@ -69,7 +70,7 @@ public class CameraTest {
         cam1.setSettings(new CameraSettings(65, 65, 65, 65));
         cam2.setSettings(new CameraSettings(90, 90, 90, 90));
         Camera.clearAllCameras();
-        assertTrue(Camera.getAllCameras().size() == 0);
+        assertEquals(Camera.getAllCameras().size(), 0);
     }
 
     /**
@@ -171,6 +172,21 @@ public class CameraTest {
     }
 
     /**
+     * Tests the panTilt method.
+     * Also tests if the observer is actually called.
+     */
+    @Test
+    public void testPanTilt() {
+        Camera cam = new Camera(new CameraSettings(30, 30, 30, 30));
+        TestObserver testOb = new TestObserver();
+        cam.addObserver(testOb);
+        cam.panTilt(30, 30);
+        assertEquals(60, cam.getSettings().getPan());
+        assertEquals(60, cam.getSettings().getTilt());
+        assertTrue(testOb.wasCalled());
+    }
+
+    /**
      * Tests the absTilt method.
      * Also tests if the observer is actually called.
      */
@@ -257,6 +273,16 @@ public class CameraTest {
         assertTrue(cam.getAllPresets().containsAll(presetCollection.values()));
         assertTrue(cam.getAllPresets().size() == presetCollection.values().size());
         assertEquals(cam.getPresetAmount(), 2);
+    }
+
+    /**
+     * Tests the toString method.
+     */
+    @Test
+    public void testToString() {
+        Camera cam = new Camera(new CameraSettings(10, 10, 10, 10));
+        String expected = Integer.toString(cam.getNumber() + 1);
+        assertEquals(expected, cam.toString());
     }
 
     /**

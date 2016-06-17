@@ -53,18 +53,23 @@ public class ScriptTest {
         cam1 = new Camera();
         cam0.setConnection(new MockedCameraConnection());
         cam1.setConnection(new MockedCameraConnection());
+        
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
         pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2);
         pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3);
+        
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(2, cam1, pres2);
         shot3 = new Shot(3, cam0, pres3);
-        dummyShot = new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
+        dummyShot = new Shot(-1, "-1", Camera.DUMMY, 
+                new InstantPreset(new CameraSettings(), -1), "No shot", "No action");
+        
         los = new ArrayList<>();
         los1 = new ArrayList<>();
         los.add(shot1);
         los.add(shot2);
         los.add(shot3);
+        
         script1 = new Script(los);
         script2 = new Script(los1);
         timeline1 = new Timeline(cam0, los1);
@@ -99,6 +104,8 @@ public class ScriptTest {
         assertEquals(script1.getShots().get(0).getCamera(), cam0);
         assertEquals(script1.getShots().get(0).getNumber(), 1);
         assertEquals(script1.getShots().get(0).getPreset(), pres);
+        assertNotEquals(script1, script2);
+        assertNotEquals(script1, los1);
     }
 
     /**
@@ -138,10 +145,11 @@ public class ScriptTest {
      */
     @Test
     public void testNext() throws NoSuchElementException {
-        assertEquals(script1.next(), shot1);
-        assertEquals(script1.next(), shot2);
+        assertEquals(script1.next(true), shot1);
+        assertEquals(script1.next(true), shot2);
         script1.next();
         assertFalse(script1.hasNext());
+        assertNull(script1.getNextShot());
     }
 
     /**
@@ -217,7 +225,8 @@ public class ScriptTest {
     }
 
     /**
-     * Tests the addShot method.
+     * Tests the addShot method if the shots are properly added to
+     * the script.
      */
     @Test
     public void testAddShot() {
@@ -226,7 +235,10 @@ public class ScriptTest {
         assertEquals(script2.getShots(), los1);
         assertTrue(timeline1.getShots().contains(shot1));
     }
-    
+
+    /**
+     * This tests the getCurrent method.
+     */
     @Test
     public void testGetCurrent() {
         assertEquals(-1, script1.getCurrent());

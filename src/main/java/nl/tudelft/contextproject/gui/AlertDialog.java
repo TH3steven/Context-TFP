@@ -11,8 +11,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.Preset;
+import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Shot;
-
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 import java.io.File;
@@ -137,6 +139,20 @@ public final class AlertDialog {
 
         alert.showAndWait();
     }
+    
+    /**
+     * Displays an error when saving of the settings was unsuccessful.
+     * @param e The exception that was thrown.
+     */
+    public static void errorSavingSettings(Exception e) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Saving settings failed!");
+        alert.setHeaderText("Error when trying to save the settings to file");
+        alert.setContentText("An error occurred when trying to save the settings to "
+                + "'settings.tfp'. \n\nError: "
+                + e.getCause());
+        alert.showAndWait();
+    }
 
     /**
      * Shows a dialog when exiting a screen without saving, thus
@@ -220,7 +236,7 @@ public final class AlertDialog {
      * @param window Only used with 
      *      {@link nl.tudelft.contextproject.ContextTFP#primaryStage ContextTFP.primaryStage}
      */
-    private static void findVlc(Window window) {
+    public static void findVlc(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Locate VLC installation");
         fileChooser.setInitialFileName("libvlc.dll");
@@ -231,6 +247,7 @@ public final class AlertDialog {
             NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), libvlc.getParent());
             try {
                 getVersion();
+                ApplicationSettings.getInstance().setVlcLocation(libvlc.getParent());
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("VLC Found!");
                 alert.setHeaderText("VLC installation found!");
@@ -243,5 +260,49 @@ public final class AlertDialog {
         } else {
             throw new RuntimeException("No VLC installed!");
         }
+    }
+    
+    /**
+     * Shows a dialog asking whether the user is sure if he or she
+     * wants to clear all cameras.
+     * @return true iff the user wants to clear, false otherwise.
+     */
+    public static boolean confirmClearCameras() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm clearing");
+        alert.setHeaderText("Are you sure you want to clear all cameras?");
+        alert.setContentText("It may not be possible to ever retrieve these settings");
+        return alert.showAndWait().get() == ButtonType.OK;
+    }
+    
+    /**
+     * Shows a dialog asking whether the user is sure if he or she
+     * wants to save the settings.
+     * @return true iff the user wants to save the settings, false otherwise.
+     */
+    public static boolean confirmSaveSettings() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm saving");
+        alert.setHeaderText("Are you sure you want to save these settings?");
+        alert.setContentText("The database settings are not verified. You can save the "
+                + "settings, but this prohibits the application from synchronising with "
+                + "the database.");
+        return alert.showAndWait().get() == ButtonType.OK;
+    }
+    
+    /**
+     * Shows a message box to confirm overwriting a preset.
+     * @param newPreset The preset which will overwrite another preset.
+     * @param cam The camera of the preset that will be overridden.
+     */
+    public static boolean confirmPresetOverwrite(Preset newPreset, Camera cam) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm overwriting");
+        alert.setHeaderText("You are about to overwrite a preset");
+        alert.setContentText("Are you sure you want to overwrite preset " + newPreset.getId() + "?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        return result.get() == ButtonType.OK;
     }
 }

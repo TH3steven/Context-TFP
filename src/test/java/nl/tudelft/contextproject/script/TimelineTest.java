@@ -3,6 +3,7 @@ package nl.tudelft.contextproject.script;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
@@ -127,6 +128,15 @@ public class TimelineTest {
         timeline1.addShot(shot2);
         assertEquals(timeline1.getShots().get(0), shot1);
         assertEquals(timeline1.getShots().get(1), shot2);
+    }
+
+    /**
+     * Tests the getNextShot method. Returns null is the timeline
+     */
+    @Test
+    public void testGetNextShot() {
+        assertEquals(timeline1.getNextShot(shot1), shot2);
+        assertNull(timeline.getNextShot(shot1));
     }
 
     /**

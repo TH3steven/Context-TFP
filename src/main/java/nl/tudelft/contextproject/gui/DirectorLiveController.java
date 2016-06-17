@@ -1,16 +1,20 @@
 package nl.tudelft.contextproject.gui;
 
-import javafx.application.Platform;
-import javafx.beans.property.FloatProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -21,6 +25,7 @@ import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class controls the screen that shows the live view
@@ -38,55 +43,43 @@ public class DirectorLiveController {
     private static Script script;
 
     @FXML private Button btnBack;
+    @FXML private Button btnConfirm;
     @FXML private Button btnNext;
-    @FXML private Button btnSwap;
+    @FXML private Button btnUndo;
     
     @FXML private CheckBox automaticCheck;
-
-    @FXML private Label bigCameraNumberLabel;
-    @FXML private Label bigShotNumberLabel;
-    @FXML private Label bigPresetLabel;
-    @FXML private Label bigStatusLabel;
-    @FXML private Label smallCameraNumberLabel;
-    @FXML private Label smallPresetLabel;
-    @FXML private Label smallShotNumberLabel;
-    @FXML private Label smallStatusLabel;
-
-    @FXML private TextArea bigDescriptionField;
-    @FXML private TextArea smallDescriptionField;
     
-    @FXML private TableColumn<Shot, Number> numberColumn;
-    @FXML private TableColumn<Shot, String> idColumn;
-    @FXML private TableColumn<Shot, Button> btnColumn;
+    @FXML private ChoiceBox<Camera> cameraSelecter;
+    @FXML private ChoiceBox<String> presetSelecter;
 
-    @FXML private VBox bigViewBox;
-    @FXML private VBox smallViewBox;
-    @FXML private VBox vboxButtons;
-    @FXML private VBox vboxLabels;
+    @FXML private ImageView thumbnail;
     
-    private boolean endReached;
+    @FXML private Label actionTxt;
+    @FXML private Label labelID;
+    
+    @FXML private TableView<Shot> tableShots;
+    @FXML private TableColumn<Shot, Number> columnCamera;
+    @FXML private TableColumn<Shot, String> columnSubject;
+    @FXML private TableColumn<Shot, Number> columnID;
+    @FXML private TableColumn<Shot, String> columnPreset;
+    @FXML private TableColumn<Shot, String> columnShot;
+    
+    @FXML private TextArea actionArea;
+    
+    @FXML private TextField fieldShot;
+    @FXML private TextField fieldSubject;
+
+    @FXML private VBox thumbnailBox;
+    
+    // Will be used soon.
     private boolean live;
-    
-    /**
-     * True if the big screen shows the live view, otherwise false.
-     */
-    private boolean bigShowsLive;
-    
-    private LiveStreamHandler liveStreamHandler;
-    private LiveStreamHandler nextStreamHandler;
-    
 
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
-
-        liveStreamHandler = new LiveStreamHandler();
-        nextStreamHandler = new LiveStreamHandler();
-
-        endReached = false;
-        bigShowsLive = true;
+        Shot current = getCurrentShot();
         
         if (!script.isEmpty()) {
             if (script.getCurrent() == -1) {
@@ -97,94 +90,22 @@ public class DirectorLiveController {
             live = false;
         }
 
-        addListenersToBoxes();
-        initializeLabels();
         initializeButtons();
-        initializeCheckbox();
-        
-        if (live) {
-            initializeLiveViews();
+        if (script.getShots().size() > 0) {
+            initializeEditButtons();
+            initializeCheckbox();
+            initializeChoiceBoxes();
+            updateShotInfo(current);
+            initializeTableListener();
+            thumbnail.setImage(loadImage(current.getPreset().getImage()));
         } else {
-            initializeBlackView(smallViewBox);
-            initializeBlackView(bigViewBox);
+            emptyInitialization();
         }
-    }
-    
-    /**
-     * Adds the listeners to the viewboxes in order to get scalability.
-     */
-    private void addListenersToBoxes() {
-        LiveStreamHandler smallStream;
-        LiveStreamHandler bigStream;
+        setFactories();
         
-        if (bigShowsLive) {
-            smallStream = nextStreamHandler;
-            bigStream = liveStreamHandler;
-        } else {
-            smallStream = liveStreamHandler;
-            bigStream = nextStreamHandler;
-        }
+        bindImageToBox(thumbnail, thumbnailBox);
         
-        smallViewBox.widthProperty().addListener((observable, oldValue, newValue) -> {
-            fitImageViewSize(newValue.floatValue(), (float) smallViewBox.getHeight(), 
-                    (ImageView) smallViewBox.getChildren().get(0), smallStream);
-        });
-        
-        smallViewBox.heightProperty().addListener((observable, oldValue, newValue) -> {
-            fitImageViewSize((float) smallViewBox.getWidth(), newValue.floatValue(), 
-                    (ImageView) smallViewBox.getChildren().get(0), smallStream);
-        });
-        
-        bigViewBox.widthProperty().addListener((observable, oldValue, newValue) -> {
-            fitImageViewSize(newValue.floatValue(), (float) bigViewBox.getHeight(), 
-                    (ImageView) bigViewBox.getChildren().get(0), bigStream);
-        });
-        
-        bigViewBox.heightProperty().addListener((observable, oldValue, newValue) -> {
-            fitImageViewSize((float) bigViewBox.getWidth(), newValue.floatValue(), 
-                    (ImageView) bigViewBox.getChildren().get(0), bigStream);
-        });
-    }
-
-    /**
-     * Initializes the labels.
-     */
-    private void initializeLabels() {
-        bigStatusLabel.setText("LIVE");
-        bigStatusLabel.setStyle("-fx-text-fill: red;");
-        smallStatusLabel.setText("Up next");
-
-        updateTables();
-    }
-
-    /**
-     * Initializes the live views.
-     */
-    private void initializeLiveViews() {
-        if (script.getCurrentShot().getCamera().getConnection() == null) {
-            initializeBlackView(bigViewBox);
-        } else {
-            createStream(script.getCurrentShot().getCamera().getConnection().getStreamLink(), 
-                    liveStreamHandler, bigViewBox);
-        }
-        
-        if (script.getNextShot() == null || script.getNextShot().getCamera().getConnection() == null) {
-            initializeBlackView(smallViewBox);           
-        } else {
-            createStream(script.getNextShot().getCamera().getConnection().getStreamLink(), 
-                    nextStreamHandler, smallViewBox);
-        }
-    }
-    
-    /**
-     * Adds a black ImageView to a VBox.
-     * @param VBox The vBox to which the created black ImageView should be added.
-     */
-    private void initializeBlackView(VBox vBox) {
-        ImageView img1 = new ImageView("black.png"); 
-        bindImageToBox(img1, vBox);
-        vBox.getChildren().clear();
-        vBox.getChildren().add(img1);
+        tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
     
     /**
@@ -199,98 +120,52 @@ public class DirectorLiveController {
     }
 
     /**
-     * Initializes the swap and back onAction events.
+     * Initializes the back and exit buttons's onAction events.
      */
     private void initializeButtons() {
-        btnSwap.setOnAction((event) -> {
-            swapAction();
-        });
-
         btnBack.toFront();
-        btnBack.setOnAction((event) -> {
-            liveStreamHandler.stop();
-            nextStreamHandler.stop();
+        btnBack.setOnAction(event -> {
             live = false;
             MenuController.show();
         });
         
-        btnNext.setOnAction((event) -> {
-            if (!endReached) {
-                script.next(automaticCheck.isSelected());
-                updateTables();
-                nextViews();
-            }
+        btnNext.setOnAction(event -> {
+            initializeLive();
+            live = true;
+            btnNext.setText("Next shot");
         });
     }
     
     /**
-     * Performs the action to swap the two views.
+     * Initializes the edit script buttons.
      */
-    private void swapAction() {
-        bigShowsLive = !bigShowsLive;
+    private void initializeEditButtons() {
+        btnUndo.setOnAction(event -> {
+            updateShotInfo(tableShots.getSelectionModel().getSelectedItem());
+        });
         
-        swapViews();
-
-        String text = bigStatusLabel.getText();
-        bigStatusLabel.setText(smallStatusLabel.getText());
-        smallStatusLabel.setText(text);
-
-        if (text.equals("LIVE")) {
-            smallStatusLabel.setStyle("-fx-text-fill: red;");
-            bigStatusLabel.setStyle("");
-        } else {
-            smallStatusLabel.setStyle("");
-            bigStatusLabel.setStyle("-fx-text-fill: red;");
-        }
-        
-        updateTables();
+        btnConfirm.setOnAction((event) -> {
+            changeShot();
+        });
     }
     
     /**
-     * Swaps the small and big view.
+     * Initialize the button that handles going live.
      */
-    private void swapViews() {
-        ImageView newBig = (ImageView) smallViewBox.getChildren().get(0);
-        ImageView newSmall = (ImageView) bigViewBox.getChildren().get(0);
-        smallViewBox.getChildren().clear();
-        smallViewBox.getChildren().add(newSmall);
-        bigViewBox.getChildren().clear();
-        bigViewBox.getChildren().add(newBig); 
-        bigViewBox.getChildren().get(0);
-        swapScalability(newSmall, newBig);
+    private void initializeLive() {
+        btnNext.setOnAction(event -> {
+            if (!endReached()) {
+                script.next(automaticCheck.isSelected());
+                // TODO Move the current shot highlight in the table.
+            } else {
+                actionTxt.setText("End of script reached");
+            }
+        });        
     }
     
     /**
-     * Implements the scalability after the views have been swapped.
-     * 
-     * @param small The ImageView that is displayed in the smallViewBox.
-     * @param big The ImageView that is displayed in the bigViewBox.
+     * Initialize the checkbox.
      */
-    private void swapScalability(ImageView small, ImageView big) {
-        LiveStreamHandler smallStream;
-        LiveStreamHandler bigStream;
-        
-        if (bigShowsLive) {
-            smallStream = nextStreamHandler;
-            bigStream = liveStreamHandler;
-        } else {
-            smallStream = liveStreamHandler;
-            bigStream = nextStreamHandler;
-        }
-        
-        if (big.getImage() instanceof WritableImage) {
-            fitImageViewSize((float) bigViewBox.getWidth(), (float) bigViewBox.getHeight(), big, bigStream);
-        } else {
-            bindImageToBox(big, bigViewBox);
-        }
-        
-        if (small.getImage() instanceof WritableImage) {
-            fitImageViewSize((float) smallViewBox.getWidth(), (float) smallViewBox.getHeight(), small, smallStream);
-        } else {
-            bindImageToBox(small, smallViewBox);
-        }
-    }
-
     private void initializeCheckbox() {
         automaticCheck.selectedProperty().addListener((obs, oldV, newV) -> {
             if (newV && script.getCurrent() > -1) {
@@ -300,129 +175,181 @@ public class DirectorLiveController {
     }
     
     /**
-     * Updates the table contents according to the current position in the script.
+     * Initializes the choice boxes for preset and camera.
      */
-    private void updateTables() {
-        Shot smallShot;
-        Shot bigShot;
-        if (bigShowsLive) {
-            smallShot = script.getNextShot();
-            bigShot = script.getCurrentShot();
-        } else {
-            smallShot = script.getCurrentShot();
-            bigShot = script.getNextShot();
-        }
+    private void initializeChoiceBoxes() {
+        Camera current = getCurrentShot().getCamera();
         
-        if (smallShot != null) {
-            smallShotNumberLabel.setText(smallShot.getShotId());
-            smallCameraNumberLabel.setText(Integer.toString(smallShot.getCamera().getNumber() + 1));
-            smallPresetLabel.setText(Integer.toString(smallShot.getPreset().getId()));
-            smallDescriptionField.setText(smallShot.getDescription());
-        } else {
-            initializeBlackView(smallViewBox);
-            endOfScript(false);            
+        initializeCameraChoice();
+        initializePresetChoice();
+        updatePresetChoice(current);
+        
+        presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId() + 1));
+    }
+    
+    /**
+     * Initializes the camera choice box.
+     */
+    private void initializeCameraChoice() {
+        cameraSelecter.setItems(FXCollections.observableArrayList(Camera.getAllCameras()));
+        Camera current = getCurrentShot().getCamera();
+        cameraSelecter.setValue(current);
+        
+        cameraSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            updatePresetChoice(newV);
+            presetSelecter.setValue("None");
+        });
+    }
+    
+    /**
+     * Initializes the preset choice box.
+     */
+    private void initializePresetChoice() {
+        Camera current = cameraSelecter.getValue();
+        
+        updatePresetChoice(current);
+        
+        presetSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null) {
+                if (newV.equals("None")) {
+                    thumbnail.setImage(loadImage("black.png"));
+                } else {
+                    thumbnail.setImage(loadImage(current.getPreset(Integer.valueOf(newV) - 1).getImage()));
+                }
+            }
+        });
+    }
+    
+    /**
+     * Updates the preset choice box to the presets of a given camera.
+     * 
+     * @param cam The camera the presets shown should belong to.
+     */
+    private void updatePresetChoice(Camera cam) {       
+        ArrayList<String> presetList = new ArrayList<String>(); 
+        
+        presetList.add("None");
+
+        for (int i = 0; i < cam.getPresetAmount(); ++i) {
+            presetList.add(Integer.toString(i + 1));
         }
 
-        if (bigShot != null) {
-            bigShotNumberLabel.setText(bigShot.getShotId());
-            bigCameraNumberLabel.setText(Integer.toString(bigShot.getCamera().getNumber() + 1));
-            bigPresetLabel.setText(Integer.toString(bigShot.getPreset().getId()));
-            bigDescriptionField.setText(bigShot.getDescription());
-        } else {
-            endOfScript(true);
-        }
-    }
-    
-    private void endOfScript(boolean big) {
-        if (big) {
-            bigShotNumberLabel.setText("");
-            bigCameraNumberLabel.setText("");
-            bigPresetLabel.setText("");
-            bigDescriptionField.setText("End of script reached");
-            endReached = true;
-        } else {
-            smallShotNumberLabel.setText("");
-            smallCameraNumberLabel.setText("");
-            smallPresetLabel.setText("");
-            smallDescriptionField.setText("End of script reached");
-            endReached = true;
-        }
-    }
-    
-    /**
-     * Updates the live views of the cameras when you go to the next shot.
-     */
-    private void nextViews() {
-        Shot nextShot = script.getNextShot();
-        Shot currentShot = script.getCurrentShot();
-        
-        if (bigShowsLive) {
-            bigViewBox.getChildren().clear();
-            createStream(currentShot.getCamera().getConnection().getStreamLink(), liveStreamHandler, bigViewBox);
-            smallViewBox.getChildren().clear();
-            if (nextShot != null) {
-                createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, smallViewBox);
-            } else {
-                initializeBlackView(smallViewBox);
-                nextStreamHandler.stop();
-            }
-        } else {
-            smallViewBox.getChildren().clear();
-            createStream(currentShot.getCamera().getConnection().getStreamLink(), liveStreamHandler, smallViewBox);
-            bigViewBox.getChildren().clear();
-            if (nextShot != null) {
-                createStream(nextShot.getCamera().getConnection().getStreamLink(), nextStreamHandler, bigViewBox);
-            } else {
-                initializeBlackView(bigViewBox);
-                nextStreamHandler.stop();
-            }
-        }      
-    }
-    
-    /**
-     * Creates a livestream in a VBox.
-     * @param streamLink The link of the livestream.
-     * @param streamHandler The LiveStreamHandler responsible for the stream.
-     * @param viewBox The VBox which will contain the stream.
-     */
-    private void createStream(String streamLink, LiveStreamHandler streamHandler, VBox viewBox) {
-        if (streamHandler != null) {
-            streamHandler.stop();
-        }
+        presetSelecter.setItems(FXCollections.observableArrayList(presetList));
 
-        viewBox.getChildren().clear();
-        ImageView imgView = streamHandler.createImageView(streamLink, 1920, 1080);
-        viewBox.getChildren().add(imgView);
-        Platform.runLater(() -> {
-            fitImageViewSize((float) viewBox.getWidth(), (float) viewBox.getHeight(), imgView, streamHandler);
-        });       
-        streamHandler.start();
+        presetSelecter.setValue("None");
     }
     
     /**
-     * Resizes the ImageView.
-     * @param width The new width of the ImageView.
-     * @param height The new height of the ImageView.
-     * @param imageView The imageView that needs resizing.
-     * @param streamHandler The LiveStreamHandler responsible for the stream.
+     * Initialize a table selection listener that updates the shot info and the thumbnail.
      */
-    private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
-        if (imageView.getImage() instanceof WritableImage && streamHandler.isPlaying()) {
-            FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
-            float fitHeight = videoSourceRatioProperty.get() * width;
-            if (fitHeight > height) {
-                imageView.setFitHeight(height);
-                double fitWidth = height / videoSourceRatioProperty.get();
-                imageView.setFitWidth(fitWidth);
-                imageView.setX((width - fitWidth) / 2);
-                imageView.setY(0);
+    private void initializeTableListener() {
+        tableShots.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null) {
+                updateShotInfo(newV);
+            }
+        });
+    }
+    
+    /**
+     * Set the table column factories.
+     */
+    private void setFactories() {
+        columnID.setCellValueFactory(new PropertyValueFactory<Shot, Number>("number"));
+
+        columnShot.setCellValueFactory(new PropertyValueFactory<Shot, String>("shotId"));
+
+        columnPreset.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getPreset() == null) {
+                return new ReadOnlyObjectWrapper<>();
             } else {
-                imageView.setFitWidth(width);
-                imageView.setFitHeight(fitHeight);
-                imageView.setY((height - fitHeight) / 2);
-                imageView.setX(0);
-            } 
+                return new ReadOnlyObjectWrapper<>(
+                        Integer.toString(cellData.getValue().getPreset().getId() + 1));
+            }
+        });
+
+        columnSubject.setCellValueFactory(new PropertyValueFactory<Shot, String>("description"));
+
+        columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
+                cellData.getValue().getCamera().getNumber() + 1));
+    }
+    
+    /**
+     * Initialize the UI in the case when the script is empty.
+     */
+    private void emptyInitialization() {
+        updateShotInfo(new Shot(0, "", Camera.DUMMY, null, "", ""));
+        actionTxt.setText("No shots");
+    }
+    
+    /**
+     * Updates the shot info and image.
+     */
+    public void updateShotInfo(Shot shot) {
+        labelID.setText(Integer.toString(shot.getNumber()));
+        fieldShot.setText(shot.getShotId());
+        cameraSelecter.setValue(shot.getCamera());
+        fieldSubject.setText(shot.getDescription());
+        actionArea.setText(shot.getDescription());
+        
+        if (shot.getPreset() != null) {
+            presetSelecter.setValue(Integer.toString(shot.getPreset().getId() + 1));
+            thumbnail.setImage(loadImage(shot.getPreset().getImage()));
+        } else {
+            presetSelecter.setValue("None");
+            thumbnail.setImage(loadImage("black.png"));
         }
+    }
+    
+    /**
+     * Loads an image. Loads an error image if path is null or invalid.
+     * 
+     * @param path Image path.
+     * @return The newly loaded image.
+     */
+    public Image loadImage(String path) {
+        try {
+            return new Image(path);
+        } catch (IllegalArgumentException e) {
+            return new Image("error.jpg");
+        }
+    }
+    
+    /**
+     * Gives a boolean back depending on whether the end of the script has been reached.
+     * 
+     * @return True if the end of the script has been reached, else false.
+     */
+    public boolean endReached() {
+        return !script.hasNext();
+    }
+    
+    /**
+     * Method for adding a preset to the view and the model.
+     * @param id The id of the preset to add.
+     */
+    private void changeShot() {
+        Shot shot = script.getShots().get(tableShots.getSelectionModel().getSelectedIndex());
+        
+        String shotID = fieldShot.getText();
+        Camera cam = cameraSelecter.getValue();        
+        int presNum = Integer.valueOf(presetSelecter.getValue()) - 1;
+        Preset preset = cam.getPreset(presNum);
+        String description = fieldSubject.getText();
+        
+        shot.setShotId(shotID);
+        shot.setCamera(cam);
+        shot.setPreset(preset);
+        shot.setDescription(description);       
+    }
+    
+    /**
+     * Gets the current shot in the script.
+     * Gives back the first shot if it is not live yet.
+     * 
+     * @return The current or first shot.
+     */
+    public Shot getCurrentShot() {        
+        return (script.getCurrent() == -1) ? script.getNextShot() : script.getCurrentShot();
     }
     
     /**

@@ -1,6 +1,10 @@
 package nl.tudelft.contextproject.camera;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
+import javax.imageio.ImageIO;
 
 /**
  * Class to represent a mocked camera. It mimics or mocks the behavior of a specific camera
@@ -9,6 +13,7 @@ import java.util.Observable;
  * @since 0.4
  */
 public class MockedCameraConnection extends CameraConnection {
+
     private CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
     private String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
     
@@ -125,6 +130,17 @@ public class MockedCameraConnection extends CameraConnection {
         
         if (arg instanceof CameraSettings) {
             camSet = (CameraSettings) arg;
+        }
+    }
+
+    @Override
+    public void snapShot(String imageLocation) {
+        File output = new File("src/main/resources/error.jpg");
+        try {
+            BufferedImage image = ImageIO.read(output);
+            ImageIO.write(image, "jpg", new File(imageLocation));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

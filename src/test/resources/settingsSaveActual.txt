@@ -3,4 +3,10 @@ resY 65
 vlcLocation C:\Test
 cameraIPs
 1 420.420.420.420
-3 65.65.65.65
+2 65.65.65.65
+databaseUrl url
+databasePort 1337
+databaseName pieter
+databaseUsername pjejnis
+databasePassword rEuO+Szjw2uSjFfu7eNnPA==
+jdbcDriver com.mysql.cj.jdbc.Driver
