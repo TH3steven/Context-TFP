@@ -101,7 +101,7 @@ public class ContextTFP extends Application {
     public void initRootLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ContextTFP.class.getClassLoader().getResource("view/RootLayout.fxml"));
+            loader.setLocation(ContextTFP.class.getResource("view/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
 
             Scene scene = new Scene(rootLayout);
