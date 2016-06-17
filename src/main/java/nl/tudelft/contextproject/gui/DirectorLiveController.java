@@ -21,6 +21,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -146,7 +147,7 @@ public class DirectorLiveController {
         });
         
         btnConfirm.setOnAction((event) -> {
-            // TODO: Update script.
+            changeShot();
         });
     }
     
@@ -348,6 +349,25 @@ public class DirectorLiveController {
      */
     public boolean endReached() {
         return !script.hasNext();
+    }
+    
+    /**
+     * Method for adding a preset to the view and the model.
+     * @param id The id of the preset to add.
+     */
+    private void changeShot() {
+        Shot shot = script.getShots().get(tableShots.getSelectionModel().getSelectedIndex());
+        
+        String shotID = fieldShot.getText();
+        Camera cam = cameraSelecter.getValue();        
+        int presNum = Integer.valueOf(presetSelecter.getValue()) - 1;
+        Preset preset = cam.getPreset(presNum);
+        String description = fieldSubject.getText();
+        
+        shot.setShotId(shotID);
+        shot.setCamera(cam);
+        shot.setPreset(preset);
+        shot.setDescription(description);       
     }
     
     /**
