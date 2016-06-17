@@ -233,6 +233,7 @@ public class Shot {
      * Gives the shot and its number as a String.
      * @return the particular shot and its number as a string.
      */
+    @Override
     public String toString() {
         return "Shot " + number;
     }
