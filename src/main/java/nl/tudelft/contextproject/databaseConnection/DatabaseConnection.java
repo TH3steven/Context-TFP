@@ -176,12 +176,12 @@ public final class DatabaseConnection {
         while (iterator.hasNext()) {
             Shot shot = iterator.next();
             StringBuilder sBuilder = new StringBuilder("INSERT INTO " + SCRIPT_TABLE + " VALUES " + "(");
-            sBuilder.append("'" + shot.getNumber() + "',");
-            sBuilder.append("'" + shot.getShotId() + "',");
-            sBuilder.append("'" + shot.getCamera().getNumber() + "',");
-            sBuilder.append("'" + shot.getPreset().getId() + "',");
-            sBuilder.append("'" + shot.getDescription() + "',");
-            sBuilder.append("'" + shot.getAction() + "');");
+            sBuilder.append("'" + shot.getNumber() + "',")
+            .append("'" + shot.getShotId() + "',")
+            .append("'" + shot.getCamera().getNumber() + "',")
+            .append("'" + shot.getPreset().getId() + "',")
+            .append("'" + shot.getDescription() + "',")
+                .append("'" + shot.getAction() + "');");
             stmt.executeUpdate(sBuilder.toString());
         }
         stmt.close();
@@ -283,15 +283,15 @@ public final class DatabaseConnection {
         }
         
         StringBuilder sBuilder = new StringBuilder("INSERT INTO " + PRESET_TABLE + " VALUES " + "(");
-        sBuilder.append("'" + preset.getId() + "',");
-        sBuilder.append("'" + camera.getNumber() + "',");
-        sBuilder.append("'" + type + "',");
-        sBuilder.append("'" + preset.getDescription() + "',");
-        sBuilder.append("'" + preset.getImage() + "',");
-        sBuilder.append("'" + preset.getToSet().getPan() + "',");
-        sBuilder.append("'" + preset.getToSet().getTilt() + "',");
-        sBuilder.append("'" + preset.getToSet().getZoom() + "',");
-        sBuilder.append("'" + preset.getToSet().getFocus() + "');");
+        sBuilder.append("'" + preset.getId() + "',")
+        .append("'" + camera.getNumber() + "',")
+        .append("'" + type + "',")
+        .append("'" + preset.getDescription() + "',")
+        .append("'" + preset.getImage() + "',")
+        .append("'" + preset.getToSet().getPan() + "',")
+        .append("'" + preset.getToSet().getTilt() + "',")
+        .append("'" + preset.getToSet().getZoom() + "',")
+            .append("'" + preset.getToSet().getFocus() + "');");
         return sBuilder.toString();
     }
     
@@ -309,16 +309,16 @@ public final class DatabaseConnection {
         }
         
         StringBuilder sBuilder = new StringBuilder("UPDATE " + PRESET_TABLE + " SET ");
-        sBuilder.append("id='" + preset.getId() + "',");
-        sBuilder.append("camera='" + camera.getNumber() + "',");
-        sBuilder.append("type='" + type + "',");
-        sBuilder.append("description='" + preset.getDescription() + "',");
-        sBuilder.append("imageLocation='" + preset.getImage() + "',");
-        sBuilder.append("pan='" + preset.getToSet().getPan() + "',");
-        sBuilder.append("tilt='" + preset.getToSet().getTilt() + "',");
-        sBuilder.append("zoom='" + preset.getToSet().getZoom() + "',");
-        sBuilder.append("focus='" + preset.getToSet().getFocus() + "' ");
-        sBuilder.append("WHERE id='" + preset.getId() + "' AND camera='" + camera.getNumber() + "';");
+        sBuilder.append("id='" + preset.getId() + "',")
+        .append("camera='" + camera.getNumber() + "',")
+        .append("type='" + type + "',")
+        .append("description='" + preset.getDescription() + "',")
+        .append("imageLocation='" + preset.getImage() + "',")
+        .append("pan='" + preset.getToSet().getPan() + "',")
+        .append("tilt='" + preset.getToSet().getTilt() + "',")
+        .append("zoom='" + preset.getToSet().getZoom() + "',")
+        .append("focus='" + preset.getToSet().getFocus() + "' ")
+            .append("WHERE id='" + preset.getId() + "' AND camera='" + camera.getNumber() + "';");
         return sBuilder.toString();
     }
     
