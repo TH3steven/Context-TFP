@@ -28,7 +28,7 @@
          <children>
             <VBox alignment="CENTER" GridPane.hgrow="ALWAYS">
                <children>
-                  <VBox fx:id="bigViewBox" alignment="CENTER" minHeight="149.0" minWidth="187.0" VBox.vgrow="ALWAYS">
+                  <VBox fx:id="bigViewBox" alignment="CENTER" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets right="5.0" />
                      </padding>
