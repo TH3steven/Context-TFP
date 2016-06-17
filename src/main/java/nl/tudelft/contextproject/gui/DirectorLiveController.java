@@ -43,12 +43,14 @@ import java.util.Observer;
  * 
  * @since 0.3
  */
-public class DirectorLiveController implements Observer {
+public class DirectorLiveController {
 
     private static Script script;
 
     @FXML private Button btnBack;
+    @FXML private Button btnConfirm;
     @FXML private Button btnNext;
+    @FXML private Button btnUndo;
     
     @FXML private CheckBox automaticCheck;
     
@@ -58,6 +60,7 @@ public class DirectorLiveController implements Observer {
     @FXML private ImageView thumbnail;
     
     @FXML private Label actionTxt;
+    @FXML private Label labelID;
     
     @FXML private TableView<Shot> tableShots;
     @FXML private TableColumn<Shot, Number> columnCamera;
@@ -68,7 +71,6 @@ public class DirectorLiveController implements Observer {
     
     @FXML private TextArea actionArea;
     
-    @FXML private TextField fieldID;
     @FXML private TextField fieldShot;
     @FXML private TextField fieldSubject;
 
@@ -81,6 +83,7 @@ public class DirectorLiveController implements Observer {
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
+        Shot current = getCurrentShot();
         
         if (!script.isEmpty()) {
             if (script.getCurrent() == -1) {
@@ -91,16 +94,17 @@ public class DirectorLiveController implements Observer {
             live = false;
         }
 
-        actionTxt.setText(script.getShots().get(0).getDescription());
         initializeButtons();
         initializeCheckbox();
         if (script.getShots().size() > 0) {
             initializeChoiceBoxes();
-            initializeShotInfo();
+            updateShotInfo(current);
+            initializeTableListener();
         }
         setFactories();
+
         
-        thumbnail.setImage(loadImage(script.getShots().get(0).getPreset().getImage()));
+        thumbnail.setImage(loadImage(current.getPreset().getImage()));
         
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
@@ -131,13 +135,20 @@ public class DirectorLiveController implements Observer {
             live = true;
             btnNext.setText("Next shot");
         });
+        
+        btnUndo.setOnAction((event) -> {
+            updateShotInfo(tableShots.getSelectionModel().getSelectedItem());
+        });
     }
     
+    /**
+     * Initialize the button that handles going live.
+     */
     private void initializeLive() {
         btnNext.setOnAction((event) -> {
             if (!endReached()) {
                 script.next(automaticCheck.isSelected());
-                updateShotInfo();
+                // TODO: Move the current shot highlight in the table.
             } else {
                 thumbnail.setImage(loadImage("black.png"));
                 actionTxt.setText("End of script reached");
@@ -156,31 +167,58 @@ public class DirectorLiveController implements Observer {
         });
     }
     
+    /**
+     * Initializes the choice boxes for preset and camera.
+     */
     private void initializeChoiceBoxes() {
-        Camera current;
-        
-        if (script.getCurrent() == -1) {
-            current = script.getNextShot().getCamera();
-        } else {
-            current = script.getCurrentShot().getCamera();
-        }
+        Camera current = getCurrentShot().getCamera();
         
         initializeCameraChoice();
+        initializePresetChoice();
         updatePresetChoice(current);
         
-        presetSelecter.setValue(Integer.toString(script.getShots().get(0).getPreset().getId() + 1));
+        presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId() + 1));
     }
     
+    /**
+     * Initializes the camera choice box.
+     */
     private void initializeCameraChoice() {
         cameraSelecter.setItems(FXCollections.observableArrayList(Camera.getAllCameras()));
-        Camera first = script.getShots().get(0).getCamera();
-        cameraSelecter.setValue(first);
+        Camera current = getCurrentShot().getCamera();
+        cameraSelecter.setValue(current);
         
         cameraSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             updatePresetChoice(newV);
+            presetSelecter.setValue("None");
         });
     }
     
+    /**
+     * Initializes the preset choice box.
+     */
+    private void initializePresetChoice() {
+        Camera current = cameraSelecter.getValue();
+        
+        updatePresetChoice(current);
+        
+        presetSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            System.out.println(newV);
+            if (newV != null) {
+                if (newV.equals("None")) {
+                    thumbnail.setImage(loadImage("black.png"));
+                } else {
+                    thumbnail.setImage(loadImage(current.getPreset(Integer.valueOf(newV) - 1).getImage()));
+                }
+            }
+        });
+    }
+    
+    /**
+     * Updates the preset choice box to the presets of a given camera.
+     * 
+     * @param cam The camera the presets shown should belong to.
+     */
     private void updatePresetChoice(Camera cam) {       
         ArrayList<String> presetList = new ArrayList<String>(); 
         
@@ -192,17 +230,18 @@ public class DirectorLiveController implements Observer {
 
         presetSelecter.setItems(FXCollections.observableArrayList(presetList));
 
-        presetSelecter.setValue(Integer.toString(script.getShots().get(0).getPreset().getId() + 1));
+        presetSelecter.setValue("None");
     }
     
-    private void initializeShotInfo() {
-        List<Shot> shots = script.getShots();
-        if (shots.size() > 0) {
-            Shot first = shots.get(0);
-            fieldID.setText(Integer.toString(first.getNumber()));
-            fieldShot.setText(first.getShotId());
-            
-        }
+    /**
+     * Initialize a table selection listener that updates the shot info and the thumbnail.
+     */
+    private void initializeTableListener() {
+        tableShots.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null) {
+                updateShotInfo(newV);
+            }
+        });
     }
     
     /**
@@ -231,11 +270,20 @@ public class DirectorLiveController implements Observer {
     /**
      * Updates the shot info and image.
      */
-    public void updateShotInfo() {
-        Shot current = script.getCurrentShot();
-        thumbnail.setImage(loadImage(current.getPreset().getImage()));
-        actionTxt.setText(current.getDescription());
-        System.out.println("kaas");
+    public void updateShotInfo(Shot shot) {
+        labelID.setText(Integer.toString(shot.getNumber()));
+        fieldShot.setText(shot.getShotId());
+        cameraSelecter.setValue(shot.getCamera());
+        fieldSubject.setText(shot.getDescription());
+        actionArea.setText(shot.getDescription());
+        
+        if (shot.getPreset() != null) {
+            presetSelecter.setValue(Integer.toString(shot.getPreset().getId() + 1));
+            thumbnail.setImage(loadImage(shot.getPreset().getImage()));
+        } else {
+            presetSelecter.setValue("None");
+            thumbnail.setImage(loadImage("black.png"));
+        }
     }
     
     /**
@@ -278,8 +326,23 @@ public class DirectorLiveController implements Observer {
         }
     }
     
+    /**
+     * Gives a boolean back depending on whether the end of the script has been reached.
+     * 
+     * @return True if the end of the script has been reached, else false.
+     */
     public boolean endReached() {
         return !script.hasNext();
+    }
+    
+    /**
+     * Gets the current shot in the script.
+     * Gives back the first shot if it is not live yet.
+     * 
+     * @return The current or first shot.
+     */
+    public Shot getCurrentShot() {        
+        return (script.getCurrent() == -1) ? script.getNextShot() : script.getCurrentShot();
     }
     
     /**
@@ -296,13 +359,5 @@ public class DirectorLiveController implements Observer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        System.out.println("dingen");
-        Shot current = script.getCurrentShot();
-        thumbnail.setImage(new Image(current.getPreset().getImage()));
-        actionTxt.setText(current.getDescription());        
     }
 }

@@ -21,7 +21,7 @@ import java.util.TimerTask;
  * 
  * @since 0.2
  */
-public class Script extends Observable implements Iterator<Shot> {
+public class Script implements Iterator<Shot> {
 
     /**
      * Contains the Timelines per camera number.
