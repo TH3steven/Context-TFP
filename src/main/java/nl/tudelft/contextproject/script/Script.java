@@ -21,6 +21,9 @@ import java.util.TimerTask;
  * @since 0.2
  */
 public class Script implements Iterator<Shot> {
+    
+    public static final Shot DUMMY = new Shot(-1, "-1", Camera.DUMMY, 
+            new InstantPreset(new CameraSettings(), -1), "No shot", "No action");
 
     /**
      * Contains the Timelines per camera number.
@@ -174,7 +177,7 @@ public class Script implements Iterator<Shot> {
         try {
             return shots.get(current);
         } catch (Exception e) {
-            return new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
+            return DUMMY;
         }
     }
 
@@ -276,12 +279,7 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        current++;
-        Shot next = shots.get(current);
-        
-        updateOldCamCaller();
-
-        return next;
+        return next(false);
     }
     
     /**
