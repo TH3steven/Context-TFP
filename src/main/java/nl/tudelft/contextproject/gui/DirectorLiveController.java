@@ -7,9 +7,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,6 +26,9 @@ import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -45,6 +51,9 @@ public class DirectorLiveController implements Observer {
     @FXML private Button btnNext;
     
     @FXML private CheckBox automaticCheck;
+    
+    @FXML private ChoiceBox<Camera> cameraSelecter;
+    @FXML private ChoiceBox<String> presetSelecter;
 
     @FXML private ImageView thumbnail;
     
@@ -57,6 +66,12 @@ public class DirectorLiveController implements Observer {
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
     
+    @FXML private TextArea actionArea;
+    
+    @FXML private TextField fieldID;
+    @FXML private TextField fieldShot;
+    @FXML private TextField fieldSubject;
+
     @FXML private VBox thumbnailBox;
 
     private boolean live;
@@ -79,6 +94,10 @@ public class DirectorLiveController implements Observer {
         actionTxt.setText(script.getShots().get(0).getDescription());
         initializeButtons();
         initializeCheckbox();
+        if (script.getShots().size() > 0) {
+            initializeChoiceBoxes();
+            initializeShotInfo();
+        }
         setFactories();
         
         thumbnail.setImage(loadImage(script.getShots().get(0).getPreset().getImage()));
@@ -135,6 +154,55 @@ public class DirectorLiveController implements Observer {
                 script.adjustAllCameras();
             }
         });
+    }
+    
+    private void initializeChoiceBoxes() {
+        Camera current;
+        
+        if (script.getCurrent() == -1) {
+            current = script.getNextShot().getCamera();
+        } else {
+            current = script.getCurrentShot().getCamera();
+        }
+        
+        initializeCameraChoice();
+        updatePresetChoice(current);
+        
+        presetSelecter.setValue(Integer.toString(script.getShots().get(0).getPreset().getId() + 1));
+    }
+    
+    private void initializeCameraChoice() {
+        cameraSelecter.setItems(FXCollections.observableArrayList(Camera.getAllCameras()));
+        Camera first = script.getShots().get(0).getCamera();
+        cameraSelecter.setValue(first);
+        
+        cameraSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            updatePresetChoice(newV);
+        });
+    }
+    
+    private void updatePresetChoice(Camera cam) {       
+        ArrayList<String> presetList = new ArrayList<String>(); 
+        
+        presetList.add("None");
+
+        for (int i = 0; i < cam.getPresetAmount(); ++i) {
+            presetList.add(Integer.toString(i + 1));
+        }
+
+        presetSelecter.setItems(FXCollections.observableArrayList(presetList));
+
+        presetSelecter.setValue(Integer.toString(script.getShots().get(0).getPreset().getId() + 1));
+    }
+    
+    private void initializeShotInfo() {
+        List<Shot> shots = script.getShots();
+        if (shots.size() > 0) {
+            Shot first = shots.get(0);
+            fieldID.setText(Integer.toString(first.getNumber()));
+            fieldShot.setText(first.getShotId());
+            
+        }
     }
     
     /**
