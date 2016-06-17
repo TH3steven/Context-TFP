@@ -24,6 +24,28 @@
 	-fx-font-size: 15px;
 }
 
+.table-view {
+	-fx-background-color: transparent;
+	-fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+
+    -fx-control-inner-background: #eee;
+    -fx-accent: derive(-fx-control-inner-background, -40%);
+    -fx-cell-hover-color: derive(-fx-control-inner-background, -20%);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0px;
+}
+
 .table-row-cell:current {
 	-fx-background-color: #0c3;
 }

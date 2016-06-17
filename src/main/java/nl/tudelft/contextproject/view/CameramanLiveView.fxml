@@ -10,8 +10,8 @@
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.CameramanLiveController">
    <children>
       <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Return to menu" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
-      <Label layoutX="12.0" layoutY="19.0" text="Select cameras to be displayed:" />
-      <TableView fx:id="tableShots" layoutX="232.0" layoutY="14.0" prefHeight="545.0" prefWidth="553.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="230.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <Label layoutX="15.0" layoutY="90.0" text="Select cameras to be displayed:" />
+      <TableView fx:id="tableShots" layoutX="196.0" layoutY="14.0" prefHeight="545.0" prefWidth="589.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="196.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <columns>
             <TableColumn fx:id="columnID" maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" text="ID" />
           <TableColumn fx:id="columnShot" editable="false" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
@@ -20,9 +20,10 @@
             <TableColumn fx:id="columnDescription" editable="false" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" sortable="false" text="Action" />
         </columns>
       </TableView>
-      <VBox fx:id="vbox" layoutX="15.0" layoutY="70.0" prefHeight="200.0" prefWidth="166.0" />
-      <Button fx:id="btnNext" layoutX="15.0" layoutY="502.0" mnemonicParsing="false" text="Next shot" />
-      <Button fx:id="btnHideAll" layoutX="14.0" layoutY="42.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="Hide all" />
-      <Button fx:id="btnShowAll" layoutX="120.0" layoutY="42.0" mnemonicParsing="false" text="Show all" />
+      <VBox fx:id="vbox" layoutX="15.0" layoutY="137.0" prefHeight="200.0" prefWidth="166.0" />
+      <Button fx:id="btnNext" layoutX="15.0" layoutY="501.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Next shot" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" />
+      <Button fx:id="btnHideAll" layoutX="14.0" layoutY="107.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="Hide all" />
+      <Button fx:id="btnShowAll" layoutX="120.0" layoutY="107.0" mnemonicParsing="false" text="Show all" />
+      <Button fx:id="btnPresets" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="166.0" text="Edit presets" />
    </children>
 </AnchorPane>
