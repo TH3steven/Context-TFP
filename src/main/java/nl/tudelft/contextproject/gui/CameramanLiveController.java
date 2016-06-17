@@ -45,11 +45,12 @@ public class CameramanLiveController {
     @FXML private Button btnShowAll;
     
     @FXML private TableView<Shot> tableShots;
+    @FXML private TableColumn<Shot, String> columnAction;
     @FXML private TableColumn<Shot, Number> columnCamera;
-    @FXML private TableColumn<Shot, String> columnDescription;
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
+    @FXML private TableColumn<Shot, String> columnSubject;
     
     @FXML private VBox vbox;
     
@@ -190,10 +191,12 @@ public class CameramanLiveController {
             }
         });
 
-        columnDescription.setCellValueFactory(new PropertyValueFactory<Shot, String>("description"));
+        columnAction.setCellValueFactory(new PropertyValueFactory<Shot, String>("action"));
 
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
             cellData.getValue().getCamera().getNumber() + 1));
+        
+        columnSubject.setCellValueFactory(new PropertyValueFactory<Shot, String>("description"));
     }
     
     /**
