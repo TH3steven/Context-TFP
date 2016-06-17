@@ -13,7 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
@@ -39,6 +39,8 @@ public class CameramanLiveController {
     private Script script;
 
     @FXML private Button btnBack;
+    @FXML private Button btnHideAll;
+    @FXML private Button btnShowAll;
     @FXML private Button btnNext;
     
     @FXML private TableView<Shot> tableShots;
@@ -101,6 +103,28 @@ public class CameramanLiveController {
             ContextTFP.getScript().next();
             tableShots.refresh();
         });
+        
+        btnShowAll.setOnAction(event -> {
+            toggleCameras(true);
+        });
+        
+        btnHideAll.setOnAction(event -> {
+            toggleCameras(false);
+        });
+    }
+    
+    /**
+     * Toggles the cameras shown in the table.
+     * @param show True if show, false if hide.
+     */
+    private void toggleCameras(boolean show) {
+        for (CheckBox c : cameras) {
+            if (show) {
+                c.setSelected(true);
+            } else {
+                c.setSelected(false);
+            }
+        }
     }
 
     /**
@@ -113,11 +137,12 @@ public class CameramanLiveController {
         for (Shot s : script.getShots()) {
             int shotCamNum = s.getCamera().getNumber();
             
-            if (cameras.get(shotCamNum).isSelected()) {
+            if (s.equals(script.getCurrentShot())
+                    || cameras.get(shotCamNum).isSelected()) {
                 listShots.add(s);
             }
         }
-
+        
         return listShots;
     }
     
@@ -130,8 +155,9 @@ public class CameramanLiveController {
             protected void updateItem(Shot s, boolean b) {
                 super.updateItem(s, b);
                 if (s != null) {
-                    boolean current = s.getNumber() - 1 == ContextTFP.getScript().getCurrent();
+                    boolean current = s.equals(script.getCurrentShot());
                     pseudoClassStateChanged(currentPseudoClass, current);
+                    tableShots.refresh();
                 }
             }
         });
