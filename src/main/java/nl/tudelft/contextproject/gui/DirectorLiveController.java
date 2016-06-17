@@ -1,6 +1,5 @@
 package nl.tudelft.contextproject.gui;
 
-import javafx.beans.property.FloatProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -16,12 +15,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -72,7 +70,8 @@ public class DirectorLiveController {
     @FXML private TextField fieldSubject;
 
     @FXML private VBox thumbnailBox;
-
+    
+    // Will be used soon.
     private boolean live;
 
     /**
@@ -104,8 +103,7 @@ public class DirectorLiveController {
         }
         setFactories();
         
-        thumbnail.fitWidthProperty().bind(thumbnailBox.widthProperty());
-        thumbnail.fitHeightProperty().bind(thumbnailBox.heightProperty());
+        bindImageToBox(thumbnail, thumbnailBox);
         
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
@@ -313,32 +311,6 @@ public class DirectorLiveController {
             return new Image(path);
         } catch (IllegalArgumentException e) {
             return new Image("error.jpg");
-        }
-    }
-    
-    /**
-     * Resizes the ImageView.
-     * @param width The new width of the ImageView.
-     * @param height The new height of the ImageView.
-     * @param imageView The imageView that needs resizing.
-     * @param streamHandler The LiveStreamHandler responsible for the stream.
-     */
-    private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
-        if (imageView.getImage() instanceof WritableImage && streamHandler.isPlaying()) {
-            FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
-            float fitHeight = videoSourceRatioProperty.get() * width;
-            if (fitHeight > height) {
-                imageView.setFitHeight(height);
-                double fitWidth = height / videoSourceRatioProperty.get();
-                imageView.setFitWidth(fitWidth);
-                imageView.setX((width - fitWidth) / 2);
-                imageView.setY(0);
-            } else {
-                imageView.setFitWidth(width);
-                imageView.setFitHeight(fitHeight);
-                imageView.setY((height - fitHeight) / 2);
-                imageView.setX(0);
-            } 
         }
     }
     
