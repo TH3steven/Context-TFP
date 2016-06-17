@@ -22,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
@@ -203,6 +204,9 @@ public class PresetController {
                 cam.getSettings(),
                 id,
                 description.getText());
+        String loc = String.format("CameraId%dPresetId%d", cam.getNumber(), newPreset.getId());
+        cam.getConnection().snapShot(loc);
+        newPreset.setImageLocation(loc);
 
         if (overwrite.isSelected()) {
             cam.overwritePreset(newPreset);

@@ -1,6 +1,7 @@
 package nl.tudelft.contextproject.script;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
@@ -25,6 +26,7 @@ public class ShotTest {
     private Shot shot1;
     private Shot shot2;
     private Shot shot3;
+    private Shot shot4;
 
     /**
      * Initializes the above private variables before each test.
@@ -39,7 +41,10 @@ public class ShotTest {
         pres2 = new InstantPreset(new CameraSettings(1, 2, 3, 4), 2);
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(0, null, null);
-        shot3 = new Shot(2, "2!", cam1, pres, "cover main podium", "rotate the camera to the left");
+        shot3 = new Shot(2, "2!", cam1, pres, null, null);
+        shot3.setAction("rotate the camera to the left");
+        shot3.setDescription("cover main podium");
+        shot4 = new Shot(3, "3!", cam0, "Right", "Left");
     }
     
     @After
@@ -84,8 +89,12 @@ public class ShotTest {
         assertEquals(shot1.getCamera(), cam0);
         assertEquals(shot1.getNumber(), 1);
         assertEquals(shot1.getPreset(), pres);
+        assertNotEquals(shot1, shot2);
     }
 
+    /**
+     * Tests the second constructor of the short class.
+     */
     @Test
     public void testShot4() {
         shot2.setCamera(cam1);
@@ -94,6 +103,7 @@ public class ShotTest {
         assertEquals(shot2.getCamera(), cam1);
         assertEquals(shot2.getNumber(), 2);
         assertEquals(shot2.getPreset(), pres2);
+        assertEquals(shot4.getAction(), "Left");
     }
     /**
      * Test the execute method.

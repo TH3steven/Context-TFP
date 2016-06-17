@@ -142,4 +142,9 @@ public abstract class CameraConnection implements Observer {
      * @return True iff the operation was performed successfully.
      */
     protected abstract boolean relFocus(int offset);
+
+    /**
+     * @param imageLocation The location to which the captured image is stored.
+     */
+    public abstract void snapShot(String imageLocation);
 }

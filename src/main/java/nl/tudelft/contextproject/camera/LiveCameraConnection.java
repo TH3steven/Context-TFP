@@ -1,6 +1,14 @@
 package nl.tudelft.contextproject.camera;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import nl.tudelft.contextproject.gui.LiveStreamHandler;
+
+import javax.imageio.ImageIO;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -43,7 +51,6 @@ public class LiveCameraConnection extends CameraConnection {
     private boolean autoFocus;
     private CameraSettings lastKnown;
     private String address;
-
     /**
      * Creates a LiveCameraConnection object. Assumes that the
      * address given is the correctly formulated IP address of the
@@ -201,6 +208,21 @@ public class LiveCameraConnection extends CameraConnection {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public void snapShot(String imageLocation) {
+        if (isConnected()) {
+            LiveStreamHandler liveStreamHandler = new LiveStreamHandler();
+            ImageView imageView = liveStreamHandler.createImageView(getStreamLink(), 640, 360);
+            WritableImage image = imageView.snapshot(new SnapshotParameters(), null);
+            File output = new File(imageLocation);
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", output);
+            } catch ( IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
