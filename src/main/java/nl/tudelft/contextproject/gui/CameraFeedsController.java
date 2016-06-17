@@ -19,8 +19,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-
-
+/**
+ * Controller for the window that can display camera feeds.
+ * 
+ * @since 0.8
+ */
 public class CameraFeedsController {
     
     private static LiveStreamHandler leftStreamHandler;
@@ -47,10 +50,14 @@ public class CameraFeedsController {
         rightStreamHandler = new LiveStreamHandler();
         
         initChoiceBoxes();
-        initStreams();        
+
+        addStreamListeners();
         
         viewOne.setImage(loadImage("black.png"));
         viewTwo.setImage(loadImage("black.png"));
+        
+        fitImageView(viewOne, streamBoxOne);
+        fitImageView(viewTwo, streamBoxTwo);
     }
     
     /**
@@ -75,13 +82,10 @@ public class CameraFeedsController {
         addChoiceListener(camChoiceTwo);
     }
     
-    private void initStreams() {        
-        addStreamListeners();
-    }
-    
     /**
-     * Add a changelistener to the choicebox.
-     * @param cb the choicebox to add the listener to.
+     * Add a ChangeListener to the ChoiceBox.
+     * 
+     * @param cb the ChoiceBox to add the listener to.
      */
     private void addChoiceListener(ChoiceBox<Camera> cb) {
         cb.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
@@ -109,6 +113,10 @@ public class CameraFeedsController {
         });
     }
     
+    /**
+     * Adds listeners to the width and height properties of the stream containers
+     * for scaling.
+     */
     private void addStreamListeners() {
         streamBoxOne.widthProperty().addListener((observable, oldValue, newValue) -> {
             if (leftStreamHandler != null) {
@@ -145,6 +153,7 @@ public class CameraFeedsController {
     
     /**
      * Updates the camera stream to the stream referenced by the specified link.
+     * 
      * @param streamLink the link to the video stream to be played next.
      */
     private void updateStream(String streamLink, ImageView imageView, LiveStreamHandler streamHandler) {
@@ -152,39 +161,52 @@ public class CameraFeedsController {
         
         if (streamHandler != null) {
             streamHandler.stop();
-        }
 
-        ImageView newView = streamHandler.createImageView(streamLink, 1920, 1080);
-        
-        Platform.runLater(() -> {
-            fitImageViewSize((float) vBox.getWidth(), (float) vBox.getHeight(), newView, streamHandler);
-        }); 
-        
-        vBox.getChildren().clear();
-        vBox.getChildren().add(newView);
-        
-        streamHandler.start();
-        
-        vBox.setStyle("-fx-border-color: transparent");
+            ImageView newView = streamHandler.createImageView(streamLink, 1920, 1080);
+
+            Platform.runLater(() -> {
+                fitImageViewSize((float) vBox.getWidth(), (float) vBox.getHeight(), newView, streamHandler);
+            }); 
+
+            vBox.getChildren().clear();
+            vBox.getChildren().add(newView);
+            vBox.setStyle("-fx-border-color: transparent");
+
+            if (!ContextTFP.hasVLC()) {
+                fitImageView(newView, vBox);
+            }
+            
+            streamHandler.start();
+        }
     }
     
+    /**
+     * Loads a black image instead of a stream.
+     * 
+     * @param imgView The ImageView to set to a black image.
+     * @param streamHandler The stream handler that should be stopped.
+     */
     private void blackView(ImageView imgView, LiveStreamHandler streamHandler) {
-        streamHandler.stop();
+        if (streamHandler != null) {
+            streamHandler.stop();
+        }
         imgView.setImage(loadImage("black.png"));
     }
     
     /**
      * Resizes the ImageView.
+     * 
      * @param width The new width of the ImageView.
      * @param height The new height of the ImageView.
      * @param imageView The imageView that needs resizing.
      * @param streamHandler The LiveStreamHandler responsible for the stream.
      */
     private void fitImageViewSize(float width, float height, ImageView imageView, LiveStreamHandler streamHandler) {
-        if (imageView.getImage() instanceof WritableImage && streamHandler.isPlaying()) {
-
+        if (imageView.getImage() instanceof WritableImage 
+                && streamHandler.isPlaying()) {
             FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
             float fitHeight = videoSourceRatioProperty.get() * width;
+            
             if (fitHeight > height) {
                 imageView.setFitHeight(height);
                 double fitWidth = height / videoSourceRatioProperty.get();
@@ -198,6 +220,17 @@ public class CameraFeedsController {
                 imageView.setX(0);
             } 
         }
+    }
+    
+    /**
+     * Fit ImageView to its VBox container.
+     * 
+     * @param imgView The ImageView that should be fit to its VBox.
+     * @param vBox The VBox the ImageView should be bound to.
+     */
+    private void fitImageView(ImageView imgView, VBox vBox) {
+        imgView.fitWidthProperty().bind(vBox.widthProperty());
+        imgView.fitHeightProperty().bind(vBox.heightProperty());
     }
     
     /**
@@ -234,7 +267,7 @@ public class CameraFeedsController {
     public static void show() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ContextTFP.class.getResource("view/CameramanLiveView.fxml"));
+            loader.setLocation(ContextTFP.class.getResource("view/CameraFeedsView.fxml"));
             AnchorPane cameraLiveUI = (AnchorPane) loader.load();
 
             ContextTFP.getRootLayout().setCenter(cameraLiveUI);
