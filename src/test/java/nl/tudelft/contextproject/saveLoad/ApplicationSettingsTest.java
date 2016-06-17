@@ -8,8 +8,11 @@ import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+import nl.tudelft.contextproject.camera.Camera;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -31,22 +34,29 @@ import java.util.Scanner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ApplicationSettings.class)
 @SuppressWarnings("PMD.TooManyStaticImports")
+@PowerMockIgnore("javax.crypto.*")
 public class ApplicationSettingsTest {
     
     /**
      * Asserts that the specified settings are the default settings.
+     * 
      * @param settings Settings to be tested.
+     * @throws Exception Due to PowerMockito's when method.
      */
     private static void assertDefaultSettings(ApplicationSettings settings) {
         assertEquals(ApplicationSettings.DEFAULT_RESX, settings.getRenderResX());
         assertEquals(ApplicationSettings.DEFAULT_RESY, settings.getRenderResY());
         assertEquals(ApplicationSettings.DEFAULT_VLC_LOC, settings.getVlcLocation());
+        assertEquals(ApplicationSettings.DEFAULT_DB_PORT, settings.getDatabasePort());
+        assertEquals(ApplicationSettings.DEFAULT_JDBC_DRIVER, settings.getJdbcDriver());
         assertEquals(new HashMap<Integer, String>(), settings.getAllCameraIPs());
     }
 
     /**
      * Tests {@link ApplicationSettings#isLoaded()}.
      * Loads two different files.
+     * 
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     public void testIsLoaded() throws Exception {
@@ -74,6 +84,8 @@ public class ApplicationSettingsTest {
     /**
      * Tests {@link ApplicationSettings#load()}.
      * Tries to load a non-existent file.
+     * 
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     public void testLoadNoFile() throws Exception {
@@ -89,21 +101,29 @@ public class ApplicationSettingsTest {
      * 
      * <p>Uses @SuppressWarnings to suppress the warning about a hardcoded IP,
      * which isn't meant to be an actual IP.
+     * 
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     public void testLoadFull() throws Exception {
         ApplicationSettings settings = spy(ApplicationSettings.getInstance());
+        settings.reset();
         File file = new File("src/test/resources/settingsLoadTest.txt");
         whenNew(File.class).withAnyArguments().thenReturn(file);
         settings.load();
         HashMap<Integer, String> expectedIPs = new HashMap<Integer, String>();
-        expectedIPs.put(1, "65.65.65.65");
-        expectedIPs.put(3, "420.420.420.420");
+        expectedIPs.put(0, "65.65.65.65");
+        expectedIPs.put(1, "420.420.420.420");
         assertEquals(1965, settings.getRenderResX());
         assertEquals(420, settings.getRenderResY());
         assertEquals("D:\\program files", settings.getVlcLocation());
         assertEquals(expectedIPs, settings.getAllCameraIPs());
+        assertEquals("google.nl", settings.getDatabaseUrl());
+        assertEquals(1996, settings.getDatabasePort());
+        assertEquals("henk", settings.getDatabaseUsername());
+        assertEquals("ingrid", settings.getDatabaseName());
+        assertEquals("com.mysql.jdbc.Test", settings.getJdbcDriver());
     }
 
     /**
@@ -114,18 +134,22 @@ public class ApplicationSettingsTest {
      * the PrintWriter in the doReturn statement. This resource is closed, because
      * it's technically injected in the save method, which closes the writer it
      * uses.
+     * 
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", "resource" })
     public void testSave() throws Exception {
         ApplicationSettings settings = spy(ApplicationSettings.getInstance());
+        settings.reset();
         File actual = new File("src/test/resources/settingsSaveActual.txt");
         File expected = new File("src/test/resources/settingsSaveExpected.txt");
         doReturn(new PrintWriter(new FileWriter(actual))).when(settings, "getWriter");
         settings.setRenderResolution(420, 65);
         settings.setVlcLocation("C:\\Test");
-        settings.addCameraIP(1, "420.420.420.420");
-        settings.addCameraIP(3, "65.65.65.65");
+        settings.addCameraIP(new Camera().getNumber(), "420.420.420.420");
+        settings.addCameraIP(new Camera().getNumber(), "65.65.65.65");
+        settings.setDatabaseInfo("url", 1337, "pieter", "pjejnis", "password");
         settings.save();
         assertTrue(actual.exists());
         String eof = "\\A";
@@ -136,6 +160,31 @@ public class ApplicationSettingsTest {
         assertEquals(sc2.next(), sc.next());
         sc.close();
         sc2.close();
+    }
+    
+    /**
+     * Integration test of save and load method.
+     * @throws Exception Due to PowerMockito's when method.
+     */
+    @Test
+    @SuppressWarnings("resource")
+    public void testSaveLoad() throws Exception {
+        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
+        settings.reset();
+        File file = new File("src/test/resources/settingsSaveLoad.txt");
+        doReturn(new PrintWriter(new FileWriter(file))).when(settings, "getWriter");
+        doReturn(new Scanner(file)).when(settings, "getScanner");
+        settings.reset();
+        settings.setVlcLocation("This is not a path ");
+        settings.setDatabaseInfo("", 3306, "SwekJeweled", "", "pass");
+        settings.addCameraIP(new Camera().getNumber(), "420.420.420.420");
+        settings.save();
+        settings.load();
+        assertEquals("This is not a path", settings.getVlcLocation());
+        assertEquals("420.420.420.420", settings.getCameraIP(0));
+        assertEquals("SwekJeweled", settings.getDatabaseName());
+        assertEquals(3306, settings.getDatabasePort());
+        assertEquals("pass", settings.getDatabasePassword());
     }
 
 }
