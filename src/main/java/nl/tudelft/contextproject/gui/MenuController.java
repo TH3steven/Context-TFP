@@ -1,16 +1,19 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-
+import javafx.stage.Stage;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.saveLoad.LoadScript;
 import nl.tudelft.contextproject.saveLoad.SaveScript;
@@ -32,6 +35,7 @@ import java.util.List;
 public class MenuController {
 
     @FXML private Button btnCameraman;
+    @FXML private Button btnCameras;
     @FXML private Button btnCreateScript;
     @FXML private Button btnDirector;
     @FXML private Button btnEditScript;
@@ -78,6 +82,7 @@ public class MenuController {
         initSubButtons();
         initOtherButtons();
         initSettingsImg();
+        initCameraViewButton();
     }
 
     private void initLoadButton() {
@@ -229,6 +234,28 @@ public class MenuController {
         
         settings.setOnMouseExited(event -> {
             settings.setImage(new Image("settings.png"));
+        });
+    }
+    
+    private void initCameraViewButton() {
+        btnCameras.setOnAction(event -> {
+            Stage secondaryStage = new Stage();
+            secondaryStage.show();
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(ContextTFP.class.getResource("view/CameraFeedsView.fxml"));
+
+                AnchorPane rootLayout = (AnchorPane) loader.load();
+
+                Scene scene = new Scene(rootLayout);
+                secondaryStage.setScene(scene);
+                secondaryStage.show();
+                secondaryStage.setOnCloseRequest(e -> {
+                    CameraFeedsController.closeStreams();
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
