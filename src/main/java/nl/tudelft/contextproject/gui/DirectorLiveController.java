@@ -95,16 +95,17 @@ public class DirectorLiveController {
         }
 
         initializeButtons();
-        initializeCheckbox();
         if (script.getShots().size() > 0) {
+            initializeEditButtons();
+            initializeCheckbox();
             initializeChoiceBoxes();
             updateShotInfo(current);
             initializeTableListener();
+            thumbnail.setImage(loadImage(current.getPreset().getImage()));
+        } else {
+            emptyInitialization();
         }
         setFactories();
-
-        
-        thumbnail.setImage(loadImage(current.getPreset().getImage()));
         
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
@@ -121,7 +122,7 @@ public class DirectorLiveController {
     }
 
     /**
-     * Initializes the swap and back onAction events.
+     * Initializes the back and exit buttons's onAction events.
      */
     private void initializeButtons() {
         btnBack.toFront();
@@ -135,9 +136,18 @@ public class DirectorLiveController {
             live = true;
             btnNext.setText("Next shot");
         });
-        
+    }
+    
+    /**
+     * Initializes the edit script buttons.
+     */
+    private void initializeEditButtons() {
         btnUndo.setOnAction((event) -> {
             updateShotInfo(tableShots.getSelectionModel().getSelectedItem());
+        });
+        
+        btnConfirm.setOnAction((event) -> {
+            // TODO: Update script.
         });
     }
     
@@ -150,7 +160,6 @@ public class DirectorLiveController {
                 script.next(automaticCheck.isSelected());
                 // TODO: Move the current shot highlight in the table.
             } else {
-                thumbnail.setImage(loadImage("black.png"));
                 actionTxt.setText("End of script reached");
             }
         });        
@@ -265,6 +274,14 @@ public class DirectorLiveController {
 
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
                 cellData.getValue().getCamera().getNumber() + 1));
+    }
+    
+    /**
+     * Initialize the UI in the case when the script is empty.
+     */
+    private void emptyInitialization() {
+        updateShotInfo(new Shot(0, "", Camera.DUMMY, ""));
+        actionTxt.setText("No shots");
     }
     
     /**

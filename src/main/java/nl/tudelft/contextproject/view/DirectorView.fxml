@@ -37,9 +37,14 @@
             </CheckBox>
          </children>
       </HBox>
-      <VBox fx:id="thumbnailBox" layoutX="14.0" layoutY="14.0" minHeight="297.0" minWidth="392.0">
+      <VBox fx:id="thumbnailBox" alignment="CENTER" layoutX="14.0" layoutY="14.0" minHeight="297.0" minWidth="392.0">
          <children>
             <ImageView fx:id="thumbnail" fitHeight="297.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="actionTxt">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Label>
          </children>
       </VBox>
       <Label layoutX="30.0" layoutY="330.0" text="ID:" />
@@ -52,7 +57,6 @@
       <Label layoutX="201.0" layoutY="370.0" text="Action:" />
       <TextField fx:id="fieldSubject" layoutX="264.0" layoutY="325.0" prefHeight="31.0" prefWidth="144.0" />
       <TextArea fx:id="actionArea" layoutX="201.0" layoutY="393.0" prefHeight="91.0" prefWidth="206.0" />
-      <Label fx:id="actionTxt" layoutX="193.0" layoutY="498.0" />
       <Label fx:id="labelID" layoutX="93.0" layoutY="330.0" />
       <Button fx:id="btnUndo" layoutX="94.0" layoutY="491.0" mnemonicParsing="false" text="Undo changes" />
       <Button fx:id="btnConfirm" layoutX="226.0" layoutY="491.0" mnemonicParsing="false" text="Confirm changes" />
