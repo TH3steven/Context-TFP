@@ -33,7 +33,7 @@
       <GridPane layoutY="-2.0" minHeight="524.0" minWidth="800.0" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
           <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" />
-          <ColumnConstraints fillWidth="false" hgrow="ALWAYS" minWidth="10.0" />
+          <ColumnConstraints fillWidth="false" hgrow="ALWAYS" maxWidth="400.0" minWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -43,7 +43,7 @@
                <children>
                   <VBox fx:id="thumbnailBox" alignment="TOP_CENTER" minHeight="173.0" minWidth="258.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <ImageView fx:id="thumbnail" fitHeight="297.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                        <ImageView fx:id="thumbnail" fitHeight="238.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
                            <VBox.margin>
                               <Insets top="17.0" />
                            </VBox.margin>
@@ -55,7 +55,7 @@
                   </VBox>
                   <Label fx:id="actionTxt">
                      <VBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="20.0" />
                      </VBox.margin>
                   </Label>
                   <AnchorPane maxHeight="200.0" maxWidth="411.0" minHeight="200.0" minWidth="411.0" VBox.vgrow="ALWAYS">
@@ -81,7 +81,7 @@
                   </AnchorPane>
                </children>
             </VBox>
-            <TableView fx:id="tableShots" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500.0" prefWidth="360.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+            <TableView fx:id="tableShots" maxWidth="360.0" prefWidth="360.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
               <columns>
                   <TableColumn fx:id="columnID" maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" text="ID" />
                 <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" text="Shot" />
