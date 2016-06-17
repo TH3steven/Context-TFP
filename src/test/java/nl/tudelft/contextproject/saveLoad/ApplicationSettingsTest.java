@@ -39,6 +39,7 @@ public class ApplicationSettingsTest {
     
     /**
      * Asserts that the specified settings are the default settings.
+     * 
      * @param settings Settings to be tested.
      * @throws Exception Due to PowerMockito's when method.
      */
@@ -54,6 +55,7 @@ public class ApplicationSettingsTest {
     /**
      * Tests {@link ApplicationSettings#isLoaded()}.
      * Loads two different files.
+     * 
      * @throws Exception Due to PowerMockito's when method.
      */
     @Test
@@ -82,6 +84,7 @@ public class ApplicationSettingsTest {
     /**
      * Tests {@link ApplicationSettings#load()}.
      * Tries to load a non-existent file.
+     * 
      * @throws Exception Due to PowerMockito's when method.
      */
     @Test
@@ -98,6 +101,7 @@ public class ApplicationSettingsTest {
      * 
      * <p>Uses @SuppressWarnings to suppress the warning about a hardcoded IP,
      * which isn't meant to be an actual IP.
+     * 
      * @throws Exception Due to PowerMockito's when method.
      */
     @Test
@@ -130,6 +134,7 @@ public class ApplicationSettingsTest {
      * the PrintWriter in the doReturn statement. This resource is closed, because
      * it's technically injected in the save method, which closes the writer it
      * uses.
+     * 
      * @throws Exception Due to PowerMockito's when method.
      */
     @Test

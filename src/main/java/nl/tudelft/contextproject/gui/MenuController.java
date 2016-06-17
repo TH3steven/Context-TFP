@@ -34,7 +34,6 @@ import nl.tudelft.contextproject.script.Script;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -321,6 +320,7 @@ public class MenuController {
         try {
             btnSettingsTest.fire();
             ApplicationSettings.getInstance().save();
+            
             settingsFront.setVisible(false);
             settingsBack.setVisible(false);
             settingsGrid.disableProperty().set(true);
@@ -437,6 +437,7 @@ public class MenuController {
     
     /**
      * Initialises the camera IPs section of the settings menu.
+     * 
      * @param settings The instance of ApplicationSettings
      */
     private void settingsInitIpTable(ApplicationSettings settings) {
