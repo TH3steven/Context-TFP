@@ -2,9 +2,10 @@ resX 1920
 resY 1080
 vlcLocation This is not a path 
 cameraIPs
-2 420.420.420.420
+1 420.420.420.420
 databaseUrl 
 databasePort 3306
+databaseName SwekJeweled
 databaseUsername 
-databaseName 
+databasePassword MhVDYjLt/TA=
 jdbcDriver com.mysql.cj.jdbc.Driver
