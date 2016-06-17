@@ -93,7 +93,7 @@ public class MenuController {
     
     private List<Node> preNodes;
     private List<Node> liveNodes;
-    
+
     private boolean isPreVisible = false;
     private boolean isLiveVisible = false;
 
@@ -109,8 +109,8 @@ public class MenuController {
             setScriptLabel(name);
         }
 
-        setVersionLabel("0.7");
-        
+        setVersionLabel("0.8");
+
         preNodes = new ArrayList<Node>();
         liveNodes = new ArrayList<Node>();
         preNodes.addAll(Arrays.asList(lblPre, btnCreateScript, 
@@ -123,6 +123,53 @@ public class MenuController {
         initSettingsImg();
     }
 
+    /**
+     * Initializes the onAction events for the buttons that display
+     * the sub menus.
+     */
+    private void initSubButtons() {
+        btnPre.setOnAction(event -> {
+            animate(true);
+
+            isPreVisible = !isPreVisible;
+            isLiveVisible = false;
+
+            toggleNodeVisibility(preNodes, liveNodes);
+        });
+
+        btnLive.setOnAction(event -> {
+            animate(false);
+
+            isLiveVisible = !isLiveVisible;
+            isPreVisible = false;
+
+            toggleNodeVisibility(liveNodes, preNodes);
+        });
+    }
+
+    /**
+     * Animates the sub buttons up or down.
+     * 
+     * @param pre Should be true if the pre button was clicked,
+     *      false if the live button was clicked.
+     */
+    private void animate(boolean pre) {
+        if (!isPreVisible && !isLiveVisible) {
+            Animation.animNodeUp(btnPre);
+            Animation.animNodeUp(btnLive);
+        } else if (isPreVisible && !isLiveVisible && pre) {
+            Animation.animNodeDown(btnPre);
+            Animation.animNodeDown(btnLive);
+        } else if (!isPreVisible && isLiveVisible && !pre) {
+            Animation.animNodeDown(btnPre);
+            Animation.animNodeDown(btnLive);
+        }
+    }
+
+    /**
+     * Initializes the load button, to enable the user to select a file
+     * location of a script, and load it in.
+     */
     private void initLoadButton() {
         btnLoadScript.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
@@ -148,50 +195,7 @@ public class MenuController {
             }
         });
     }
-    
-    /**
-     * Initializes the onAction events for the buttons that display
-     * the sub menus.
-     */
-    private void initSubButtons() {
-        btnPre.setOnAction(event -> {
-            animate(true);
 
-            isPreVisible = !isPreVisible;
-            isLiveVisible = false;
-            
-            toggleNodeVisibility(preNodes, liveNodes);
-        });
-        
-        btnLive.setOnAction(event -> {
-            animate(false);
-            
-            isLiveVisible = !isLiveVisible;
-            isPreVisible = false;
-            
-            toggleNodeVisibility(liveNodes, preNodes);
-        });
-    }
-    
-    /**
-     * Animates the sub buttons up or down.
-     * 
-     * @param pre Should be true if the pre button was clicked,
-     *      false if the live button was clicked.
-     */
-    private void animate(boolean pre) {
-        if (!isPreVisible && !isLiveVisible) {
-            Animation.animNodeUp(btnPre);
-            Animation.animNodeUp(btnLive);
-        } else if (isPreVisible && !isLiveVisible && pre) {
-            Animation.animNodeDown(btnPre);
-            Animation.animNodeDown(btnLive);
-        } else if (!isPreVisible && isLiveVisible && !pre) {
-            Animation.animNodeDown(btnPre);
-            Animation.animNodeDown(btnLive);
-        }
-    }
-    
     /**
      * Toggles the visibility of the nodes of the sub menu.
      * 
@@ -206,7 +210,7 @@ public class MenuController {
                 Animation.animNodeIn(b);
             }
         }
-        
+
         for (Node b : hidden) {
             if (b.isVisible()) {
                 Animation.animNodeOut(b, true);
@@ -233,6 +237,8 @@ public class MenuController {
         });
 
         btnPresets.setOnAction(event -> {
+            PresetController.setToCameramanView(false);
+
             Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
                 PresetController.show();
                 Animation.animNodeIn(ContextTFP.getRootLayout());

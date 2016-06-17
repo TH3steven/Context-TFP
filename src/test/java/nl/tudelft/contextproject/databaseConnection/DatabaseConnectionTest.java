@@ -111,6 +111,7 @@ public class DatabaseConnectionTest {
         cam0.addPreset(pres3);
         cam1.addPreset(pres2);
         connection.clearPresets();
+        
         Collection<Preset> expected0 = cam0.getAllPresets();
         Collection<Preset> expected1 = cam1.getAllPresets();
         Iterator<Preset> it = cam0.getAllPresets().iterator();
@@ -136,8 +137,7 @@ public class DatabaseConnectionTest {
         cam0.addPreset(pres3);
         cam1.addPreset(pres2);
         connection.clearPresets();
-        Collection<Preset> expected0 = cam0.getAllPresets();
-        Collection<Preset> expected1 = cam1.getAllPresets();
+        
         Iterator<Preset> it = cam0.getAllPresets().iterator();
         //Upload current presets
         while (it.hasNext()) {

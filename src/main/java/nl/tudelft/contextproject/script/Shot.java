@@ -18,7 +18,7 @@ public class Shot {
     private Camera camera;
     private Preset preset;
     private String shotId;
-    private String description;
+    private String subject;
     private String action;
 
     private double duration;
@@ -32,15 +32,15 @@ public class Shot {
      * @param shotId The identifier for the shot.
      * @param cam is the camera used to make the shot.
      * @param pres is the preset used for the shot.
-     * @param description The description of what happens during the shot.
+     * @param subject The subject of what happens during the shot.
      * @param action The action associated to the shot.
      */
-    public Shot(int num, String shotId, Camera cam, Preset pres, String description, String action) {
+    public Shot(int num, String shotId, Camera cam, Preset pres, String subject, String action) {
         this.number = num;
         this.shotId = shotId;
         this.camera = cam;
         this.preset = pres;
-        this.description = description;
+        this.subject = subject;
         if (cam != null && pres != null) {
             cam.addPreset(pres);
         }
@@ -55,14 +55,14 @@ public class Shot {
      * @param num is the shot number
      * @param shotId The identifier for the shot.
      * @param cam is the camera used to make the shot.
-     * @param description The description of what happens during the shot.
+     * @param subject The subject of what happens during the shot.
      * @param action The action associated to the shot.
      */
-    public Shot(int num, String shotId, Camera cam, String description, String action) {
+    public Shot(int num, String shotId, Camera cam, String subject, String action) {
         this.number = num;
         this.shotId = shotId;
         this.camera = cam;
-        this.description = description;
+        this.subject = subject;
         this.action = action;
         this.duration = -1;
     }
@@ -80,7 +80,7 @@ public class Shot {
         this.shotId = "";
         this.camera = cam;
         this.preset = pres;
-        this.description = "";
+        this.subject = "";
         this.duration = -1;
         this.action = "";
         if (cam != null && pres != null) {
@@ -161,11 +161,11 @@ public class Shot {
     }
 
     /**
-     * Returns the description of this shot.
-     * @return The description of this shot.
+     * Returns the subject of this shot.
+     * @return The subject of this shot.
      */
     public String getDescription() {
-        return description;
+        return subject;
     }
 
     @Override
@@ -190,11 +190,11 @@ public class Shot {
     }
 
     /**
-     * Sets the description of this shot.
-     * @param description The description of this shot.
+     * Sets the subject of this shot.
+     * @param subject The subject of this shot.
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String subject) {
+        this.subject = subject;
     }
 
     /**

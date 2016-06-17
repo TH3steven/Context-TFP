@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/TH3steven/Context-TFP.svg?branch=master)](https://travis-ci.org/TH3steven/Context-TFP)
+[![Coverage Status](https://coveralls.io/repos/github/TH3steven/Context-TFP/badge.svg?branch=master)](https://coveralls.io/github/TH3steven/Context-TFP?branch=master)
 
 ![TFP](src/main/resources/logo-TFP.png)
 

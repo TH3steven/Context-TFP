@@ -12,6 +12,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import nl.tudelft.contextproject.camera.Camera;
@@ -53,6 +54,7 @@ public class ContextTFP extends Application {
         primaryStage.setTitle("TFP Camera Control");
         primaryStage.minWidthProperty().set(800);
         primaryStage.minHeightProperty().set(575);
+        primaryStage.getIcons().add(new Image(ContextTFP.class.getResourceAsStream("/icon.png")));
         
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
