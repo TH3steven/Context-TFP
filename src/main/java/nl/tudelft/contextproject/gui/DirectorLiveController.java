@@ -387,7 +387,7 @@ public class DirectorLiveController {
     public static void show() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ContextTFP.class.getResource("view/DirectorView.fxml"));
+            loader.setLocation(ContextTFP.class.getResource("view/DirectorLiveView.fxml"));
             AnchorPane cameraLiveUI = (AnchorPane) loader.load();
 
             ContextTFP.getRootLayout().setCenter(cameraLiveUI);
