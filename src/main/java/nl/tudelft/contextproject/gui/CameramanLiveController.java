@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class controls the screen that shows the live view of
- * the {@link Camera}, for the cameraman. This screen allows a cameraman to see the
- * script with the current active shot, look at the {@link Preset Presets} of the 
- * camera, and set the camera in the position of the next preset.
+ * This class controls the screen that shows the view for a cameraman.
+ * This screen allows a cameraman to see the script with the current 
+ * active shot, and look at the {@link Preset Presets} of the 
+ * camera.
  * 
  * <p>The view section is defined under view/CameramanLiveView.fxml
  * 
@@ -36,12 +36,13 @@ import java.util.List;
  */
 public class CameramanLiveController {
 
-    private Script script;
-
+    private static List<CheckBox> cameras;
+    
     @FXML private Button btnBack;
     @FXML private Button btnHideAll;
-    @FXML private Button btnShowAll;
+    @FXML private Button btnPresets;
     @FXML private Button btnNext;
+    @FXML private Button btnShowAll;
     
     @FXML private TableView<Shot> tableShots;
     @FXML private TableColumn<Shot, Number> columnCamera;
@@ -51,8 +52,8 @@ public class CameramanLiveController {
     @FXML private TableColumn<Shot, String> columnShot;
     
     @FXML private VBox vbox;
-
-    private List<CheckBox> cameras;
+    
+    private Script script;
 
     /**
      * Initialize method used by JavaFX.
@@ -73,7 +74,7 @@ public class CameramanLiveController {
 
     private void initCameraSelector() {
         for (Camera c : Camera.getAllCameras()) {
-            CheckBox check = new CheckBox();
+            final CheckBox check = new CheckBox();
             check.setText("Camera: " + (c.getNumber() + 1));
             check.setContentDisplay(ContentDisplay.LEFT);
             check.fire();
@@ -111,6 +112,15 @@ public class CameramanLiveController {
         btnHideAll.setOnAction(event -> {
             toggleCameras(false);
         });
+        
+        btnPresets.setOnAction(event -> {
+            PresetController.setToCameramanView(true);
+            
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                PresetController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
+        });
     }
     
     /**
@@ -119,20 +129,16 @@ public class CameramanLiveController {
      */
     private void toggleCameras(boolean show) {
         for (CheckBox c : cameras) {
-            if (show) {
-                c.setSelected(true);
-            } else {
-                c.setSelected(false);
-            }
+            c.setSelected(show);
         }
     }
 
     /**
-     * Submethod of {@link #initButtons()} that fills a list
+     * Sub method of {@link #initButtons()} that fills a list
      * with all the shots that belong to the selected camera.
      */
     private List<Shot> fillListOfShots() {
-        List<Shot> listShots = new ArrayList<Shot>();
+        final List<Shot> listShots = new ArrayList<Shot>();
         
         for (Shot s : script.getShots()) {
             int shotCamNum = s.getCamera().getNumber();
@@ -146,6 +152,10 @@ public class CameramanLiveController {
         return listShots;
     }
     
+    /**
+     * Sets the row factory of the table, enabling the 
+     * indication of the current shot.
+     */
     private void initRowFactory() {
         final PseudoClass currentPseudoClass = PseudoClass.getPseudoClass("current");
 
@@ -163,6 +173,9 @@ public class CameramanLiveController {
         });
     }
 
+    /**
+     * Sets the factories of the table columns.
+     */
     private void setFactories() {
         columnID.setCellValueFactory(new PropertyValueFactory<Shot, Number>("number"));
 
@@ -180,7 +193,7 @@ public class CameramanLiveController {
         columnDescription.setCellValueFactory(new PropertyValueFactory<Shot, String>("description"));
 
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
-                cellData.getValue().getCamera().getNumber() + 1));
+            cellData.getValue().getCamera().getNumber() + 1));
     }
     
     /**
