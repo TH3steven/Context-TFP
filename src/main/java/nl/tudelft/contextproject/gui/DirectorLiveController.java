@@ -27,10 +27,6 @@ import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * This class controls the screen that shows the live view
@@ -212,7 +208,6 @@ public class DirectorLiveController {
         updatePresetChoice(current);
         
         presetSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-            System.out.println(newV);
             if (newV != null) {
                 if (newV.equals("None")) {
                     thumbnail.setImage(loadImage("black.png"));
