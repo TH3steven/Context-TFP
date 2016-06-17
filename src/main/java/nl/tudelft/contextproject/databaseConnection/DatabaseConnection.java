@@ -219,12 +219,14 @@ public final class DatabaseConnection {
             int presetId = rs.getInt("preset");
             String description = rs.getString("description");
             String action = rs.getString("action");
+            
             Camera cam = Camera.getCamera(cameraId);
             Preset preset = cam.getPreset(presetId);
             Shot shot = new Shot(number, shotId, cam, preset, description, action);
             script.addShot(shot);
         }
         
+        rs.close();
         stmt.close();
         return script;
     }
@@ -356,6 +358,8 @@ public final class DatabaseConnection {
                 }
             }
         }
+        
+        rs.close();
         stmt.close(); 
     }
 }
