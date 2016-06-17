@@ -46,31 +46,31 @@ public class DirectorLiveController {
     @FXML private Button btnConfirm;
     @FXML private Button btnNext;
     @FXML private Button btnUndo;
-    
+
     @FXML private CheckBox automaticCheck;
-    
+
     @FXML private ChoiceBox<Camera> cameraSelecter;
     @FXML private ChoiceBox<String> presetSelecter;
 
     @FXML private ImageView thumbnail;
-    
+
     @FXML private Label actionTxt;
     @FXML private Label labelID;
-    
+
     @FXML private TableView<Shot> tableShots;
     @FXML private TableColumn<Shot, Number> columnCamera;
     @FXML private TableColumn<Shot, String> columnSubject;
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
-    
+
     @FXML private TextArea actionArea;
-    
+
     @FXML private TextField fieldShot;
     @FXML private TextField fieldSubject;
 
     @FXML private VBox thumbnailBox;
-    
+
     // Will be used soon.
     private boolean live;
 
@@ -80,7 +80,7 @@ public class DirectorLiveController {
     @FXML private void initialize() {
         script = ContextTFP.getScript();
         Shot current = getCurrentShot();
-        
+
         if (!script.isEmpty()) {
             if (script.getCurrent() == -1) {
                 script.next();
@@ -102,12 +102,12 @@ public class DirectorLiveController {
             emptyInitialization();
         }
         setFactories();
-        
+
         bindImageToBox(thumbnail, thumbnailBox);
-        
+
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
-    
+
     /**
      * Binds the width and height properties of an ImageView to the properties of a VBox..
      * 
@@ -128,14 +128,14 @@ public class DirectorLiveController {
             live = false;
             MenuController.show();
         });
-        
+
         btnNext.setOnAction(event -> {
             initializeLive();
             live = true;
             btnNext.setText("Next shot");
         });
     }
-    
+
     /**
      * Initializes the edit script buttons.
      */
@@ -143,14 +143,14 @@ public class DirectorLiveController {
         btnUndo.setOnAction(event -> {
             updateShotInfo(tableShots.getSelectionModel().getSelectedItem());
         });
-        
+
         btnConfirm.setOnAction((event) -> {
             changeShot();
         });
     }
-    
+
     /**
-     * Initialize the button that handles going live.
+     * Initializes the button that handles going live.
      */
     private void initializeLive() {
         btnNext.setOnAction(event -> {
@@ -162,9 +162,9 @@ public class DirectorLiveController {
             }
         });        
     }
-    
+
     /**
-     * Initialize the checkbox.
+     * Initializes the checkbox.
      */
     private void initializeCheckbox() {
         automaticCheck.selectedProperty().addListener((obs, oldV, newV) -> {
@@ -173,20 +173,20 @@ public class DirectorLiveController {
             }
         });
     }
-    
+
     /**
      * Initializes the choice boxes for preset and camera.
      */
     private void initializeChoiceBoxes() {
         Camera current = getCurrentShot().getCamera();
-        
+
         initializeCameraChoice();
         initializePresetChoice();
         updatePresetChoice(current);
-        
+
         presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId() + 1));
     }
-    
+
     /**
      * Initializes the camera choice box.
      */
@@ -194,21 +194,21 @@ public class DirectorLiveController {
         cameraSelecter.setItems(FXCollections.observableArrayList(Camera.getAllCameras()));
         Camera current = getCurrentShot().getCamera();
         cameraSelecter.setValue(current);
-        
+
         cameraSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             updatePresetChoice(newV);
             presetSelecter.setValue("None");
         });
     }
-    
+
     /**
      * Initializes the preset choice box.
      */
     private void initializePresetChoice() {
         Camera current = cameraSelecter.getValue();
-        
+
         updatePresetChoice(current);
-        
+
         presetSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
             if (newV != null) {
                 if (newV.equals("None")) {
@@ -219,15 +219,14 @@ public class DirectorLiveController {
             }
         });
     }
-    
+
     /**
      * Updates the preset choice box to the presets of a given camera.
-     * 
      * @param cam The camera the presets shown should belong to.
      */
     private void updatePresetChoice(Camera cam) {       
         ArrayList<String> presetList = new ArrayList<String>(); 
-        
+
         presetList.add("None");
 
         for (int i = 0; i < cam.getPresetAmount(); ++i) {
@@ -235,12 +234,11 @@ public class DirectorLiveController {
         }
 
         presetSelecter.setItems(FXCollections.observableArrayList(presetList));
-
         presetSelecter.setValue("None");
     }
-    
+
     /**
-     * Initialize a table selection listener that updates the shot info and the thumbnail.
+     * Initializes a table selection listener that updates the shot info and the thumbnail.
      */
     private void initializeTableListener() {
         tableShots.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
@@ -249,7 +247,7 @@ public class DirectorLiveController {
             }
         });
     }
-    
+
     /**
      * Set the table column factories.
      */
@@ -272,7 +270,7 @@ public class DirectorLiveController {
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
                 cellData.getValue().getCamera().getNumber() + 1));
     }
-    
+
     /**
      * Initialize the UI in the case when the script is empty.
      */
@@ -280,7 +278,7 @@ public class DirectorLiveController {
         updateShotInfo(new Shot(0, "", Camera.DUMMY, null, "", ""));
         actionTxt.setText("No shots");
     }
-    
+
     /**
      * Updates the shot info and image.
      */
@@ -290,7 +288,7 @@ public class DirectorLiveController {
         cameraSelecter.setValue(shot.getCamera());
         fieldSubject.setText(shot.getDescription());
         actionArea.setText(shot.getDescription());
-        
+
         if (shot.getPreset() != null) {
             presetSelecter.setValue(Integer.toString(shot.getPreset().getId() + 1));
             thumbnail.setImage(loadImage(shot.getPreset().getImage()));
@@ -299,7 +297,7 @@ public class DirectorLiveController {
             thumbnail.setImage(loadImage("black.png"));
         }
     }
-    
+
     /**
      * Loads an image. Loads an error image if path is null or invalid.
      * 
@@ -313,7 +311,7 @@ public class DirectorLiveController {
             return new Image("error.jpg");
         }
     }
-    
+
     /**
      * Gives a boolean back depending on whether the end of the script has been reached.
      * 
@@ -322,26 +320,26 @@ public class DirectorLiveController {
     public boolean endReached() {
         return !script.hasNext();
     }
-    
+
     /**
      * Method for adding a preset to the view and the model.
      * @param id The id of the preset to add.
      */
     private void changeShot() {
         Shot shot = script.getShots().get(tableShots.getSelectionModel().getSelectedIndex());
-        
+
         String shotID = fieldShot.getText();
         Camera cam = cameraSelecter.getValue();        
         int presNum = Integer.valueOf(presetSelecter.getValue()) - 1;
         Preset preset = cam.getPreset(presNum);
         String description = fieldSubject.getText();
-        
+
         shot.setShotId(shotID);
         shot.setCamera(cam);
         shot.setPreset(preset);
         shot.setDescription(description);       
     }
-    
+
     /**
      * Gets the current shot in the script.
      * Gives back the first shot if it is not live yet.
@@ -351,7 +349,7 @@ public class DirectorLiveController {
     public Shot getCurrentShot() {        
         return (script.getCurrent() == -1) ? script.getNextShot() : script.getCurrentShot();
     }
-    
+
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.

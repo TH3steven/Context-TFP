@@ -139,7 +139,7 @@ public final class AlertDialog {
 
         alert.showAndWait();
     }
-    
+
     /**
      * Displays an error when saving of the settings was unsuccessful.
      * @param e The exception that was thrown.
@@ -175,7 +175,7 @@ public final class AlertDialog {
 
         return true;
     }
-    
+
     /**
      * Shows the dialog that notifies the user that the loading
      * of a script was successful.
@@ -190,7 +190,7 @@ public final class AlertDialog {
 
         alert.showAndWait();
     }
-    
+
     /**
      * Displays an error dialog when saving of the script
      * was unsuccessful.
@@ -200,7 +200,7 @@ public final class AlertDialog {
      */
     public static void errorLoadUnsuccesful(Exception e, File file) {
         String c = (e.getCause() == null) ? "" : "\nCause: "  + e.getCause();
-        
+
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Unsuccesful load!");
         alert.setHeaderText("Loading script was unsuccesful!");
@@ -212,7 +212,7 @@ public final class AlertDialog {
 
         alert.showAndWait();
     }
-    
+
     /**
      * Displays an error dialog when a VLC installation cannot be found.
      * 
@@ -225,11 +225,11 @@ public final class AlertDialog {
         alert.setHeaderText("VLC installation could not be found.");
         alert.setContentText(
                 "If you do have VLC installed, please select your VLC install directory. "
-                + "\n\nIf not, please install VLC to make use of live camera feeds.");
+                        + "\n\nIf not, please install VLC to make use of live camera feeds.");
         alert.showAndWait();
         findVlc(window);
     }
-    
+
     /**
      * Opens a file chooser dialog when a VLC installation cannot be found.
      * 
@@ -242,7 +242,7 @@ public final class AlertDialog {
         fileChooser.setInitialFileName("libvlc.dll");
         fileChooser.getExtensionFilters().add(new ExtensionFilter("LibVLC", "libvlc.dll"));
         File libvlc = fileChooser.showOpenDialog(window);
-        
+
         if (libvlc != null) {
             NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), libvlc.getParent());
             try {
@@ -261,7 +261,7 @@ public final class AlertDialog {
             throw new RuntimeException("No VLC installed!");
         }
     }
-    
+
     /**
      * Shows a dialog asking whether the user is sure if he or she
      * wants to clear all cameras.
@@ -274,7 +274,7 @@ public final class AlertDialog {
         alert.setContentText("It may not be possible to ever retrieve these settings");
         return alert.showAndWait().get() == ButtonType.OK;
     }
-    
+
     /**
      * Shows a dialog asking whether the user is sure if he or she
      * wants to save the settings.
@@ -289,7 +289,7 @@ public final class AlertDialog {
                 + "the database.");
         return alert.showAndWait().get() == ButtonType.OK;
     }
-    
+
     /**
      * Shows a message box to confirm overwriting a preset.
      * @param newPreset The preset which will overwrite another preset.

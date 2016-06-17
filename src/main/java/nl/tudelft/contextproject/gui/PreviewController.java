@@ -37,6 +37,8 @@ import java.util.List;
  * set the duration of a show all while live previewing what the shot 
  * will capture.
  * 
+ * <p>The view section is defined under view/ScriptPreview.fxml
+ * 
  * @since 0.2
  */
 public class PreviewController {
@@ -435,13 +437,13 @@ public class PreviewController {
         if (shotSwitch) {
             switchHighlights(check);
         }
-        
+
         List<ImageView> list = new ArrayList<ImageView>();
         list.addAll(Arrays.asList(viewOne, viewTwo, viewThree, viewFour));
-        
+
         List<Integer> offset = new ArrayList<Integer>();
         offset.addAll(Arrays.asList(-1, 0, 1, 2));
-        
+
         for (int i = 0; i < offset.size(); ++i) {
             offset.set(i, offset.get(i) - (check - 1));
         }

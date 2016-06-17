@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraConnection;
 import nl.tudelft.contextproject.camera.LiveCameraConnection;
@@ -24,15 +25,16 @@ import nl.tudelft.contextproject.gui.MenuController;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
+
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This is the main file for the Multi-Media Contextproject of Team Free Pizza.
+ * This is the main file for the Multimedia Contextproject of Team Free Pizza.
  * The main purpose of this project is to allow PolyCast Productions B.V. to
- * easily control their cameras and to improve their digital environment.
+ * easily digitize their script and to improve their digital environment.
  * 
  * <p>This file should be used to initialize the program.
  * 
@@ -41,7 +43,7 @@ import java.util.ArrayList;
  * @since 0.1
  */
 public class ContextTFP extends Application {
-    
+
     private static boolean hasVLC;
     private static BorderPane rootLayout;
     private static Script script;
@@ -55,23 +57,23 @@ public class ContextTFP extends Application {
         primaryStage.minWidthProperty().set(800);
         primaryStage.minHeightProperty().set(575);
         primaryStage.getIcons().add(new Image(ContextTFP.class.getResourceAsStream("/icon.png")));
-        
+
         // Create the script to be used by the application.
         script = new Script(new ArrayList<Shot>());
-        
-        // Statically initialise ApplicationSettings class.
+
+        // Statically initialize ApplicationSettings class.
         ApplicationSettings.getInstance();
-        
+
         initRootLayout();
-        
+
         new Thread(() -> initVLCj()).start();
         new Thread(() -> initCameraConnections()).start();
-        
+
         MenuController.show();
     }
 
     /**
-     * Initialises the root layout of the application.
+     * Initializes the root layout of the application.
      */
     public void initRootLayout() {
         try {
@@ -88,6 +90,7 @@ public class ContextTFP extends Application {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+
                 Platform.exit(); 
                 System.exit(0);
             });
@@ -95,31 +98,34 @@ public class ContextTFP extends Application {
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * Initialises the camera connections for every loaded camera.
+     * Initializes the camera connections for every loaded camera.
      * If an IP was loaded for a camera, then it will check if it
-     * can make a connection to this camera. If it can, then it will
+     * can make a connection to this camera. If it can, it will
      * set its connection to a LiveCameraConnection. If it cannot,
-     * then it sets a MockedCameraConnection. 
+     * it sets a MockedCameraConnection. 
      */
     public void initCameraConnections() {
         ApplicationSettings settings = ApplicationSettings.getInstance();
+
         for (Camera cam : Camera.getAllCameras()) {
             String camIp = settings.getCameraIP(cam.getNumber());
             if (camIp != null && !camIp.equals("")) {
                 CameraConnection connect = new LiveCameraConnection(camIp);
+
                 if (connect.setUpConnection()) {
                     cam.setConnection(connect);
                     break;
                 }
             }
+
             cam.setConnection(new MockedCameraConnection());
         }
     }
-    
+
     /**
-     * Tries to load VLC using the VLC native discovery tactic.
+     * Tries to load VLC using the VLC native discovery tactics.
      * If it cannot find VLC installed, it will ask for the location of the
      * VLC installation.
      */
@@ -138,7 +144,6 @@ public class ContextTFP extends Application {
 
     /**
      * The main class of the project. Calling this method will start the program.
-     * 
      * @param args Environment arguments for the main method.
      */
     public static void main(String[] args) {
@@ -147,8 +152,7 @@ public class ContextTFP extends Application {
 
     /**
      * Get method for the primary stage of the application.
-     * 
-     * @return The main stage
+     * @return The main stage.
      */
     public Stage getPrimaryStage() {
         return primaryStage;
@@ -156,7 +160,6 @@ public class ContextTFP extends Application {
 
     /**
      * Get the active script used by the application.
-     * 
      * @return The script.
      */
     public static Script getScript() {
@@ -165,7 +168,6 @@ public class ContextTFP extends Application {
 
     /**
      * Sets the active script used by the application.
-     * 
      * @param script The script to be used.
      */
     public static void setScript(Script script) {
@@ -174,13 +176,16 @@ public class ContextTFP extends Application {
 
     /**
      * Retrieves the root layout of the application.
-     * 
      * @return The root layout
      */
     public static BorderPane getRootLayout() {
         return rootLayout;
     }
-    
+
+    /**
+     * Checks of the user has VLC.
+     * @return True if the program could find VLC.
+     */
     public static boolean hasVLC() {
         return hasVLC;
     }

@@ -195,9 +195,11 @@ public class PresetController {
             Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
             data.clear();
+
             for (Preset p : presets.values()) {
                 data.add(p);
             }
+
             if (cam.hasConnection()) {
                 updateStream(cam.getConnection().getStreamLink());
             } else {

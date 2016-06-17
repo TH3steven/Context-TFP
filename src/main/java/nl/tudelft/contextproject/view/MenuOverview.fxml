@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.MenuController">
+<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.MenuController">
    <children>
       <VBox alignment="BOTTOM_LEFT" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0">
          <children>
@@ -71,6 +71,7 @@
                   <Button fx:id="btnLive" layoutX="288.0" layoutY="352.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" styleClass="subButton" text="Live-production ↧" />
                   <Label fx:id="lblPre" layoutX="193.0" layoutY="329.0" text="Pre-production menu" visible="false" />
                   <Label fx:id="lblLive" layoutX="191.0" layoutY="329.0" text="Live-production menu" visible="false" />
+                  <Button fx:id="btnCameras" layoutX="206.0" layoutY="538.0" mnemonicParsing="false" text="Camera views" />
                </children>
             </Pane>
          </children>
@@ -149,6 +150,5 @@
             <Image url="settings.png" />
          </image>
       </ImageView>
-      <Button fx:id="btnCameras" layoutX="350.0" layoutY="530.0" mnemonicParsing="false" text="Camera views" />
    </children>
 </AnchorPane>
