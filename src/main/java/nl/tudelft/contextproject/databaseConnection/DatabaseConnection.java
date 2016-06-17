@@ -1,6 +1,7 @@
 package nl.tudelft.contextproject.databaseConnection;
 
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class to create a database connection. 
@@ -228,6 +230,20 @@ public final class DatabaseConnection {
     }
     
     /**
+     * Clears all preset currently in the Database.
+     * 
+     * @throws SQLException When no connection can be made, this exception will be thrown.
+     */
+    public void clearPresets() throws SQLException {
+        revalidate();
+        
+        Statement stmt = conn.createStatement();
+        String query = "DELETE FROM " + PRESET_TABLE;
+        stmt.executeUpdate(query);
+        stmt.close();
+    }
+    
+    /**
      * Upload a preset to the database.
      * 
      * @param preset The preset to upload.
@@ -302,5 +318,44 @@ public final class DatabaseConnection {
         sBuilder.append("focus='" + preset.getToSet().getFocus() + "' ");
         sBuilder.append("WHERE id='" + preset.getId() + "' AND camera='" + camera.getNumber() + "';");
         return sBuilder.toString();
+    }
+    
+    /**
+     * Updates the presets by getting them from the database and adding them to the cameras.
+     * 
+     * @param overwrite True if you want to overwrite already existing presets, otherwise false.
+     * @throws SQLException When no connection can be made, this exception will be thrown.
+     */
+    public void updatePresets(boolean overwrite) throws SQLException {
+        revalidate();
+        Statement stmt = conn.createStatement();
+        
+        String query = "SELECT * FROM " + PRESET_TABLE;
+        ResultSet rs = stmt.executeQuery(query);
+        
+        while (rs.next()) {
+            int presetId = rs.getInt("id");
+            int cameraId = rs.getInt("camera");
+            String desc = rs.getString("description");
+            String imageLoc = rs.getString("imageLocation");
+            int pan = rs.getInt("pan");
+            int tilt = rs.getInt("tilt");
+            int zoom = rs.getInt("zoom");
+            int focus = rs.getInt("focus");
+            String type = rs.getString("type");
+            
+            if (type.equals("InstantPreset")) {
+                Preset preset = new InstantPreset(new CameraSettings(pan, tilt, zoom, focus), presetId);
+                preset.setDescription(desc);
+                preset.setImageLocation(imageLoc);
+                Camera cam = Camera.getCamera(cameraId);
+                if (overwrite) {
+                    cam.overwritePreset(preset);
+                } else {
+                    cam.addPreset(preset);
+                }
+            }
+        }
+        stmt.close(); 
     }
 }

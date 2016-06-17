@@ -2,7 +2,6 @@ package nl.tudelft.contextproject.databaseConnection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -11,12 +10,15 @@ import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class DatabaseConnectionTest {
     
@@ -38,11 +40,18 @@ public class DatabaseConnectionTest {
     }
     
     /**
-     * Resets the settings and clears all cameras.
+     * Resets the settings when all the tests in this class are finished.
      */
     @AfterClass
     public static void cleanUp() {
-        ApplicationSettings.getInstance().reset();
+        ApplicationSettings.getInstance().reset();       
+    }
+    
+    /**
+     * Resets the cameras after each test.
+     */
+    @After
+    public void after() {
         Camera.clearAllCameras();
     }
     
@@ -87,5 +96,57 @@ public class DatabaseConnectionTest {
         Script script = new Script(los);
         connection.uploadScript(script);
         assertEquals(script, connection.getScript());
+    }
+    
+    @Test
+    public void testPreset() throws SQLException {
+        Camera cam0 = new Camera();
+        Camera cam1 = new Camera();
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1, "desccc");
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2, "dsdoifj");
+        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3, "sdfioj");
+        cam0.addPreset(pres);
+        cam0.addPreset(pres3);
+        cam1.addPreset(pres2);
+        connection.clearPresets();
+        Collection<Preset> expected0 = cam0.getAllPresets();
+        Collection<Preset> expected1 = cam1.getAllPresets();
+        Iterator<Preset> it = cam0.getAllPresets().iterator();
+        while (it.hasNext()) {
+            connection.uploadPreset(it.next(), cam0);
+        }
+        connection.uploadPreset(pres2, cam1);
+        cam0.getAllPresets().clear();
+        cam1.getAllPresets().clear();
+        connection.updatePresets(false);
+        assertEquals(expected0, cam0.getAllPresets());
+        assertEquals(expected1, cam1.getAllPresets());
+    }
+    
+    @Test
+    public void testPresetOverwrite() throws SQLException {
+        Camera cam0 = new Camera();
+        Camera cam1 = new Camera();
+        Preset pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1, "desccc");
+        Preset pres2 = new InstantPreset(new CameraSettings(1, 3, 2, 5), 2, "dsdoifj");
+        Preset pres3 = new InstantPreset(new CameraSettings(2, 4, 5, 3), 3, "sdfioj");
+        cam0.addPreset(pres);
+        cam0.addPreset(pres3);
+        cam1.addPreset(pres2);
+        connection.clearPresets();
+        Collection<Preset> expected0 = cam0.getAllPresets();
+        Collection<Preset> expected1 = cam1.getAllPresets();
+        Iterator<Preset> it = cam0.getAllPresets().iterator();
+        //Upload current presets
+        while (it.hasNext()) {
+            connection.uploadPreset(it.next(), cam0);
+        }
+        connection.uploadPreset(pres2, cam1);
+
+        //Upload new preset
+        Preset presOverwrite = new InstantPreset(new CameraSettings(1, 3, 5, 3), 3, "sjhloj");
+        connection.uploadPreset(presOverwrite, cam0);
+        connection.updatePresets(true);
+        assertTrue(cam0.getAllPresets().contains(presOverwrite));
     }
 }
