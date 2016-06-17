@@ -41,39 +41,7 @@
          <children>
             <VBox alignment="TOP_CENTER" minHeight="0.0" minWidth="0.0" spacing="5.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                <children>
-<<<<<<< HEAD
                   <VBox fx:id="thumbnailBox" alignment="TOP_CENTER" minHeight="173.0" minWidth="258.0" VBox.vgrow="ALWAYS">
-=======
-                  <VBox fx:id="bigViewBox" alignment="CENTER" VBox.vgrow="ALWAYS">
-                     <padding>
-                        <Insets right="5.0" />
-                     </padding>
-                  </VBox>
-                  <HBox alignment="CENTER" maxHeight="40.0" maxWidth="511.0" prefHeight="40.0" prefWidth="511.0" VBox.vgrow="NEVER">
-                     <children>
-                        <Label text="Currently displayed:  ">
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding></Label>
-                        <Label fx:id="bigStatusLabel" prefHeight="17.0" prefWidth="51.0" text="-1">
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding></Label>
-                        <VBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Button fx:id="btnSwap" mnemonicParsing="false" text="Switch" />
-                           </children>
-                        </VBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" top="5.0" />
-                     </padding>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </HBox>
-                  <AnchorPane maxHeight="176.0" maxWidth="512.0" minHeight="176.0" minWidth="512.0" prefHeight="176.0" prefWidth="512.0" style="-fx-border-color: black;" VBox.vgrow="NEVER">
->>>>>>> dev
                      <children>
                         <ImageView fx:id="thumbnail" fitHeight="238.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
                            <VBox.margin>
