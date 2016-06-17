@@ -153,10 +153,12 @@ public final class DatabaseConnection {
         ResultSet rs = stmt.executeQuery(query);
         rs.next();
 
+        int res = rs.getInt("number");
+
         rs.close();
         stmt.close();
 
-        return rs.getInt("number");
+        return res;
     }
 
     /**
