@@ -1,372 +1,206 @@
 package nl.tudelft.contextproject.gui;
 
-import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.presets.MovementType;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
+import nl.tudelft.contextproject.script.Shot;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This class controls the screen that shows the live view of
- * the {@link Camera}, for the cameraman. This screen allows a cameraman to see the
- * current live view, look at the {@link Preset Presets} of the camera, and apply
- * both new and pre-configured presets.
+ * This class controls the screen that shows the view for a cameraman.
+ * This screen allows a cameraman to see the script with the current 
+ * active shot, and look at the {@link Preset Presets} of the 
+ * camera.
  * 
  * <p>The view section is defined under view/CameramanLiveView.fxml
  * 
- * @since 0.3
+ * @since 0.8
  */
 public class CameramanLiveController {
 
-    private static Script script;
-
-    @FXML private AnchorPane movementPane;
-    @FXML private TabPane tabs;
-
+    private static List<CheckBox> cameras;
+    
     @FXML private Button btnBack;
-    @FXML private Button btnConfirm;
-    @FXML private Button swap;
-    @FXML private Button moveOne;
-    @FXML private Button moveTwo;
-    @FXML private Button moveThree;
-    @FXML private Button moveFour;
-    @FXML private Button moveFive;
-    @FXML private Button moveSix;
-    @FXML private Button moveSeven;
+    @FXML private Button btnHideAll;
+    @FXML private Button btnPresets;
+    @FXML private Button btnNext;
+    @FXML private Button btnShowAll;
     
-    @FXML private ChoiceBox<Camera> currentCam;
-
-    @FXML private ImageView bigView;
-    @FXML private ImageView smallView;
-
-    @FXML private Label bigStatusLabel;
-    @FXML private Label smallStatusLabel;
-    @FXML private Label cameraNumberLabel;
-    @FXML private Label presetLabel;
-    @FXML private Label movement;
-    @FXML private Label infoLabel;
-
-    @FXML private TextArea descriptionField;
-    @FXML private TextField speed;
-
-    @FXML private VBox bigViewBox;
-    @FXML private VBox smallViewBox;
-
-    private Camera liveCam;
+    @FXML private TableView<Shot> tableShots;
+    @FXML private TableColumn<Shot, String> columnAction;
+    @FXML private TableColumn<Shot, Number> columnCamera;
+    @FXML private TableColumn<Shot, Number> columnID;
+    @FXML private TableColumn<Shot, String> columnPreset;
+    @FXML private TableColumn<Shot, String> columnShot;
+    @FXML private TableColumn<Shot, String> columnSubject;
     
-    private boolean live;
+    @FXML private VBox vbox;
     
-    private int liveSpeed;
-    private int currentSpeed;
-
-    private MovementType liveMovement;
-    private MovementType currentMovement;
+    private Script script;
 
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         script = ContextTFP.getScript();
-        
-        //set an initial live camera
-        liveCam = Camera.getCamera(0);
-        
-        bigView.fitWidthProperty().bind(bigViewBox.widthProperty());
-        bigView.fitHeightProperty().bind(bigViewBox.heightProperty());
+        cameras = new ArrayList<CheckBox>();
+        vbox.setSpacing(6);
 
-        smallView.fitWidthProperty().bind(smallViewBox.widthProperty());
-        smallView.fitHeightProperty().bind(smallViewBox.heightProperty());
-        
-        live = true;
-        
-        initializeLabels();
-        initializeViews();
-        initializeButtons();
-        initializeMovements();
-        initializeTextFields();
-        initializeCurrentCam();
-        
-        movementPane.setDisable(true);
-        descriptionField.setEditable(false);
+        initCameraSelector();
+        initButtons();
+        initRowFactory();
+        setFactories();
+
+        tableShots.getItems().addAll(script.getShots());
+        tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    /**
-     * Initializes the labels in the gui.
-     */
-    private void initializeLabels() {
-        bigStatusLabel.setText("LIVE");
-        bigStatusLabel.setStyle("-fx-text-fill: red;");
-        smallStatusLabel.setText("Current camera");
+    private void initCameraSelector() {
+        for (Camera c : Camera.getAllCameras()) {
+            final CheckBox check = new CheckBox();
+            check.setText("Camera: " + (c.getNumber() + 1));
+            check.setContentDisplay(ContentDisplay.LEFT);
+            check.fire();
+            cameras.add(check);
 
-        if (script.getCurrentShot() != null) {
-            cameraNumberLabel.setText(Integer.toString(script.getCurrentShot().getCamera().getNumber()));
-            presetLabel.setText(Integer.toString(script.getCurrentShot().getPreset().getId()));
-            descriptionField.setText(script.getCurrentShot().getDescription());
+            check.selectedProperty().addListener((obs, oldV, newV) -> {
+                if (newV != null) {
+                    List<Shot> listShots = fillListOfShots();
+                    tableShots.getItems().setAll(listShots);
+                }
+            });
+
+            vbox.getChildren().add(check);
         }
-
-        cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
-        presetLabel.setText(String.valueOf(liveCam.getPreset(1).getId()));
     }
 
     /**
-     * Initializes the views.
+     * Initialize button functionality.
      */
-    private void initializeViews() {
-        Image actual = new Image("placeholder_picture.jpg");
-        bigView.setImage(actual);
-
-        Image current = new Image("test3.jpg");
-        smallView.setImage(current);
-    }
-
-    /**
-     * Initialize button styling and functionality.
-     */
-    private void initializeButtons() {
-        initSwapButton();
-
+    private void initButtons() {
         btnBack.setOnAction(event -> {
             MenuController.show();
         });
-
-        btnConfirm.setOnAction(event -> {
-            if (!speed.getText().isEmpty()) {
-                int spd = Integer.parseInt(speed.getText());
-
-                if (spd > 100) {
-                    spd = 100;
-                }
-
-                if (live) {                   
-                    liveSpeed = spd;
-                    speed.setText(String.valueOf(spd));
-                } else {
-                    currentSpeed = spd;
-                    speed.setText(String.valueOf(spd));
-                }
-            }
-        });
-    }
-
-    /**
-     * Initializes the swap button.
-     */
-    private void initSwapButton() {
-        swap.setOnAction(event -> {
-            Image three = bigView.getImage();
-            bigView.setImage(smallView.getImage());
-            smallView.setImage(three);
-            String text = bigStatusLabel.getText();
-            bigStatusLabel.setText(smallStatusLabel.getText());
-            smallStatusLabel.setText(text);
-
-            if (text.equals("LIVE")) {
-                smallStatusLabel.setStyle("-fx-text-fill: red;");
-                bigStatusLabel.setStyle("");
-            } else {
-                smallStatusLabel.setStyle("");
-                bigStatusLabel.setStyle("-fx-text-fill: red;");
-            }
-
-            swapCurrentView();
-            swapInfoTable();
-            swapSpeed();
-        });
-    }
-
-    /**
-     * Initialises movements.
-     */
-    private void initializeMovements() {
-        moveOne.setOnAction(event -> {
-            movement.setText(moveOne.getText());
-            setMovement(MovementType.ZOOM_IN);
-        });
-
-        moveTwo.setOnAction(event -> {
-            movement.setText(moveTwo.getText());
-            setMovement(MovementType.ZOOM_OUT);
-        });
-
-        moveThree.setOnAction(event -> {
-            movement.setText(moveThree.getText());
-            setMovement(MovementType.LEFT);
-        });
-
-        moveFour.setOnAction(event -> {
-            movement.setText(moveFour.getText());
-            setMovement(MovementType.RIGHT);
-        });
-
-        moveFive.setOnAction(event -> {
-            movement.setText(moveFive.getText());
-            setMovement(MovementType.UP);
-        });
-
-        moveSix.setOnAction(event -> {
-            movement.setText(moveSix.getText());
-            setMovement(MovementType.DOWN);
-        });
-
-        moveSeven.setOnAction(event -> {
-            movement.setText(moveSeven.getText());
-            setMovement(MovementType.CUSTOM);
+        
+        //TODO remove temp button
+        //Button is here to allow for easy demo-ing of
+        //the current shot highlight.
+        btnNext.setOnAction(event -> {
+            ContextTFP.getScript().next();
+            tableShots.refresh();
         });
         
+        btnShowAll.setOnAction(event -> {
+            toggleCameras(true);
+        });
         
+        btnHideAll.setOnAction(event -> {
+            toggleCameras(false);
+        });
+        
+        btnPresets.setOnAction(event -> {
+            PresetController.setToCameramanView(true);
+            
+            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
+                PresetController.show();
+                Animation.animNodeIn(ContextTFP.getRootLayout());
+            });
+        });
+    }
+    
+    /**
+     * Toggles the cameras shown in the table.
+     * @param show True if show, false if hide.
+     */
+    private void toggleCameras(boolean show) {
+        for (CheckBox c : cameras) {
+            c.setSelected(show);
+        }
     }
 
     /**
-     * Initialises the text fields.
+     * Sub method of {@link #initButtons()} that fills a list
+     * with all the shots that belong to the selected camera.
      */
-    private void initializeTextFields() {
-        speed.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+    private List<Shot> fillListOfShots() {
+        final List<Shot> listShots = new ArrayList<Shot>();
+        
+        for (Shot s : script.getShots()) {
+            int shotCamNum = s.getCamera().getNumber();
+            
+            if (s.equals(script.getCurrentShot())
+                    || cameras.get(shotCamNum).isSelected()) {
+                listShots.add(s);
+            }
+        }
+        
+        return listShots;
+    }
+    
+    /**
+     * Sets the row factory of the table, enabling the 
+     * indication of the current shot.
+     */
+    private void initRowFactory() {
+        final PseudoClass currentPseudoClass = PseudoClass.getPseudoClass("current");
+
+        tableShots.setRowFactory(table -> new TableRow<Shot>() {
+            
             @Override
-            public void handle(KeyEvent event) {
-                String character = event.getCharacter();
-
-                if (!character.matches("[0-9]")) {
-                    event.consume();
-                } else if (speed.getText().length() == 3) {
-                    event.consume();
+            protected void updateItem(Shot s, boolean b) {
+                super.updateItem(s, b);
+                if (s != null) {
+                    boolean current = s.equals(script.getCurrentShot());
+                    pseudoClassStateChanged(currentPseudoClass, current);
+                    tableShots.refresh();
                 }
             }
         });
     }
 
     /**
-     * Initialises the ChoiceBox of cameras to choose from.
+     * Sets the factories of the table columns.
      */
-    private void initializeCurrentCam() {
-        currentCam.setItems(FXCollections.observableArrayList(Camera.getAllCameras()));
-        currentCam.setVisible(false);
-        
-        currentCam.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> { 
-            changeInfoTable(newV);
+    private void setFactories() {
+        columnID.setCellValueFactory(new PropertyValueFactory<Shot, Number>("number"));
+
+        columnShot.setCellValueFactory(new PropertyValueFactory<Shot, String>("shotId"));
+
+        columnPreset.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getPreset() == null) {
+                return new ReadOnlyObjectWrapper<>();
+            } else {
+                return new ReadOnlyObjectWrapper<>(
+                    Integer.toString(cellData.getValue().getPreset().getId() + 1));
+            }
         });
+
+        columnAction.setCellValueFactory(new PropertyValueFactory<Shot, String>("action"));
+
+        columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
+            cellData.getValue().getCamera().getNumber() + 1));
         
-        //set initial current camera
-        currentCam.setValue(Camera.getCamera(1));
+        columnSubject.setCellValueFactory(new PropertyValueFactory<Shot, String>("description"));
     }
     
-    /**
-     * Swap currentView.
-     */
-    private void swapCurrentView() {
-        if (live) {
-            live = false;
-            currentCam.setVisible(true);
-            movementPane.setDisable(false);
-        } else {
-            live = true;
-            currentCam.setVisible(false);
-            movementPane.setDisable(true);
-        }
-    }
-
-    /**
-     * Swap info table according to the big view.
-     */
-    private void swapInfoTable() {
-        if (live) {
-            setActualInfo();
-        } else {
-            setCurrentInfo();
-        }
-    }
-    
-    /**
-     * Changes the info table according to the currently selected camera.
-     * 
-     * @param newCam The new camera to switch the info to.
-     */
-    private void changeInfoTable(Camera newCam) {
-        Preset preset;
-        if (newCam.getPreset(1) == null) {
-            preset = newCam.getPreset(2);
-        } else {
-            preset = newCam.getPreset(1);
-        }
-        infoLabel.setText("Information about current camera");
-        cameraNumberLabel.setText(String.valueOf(newCam.getNumber()));
-        presetLabel.setText(String.valueOf(preset.getId()));
-        movement.setText(MovementType.getName(currentMovement));
-        descriptionField.setText(preset.getDescription());
-    }
-
-    /**
-     * Swap speed according to the big view.
-     */
-    private void swapSpeed() {
-        if (live) {
-            if (liveSpeed > 0) {
-                speed.setText(String.valueOf(liveSpeed));
-            } else {
-                speed.setText("");
-            }
-        } else {
-            if (currentSpeed > 0) {
-                speed.setText(String.valueOf(currentSpeed));
-            } else {
-                speed.setText("");
-            }
-        }
-    }
-
-    /**
-     * Set movement type to the big view.
-     * @param mt The movement type to set.
-     */
-    private void setMovement(MovementType mt) {
-        if (live) {
-            liveMovement = mt;
-        } else {
-            currentMovement = mt;
-        }
-    }
-
-    /**
-     * Set the table info to the actual camera info.
-     */
-    private void setActualInfo() {
-        Preset preset = liveCam.getPreset(1);
-        infoLabel.setText("Information about live camera");
-        cameraNumberLabel.setText(String.valueOf(liveCam.getNumber()));
-        presetLabel.setText(String.valueOf(preset.getId()));
-        movement.setText(MovementType.getName(liveMovement));
-        descriptionField.setText(preset.getDescription());
-    }
-    
-    /**
-     * Set the table info to the current camera info.
-     */
-    private void setCurrentInfo() {
-        Preset preset = currentCam.getValue().getPreset(2);
-        infoLabel.setText("Information about current camera");
-        cameraNumberLabel.setText(String.valueOf(currentCam.getValue().getNumber()));
-        presetLabel.setText(String.valueOf(preset.getId()));
-        movement.setText(MovementType.getName(currentMovement));
-        descriptionField.setText(preset.getDescription());
-    }
-
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.

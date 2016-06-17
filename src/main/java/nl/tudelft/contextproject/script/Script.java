@@ -276,12 +276,7 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        current++;
-        Shot next = shots.get(current);
-        
-        updateOldCamCaller();
-
-        return next;
+        return next(false);
     }
     
     /**

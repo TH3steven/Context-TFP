@@ -11,6 +11,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
 
+import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Shot;
 
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
@@ -243,5 +245,21 @@ public final class AlertDialog {
         } else {
             throw new RuntimeException("No VLC installed!");
         }
+    }
+    
+    /**
+     * Shows a message box to confirm overwriting a preset.
+     * @param newPreset The preset which will overwrite another preset.
+     * @param cam The camera of the preset that will be overridden.
+     */
+    public static boolean confirmPresetOverwrite(Preset newPreset, Camera cam) {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm overwriting");
+        alert.setHeaderText("You are about to overwrite a preset");
+        alert.setContentText("Are you sure you want to overwrite preset " + newPreset.getId() + "?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        return result.get() == ButtonType.OK;
     }
 }
