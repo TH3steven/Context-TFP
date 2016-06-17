@@ -121,6 +121,17 @@ public class CameraSettings {
     }
 
     /**
+     * Pans and Tilts the Camera Settings a certain pan and tilt offset.
+     *
+     * @param panOffset The offset to pan the camera.
+     * @param tiltOffset The offset to tilt the camera.
+     */
+    protected void panTilt(int panOffset, int tiltOffset) {
+        pan += panOffset;
+        tilt += tiltOffset;
+    }
+
+    /**
      * Zooms the camera settings a certain offset.
      * @param offset The offset to zoom the camera.
      */

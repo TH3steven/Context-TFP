@@ -6,11 +6,19 @@ import static org.junit.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.Arrays;
 
 /**
  * Class to test the behavior of a mimiced or mocked camera.
  * @since 0.4
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(MockedCameraConnection.class)
 public class MockedCameraConnectionTest {
     private MockedCameraConnection mockedCam;
     private CameraSettings camSet;
@@ -31,10 +39,10 @@ public class MockedCameraConnectionTest {
         mockedCam = new MockedCameraConnection();
         cam1 = new Camera();
     }
-    
+
     /**
      * Tests getCurrentCameraSettings method.
-     */    
+     */
     @Test
     public void testGetCurrentCameraSettings() {
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet);
@@ -59,7 +67,7 @@ public class MockedCameraConnectionTest {
         String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
         assertTrue(mockedCam.getStreamLink().equals(streamLink));
     }
-    
+
     /**
      * Tests the getCurrentZoom method.
      */
@@ -79,7 +87,7 @@ public class MockedCameraConnectionTest {
         cam1.setSettings(camSet);
         assertEquals(mockedCam.getCurrentFocus(), camSet.getFocus());
     }
-    
+
     /**
      * Tests update method.
      */
@@ -201,4 +209,35 @@ public class MockedCameraConnectionTest {
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
     }
 
+    /**
+     * Tests relPanTilt method. Checks if the correct cameraSettings are returned
+     * after a relative pan and tilt are performed simultaneously.
+     */
+    @Test
+    public void testRelPanTilt() {
+        CameraSettings camSet2 = new CameraSettings(60, 60, 30, 1365);
+        cam1.setConnection(mockedCam);
+        cam1.panTilt(30, 30);
+        int[] panTilt;
+        panTilt = new int[]{60, 60};
+        assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
+        Arrays.equals(panTilt, mockedCam.getCurrentPanTilt());
+    }
+
+    /**
+     * Tests the snapShot method. PowerMock is
+     * used here to verify the behavior of this method.
+     */
+    @Test
+    public void testSnapShot() {
+        PowerMockito.spy(MockedCameraConnection.class);
+        cam1.setConnection(mockedCam);
+        String imageLocation = "error.jpg";
+
+        mockedCam.snapShot(imageLocation);
+
+        PowerMockito.verifyStatic();
+        mockedCam.snapShot(imageLocation);
+    }
 }
+

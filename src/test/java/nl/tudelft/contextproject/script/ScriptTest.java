@@ -99,6 +99,8 @@ public class ScriptTest {
         assertEquals(script1.getShots().get(0).getCamera(), cam0);
         assertEquals(script1.getShots().get(0).getNumber(), 1);
         assertEquals(script1.getShots().get(0).getPreset(), pres);
+        assertNotEquals(script1, script2);
+        assertNotEquals(script1, los1);
     }
 
     /**
@@ -138,10 +140,11 @@ public class ScriptTest {
      */
     @Test
     public void testNext() throws NoSuchElementException {
-        assertEquals(script1.next(), shot1);
-        assertEquals(script1.next(), shot2);
+        assertEquals(script1.next(true), shot1);
+        assertEquals(script1.next(true), shot2);
         script1.next();
         assertFalse(script1.hasNext());
+        assertNull(script1.getNextShot());
     }
 
     /**
@@ -217,7 +220,8 @@ public class ScriptTest {
     }
 
     /**
-     * Tests the addShot method.
+     * Tests the addShot method if the shots are properly added to
+     * the script.
      */
     @Test
     public void testAddShot() {
@@ -226,7 +230,10 @@ public class ScriptTest {
         assertEquals(script2.getShots(), los1);
         assertTrue(timeline1.getShots().contains(shot1));
     }
-    
+
+    /**
+     * This tests the getCurrent method.
+     */
     @Test
     public void testGetCurrent() {
         assertEquals(-1, script1.getCurrent());

@@ -197,6 +197,23 @@ public class Camera extends Observable {
     }
 
     /**
+     * Pans and Tilts the camera to a setting offset. Cannot tilt or
+     * pan the camera past the pan and tilt limits.
+     *
+     * @param panOffset The offset to pan the camera
+     * @param tiltOffset The offset to tilt the camera.
+     */
+    public void panTilt(int panOffset, int tiltOffset) {
+        camSet.panTilt(panOffset, tiltOffset);
+
+        if (hasConnection()) {
+            connection.relPanTilt(panOffset, tiltOffset);
+        }
+
+        setChanged();
+        notifyObservers();
+    }
+    /**
      * Zooms the camera a certain offset. Cannot zoom past
      * the zoom limits.
      * 
