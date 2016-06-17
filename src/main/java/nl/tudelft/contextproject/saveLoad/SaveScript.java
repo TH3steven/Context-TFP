@@ -43,6 +43,7 @@ public final class SaveScript {
     private static final String TAG_SHOT = "shot";
     private static final String TAG_SHOTID = "shotId";
     private static final String TAG_SHOTS = "shots";
+    private static final String TAG_ACTION = "action";
 
     /**
      * XMLEventWriter that writes everything away to an XML file.
@@ -238,6 +239,9 @@ public final class SaveScript {
         writer.add(eventFactory.createStartElement("", "", TAG_DESCRIPTION));
         writer.add(eventFactory.createCharacters(shot.getDescription()));
         writer.add(eventFactory.createEndElement("", "", TAG_DESCRIPTION));
+        writer.add(eventFactory.createStartElement("", "", TAG_ACTION));
+        writer.add(eventFactory.createCharacters(shot.getAction()));
+        writer.add(eventFactory.createEndElement("", "", TAG_ACTION));
         writer.add(eventFactory.createStartElement("", "", TAG_CAMERAID));
         writer.add(eventFactory.createCharacters(shot.getCamera().getNumber() + ""));
         writer.add(eventFactory.createEndElement("", "", TAG_CAMERAID));

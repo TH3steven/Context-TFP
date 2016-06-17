@@ -88,19 +88,22 @@ public class CreateScriptController {
     @FXML private TableView<Shot> tableEvents;
     @FXML private TableColumn<Shot, Shot> columnAction;
     @FXML private TableColumn<Shot, Number> columnCamera;
-    @FXML private TableColumn<Shot, String> columnDescription;
+    @FXML private TableColumn<Shot, String> columnSubject;
+    @FXML private TableColumn<Shot, String> columnShotAction;
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, Image> columnReorder;
     @FXML private TableColumn<Shot, String> columnShot;
 
     @FXML private TextField addShot;
-    @FXML private TextField addDescription;
+    @FXML private TextField addSubject;
+    @FXML private TextField addAction;
+    @FXML private TextField editAction;
     @FXML private TextField editShot;
-    @FXML private TextField editDescription;
+    @FXML private TextField editSubject;
 
     /**
-     * Initialise method used by JavaFX.
+     * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
 
@@ -235,8 +238,11 @@ public class CreateScriptController {
             }
         });
 
-        columnDescription.setCellValueFactory(
+        columnSubject.setCellValueFactory(
             new PropertyValueFactory<Shot, String>("description"));
+
+        columnShotAction.setCellValueFactory(
+            new PropertyValueFactory<Shot, String>("action"));
 
         columnAction.setCellValueFactory(cellData -> 
             new ReadOnlyObjectWrapper<>(cellData.getValue()));
@@ -274,7 +280,6 @@ public class CreateScriptController {
             if (isValidInput()) {
                 addCamera.setStyle("");
                 addPreset.setStyle("");
-                addDescription.setStyle("");
 
                 if (!validateScript(data)
                         && !AlertDialog.confirmInvalidScriptAdding(
@@ -288,7 +293,8 @@ public class CreateScriptController {
                 addShot.clear();
                 addCamera.getSelectionModel().clearSelection();
                 addPreset.getSelectionModel().clearSelection();
-                addDescription.clear();
+                addSubject.clear();
+                addAction.clear();
             }
         });
     }
@@ -309,11 +315,6 @@ public class CreateScriptController {
 
         if (addPreset.getSelectionModel().isEmpty()) {
             addPreset.setStyle(REDBORDER);
-            isValid = false;
-        }
-
-        if (addDescription.getText().isEmpty()) {
-            addDescription.setStyle(REDBORDER);
             isValid = false;
         }
 
@@ -354,7 +355,8 @@ public class CreateScriptController {
                     maximumId,
                     addShot.getText(),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                    addDescription.getText()
+                    addSubject.getText(),
+                    addAction.getText()
                     );
 
             return newShot;
@@ -365,7 +367,8 @@ public class CreateScriptController {
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
                     Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
                         .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
-                    addDescription.getText()
+                    addSubject.getText(),
+                    addAction.getText()
                     );
 
             return newShot;
@@ -514,7 +517,8 @@ public class CreateScriptController {
         editShot.setOnKeyReleased(addResourceHandler);
         editCamera.setOnKeyReleased(addResourceHandler);
         editPreset.setOnKeyReleased(addResourceHandler);
-        editDescription.setOnKeyReleased(addResourceHandler);
+        editSubject.setOnKeyReleased(addResourceHandler);
+        editAction.setOnKeyReleased(addResourceHandler);
 
         initTable();
     }
@@ -538,15 +542,9 @@ public class CreateScriptController {
                 isValid = false;
             }
 
-            if (editDescription.getText().isEmpty()) {
-                editDescription.setStyle(REDBORDER);
-                isValid = false;
-            }
-
             if (isValid) {
                 editCamera.setStyle("");
                 editPreset.setStyle("");
-                editDescription.setStyle("");
 
                 editConfirmAction(lastSelectedRow.get().getItem());
             }
@@ -573,7 +571,8 @@ public class CreateScriptController {
                 } else {
                     editPreset.getSelectionModel().select(0);
                 }
-                editDescription.setText(nv.getDescription());
+                editSubject.setText(nv.getDescription());
+                editAction.setText(nv.getAction());
 
                 if (ov != nv && ov != null) {
                     editDoneAction();
@@ -601,7 +600,7 @@ public class CreateScriptController {
      */
     private void editConfirmAction(Shot shot) {
         Shot backup = new Shot(shot.getNumber(), shot.getShotId(), 
-                shot.getCamera(), shot.getPreset(), shot.getDescription());
+                shot.getCamera(), shot.getPreset(), shot.getDescription(), shot.getAction());
 
         shot.setShotId(editShot.getText());
         shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
@@ -611,7 +610,8 @@ public class CreateScriptController {
         } else {
             shot.setPreset(null);
         }
-        shot.setDescription(editDescription.getText());
+        shot.setDescription(editSubject.getText());
+        shot.setAction(editAction.getText());
 
         if (lastSelectedRow.get().getIndex() < backupList.size()) {
             backupList.set(lastSelectedRow.get().getIndex(), backup);

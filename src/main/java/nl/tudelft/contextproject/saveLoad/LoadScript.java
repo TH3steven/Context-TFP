@@ -371,6 +371,7 @@ public final class LoadScript {
         int cameraId = -1;
         int presetId = -1;
         String description = "";
+        String action = "";
         
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
@@ -398,6 +399,11 @@ public final class LoadScript {
                     if (presetIdEvent.isCharacters()) {
                         presetId = Integer.parseInt(presetIdEvent.asCharacters().getData());
                     }
+                } else if ("action".equals(start.getName().getLocalPart())) {
+                    XMLEvent actionEvent = reader.nextEvent();
+                    if (actionEvent.isCharacters()) {
+                        action = actionEvent.asCharacters().getData();
+                    }
                 }
             }
             if (event.isEndElement()) {
@@ -410,7 +416,7 @@ public final class LoadScript {
         
         Camera cam = Camera.getCamera(cameraId);
         if (cam != null) {
-            return new Shot(id, shotId, cam, cam.getPreset(presetId), description);
+            return new Shot(id, shotId, cam, cam.getPreset(presetId), description, action);
         } else {
             throw new XMLStreamException("Camera cannot be found with camera id: " + cameraId);
         }

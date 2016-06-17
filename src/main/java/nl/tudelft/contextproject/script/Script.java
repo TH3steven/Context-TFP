@@ -174,7 +174,7 @@ public class Script implements Iterator<Shot> {
         try {
             return shots.get(current);
         } catch (Exception e) {
-            return new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot");
+            return new Shot(-1, "-1", Camera.DUMMY, new InstantPreset(new CameraSettings(), -1), "No shot", "No action");
         }
     }
 
