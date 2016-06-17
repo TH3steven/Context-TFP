@@ -156,7 +156,7 @@ public class DirectorLiveController {
         btnNext.setOnAction(event -> {
             if (!endReached()) {
                 script.next(automaticCheck.isSelected());
-                // TODO: Move the current shot highlight in the table.
+                // TODO Move the current shot highlight in the table.
             } else {
                 actionTxt.setText("End of script reached");
             }
