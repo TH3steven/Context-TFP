@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.saveLoad.LoadScript;
 import nl.tudelft.contextproject.saveLoad.SaveScript;
@@ -33,6 +34,7 @@ import nl.tudelft.contextproject.script.Script;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +66,7 @@ public class MenuController {
     @FXML private Button btnLoadScript;
     @FXML private Button btnChangeVlcLoc;
     @FXML private Button btnSettingsAddCamera;
+    @FXML private Button btnSettingsCancel;
     @FXML private Button btnSettingsClearCameras;
     @FXML private Button btnSettingsSave;
     @FXML private Button btnSettingsTest;
@@ -285,6 +288,9 @@ public class MenuController {
         });
     }
     
+    /**
+     * Opens Settings menu.
+     */
     private void settingsOnOpen() {
         BoxBlur boxBlur = new BoxBlur(15, 10, 3);
         settingsBack.setEffect(boxBlur);
@@ -300,8 +306,17 @@ public class MenuController {
         btnSettingsSave.setOnAction(event -> {
             settingsOnClose();
         });
+        
+        btnSettingsCancel.setOnAction(event -> {
+            settingsFront.setVisible(false);
+            settingsBack.setVisible(false);
+            settingsGrid.disableProperty().set(true);
+        });
     }
     
+    /**
+     * Closes settings menu.
+     */
     private void settingsOnClose() {
         try {
             btnSettingsTest.fire();
@@ -312,9 +327,13 @@ public class MenuController {
         } catch (IOException e) {
             AlertDialog.errorSavingSettings(e);
         }
-        
     }
     
+    /**
+     * Initialises the VLC settings section of the settings menu.
+     * 
+     * @param settings The instance of ApplicationSettings
+     */
     private void settingsInitVlcSettings(ApplicationSettings settings) {
         settingsVlcBox.setItems(FXCollections.observableArrayList(
                 "1080p", "720p", "480p"));
@@ -356,6 +375,11 @@ public class MenuController {
         });
     }
     
+    /**
+     * Initialises the database settings section of the settings menu.
+     * 
+     * @param settings The instance of ApplicationSettings
+     */
     private void settingsInitDbSettings(ApplicationSettings settings) {
         settingsDbAddress.setTooltip(new Tooltip("Address of the database used for synchronisation"));
         settingsDbPort.setTooltip(new Tooltip("Port associated with the address"));
@@ -375,18 +399,34 @@ public class MenuController {
             }
         });
         
+        settingsInitTestButton(settings);
+    }
+    
+    /**
+     * Initialises the 'Test Connection' button in the database settings
+     * section of the settings menu.
+     * 
+     * @param settings The instance of ApplicationSettings
+     */
+    private void settingsInitTestButton(ApplicationSettings settings) {
         btnSettingsTest.setOnAction(event -> {
-            //TODO: Test DB connection, keep old settings if incorrect.
-            if (/*connection is good*/ true) {
+            settings.setDatabaseInfo(settingsDbAddress.getText(), 
+                    Integer.parseInt(settingsDbPort.getText()),
+                    settingsDbName.getText(),
+                    settingsDbUsername.getText(), 
+                    settingsDbPassword.getText());
+            
+            DatabaseConnection dbConnect = DatabaseConnection.getInstance();
+            try {
+                dbConnect.connect();
+            } catch (Exception e) {
+                // If exceptions occur, then that will reflect in the isValid method.
+            }
+            
+            if (dbConnect.isValid(200)) {
                 lblDbSettingStatus.setText("Connection Verified!");
                 lblDbSettingStatus.setStyle("-fx-text-fill: green");
                 lblDbSettingStatus.setVisible(true);
-                settings.setDatabaseInfo(
-                        settingsDbAddress.getText(), 
-                        Integer.parseInt(settingsDbPort.getText()),
-                        settingsDbName.getText(),
-                        settingsDbUsername.getText(), 
-                        settingsDbPassword.getText());
             } else {
                 lblDbSettingStatus.setText("Connection Failed!");
                 lblDbSettingStatus.setStyle("-fx-text-fill: red");
@@ -395,11 +435,16 @@ public class MenuController {
         });
     }
     
+    /**
+     * Initialises the camera IPs section of the settings menu.
+     * @param settings The instance of ApplicationSettings
+     */
     private void settingsInitIpTable(ApplicationSettings settings) {
         btnSettingsAddCamera.setTooltip(new Tooltip("Adds a camera to the table"));
         btnSettingsAddCamera.setOnAction(event -> {
             settingsIpTable.getItems().add(new Camera());
         });
+        
         btnSettingsClearCameras.setTooltip(new Tooltip("Clears all cameras from the table"));
         btnSettingsClearCameras.setOnAction(event -> {
             if (AlertDialog.confirmClearCameras()) {
@@ -412,6 +457,7 @@ public class MenuController {
         settingsIdColumn.setCellValueFactory(cellData ->
             new ReadOnlyObjectWrapper<Integer>(cellData.getValue().getNumber() + 1)
         );
+        
         settingsAddressColumn.setCellValueFactory(cellData ->
             new SimpleStringProperty(settings.getCameraIP(cellData.getValue().getNumber()))
         );

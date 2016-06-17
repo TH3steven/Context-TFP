@@ -271,4 +271,19 @@ public final class AlertDialog {
         alert.setContentText("It may not be possible to ever retrieve these settings");
         return alert.showAndWait().get() == ButtonType.OK;
     }
+    
+    /**
+     * Shows a dialog asking whether the user is sure if he or she
+     * wants to save the settings.
+     * @return true iff the user wants to save the settings, false otherwise.
+     */
+    public static boolean confirmSaveSettings() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirm saving");
+        alert.setHeaderText("Are you sure you want to save these settings?");
+        alert.setContentText("The database settings are not verified. You can save the "
+                + "settings, but this prohibits the application from synchronising with "
+                + "the database.");
+        return alert.showAndWait().get() == ButtonType.OK;
+    }
 }

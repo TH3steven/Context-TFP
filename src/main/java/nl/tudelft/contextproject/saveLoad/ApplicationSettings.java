@@ -1,5 +1,7 @@
 package nl.tudelft.contextproject.saveLoad;
 
+import nl.tudelft.contextproject.camera.Camera;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,14 +18,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-import nl.tudelft.contextproject.camera.Camera;
-import nl.tudelft.contextproject.camera.LiveCameraConnection;
-import nl.tudelft.contextproject.camera.MockedCameraConnection;
-
 /**
  * Class to hold settings for the application.
  * Can write these settings to the settings file using {@link #save()}
  * and load them from the file using {@link #load()}
+ * 
+ * <p>This class has high cyclomatic complexities due to the load method.
+ * We did not find any good way to get around this, without sacrificing
+ * code readability.
  * 
  * @since 0.7
  */
@@ -304,6 +306,7 @@ public final class ApplicationSettings {
     
     /**
      * Encrypts a password.
+     * 
      * @param password the password to encrypt.
      * @return the encrypted password.
      */
@@ -328,6 +331,7 @@ public final class ApplicationSettings {
     
     /**
      * Decrypts a password.
+     * 
      * @param password password to decrypt.
      * @return the decrypted password.
      */

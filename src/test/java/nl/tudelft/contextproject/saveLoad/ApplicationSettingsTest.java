@@ -7,6 +7,7 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
+
 import nl.tudelft.contextproject.camera.Camera;
 
 import org.junit.Test;
@@ -39,6 +40,7 @@ public class ApplicationSettingsTest {
     /**
      * Asserts that the specified settings are the default settings.
      * @param settings Settings to be tested.
+     * @throws Exception Due to PowerMockito's when method.
      */
     private static void assertDefaultSettings(ApplicationSettings settings) {
         assertEquals(ApplicationSettings.DEFAULT_RESX, settings.getRenderResX());
@@ -52,6 +54,7 @@ public class ApplicationSettingsTest {
     /**
      * Tests {@link ApplicationSettings#isLoaded()}.
      * Loads two different files.
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     public void testIsLoaded() throws Exception {
@@ -79,6 +82,7 @@ public class ApplicationSettingsTest {
     /**
      * Tests {@link ApplicationSettings#load()}.
      * Tries to load a non-existent file.
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     public void testLoadNoFile() throws Exception {
@@ -94,6 +98,7 @@ public class ApplicationSettingsTest {
      * 
      * <p>Uses @SuppressWarnings to suppress the warning about a hardcoded IP,
      * which isn't meant to be an actual IP.
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
@@ -125,6 +130,7 @@ public class ApplicationSettingsTest {
      * the PrintWriter in the doReturn statement. This resource is closed, because
      * it's technically injected in the save method, which closes the writer it
      * uses.
+     * @throws Exception Due to PowerMockito's when method.
      */
     @Test
     @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", "resource" })
@@ -151,6 +157,10 @@ public class ApplicationSettingsTest {
         sc2.close();
     }
     
+    /**
+     * Integration test of save and load method.
+     * @throws Exception Due to PowerMockito's when method.
+     */
     @Test
     @SuppressWarnings("resource")
     public void testSaveLoad() throws Exception {
