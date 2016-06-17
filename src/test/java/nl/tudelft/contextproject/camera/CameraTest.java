@@ -281,7 +281,7 @@ public class CameraTest {
     @Test
     public void testToString() {
         Camera cam = new Camera(new CameraSettings(10, 10, 10, 10));
-        String expected = "Camera: " +cam.getNumber();
+        String expected = Integer.toString(cam.getNumber() + 1);
         assertEquals(expected, cam.toString());
     }
 
