@@ -130,7 +130,8 @@ public class CreateScriptController {
         btnAdd.setDefaultButton(true);
 
         // Removes the "No content in table" label.
-        tableEvents.setPlaceholder(new Label(""));
+        tableEvents.setPlaceholder(new Label("The script is empty. "
+                + "Add some shots below"));
 
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
