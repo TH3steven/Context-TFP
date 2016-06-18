@@ -30,7 +30,7 @@
           <TableColumn fx:id="columnCamera" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" text="Camera #" />
             <TableColumn fx:id="columnPreset" maxWidth="60.0" minWidth="60.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset #" />
             <TableColumn fx:id="columnSubject" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" sortable="false" text="Subject" />
-            <TableColumn fx:id="columnShotAction" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" text="Action" />
+            <TableColumn fx:id="columnShotAction" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" sortable="false" text="Action" />
             <TableColumn fx:id="columnAction" maxWidth="65.0" minWidth="65.0" prefWidth="-1.0" resizable="false" sortable="false" text="Remove" />
         </columns>
       </TableView>

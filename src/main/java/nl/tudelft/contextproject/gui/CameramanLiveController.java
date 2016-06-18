@@ -1,14 +1,12 @@
 package nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -66,11 +64,12 @@ public class CameramanLiveController {
 
         initCameraSelector();
         initButtons();
-        initRowFactory();
         setFactories();
+        
+        // Allows for highlighting of the current shot
+        LiveScript.setRowFactory(tableShots);
 
         tableShots.getItems().addAll(script.getShots());
-        tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     private void initCameraSelector() {
@@ -154,27 +153,6 @@ public class CameramanLiveController {
         }
 
         return listShots;
-    }
-
-    /**
-     * Sets the row factory of the table, enabling the 
-     * indication of the current shot.
-     */
-    private void initRowFactory() {
-        final PseudoClass currentPseudoClass = PseudoClass.getPseudoClass("current");
-
-        tableShots.setRowFactory(table -> new TableRow<Shot>() {
-
-            @Override
-            protected void updateItem(Shot s, boolean b) {
-                super.updateItem(s, b);
-                if (s != null) {
-                    boolean current = s.equals(script.getCurrentShot());
-                    pseudoClassStateChanged(currentPseudoClass, current);
-                    tableShots.refresh();
-                }
-            }
-        });
     }
 
     /**

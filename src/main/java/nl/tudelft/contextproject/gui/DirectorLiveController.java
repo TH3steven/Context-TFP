@@ -58,11 +58,12 @@ public class DirectorLiveController {
     @FXML private Label labelID;
 
     @FXML private TableView<Shot> tableShots;
+    @FXML private TableColumn<Shot, String> columnAction;
     @FXML private TableColumn<Shot, Number> columnCamera;
-    @FXML private TableColumn<Shot, String> columnSubject;
     @FXML private TableColumn<Shot, Number> columnID;
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
+    @FXML private TableColumn<Shot, String> columnSubject;
 
     @FXML private TextArea actionArea;
 
@@ -103,7 +104,10 @@ public class DirectorLiveController {
         }
         setFactories();
 
-        bindImageToBox(thumbnail, thumbnailBox);
+        //bindImageToBox(thumbnail, thumbnailBox);
+        
+        // Allows for highlighting of the current shot
+        LiveScript.setRowFactory(tableShots);
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
     }
@@ -146,6 +150,7 @@ public class DirectorLiveController {
 
         btnConfirm.setOnAction((event) -> {
             changeShot();
+            tableShots.refresh();
         });
     }
 
@@ -156,7 +161,7 @@ public class DirectorLiveController {
         btnNext.setOnAction(event -> {
             if (!endReached()) {
                 script.next(automaticCheck.isSelected());
-                // TODO Move the current shot highlight in the table.
+                tableShots.refresh();
             } else {
                 actionTxt.setText("End of script reached");
             }
@@ -269,6 +274,8 @@ public class DirectorLiveController {
 
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
                 cellData.getValue().getCamera().getNumber() + 1));
+        
+        columnAction.setCellValueFactory(new PropertyValueFactory<Shot, String>("action"));
     }
 
     /**
@@ -287,7 +294,7 @@ public class DirectorLiveController {
         fieldShot.setText(shot.getShotId());
         cameraSelecter.setValue(shot.getCamera());
         fieldSubject.setText(shot.getDescription());
-        actionArea.setText(shot.getDescription());
+        actionArea.setText(shot.getAction());
 
         if (shot.getPreset() != null) {
             presetSelecter.setValue(Integer.toString(shot.getPreset().getId() + 1));

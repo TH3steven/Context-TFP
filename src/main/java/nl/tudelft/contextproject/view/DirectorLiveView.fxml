@@ -1,99 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.DirectorLiveController">
    <children>
-      <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Return to menu" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
-      <HBox alignment="CENTER" layoutX="292.0" layoutY="530.0" prefHeight="31.0" prefWidth="312.0" spacing="20.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="292.0" AnchorPane.rightAnchor="196.0">
+      <Button fx:id="btnBack" layoutX="14.0" layoutY="536.0" mnemonicParsing="false" text="Return to menu" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" />
+      <TableView fx:id="tableShots" layoutX="15.0" layoutY="14.0" prefHeight="238.0" prefWidth="770.0" AnchorPane.bottomAnchor="322.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+        <columns>
+            <TableColumn fx:id="columnID" maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" sortable="false" text="ID" />
+          <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
+            <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Camera" />
+            <TableColumn fx:id="columnPreset" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset" />
+            <TableColumn fx:id="columnSubject" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" resizable="false" sortable="false" text="Subject" />
+            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" sortable="false" text="Action" />
+        </columns>
+      </TableView>
+      <VBox fx:id="thumbnailBox" alignment="TOP_CENTER" layoutX="393.0" layoutY="271.0" minHeight="173.0" minWidth="258.0" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="393.0" AnchorPane.rightAnchor="15.0">
          <children>
-            <Button fx:id="btnNext" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" prefWidth="84.0" text="Go live" />
-            <CheckBox fx:id="automaticCheck" mnemonicParsing="false" selected="true" text="Automatic loading">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </CheckBox>
+            <ImageView fx:id="thumbnail" fitHeight="238.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" />
          </children>
-      </HBox>
-      <GridPane layoutY="-2.0" minHeight="524.0" minWidth="800.0" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" />
-          <ColumnConstraints fillWidth="false" hgrow="ALWAYS" maxWidth="400.0" minWidth="10.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <VBox alignment="TOP_CENTER" minHeight="0.0" minWidth="0.0" spacing="5.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
-               <children>
-                  <VBox fx:id="thumbnailBox" alignment="TOP_CENTER" minHeight="173.0" minWidth="258.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <ImageView fx:id="thumbnail" fitHeight="238.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
-                           <VBox.margin>
-                              <Insets top="17.0" />
-                           </VBox.margin>
-                        </ImageView>
-                     </children>
-                     <VBox.margin>
-                        <Insets left="20.0" top="20.0" />
-                     </VBox.margin>
-                  </VBox>
-                  <Label fx:id="actionTxt">
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </Label>
-                  <AnchorPane maxHeight="200.0" maxWidth="411.0" minHeight="200.0" minWidth="411.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label layoutX="30.0" layoutY="89.0" text="Camera:" />
-                        <Label layoutX="30.0" layoutY="9.0" text="ID:" />
-                        <Label fx:id="labelID" layoutX="93.0" layoutY="9.0" text="test" />
-                        <Label layoutX="31.0" layoutY="49.0" text="Shot:" />
-                        <TextField fx:id="fieldShot" layoutX="93.0" layoutY="44.0" prefHeight="31.0" prefWidth="45.0" />
-                        <ChoiceBox fx:id="cameraSelecter" layoutX="93.0" layoutY="84.0" prefHeight="31.0" prefWidth="84.0" />
-                        <Label layoutX="30.0" layoutY="129.0" text="Preset:" />
-                        <ChoiceBox fx:id="presetSelecter" layoutX="93.0" layoutY="124.0" prefHeight="31.0" prefWidth="84.0" />
-                        <Label layoutX="201.0" layoutY="9.0" text="Subject:" />
-                        <TextField fx:id="fieldSubject" layoutX="264.0" layoutY="9.0" prefHeight="31.0" prefWidth="144.0" />
-                        <Label layoutX="201.0" layoutY="49.0" text="Action:" />
-                        <TextArea fx:id="actionArea" layoutX="201.0" layoutY="72.0" prefHeight="91.0" prefWidth="206.0" />
-                        <Button fx:id="btnUndo" layoutX="94.0" layoutY="169.0" mnemonicParsing="false" text="Undo changes" />
-                        <Button fx:id="btnConfirm" layoutX="228.0" layoutY="169.0" mnemonicParsing="false" text="Confirm changes" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </AnchorPane>
-               </children>
-            </VBox>
-            <TableView fx:id="tableShots" maxWidth="360.0" prefWidth="360.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
-              <columns>
-                  <TableColumn fx:id="columnID" maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" text="ID" />
-                <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" text="Shot" />
-                  <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" text="Camera" />
-                  <TableColumn fx:id="columnPreset" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" text="Preset" />
-                  <TableColumn fx:id="columnSubject" minWidth="153.0" prefWidth="-1.0" text="Subject" />
-              </columns>
-               <GridPane.margin>
-                  <Insets left="20.0" right="10.0" top="18.0" />
-               </GridPane.margin>
-            </TableView>
-         </children>
-      </GridPane>
+      </VBox>
+      <Label fx:id="actionTxt" layoutX="182.0" layoutY="283.0" prefHeight="14.0" prefWidth="0.0" />
+      <Button fx:id="btnNext" contentDisplay="CENTER" layoutX="701.0" layoutY="532.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" prefWidth="84.0" text="Go live" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <CheckBox fx:id="automaticCheck" layoutX="553.0" layoutY="536.0" mnemonicParsing="false" selected="true" text="Automatic loading" AnchorPane.bottomAnchor="22.0" AnchorPane.rightAnchor="128.0" />
+      <Separator layoutX="15.0" layoutY="516.0" prefHeight="10.0" prefWidth="770.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <Separator layoutX="15.0" layoutY="256.0" prefHeight="10.0" prefWidth="770.0" AnchorPane.bottomAnchor="309.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <Label layoutX="15.0" layoutY="345.0" text="Camera:" AnchorPane.bottomAnchor="213.0" AnchorPane.leftAnchor="15.0" />
+      <Label layoutX="15.0" layoutY="283.0" text="ID:" AnchorPane.bottomAnchor="275.0" AnchorPane.leftAnchor="15.0" />
+      <Label fx:id="labelID" layoutX="70.0" layoutY="283.0" text="test" AnchorPane.bottomAnchor="275.0" AnchorPane.leftAnchor="70.0" />
+      <Label layoutX="15.0" layoutY="311.0" text="Shot:" AnchorPane.bottomAnchor="247.0" AnchorPane.leftAnchor="15.0" />
+      <TextField fx:id="fieldShot" layoutX="70.0" layoutY="307.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="243.0" AnchorPane.leftAnchor="70.0" />
+      <ChoiceBox fx:id="cameraSelecter" layoutX="70.0" layoutY="341.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="209.0" AnchorPane.leftAnchor="70.0" />
+      <Label layoutX="15.0" layoutY="377.0" text="Preset:" AnchorPane.bottomAnchor="181.0" AnchorPane.leftAnchor="15.0" />
+      <ChoiceBox fx:id="presetSelecter" layoutX="70.0" layoutY="373.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="70.0" />
+      <Label layoutX="15.0" layoutY="410.0" text="Subject:" AnchorPane.bottomAnchor="148.0" AnchorPane.leftAnchor="15.0" />
+      <TextField fx:id="fieldSubject" layoutX="70.0" layoutY="406.0" prefHeight="25.0" prefWidth="206.0" AnchorPane.bottomAnchor="144.0" AnchorPane.leftAnchor="70.0" />
+      <Label layoutX="15.0" layoutY="451.0" text="Action:" AnchorPane.bottomAnchor="107.0" AnchorPane.leftAnchor="15.0" />
+      <TextArea fx:id="actionArea" layoutX="70.0" layoutY="440.0" prefHeight="25.0" prefWidth="206.0" AnchorPane.bottomAnchor="97.0" AnchorPane.leftAnchor="70.0" />
+      <Button fx:id="btnUndo" layoutX="183.0" layoutY="484.0" mnemonicParsing="false" text="Undo changes" AnchorPane.bottomAnchor="66.0" />
+      <Button fx:id="btnConfirm" layoutX="12.0" layoutY="484.0" mnemonicParsing="false" text="Confirm changes" AnchorPane.bottomAnchor="66.0" />
+      <Label layoutX="23.0" layoutY="263.0" text="Edit the selected shot:" AnchorPane.bottomAnchor="295.0" AnchorPane.leftAnchor="15.0" />
    </children>
 </AnchorPane>
