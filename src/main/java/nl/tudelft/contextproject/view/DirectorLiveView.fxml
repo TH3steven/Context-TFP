@@ -22,8 +22,8 @@
           <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
             <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Camera" />
             <TableColumn fx:id="columnPreset" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset" />
-            <TableColumn fx:id="columnSubject" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" resizable="false" sortable="false" text="Subject" />
-            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" sortable="false" text="Action" />
+            <TableColumn fx:id="columnSubject" maxWidth="279.0" minWidth="150.0" prefWidth="278.0" resizable="false" sortable="false" text="Subject" />
+            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="65.0" prefWidth="286.0" sortable="false" text="Action" />
         </columns>
       </TableView>
       <VBox fx:id="thumbnailBox" alignment="TOP_CENTER" layoutX="393.0" layoutY="271.0" minHeight="173.0" minWidth="258.0" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="393.0" AnchorPane.rightAnchor="15.0">
