@@ -101,6 +101,8 @@ public class DirectorLiveController {
             
             if (hasCurrentPreset()) {
                 thumbnail.setImage(loadImage(current.getPreset().getImage()));
+            } else {
+                thumbnail.setImage(loadImage("black.png"));
             }
         } else {
             emptyInitialization();

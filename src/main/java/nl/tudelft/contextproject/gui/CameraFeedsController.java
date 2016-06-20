@@ -102,19 +102,14 @@ public class CameraFeedsController {
                 streamHandler = rightStreamHandler;
             }
 
-            VBox outerBox = (VBox) cb.getParent();
+            VBox outerBox = (VBox) cb.getParent().getParent();
             VBox innerBox = (VBox) outerBox.getChildren().get(1);
             ImageView oldStream = (ImageView) innerBox.getChildren().get(0);
-
-            if (newV.toString().equals("None")) {
-                blackView(oldStream, streamHandler);
-                return;
-            }
             
-            String newStream;
-            if (newV.getConnection() != null) {
-                newStream = newV.getConnection().getStreamLink(); 
-                updateStream(newStream, oldStream, streamHandler);   
+            if (newV.hasConnection()) {
+                updateStream(newV.getConnection().getStreamLink(), oldStream, streamHandler);   
+            } else {
+                blackView(oldStream, streamHandler);
             }
             
 
