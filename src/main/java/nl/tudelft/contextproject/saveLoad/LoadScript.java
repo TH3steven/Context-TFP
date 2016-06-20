@@ -155,7 +155,7 @@ public final class LoadScript {
             if (event.isStartElement()) {
                 StartElement start = event.asStartElement();
                 if ("camera".equals(start.getName().getLocalPart())) {
-                    loadCamera();
+                    loadCamera(Integer.parseInt(start.getAttributeByName(new QName("id")).getValue()));
                 } else {
                     throw new XMLStreamException("Unexpected start tag in cameras section: "
                             + start.getName().getLocalPart());
@@ -176,10 +176,11 @@ public final class LoadScript {
      * Reads a 'camera' section of the XML file.
      * Assumes that the start element of this section has already been read.
      * 
+     * @param id Id of the camera to be loaded.
      * @throws XMLStreamException when an error occurs in the XML.
      */
-    private static void loadCamera() throws XMLStreamException {
-        Camera cam = new Camera();
+    private static void loadCamera(int id) throws XMLStreamException {
+        Camera cam = Camera.getCamera(id) == null ? new Camera() : Camera.getCamera(id);
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {

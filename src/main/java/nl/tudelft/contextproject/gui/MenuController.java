@@ -26,9 +26,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraConnection;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.saveLoad.LoadScript;
@@ -483,7 +485,9 @@ public class MenuController {
     private void settingsInitIpTable(ApplicationSettings settings) {
         btnSettingsAddCamera.setTooltip(new Tooltip("Adds a camera to the table"));
         btnSettingsAddCamera.setOnAction(event -> {
-            settingsIpTable.getItems().add(new Camera());
+            Camera newCam = new Camera();
+            newCam.setConnection(new MockedCameraConnection());
+            settingsIpTable.getItems().add(newCam);
         });
 
         btnSettingsClearCameras.setTooltip(new Tooltip("Clears all cameras from the table"));
@@ -505,9 +509,16 @@ public class MenuController {
 
         settingsAddressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         settingsAddressColumn.setOnEditCommit(editEvent -> {
-            int camId = editEvent.getTableView().getItems()
-                    .get(editEvent.getTablePosition().getRow()).getNumber();
-            settings.addCameraIP(camId, editEvent.getNewValue());
+            Camera cam = editEvent.getTableView().getItems()
+                    .get(editEvent.getTablePosition().getRow());
+            settings.addCameraIP(cam.getNumber(), editEvent.getNewValue());
+            new Thread(() -> {
+                CameraConnection oldConnection = cam.getConnection();
+                cam.setConnection(new LiveCameraConnection(settings.getCameraIP(cam.getNumber())));
+                if (!cam.getConnection().setUpConnection()) {
+                    cam.setConnection(oldConnection == null ? new MockedCameraConnection() : oldConnection);
+                }
+            }).start();
         });
 
         settingsIpTable.setPlaceholder(new Label("No cameras in settings. Add one!"));
