@@ -195,9 +195,11 @@ public class PresetController {
             Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
             data.clear();
+
             for (Preset p : presets.values()) {
                 data.add(p);
             }
+
             if (cam.hasConnection()) {
                 updateStream(cam.getConnection().getStreamLink());
             } else {
@@ -241,7 +243,11 @@ public class PresetController {
                 id,
                 description.getText());
         String loc = String.format("CameraId%dPresetId%d", cam.getNumber(), newPreset.getId());
-        cam.getConnection().snapShot(loc);
+        
+        if (cam.getConnection() != null) {
+            cam.getConnection().snapShot(loc);
+        }
+        
         newPreset.setImageLocation(loc);
 
         if (overwrite.isSelected()) {

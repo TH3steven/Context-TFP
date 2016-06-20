@@ -26,9 +26,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraConnection;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.saveLoad.LoadScript;
@@ -52,9 +54,9 @@ public class MenuController {
 
     @FXML private Pane settingsFront;
     @FXML private Pane clickPane;
-    
+
     @FXML private AnchorPane settingsBack;
-    
+
     @FXML private GridPane settingsGrid;
 
     @FXML private Button btnCameraman;
@@ -73,7 +75,7 @@ public class MenuController {
     @FXML private Button btnSettingsClearCameras;
     @FXML private Button btnSettingsSave;
     @FXML private Button btnSettingsTest;
-    
+
     @FXML private ChoiceBox<String> settingsVlcBox;
 
     @FXML private ImageView imgSettings;
@@ -83,7 +85,7 @@ public class MenuController {
     @FXML private Label lblVersion;
     @FXML private Label lblScript;
     @FXML private Label lblDbSettingStatus;
-    
+
     @FXML private TableView<Camera> settingsIpTable;
     @FXML private TableColumn<Camera, Integer> settingsIdColumn;
     @FXML private TableColumn<Camera, String> settingsAddressColumn;
@@ -94,7 +96,7 @@ public class MenuController {
     @FXML private TextField settingsDbPort;
     @FXML private TextField settingsDbUsername;
     @FXML private TextField settingsVlcLoc;
-    
+
     private List<Node> preNodes;
     private List<Node> liveNodes;
 
@@ -120,6 +122,8 @@ public class MenuController {
         preNodes.addAll(Arrays.asList(lblPre, btnCreateScript, 
                 btnEditScript, btnPresets, btnPreview, btnLoadScript));
         liveNodes.addAll(Arrays.asList(lblLive, btnCameraman, btnDirector));
+
+        settingsIpTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         initLoadButton();
         initSubButtons();
@@ -272,7 +276,7 @@ public class MenuController {
             });
         });
     }
-    
+
     /**
      * Initialises the 'Camera views' button, which opens a new window 
      * with live camera feeds.
@@ -281,6 +285,7 @@ public class MenuController {
         btnCameras.setOnAction(event -> {
             Stage secondaryStage = new Stage();
             secondaryStage.show();
+
             try {
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(ContextTFP.class.getResource("view/CameraFeedsView.fxml"));
@@ -306,11 +311,11 @@ public class MenuController {
         imgSettings.setOnMouseEntered(event -> {
             imgSettings.setImage(new Image("settings_active.png"));
         });
-        
+
         imgSettings.setOnMouseExited(event -> {
             imgSettings.setImage(new Image("settings.png"));
         });
-        
+
         imgSettings.setOnMouseClicked(event -> {
             if (settingsFront.isVisible()) {
                 settingsOnClose();
@@ -318,7 +323,7 @@ public class MenuController {
                 settingsOnOpen();
             }
         });
-        
+
         clickPane.setOnMouseClicked(event -> {
             settingsOnClose();
         });
@@ -333,23 +338,23 @@ public class MenuController {
         settingsBack.setVisible(true);
         settingsFront.setVisible(true);
         settingsGrid.disableProperty().set(false); 
-        
+
         ApplicationSettings settings = ApplicationSettings.getInstance();
         settingsInitVlcSettings(settings);
         settingsInitDbSettings(settings);
         settingsInitIpTable(settings); 
-        
+
         btnSettingsSave.setOnAction(event -> {
             settingsOnClose();
         });
-        
+
         btnSettingsCancel.setOnAction(event -> {
             settingsFront.setVisible(false);
             settingsBack.setVisible(false);
             settingsGrid.disableProperty().set(true);
         });
     }
-    
+
     /**
      * Closes settings menu.
      */
@@ -357,7 +362,7 @@ public class MenuController {
         try {
             btnSettingsTest.fire();
             ApplicationSettings.getInstance().save();
-            
+
             settingsFront.setVisible(false);
             settingsBack.setVisible(false);
             settingsGrid.disableProperty().set(true);
@@ -365,7 +370,7 @@ public class MenuController {
             AlertDialog.errorSavingSettings(e);
         }
     }
-    
+
     /**
      * Initialises the VLC settings section of the settings menu.
      * 
@@ -392,7 +397,7 @@ public class MenuController {
                 settings.setRenderResolution(resX, resY);
             }
         });
-        
+
         settingsVlcLoc.setTooltip(new Tooltip("Current VLC installation location"));
         if (!ContextTFP.hasVLC()) {
             settingsVlcLoc.setText("No VLC found.");
@@ -402,7 +407,7 @@ public class MenuController {
         } else {
             settingsVlcLoc.setText(settings.getVlcLocation());
         }
-        
+
         btnChangeVlcLoc.setOnAction(event -> {
             try {
                 AlertDialog.findVlc(((Node) event.getTarget()).getScene().getWindow());
@@ -411,7 +416,7 @@ public class MenuController {
             }
         });
     }
-    
+
     /**
      * Initialises the database settings section of the settings menu.
      * 
@@ -423,22 +428,22 @@ public class MenuController {
         settingsDbName.setTooltip(new Tooltip("Name of the database"));
         settingsDbUsername.setTooltip(new Tooltip("Username used to log in to database"));
         settingsDbPassword.setTooltip(new Tooltip("Password used to log in to database"));
-        
+
         settingsDbAddress.setText(settings.getDatabaseUrl());
         settingsDbPort.setText(settings.getDatabasePort() + "");
         settingsDbName.setText(settings.getDatabaseName());
         settingsDbUsername.setText(settings.getDatabaseUsername());
         settingsDbPassword.setText(settings.getDatabasePassword());
-        
+
         settingsDbPort.addEventFilter(KeyEvent.KEY_TYPED, event -> {
             if (!event.getCharacter().matches("[0-9]")) {
                 event.consume();
             }
         });
-        
+
         settingsInitTestButton(settings);
     }
-    
+
     /**
      * Initialises the 'Test Connection' button in the database settings
      * section of the settings menu.
@@ -452,14 +457,14 @@ public class MenuController {
                     settingsDbName.getText(),
                     settingsDbUsername.getText(), 
                     settingsDbPassword.getText());
-            
+
             DatabaseConnection dbConnect = DatabaseConnection.getInstance();
             try {
                 dbConnect.connect();
             } catch (Exception e) {
                 // If exceptions occur, then that will reflect in the isValid method.
             }
-            
+
             if (dbConnect.isValid(200)) {
                 lblDbSettingStatus.setText("Connection Verified!");
                 lblDbSettingStatus.setStyle("-fx-text-fill: green");
@@ -471,7 +476,7 @@ public class MenuController {
             }
         });
     }
-    
+
     /**
      * Initialises the camera IPs section of the settings menu.
      * 
@@ -480,9 +485,11 @@ public class MenuController {
     private void settingsInitIpTable(ApplicationSettings settings) {
         btnSettingsAddCamera.setTooltip(new Tooltip("Adds a camera to the table"));
         btnSettingsAddCamera.setOnAction(event -> {
-            settingsIpTable.getItems().add(new Camera());
+            Camera newCam = new Camera();
+            newCam.setConnection(new MockedCameraConnection());
+            settingsIpTable.getItems().add(newCam);
         });
-        
+
         btnSettingsClearCameras.setTooltip(new Tooltip("Clears all cameras from the table"));
         btnSettingsClearCameras.setOnAction(event -> {
             if (AlertDialog.confirmClearCameras()) {
@@ -491,26 +498,34 @@ public class MenuController {
                 ApplicationSettings.getInstance().clearAllCameraIPs();
             }
         });
-        
+
         settingsIdColumn.setCellValueFactory(cellData ->
             new ReadOnlyObjectWrapper<Integer>(cellData.getValue().getNumber() + 1)
         );
-        
+
         settingsAddressColumn.setCellValueFactory(cellData ->
             new SimpleStringProperty(settings.getCameraIP(cellData.getValue().getNumber()))
         );
+
         settingsAddressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         settingsAddressColumn.setOnEditCommit(editEvent -> {
-            int camId = editEvent.getTableView().getItems()
-                    .get(editEvent.getTablePosition().getRow()).getNumber();
-            settings.addCameraIP(camId, editEvent.getNewValue());
+            Camera cam = editEvent.getTableView().getItems()
+                    .get(editEvent.getTablePosition().getRow());
+            settings.addCameraIP(cam.getNumber(), editEvent.getNewValue());
+            new Thread(() -> {
+                CameraConnection oldConnection = cam.getConnection();
+                cam.setConnection(new LiveCameraConnection(settings.getCameraIP(cam.getNumber())));
+                if (!cam.getConnection().setUpConnection()) {
+                    cam.setConnection(oldConnection == null ? new MockedCameraConnection() : oldConnection);
+                }
+            }).start();
         });
-        
+
         settingsIpTable.setPlaceholder(new Label("No cameras in settings. Add one!"));
         settingsIpTable.getItems().clear();
         settingsIpTable.getItems().addAll(Camera.getAllCameras());
     }
-    
+
     /**
      * Sets the text of the script label on the menu.
      * 

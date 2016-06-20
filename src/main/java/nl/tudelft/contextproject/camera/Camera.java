@@ -20,7 +20,7 @@ public class Camera extends Observable {
      * Dummy camera with camId -1.
      */
     public static final Camera DUMMY;
-    
+
     private static final HashMap<Integer, Camera> CAMERAS = new HashMap<Integer, Camera>();
     private static int numCams = 0;
 
@@ -29,7 +29,7 @@ public class Camera extends Observable {
     private HashMap<Integer, Preset> presets;
 
     private int camId;
-    
+
     static {
         DUMMY = new Camera();
         DUMMY.camId = -1;
@@ -422,7 +422,7 @@ public class Camera extends Observable {
     public Collection<Preset> getAllPresets() {
         return presets.values();
     }
-    
+
     @Override
     public String toString() {
         return this.equals(DUMMY) ? "None" : String.valueOf(camId + 1);

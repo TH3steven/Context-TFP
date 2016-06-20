@@ -77,7 +77,7 @@ public class LiveCameraConnection extends CameraConnection {
     public boolean setUpConnection() {
         try {
             String cameraModel = sendRequest(buildCamControlURL("QID"));
-            
+
             if (cameraModel.equals("OID:" + CAMERA_MODEL)) {
                 connected = true;
                 lastKnown = new CameraSettings();
@@ -85,6 +85,7 @@ public class LiveCameraConnection extends CameraConnection {
                 hasAutoFocus();
                 return true;
             }
+
             return false;
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,6 +116,7 @@ public class LiveCameraConnection extends CameraConnection {
             URL url = new URL("http://" + address + "/cgi-bin/aw_ptz?cmd=" + command + "&res=1");
             return url;
         }
+
         throw new MalformedURLException("Given command is null");
     }
 
@@ -131,6 +133,7 @@ public class LiveCameraConnection extends CameraConnection {
             URL url = new URL("http://" + address + "/cgi-bin/aw_cam?cmd=" + command + "&res=1");
             return url;
         }
+
         throw new MalformedURLException("Given command is null");
     }
 
@@ -184,6 +187,7 @@ public class LiveCameraConnection extends CameraConnection {
                 return autoFocus;
             }
         }
+
         return autoFocus;
     }
 
@@ -197,6 +201,7 @@ public class LiveCameraConnection extends CameraConnection {
         if (this.autoFocus == autoFocus) {
             return true;
         }
+
         try {
             int set = autoFocus ? 1 : 0;
             String autoFocusRes = sendRequest(buildPanTiltHeadControlURL("%23D1" + set));
@@ -205,8 +210,8 @@ public class LiveCameraConnection extends CameraConnection {
                 this.autoFocus = autoFocus;
                 return true;
             }
-            throw new IOException(errorString + autoFocusRes);
 
+            throw new IOException(errorString + autoFocusRes);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -220,6 +225,7 @@ public class LiveCameraConnection extends CameraConnection {
             ImageView imageView = liveStreamHandler.createImageView(getStreamLink(), 640, 360);
             WritableImage image = imageView.snapshot(new SnapshotParameters(), null);
             File output = new File(imageLocation);
+
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", output);
             } catch ( IOException e) {
@@ -272,6 +278,7 @@ public class LiveCameraConnection extends CameraConnection {
         int zoom = getCurrentZoom();
         int focus = getCurrentFocus();
         lastKnown = new CameraSettings(panTilt[0], panTilt[1], zoom, focus);
+
         return lastKnown;
     }
 
@@ -286,7 +293,7 @@ public class LiveCameraConnection extends CameraConnection {
                 lastKnown.setPan(pan);
                 lastKnown.setTilt(tilt);
 
-                return new int[]{pan, tilt};
+                return new int[] {pan, tilt};
             }
             throw new IOException(errorString + panTiltRes);
         } catch (IOException e) {
@@ -306,6 +313,7 @@ public class LiveCameraConnection extends CameraConnection {
 
                 return zoom;
             }
+
             throw new IOException(errorString + zoomRes);
         } catch (IOException e) {
             e.printStackTrace();
@@ -318,6 +326,7 @@ public class LiveCameraConnection extends CameraConnection {
         if (autoFocus) {
             return -1;
         }
+
         try {
             String focusRes = sendRequest(buildPanTiltHeadControlURL("%23GF"));
 
@@ -325,12 +334,12 @@ public class LiveCameraConnection extends CameraConnection {
                 int focus = Integer.parseInt(focusRes.substring(2), 16);
                 return focus;
             }
+
             throw new IOException(errorString + focusRes);
         } catch (IOException e) {
             e.printStackTrace();
             return lastKnown.getFocus();
         }
-        
     }
 
     @Override
@@ -382,7 +391,7 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     protected boolean absZoom(int value) {
         value = (value < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW :
-                (value > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : value;
+            (value > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : value;
         try {
             String res = sendRequest(buildPanTiltHeadControlURL("%23AXZ" 
                     + Integer.toHexString(0x1000 | value).substring(1).toUpperCase()
@@ -403,7 +412,7 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     protected boolean absFocus(int value) {
         value = (value < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
-                (value > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : value;
+            (value > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : value;
 
         try {
             if (autoFocus) {

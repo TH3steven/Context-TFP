@@ -16,7 +16,7 @@ public class MockedCameraConnection extends CameraConnection {
 
     private CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
     private String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
-    
+
     @Override
     public boolean setUpConnection() {
         return true;
@@ -26,12 +26,12 @@ public class MockedCameraConnection extends CameraConnection {
     public boolean isConnected() {
         return true;
     }
-    
+
     @Override
     public String getStreamLink() {
         return streamLink;
     }
-    
+
     /**
      * Sets the link to the 'live stream' of this mocked camera connection
      * @param link Link to the 'live stream' of this mocked camera connection.
@@ -44,17 +44,17 @@ public class MockedCameraConnection extends CameraConnection {
     public CameraSettings getCurrentCameraSettings() {
         return camSet;
     }
-    
+
     @Override
     public int[] getCurrentPanTilt() {
         return new int[]{camSet.getPan(), camSet.getTilt()};
     }
-    
+
     @Override
     public int getCurrentZoom() {
         return camSet.getZoom();
     }
-    
+
     @Override
     public int getCurrentFocus() {
         return camSet.getFocus();
@@ -64,6 +64,7 @@ public class MockedCameraConnection extends CameraConnection {
     protected boolean absPanTilt(int panValue, int tiltValue) {
         camSet.setPan(panValue);
         camSet.setTilt(tiltValue);
+
         return true;
     }
 
@@ -90,11 +91,12 @@ public class MockedCameraConnection extends CameraConnection {
         camSet.setFocus(value);
         return true;
     }
-    
+
     @Override
     protected boolean relPanTilt(int panOffset, int tiltOffset) {
         camSet.pan(panOffset);
         camSet.tilt(tiltOffset);
+
         return true;
     }
 
@@ -127,7 +129,7 @@ public class MockedCameraConnection extends CameraConnection {
         if (!(o instanceof Camera)) {
             return;
         }
-        
+
         if (arg instanceof CameraSettings) {
             camSet = (CameraSettings) arg;
         }
@@ -136,6 +138,7 @@ public class MockedCameraConnection extends CameraConnection {
     @Override
     public void snapShot(String imageLocation) {
         File output = new File("src/main/resources/error.jpg");
+
         try {
             BufferedImage image = ImageIO.read(output);
             ImageIO.write(image, "jpg", new File(imageLocation));

@@ -13,12 +13,12 @@
       <Label layoutX="15.0" layoutY="90.0" text="Select cameras to be displayed:" />
       <TableView fx:id="tableShots" layoutX="196.0" layoutY="14.0" prefHeight="545.0" prefWidth="589.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="196.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <columns>
-            <TableColumn fx:id="columnID" maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" text="ID" />
-          <TableColumn fx:id="columnShot" editable="false" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
-            <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" text="Camera" />
-          <TableColumn fx:id="columnPreset" editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset" />
-            <TableColumn fx:id="columnSubject" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Subject" />
-            <TableColumn fx:id="columnAction" editable="false" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" sortable="false" text="Action" />
+            <TableColumn fx:id="columnID" maxWidth="35.0" minWidth="35.0" prefWidth="-1.0" resizable="false" sortable="false" text="ID" />
+          <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
+            <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Camera" />
+          <TableColumn fx:id="columnPreset" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset" />
+            <TableColumn fx:id="columnSubject" maxWidth="188.0" minWidth="150.0" prefWidth="187.0" resizable="false" sortable="false" text="Subject" />
+            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="100.0" prefWidth="196.0" sortable="false" text="Action" />
         </columns>
       </TableView>
       <VBox fx:id="vbox" layoutX="15.0" layoutY="137.0" prefHeight="200.0" prefWidth="166.0" />
