@@ -243,7 +243,11 @@ public class PresetController {
                 id,
                 description.getText());
         String loc = String.format("CameraId%dPresetId%d", cam.getNumber(), newPreset.getId());
-        cam.getConnection().snapShot(loc);
+        
+        if (cam.getConnection() != null) {
+            cam.getConnection().snapShot(loc);
+        }
+        
         newPreset.setImageLocation(loc);
 
         if (overwrite.isSelected()) {

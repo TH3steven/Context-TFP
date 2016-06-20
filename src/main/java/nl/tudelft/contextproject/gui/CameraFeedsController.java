@@ -110,9 +110,14 @@ public class CameraFeedsController {
                 blackView(oldStream, streamHandler);
                 return;
             }
+            
+            String newStream;
+            if (newV.getConnection() != null) {
+                newStream = newV.getConnection().getStreamLink(); 
+                updateStream(newStream, oldStream, streamHandler);   
+            }
+            
 
-            String newStream = newV.getConnection().getStreamLink();           
-            updateStream(newStream, oldStream, streamHandler);
         });
     }
 

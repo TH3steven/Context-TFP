@@ -98,7 +98,10 @@ public class DirectorLiveController {
             initializeChoiceBoxes();
             updateShotInfo(current);
             initializeTableListener();
-            thumbnail.setImage(loadImage(current.getPreset().getImage()));
+            
+            if (hasCurrentPreset()) {
+                thumbnail.setImage(loadImage(current.getPreset().getImage()));
+            }
         } else {
             emptyInitialization();
         }
@@ -188,8 +191,10 @@ public class DirectorLiveController {
         initializeCameraChoice();
         initializePresetChoice();
         updatePresetChoice(current);
-
-        presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId() + 1));
+        
+        if (getCurrentShot().hasPreset()) {
+            presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId() + 1));
+        }
     }
 
     /**
@@ -355,6 +360,15 @@ public class DirectorLiveController {
      */
     public Shot getCurrentShot() {        
         return (script.getCurrent() == -1) ? script.getNextShot() : script.getCurrentShot();
+    }
+    
+    /**
+     * Returns whether the current shot has a preset or not.
+     * 
+     * @return True if the current shot has a preset. False otherwise.
+     */
+    public boolean hasCurrentPreset() {
+        return getCurrentShot().hasPreset();
     }
 
     /**
