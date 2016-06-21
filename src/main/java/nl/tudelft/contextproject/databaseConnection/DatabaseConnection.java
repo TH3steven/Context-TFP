@@ -1,5 +1,6 @@
 package nl.tudelft.contextproject.databaseConnection;
 
+import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -15,6 +16,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class to create a database connection. 
@@ -22,15 +27,17 @@ import java.util.Iterator;
  * 
  * @since 0.8
  */
-public final class DatabaseConnection {
+public final class DatabaseConnection extends Observable {
     
     private static final String COUNTER_TABLE = "counter";
     private static final String SCRIPT_TABLE = "script";
     private static final String PRESET_TABLE = "preset";
     private static final DatabaseConnection INSTANCE = new DatabaseConnection();
     
+    private int counter;
     private Connection conn = null;
     private ApplicationSettings settings; 
+    private Timer timer;
     
     /**
      * Initializes a database connection object. 
@@ -38,6 +45,7 @@ public final class DatabaseConnection {
      */
     private DatabaseConnection() {
         settings = ApplicationSettings.getInstance();
+        counter = -1;
         
         try {
             Class.forName(settings.getJdbcDriver());   
@@ -74,6 +82,48 @@ public final class DatabaseConnection {
             conn.close();
         }
         connect();
+    }
+    
+    /**
+     * Add an observer for the current counter. 
+     * This will start the timer that will update the counter every 200 ms.
+     */
+    @Override
+    public void addObserver(Observer o) {
+        if (countObservers() == 0) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        int actualCounter = getCounter();
+                        
+                        if (actualCounter != counter) {
+                            counter = actualCounter;
+                            setChanged();
+                            notifyObservers(actualCounter);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 200);            
+        }
+        super.addObserver(o);
+    }
+    
+    @Override
+    public void deleteObserver(Observer o) {
+        super.deleteObserver(o);
+        if (countObservers() == 0) {
+            timer.cancel();
+        }
+    }
+    
+    @Override
+    public void deleteObservers() {
+        super.deleteObservers();
+        timer.cancel();
     }
     
     /**
