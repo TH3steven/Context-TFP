@@ -177,7 +177,7 @@ public class DatabaseConnectionTest {
         
         connection.updateCounter();
         connection.updateCounter();
-        Thread.sleep(300);
+        Thread.sleep(800);
         assertEquals(2, counter);
         connection.deleteObservers();
     }
