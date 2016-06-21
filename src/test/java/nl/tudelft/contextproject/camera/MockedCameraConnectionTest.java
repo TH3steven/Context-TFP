@@ -6,19 +6,16 @@ import static org.junit.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 /**
- * Class to test the behavior of a mimiced or mocked camera.
+ * Class to test the behavior of a mocked camera connection.
  * @since 0.4
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MockedCameraConnection.class)
 public class MockedCameraConnectionTest {
     private MockedCameraConnection mockedCam;
     private CameraSettings camSet;
@@ -225,19 +222,20 @@ public class MockedCameraConnectionTest {
     }
 
     /**
-     * Tests the snapShot method. PowerMock is
-     * used here to verify the behavior of this method.
+     * Tests the snapShot method. Checks if the error image has indeed been made.
+     * 
+     * @throws IOException Because of file deletion in test.
      */
     @Test
-    public void testSnapShot() {
-        PowerMockito.spy(MockedCameraConnection.class);
+    public void testSnapShot() throws IOException {
         cam1.setConnection(mockedCam);
-        String imageLocation = "error.jpg";
-
+        String imageLocation = "src/test/resources/error.jpg";
+        File imageFile = new File(imageLocation);
+        Files.deleteIfExists(imageFile.toPath());
+        
         mockedCam.snapShot(imageLocation);
 
-        PowerMockito.verifyStatic();
-        mockedCam.snapShot(imageLocation);
+        assertTrue(imageFile.exists());
     }
 }
 
