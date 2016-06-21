@@ -101,6 +101,9 @@ public class Camera extends Observable {
      * @return Camera settings.
      */
     public CameraSettings getSettings() {
+        if (hasConnection()) {
+            camSet = connection.getCurrentCameraSettings();
+        }
         return camSet;
     }
 
@@ -109,7 +112,7 @@ public class Camera extends Observable {
      * @param settings Camera settings to set.
      */
     public void setSettings(CameraSettings settings) {
-        if (hasConnection() && connection.isConnected()) {
+        if (hasConnection()) {
             camSet = settings;
             setChanged();
             notifyObservers(settings);
@@ -331,6 +334,37 @@ public class Camera extends Observable {
             connection.absFocus(value);
         }
 
+        setChanged();
+        notifyObservers();
+    }
+    
+    /**
+     * Makes the camera start panning and tilting in the specified direction
+     * 
+     * @param panSpeed Should be between -100 and 100, where 0 is stop, 
+     *      -100 is maximum speed towards the left and 100 is maximum speed 
+     *      towards the right.
+     * @param tiltSpeed Should be between -100 and 100, where 0 is stop, 
+     *      -100 is maximum speed downwards and 100 is maximum speed upwards.
+     */
+    public void panTiltStart(int panSpeed, int tiltSpeed) {
+        if (hasConnection()) {
+            connection.panTiltStart(panSpeed, tiltSpeed);
+        }
+        
+        setChanged();
+        notifyObservers();
+    }
+    
+    /**
+     * Makes the camera stop panning and tilting in the specified direction.
+     */
+    public void panTiltStop() {
+        if (hasConnection()) {
+            connection.panTiltStop();
+        }
+        camSet = getSettings();
+        
         setChanged();
         notifyObservers();
     }
