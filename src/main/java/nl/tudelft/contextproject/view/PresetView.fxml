@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.PresetController">
+<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.PresetController">
    <children>
       <TableView fx:id="tableView" layoutX="457.0" layoutY="22.0" minHeight="485.0" minWidth="315.0" prefHeight="507.0" prefWidth="326.0" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="459.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <columns>
@@ -100,5 +100,6 @@
       </GridPane>
       <Button fx:id="btnRemove" layoutX="676.0" layoutY="536.0" mnemonicParsing="false" text="Remove preset" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
       <Separator layoutX="15.0" layoutY="522.0" prefHeight="10.0" prefWidth="770.0" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <CheckBox fx:id="arrowControl" layoutX="39.0" layoutY="475.0" mnemonicParsing="false" text="Control with Arrow Keys" />
    </children>
 </AnchorPane>

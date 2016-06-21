@@ -1,11 +1,14 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.FloatProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -14,18 +17,25 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 
+
+
+
+
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is a control class for the preset creation screen. It
@@ -40,6 +50,7 @@ public class PresetController {
     private static boolean toCameramanView = false;
 
     @FXML private CheckBox overwrite;
+    @FXML private CheckBox arrowControl;
     @FXML private ChoiceBox<Integer> cameraSelecter;
 
     @FXML private Button btnBack;
@@ -148,6 +159,7 @@ public class PresetController {
         setSaveButton();
         setBackButton();
         setCameraSelector();
+        setArrowControl();
     }
 
     /**
@@ -207,7 +219,78 @@ public class PresetController {
             }
         });
     }
+    
+    /**
+     * Sets the action for the arrow key control checkbox.
+     */
+    private void setArrowControl() {
+        arrowControl.setOnAction(event -> {
+            if (arrowControl.isSelected()) {
+                setArrowKeyBinds();
+            } else {
+                removeArrowKeyBinds();
+            }
+        });
+    }
+    
+    /**
+     * Sets the actions to allow arrow key operated control of the camera.
+     */
+    private void setArrowKeyBinds() {
+        Scene scene = arrowControl.getScene();
+        Set<KeyCode> pressedKeys = new HashSet<KeyCode>();
 
+        scene.setOnKeyPressed(event -> {
+            if (!pressedKeys.contains(event.getCode())) {
+                pressedKeys.add(event.getCode());
+                Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                
+                switch (event.getCode()) {
+                    case LEFT:
+                        currentCam.panTiltStart(1, 50);
+                        break;
+                    case RIGHT:
+                        currentCam.panTiltStart(99, 50);
+                        break;
+                    case UP:
+                        currentCam.panTiltStart(50, 99);
+                        break;
+                    case DOWN:
+                        currentCam.panTiltStart(50, 1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            event.consume();
+        });
+        scene.setOnKeyReleased(event -> {
+            pressedKeys.remove(event.getCode());
+            Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
+            
+            switch (event.getCode()) {
+                case LEFT:
+                case RIGHT:
+                case UP:
+                case DOWN:
+                    currentCam.panTiltStop();
+                    break;
+                default:
+                    break;
+            }
+            event.consume();
+        });
+    }
+
+    /**
+     * Removes the actions to disable arrow key operated control of a camera.
+     */
+    private void removeArrowKeyBinds() {
+        Scene scene = arrowControl.getScene();
+        scene.setOnKeyPressed(null);
+        scene.setOnKeyReleased(null);
+    }
+    
     /**
      * Resizes the ImageView.
      * 
