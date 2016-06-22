@@ -46,7 +46,6 @@ import nl.tudelft.contextproject.script.Shot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -207,7 +206,11 @@ public class CreateScriptController {
                         Camera.getCamera(cam.getSelectionModel().getSelectedIndex()).getAllPresets());
                 
                 for (int i = 0; i < presets.size(); ++i) {
-                    presetList.add(Integer.toString(presets.get(i).getId()));
+                    Preset p = presets.get(i);
+                    
+                    presetList.add(Integer.toString(p.getId()) 
+                            + " - "
+                            + p.getDescription());
                 }
 
                 preset.setItems(FXCollections.observableArrayList(presetList));
@@ -238,7 +241,7 @@ public class CreateScriptController {
                 return new ReadOnlyObjectWrapper<>();
             } else {
                 return new ReadOnlyObjectWrapper<>(
-                        Integer.toString(cellData.getValue().getPreset().getId() + 1));
+                        Integer.toString(cellData.getValue().getPreset().getId()));
             }
         });
 
@@ -338,7 +341,6 @@ public class CreateScriptController {
         }
 
         Shot last = data.get(data.size() - 1);
-
         return last.getCamera().getNumber() != addCamera.getSelectionModel().getSelectedIndex();
     }
 
@@ -365,7 +367,8 @@ public class CreateScriptController {
                     maximumId,
                     addShot.getText(),
                     camera,
-                    camera.getPreset(new Integer(addPreset.getValue())),
+                    camera.getPreset(
+                            new Integer(addPreset.getValue().substring(0, addPreset.getValue().indexOf(" ")))),
                     addSubject.getText(),
                     addAction.getText()
                     );
@@ -567,7 +570,9 @@ public class CreateScriptController {
                 editCamera.getSelectionModel().select(nv.getCamera().getNumber());
 
                 if (nv.getPreset() != null) {
-                    editPreset.getSelectionModel().select(nv.getPreset().getId() + 1);
+                    Preset p = nv.getPreset();
+                    editPreset.getSelectionModel().select(p.getId() 
+                            + " - " + p.getDescription());
                 } else {
                     editPreset.getSelectionModel().select(0);
                 }
@@ -608,7 +613,7 @@ public class CreateScriptController {
 
         if (!editPreset.getSelectionModel().getSelectedItem().equals("None")) {
             shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(new Integer(editPreset.getSelectionModel().getSelectedItem()) - 1));
+                    .getPreset(new Integer(editPreset.getValue().substring(0, editPreset.getValue().indexOf(" ")))));
         } else {
             shot.setPreset(null);
         }
