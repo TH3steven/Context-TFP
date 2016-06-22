@@ -489,7 +489,10 @@ public class LiveCameraConnection extends CameraConnection {
         tiltSpeed = roundToBounds(tiltSpeed, 1, 99);
         
         try {
-            String res = sendRequest(buildPanTiltHeadControlURL("%23PTS" + panSpeed + tiltSpeed));
+            String res = sendRequest(buildPanTiltHeadControlURL("%23PTS" 
+                            + String.format("%02d", panSpeed) 
+                            + String.format("%02d", tiltSpeed))
+                         );
             if (res.startsWith("pTS")) {
                 return true;
             }
