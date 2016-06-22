@@ -45,6 +45,7 @@ public class PresetController {
     @FXML private Button btnBack;
     @FXML private Button btnSave;
     @FXML private Button btnRemove;
+    @FXML private Button btnGotoPreset;
 
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
@@ -155,7 +156,19 @@ public class PresetController {
 
         initSaveButton();
         initBackButton();
+        initGotoPresetButton();
         setCameraSelector();
+    }
+    
+    private void initGotoPresetButton() {
+        btnGotoPreset.setOnAction(event -> {
+            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex >= 0) {
+                Preset selected = tableView.getItems().get(selectedIndex);
+                Camera cam = Camera.getCamera(cameraSelector.getValue() - 1);
+                selected.applyTo(cam);
+            }
+        });
     }
 
     /**
