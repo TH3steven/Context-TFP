@@ -110,9 +110,15 @@ public class Camera extends Observable {
      */
     public void setSettings(CameraSettings settings) {
         if (hasConnection() && connection.isConnected()) {
-            camSet = settings;
+            camSet.setPan(settings.getPan());
+            camSet.setTilt(settings.getTilt());
+            camSet.setZoom(settings.getZoom());
+            camSet.setFocus(settings.getFocus());
+
             setChanged();
-            notifyObservers(settings);
+            notifyObservers(camSet);
+            System.out.println(settings.getPan() + " " + settings.getTilt() + " "
+                    + settings.getZoom() + " " + settings.getFocus());
         }
     }
 

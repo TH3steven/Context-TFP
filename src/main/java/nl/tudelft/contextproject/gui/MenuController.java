@@ -198,8 +198,6 @@ public class MenuController {
 
                     AlertDialog.infoSuccesfulLoading(file);
                     CreateScriptController.showValid(ContextTFP.getScript(), 2);
-                    
-                    ContextTFP.getScript().resetCurrent();
                 } catch (Exception e) {
                     AlertDialog.errorSaveUnsuccesful(e, file);
                 }

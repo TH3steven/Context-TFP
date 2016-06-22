@@ -135,9 +135,19 @@ public class Script implements Iterator<Shot> {
     /**
      * Loads the first presets of all the cameras.
      */
-    private void initPresetLoading() {
+    public void initPresetLoading() {
         for (Timeline t : timelines.values()) {
             t.initPreset();
+        }
+    }
+    
+    /**
+     * Loads the next preset for each camera depending 
+     * on the current script position.
+     */
+    public void loadNextPresets() {
+        for (Timeline t : timelines.values()) {
+            t.instantNextPreset();
         }
     }
 
@@ -167,13 +177,6 @@ public class Script implements Iterator<Shot> {
      */
     public int getCurrent() {
         return current;
-    }
-    
-    /**
-     * Resets the current shot.
-     */
-    public void resetCurrent() {
-        current = -1;
     }
 
     /**

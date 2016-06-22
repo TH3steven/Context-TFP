@@ -44,6 +44,7 @@ public class DirectorLiveController {
 
     @FXML private Button btnBack;
     @FXML private Button btnConfirm;
+    @FXML private Button btnManualLoad;
     @FXML private Button btnNext;
     @FXML private Button btnUndo;
 
@@ -84,6 +85,7 @@ public class DirectorLiveController {
 
         initializeButtons();
         if (script.getShots().size() > 0) {
+            initializeScriptButtons();
             initializeEditButtons();
             initializeCheckbox();
             initializeChoiceBoxes();
@@ -103,6 +105,8 @@ public class DirectorLiveController {
         if (!script.isEmpty()) {
             if (script.getCurrent() > -1) {
                 btnNext.fire();
+            } else {
+                script.initPresetLoading();
             }
         } else {
             live = false;
@@ -135,12 +139,21 @@ public class DirectorLiveController {
         btnBack.setOnAction(event -> {
             MenuController.show();
         });
-
+    }
+    
+    /**
+     * Initializes script navigation buttons and preset loading buttons.
+     */
+    private void initializeScriptButtons() {      
         btnNext.setOnAction(event -> {
             initializeLive();
             live = true;
             btnNext.setText("Next shot");
             script.next(automaticCheck.isSelected());
+        });
+        
+        btnManualLoad.setOnAction(event -> {
+            script.loadNextPresets();
         });
     }
 
