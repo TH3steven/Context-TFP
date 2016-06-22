@@ -82,15 +82,6 @@ public class DirectorLiveController {
         script = ContextTFP.getScript();
         Shot current = getCurrentShot();
 
-        if (!script.isEmpty()) {
-            if (script.getCurrent() == -1) {
-                script.next();
-            }
-            live = true;
-        } else {
-            live = false;
-        }
-
         initializeButtons();
         if (script.getShots().size() > 0) {
             initializeEditButtons();
@@ -108,6 +99,14 @@ public class DirectorLiveController {
             emptyInitialization();
         }
         setFactories();
+        
+        if (!script.isEmpty()) {
+            if (script.getCurrent() > -1) {
+                btnNext.fire();
+            }
+        } else {
+            live = false;
+        }
 
         //bindImageToBox(thumbnail, thumbnailBox);
         
@@ -134,7 +133,6 @@ public class DirectorLiveController {
     private void initializeButtons() {
         btnBack.toFront();
         btnBack.setOnAction(event -> {
-            live = false;
             MenuController.show();
         });
 
@@ -142,6 +140,7 @@ public class DirectorLiveController {
             initializeLive();
             live = true;
             btnNext.setText("Next shot");
+            script.next(automaticCheck.isSelected());
         });
     }
 

@@ -163,10 +163,17 @@ public class Script implements Iterator<Shot> {
     
     /**
      * Returns the "current" variable of this class.
-     * @return current
+     * @return The index of the current shot in the script.
      */
     public int getCurrent() {
         return current;
+    }
+    
+    /**
+     * Resets the current shot.
+     */
+    public void resetCurrent() {
+        current = -1;
     }
 
     /**
@@ -286,11 +293,11 @@ public class Script implements Iterator<Shot> {
      * Go to the next shot.
      * Depending on boolean skip, cameras are adjusted or not.
      * 
-     * @param skip Determines whether cameras should be adjusted.
+     * @param load Determines whether cameras should be adjusted.
      * @return The next shot
      */
-    public Shot next(boolean skip) {
-        if (!skip) {
+    public Shot next(boolean load) {
+        if (load) {
             updateOldCamCaller();
         } 
         
