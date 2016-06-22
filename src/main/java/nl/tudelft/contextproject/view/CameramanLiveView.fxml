@@ -17,8 +17,8 @@
           <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
             <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Camera" />
           <TableColumn fx:id="columnPreset" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset" />
-            <TableColumn fx:id="columnSubject" maxWidth="188.0" minWidth="150.0" prefWidth="187.0" resizable="false" sortable="false" text="Subject" />
-            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="100.0" prefWidth="196.0" sortable="false" text="Action" />
+            <TableColumn fx:id="columnSubject" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" resizable="false" sortable="false" text="Subject" />
+            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="100.0" prefWidth="-1.0" sortable="false" text="Action" />
         </columns>
       </TableView>
       <VBox fx:id="vbox" layoutX="15.0" layoutY="137.0" prefHeight="200.0" prefWidth="166.0" />

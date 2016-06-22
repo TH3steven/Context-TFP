@@ -119,7 +119,7 @@ public class LiveStreamHandler {
      * @return The created ImageView.
      */
     public ImageView createErrorImageView() {
-        return new ImageView("error.jpg");
+        return new ImageView("error-x.png");
     }
 
     /**
