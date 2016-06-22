@@ -36,9 +36,9 @@ public class DatabaseConnectionTest {
         for (int i = 1; i < pass.length - 1; i++) {
             pass[i] += 3;
         }
-        ApplicationSettings.getInstance().setDatabaseInfo("46.21.172.161", 3306, 
-                "pmacjhdy_test", "pmacjhdy_test", new String(pass));
-        ApplicationSettings.getInstance().setDatabaseName("pmacjhdy_test");
+        ApplicationSettings.getInstance().setDatabaseInfo("159.253.0.125", 3306, 
+                "thomaaj84_test", "thomaaj84_test", new String(pass));
+        ApplicationSettings.getInstance().setDatabaseName("thomaaj84_test");
         connection = DatabaseConnection.getInstance();
     }
     
