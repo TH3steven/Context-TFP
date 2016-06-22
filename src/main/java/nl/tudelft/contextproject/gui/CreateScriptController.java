@@ -36,9 +36,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.saveLoad.SaveScript;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -46,6 +46,7 @@ import nl.tudelft.contextproject.script.Shot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -201,10 +202,12 @@ public class CreateScriptController {
 
             if (newV != null) {
                 preset.setDisable(false);
-
-                for (int i = 0; i < Camera.
-                        getCamera(cam.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
-                    presetList.add(Integer.toString(i + 1));
+                
+                ArrayList<Preset> presets = new ArrayList<Preset>(
+                        Camera.getCamera(cam.getSelectionModel().getSelectedIndex()).getAllPresets());
+                
+                for (int i = 0; i < presets.size(); ++i) {
+                    presetList.add(Integer.toString(presets.get(i).getId()));
                 }
 
                 preset.setItems(FXCollections.observableArrayList(presetList));
@@ -357,12 +360,12 @@ public class CreateScriptController {
 
             return newShot;
         } else {
+            Camera camera = Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex());
             final Shot newShot = new Shot(
                     maximumId,
                     addShot.getText(),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                        .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
+                    camera,
+                    camera.getPreset(new Integer(addPreset.getValue())),
                     addSubject.getText(),
                     addAction.getText()
                     );
