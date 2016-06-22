@@ -160,6 +160,9 @@ public class PresetController {
         setCameraSelector();
     }
     
+    /**
+     * Adds the listener to the goto preset button.
+     */
     private void initGotoPresetButton() {
         btnGotoPreset.setOnAction(event -> {
             int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
