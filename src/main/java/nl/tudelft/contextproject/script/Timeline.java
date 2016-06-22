@@ -84,7 +84,9 @@ public class Timeline {
 
         if (oldIndex + 1 < shots.size()) {
             Shot nextShot = shots.get(oldIndex + 1);
-            nextShot.getPreset().applyTo(camera); //TODO: Add null check for preset.
+            if (nextShot.getPreset() != null) {
+                nextShot.getPreset().applyTo(camera); //TODO: Add null check for preset.
+            }
         }
     }
     

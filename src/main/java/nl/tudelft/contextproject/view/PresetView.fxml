@@ -102,6 +102,5 @@
       </GridPane>
       <Button fx:id="btnRemove" layoutX="676.0" layoutY="536.0" mnemonicParsing="false" text="Remove preset" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
       <Separator layoutX="15.0" layoutY="522.0" prefHeight="10.0" prefWidth="770.0" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-      <CheckBox fx:id="arrowControl" layoutX="39.0" layoutY="475.0" mnemonicParsing="false" text="Control with Arrow Keys" />
    </children>
 </AnchorPane>
