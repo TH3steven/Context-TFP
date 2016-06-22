@@ -241,7 +241,7 @@ public class PresetController {
         Set<KeyCode> pressedKeys = new HashSet<KeyCode>();
 
         scene.setOnKeyPressed(event -> {
-            if (!pressedKeys.contains(event.getCode())) {
+            if (!pressedKeys.contains(event.getCode()) && cameraSelecter.getValue() != null) {
                 pressedKeys.add(event.getCode());
                 Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
                 
@@ -265,20 +265,22 @@ public class PresetController {
             event.consume();
         });
         scene.setOnKeyReleased(event -> {
-            pressedKeys.remove(event.getCode());
-            Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
-            
-            switch (event.getCode()) {
-                case LEFT:
-                case RIGHT:
-                case UP:
-                case DOWN:
-                    currentCam.panTiltStop();
-                    break;
-                default:
-                    break;
+            if (cameraSelecter.getValue() != null) {
+                pressedKeys.remove(event.getCode());
+                Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
+
+                switch (event.getCode()) {
+                    case LEFT:
+                    case RIGHT:
+                    case UP:
+                    case DOWN:
+                        currentCam.panTiltStop();
+                        break;
+                    default:
+                        break;
+                }
+                event.consume();
             }
-            event.consume();
         });
     }
 
