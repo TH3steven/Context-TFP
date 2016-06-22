@@ -108,24 +108,11 @@ public class DirectorLiveController {
             emptyInitialization();
         }
         setFactories();
-
-        //bindImageToBox(thumbnail, thumbnailBox);
         
         // Allows for highlighting of the current shot
         LiveScript.setRowFactory(tableShots);
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
-    }
-
-    /**
-     * Binds the width and height properties of an ImageView to the properties of a VBox..
-     * 
-     * @param imgView The ImageView whose properties should be bound.
-     * @param box The target whose properties will be used.
-     */
-    private void bindImageToBox(ImageView imgView, VBox box) {
-        imgView.fitWidthProperty().bind(box.widthProperty());
-        imgView.fitHeightProperty().bind(box.heightProperty());        
     }
 
     /**
@@ -273,7 +260,7 @@ public class DirectorLiveController {
                 return new ReadOnlyObjectWrapper<>();
             } else {
                 return new ReadOnlyObjectWrapper<>(
-                        Integer.toString(cellData.getValue().getPreset().getId() + 1));
+                        Integer.toString(cellData.getValue().getPreset().getId()));
             }
         });
 

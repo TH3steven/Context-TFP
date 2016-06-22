@@ -168,7 +168,7 @@ public class CameramanLiveController {
                 return new ReadOnlyObjectWrapper<>();
             } else {
                 return new ReadOnlyObjectWrapper<>(
-                    Integer.toString(cellData.getValue().getPreset().getId() + 1));
+                    Integer.toString(cellData.getValue().getPreset().getId()));
             }
         });
 
