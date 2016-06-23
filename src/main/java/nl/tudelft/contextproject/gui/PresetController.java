@@ -379,6 +379,7 @@ public class PresetController {
     private void addToTable(Preset p) {
         data.add(p);
         sort();
+        System.out.println("sorting!");
     }
 
     /**
@@ -387,6 +388,7 @@ public class PresetController {
     private void sort() {
         tableView.getSortOrder().clear();
         tableView.getSortOrder().add(presetColumn);
+        presetColumn.setSortable(true);
     }
 
     /**
