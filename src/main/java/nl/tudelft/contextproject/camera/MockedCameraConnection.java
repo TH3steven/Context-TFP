@@ -142,11 +142,11 @@ public class MockedCameraConnection extends CameraConnection {
 
     @Override
     public void snapShot(String imageLocation) {
-        File output = new File("src/main/resources/error.jpg");
+        File output = new File("src/main/resources/error-q.png");
 
         try {
             BufferedImage image = ImageIO.read(output);
-            ImageIO.write(image, "jpg", new File(imageLocation));
+            ImageIO.write(image, "png", new File(imageLocation));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -229,7 +229,7 @@ public class MockedCameraConnectionTest {
     @Test
     public void testSnapShot() throws IOException {
         cam1.setConnection(mockedCam);
-        String imageLocation = "src/test/resources/error.jpg";
+        String imageLocation = "src/test/resources/error.png";
         File imageFile = new File(imageLocation);
         Files.deleteIfExists(imageFile.toPath());
         
