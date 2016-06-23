@@ -10,6 +10,7 @@ import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -24,6 +25,12 @@ public class LoadScriptTest {
     @After
     public void cleanUp() {
         Camera.clearAllCameras();
+    }
+    
+    @Before
+    public void setUp() {
+        Camera.clearAllCameras();
+        ApplicationSettings.getInstance().reset();
     }
 
     @Test

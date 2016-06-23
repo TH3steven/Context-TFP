@@ -14,6 +14,7 @@ import java.util.List;
 public class Timeline {
 
     private Camera camera;
+    private int current;
     private List<Shot> shots;
 
     /**
@@ -32,6 +33,7 @@ public class Timeline {
     public Timeline(Camera cam, List<Shot> shot1) {
         this.shots = shot1;
         this.camera = cam;
+        current = -1;
     }
 
     /**
@@ -70,7 +72,7 @@ public class Timeline {
      * Loads the initial preset of the timeline, if shots is not empty.
      */
     public void initPreset() {
-        if (!shots.isEmpty()) {
+        if (!shots.isEmpty() && shots.get(0).hasPreset()) {
             shots.get(0).getPreset().applyTo(camera);  
         }
     }
@@ -80,11 +82,36 @@ public class Timeline {
      * @param oldShot The shot that just finished.
      */
     public void nextPreset(Shot oldShot) {
-        int oldIndex = shots.indexOf(oldShot);
+        
+        int oldIndex;
+        
+        if (oldShot == null) {
+            oldIndex = -1;
+        } else {
+            oldIndex = shots.indexOf(oldShot);
+        }
 
         if (oldIndex + 1 < shots.size()) {
             Shot nextShot = shots.get(oldIndex + 1);
-            nextShot.getPreset().applyTo(camera);
+            if (nextShot.hasPreset()) {
+                nextShot.getPreset().applyTo(camera);
+                current = oldIndex + 1;
+            }
+        }
+    }
+    
+    /**
+     * Reloads the next preset.
+     * Since it should be loaded before, it uses 'current'.
+     */
+    public void instantNextPreset() {
+        if (current == -1) {
+            nextPreset(null);
+        } else if (current < shots.size()) {
+            Shot restoreShot = shots.get(current);
+            if (restoreShot.hasPreset()) {
+                restoreShot.getPreset().applyTo(camera);
+            }
         }
     }
     
@@ -102,6 +129,10 @@ public class Timeline {
         }
         
         return null;
+    }
+    
+    public int getCurrent() {
+        return current;
     }
 
     /**

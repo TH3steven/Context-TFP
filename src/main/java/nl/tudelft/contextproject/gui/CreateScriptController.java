@@ -36,9 +36,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.saveLoad.SaveScript;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -130,7 +130,8 @@ public class CreateScriptController {
         btnAdd.setDefaultButton(true);
 
         // Removes the "No content in table" label.
-        tableEvents.setPlaceholder(new Label(""));
+        tableEvents.setPlaceholder(new Label("The script is empty. "
+                + "Add some shots below"));
 
         if (fill) {
             fillTable(ContextTFP.getScript().getShots());
@@ -200,10 +201,16 @@ public class CreateScriptController {
 
             if (newV != null) {
                 preset.setDisable(false);
-
-                for (int i = 0; i < Camera.
-                        getCamera(cam.getSelectionModel().getSelectedIndex()).getPresetAmount(); ++i) {
-                    presetList.add(Integer.toString(i + 1));
+                
+                ArrayList<Preset> presets = new ArrayList<Preset>(
+                        Camera.getCamera(cam.getSelectionModel().getSelectedIndex()).getAllPresets());
+                
+                for (int i = 0; i < presets.size(); ++i) {
+                    Preset p = presets.get(i);
+                    
+                    presetList.add(Integer.toString(p.getId()) 
+                            + " - "
+                            + p.getDescription());
                 }
 
                 preset.setItems(FXCollections.observableArrayList(presetList));
@@ -234,7 +241,7 @@ public class CreateScriptController {
                 return new ReadOnlyObjectWrapper<>();
             } else {
                 return new ReadOnlyObjectWrapper<>(
-                        Integer.toString(cellData.getValue().getPreset().getId() + 1));
+                        Integer.toString(cellData.getValue().getPreset().getId()));
             }
         });
 
@@ -332,9 +339,8 @@ public class CreateScriptController {
         if (data.isEmpty()) {
             return true;
         }
-        
+
         Shot last = data.get(data.size() - 1);
-        
         return last.getCamera().getNumber() != addCamera.getSelectionModel().getSelectedIndex();
     }
 
@@ -344,7 +350,7 @@ public class CreateScriptController {
      */
     private Shot createNewShot() {
         maximumId++;
-        
+
         if (addPreset.getSelectionModel().getSelectedItem().equals("None")) {
             final Shot newShot = new Shot(
                     maximumId,
@@ -356,12 +362,13 @@ public class CreateScriptController {
 
             return newShot;
         } else {
+            Camera camera = Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex());
             final Shot newShot = new Shot(
                     maximumId,
                     addShot.getText(),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex()),
-                    Camera.getCamera(addCamera.getSelectionModel().getSelectedIndex())
-                        .getPreset(new Integer(addPreset.getSelectionModel().getSelectedItem()) - 1),
+                    camera,
+                    camera.getPreset(
+                            new Integer(addPreset.getValue().substring(0, addPreset.getValue().indexOf(" ")))),
                     addSubject.getText(),
                     addAction.getText()
                     );
@@ -441,7 +448,7 @@ public class CreateScriptController {
             }
         }
     }
-    
+
     /**
      * Checks if a script is valid and gives an error message when it isn't.
      * 
@@ -561,11 +568,15 @@ public class CreateScriptController {
             if (nv != null) {                
                 editShot.setText(nv.getShotId());
                 editCamera.getSelectionModel().select(nv.getCamera().getNumber());
+
                 if (nv.getPreset() != null) {
-                    editPreset.getSelectionModel().select(nv.getPreset().getId() + 1);
+                    Preset p = nv.getPreset();
+                    editPreset.getSelectionModel().select(p.getId() 
+                            + " - " + p.getDescription());
                 } else {
                     editPreset.getSelectionModel().select(0);
                 }
+
                 editSubject.setText(nv.getDescription());
                 editAction.setText(nv.getAction());
 
@@ -599,12 +610,14 @@ public class CreateScriptController {
 
         shot.setShotId(editShot.getText());
         shot.setCamera(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex()));
+
         if (!editPreset.getSelectionModel().getSelectedItem().equals("None")) {
             shot.setPreset(Camera.getCamera(editCamera.getSelectionModel().getSelectedIndex())
-                    .getPreset(new Integer(editPreset.getSelectionModel().getSelectedItem()) - 1));
+                    .getPreset(new Integer(editPreset.getValue().substring(0, editPreset.getValue().indexOf(" ")))));
         } else {
             shot.setPreset(null);
         }
+
         shot.setDescription(editSubject.getText());
         shot.setAction(editAction.getText());
 
@@ -733,7 +746,7 @@ public class CreateScriptController {
             event.setDropCompleted(true);
         };
     }
-    
+
     /**
      * Makes sure the IDs of the shots are always in ascending order.
      */
@@ -741,7 +754,7 @@ public class CreateScriptController {
         for (int i = 0; i < tableEvents.getItems().size(); ++i) {
             tableEvents.getItems().get(i).setNumber(i + 1);
         }
-        
+
         tableEvents.refresh();
     }
 
