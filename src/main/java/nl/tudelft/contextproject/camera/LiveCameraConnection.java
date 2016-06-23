@@ -292,7 +292,6 @@ public class LiveCameraConnection extends CameraConnection {
                 int tilt = Integer.parseInt(panTiltRes.substring(7, 11), 16);
                 lastKnown.setPan(pan);
                 lastKnown.setTilt(tilt);
-
                 return new int[] {pan, tilt};
             }
             throw new IOException(errorString + panTiltRes);
@@ -310,7 +309,6 @@ public class LiveCameraConnection extends CameraConnection {
             if (zoomRes.startsWith("gz")) {
                 int zoom = Integer.parseInt(zoomRes.substring(2, 5), 16);
                 lastKnown.setZoom(zoom);
-
                 return zoom;
             }
 
@@ -344,17 +342,8 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean absPanTilt(int panValue, int tiltValue) {
-        if (panValue < PAN_LIMIT_LOW) {
-            panValue = PAN_LIMIT_LOW;
-        } else if (panValue > PAN_LIMIT_HIGH) {
-            panValue = PAN_LIMIT_HIGH;
-        }
-
-        if (tiltValue < TILT_LIMIT_LOW) {
-            tiltValue = TILT_LIMIT_LOW;
-        } else if (tiltValue > TILT_LIMIT_HIGH) {
-            tiltValue = TILT_LIMIT_HIGH;
-        }
+        panValue = roundToBounds(panValue, PAN_LIMIT_LOW, PAN_LIMIT_HIGH);
+        tiltValue = roundToBounds(tiltValue, TILT_LIMIT_LOW, TILT_LIMIT_HIGH);
 
         try {
             String res = sendRequest(buildPanTiltHeadControlURL(
@@ -367,7 +356,6 @@ public class LiveCameraConnection extends CameraConnection {
             if (res.startsWith("aPS")) {
                 lastKnown.setPan(panValue);
                 lastKnown.setTilt(tiltValue);
-
                 return true;
             }
 
@@ -390,8 +378,7 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean absZoom(int value) {
-        value = (value < ZOOM_LIMIT_LOW) ? ZOOM_LIMIT_LOW :
-            (value > ZOOM_LIMIT_HIGH) ? ZOOM_LIMIT_HIGH : value;
+        value = roundToBounds(value, ZOOM_LIMIT_LOW, ZOOM_LIMIT_HIGH);
         try {
             String res = sendRequest(buildPanTiltHeadControlURL("%23AXZ" 
                     + Integer.toHexString(0x1000 | value).substring(1).toUpperCase()
@@ -411,8 +398,7 @@ public class LiveCameraConnection extends CameraConnection {
 
     @Override
     protected boolean absFocus(int value) {
-        value = (value < FOCUS_LIMIT_LOW) ? FOCUS_LIMIT_LOW :
-            (value > FOCUS_LIMIT_HIGH) ? FOCUS_LIMIT_HIGH : value;
+        value = roundToBounds(value, FOCUS_LIMIT_LOW, FOCUS_LIMIT_HIGH);
 
         try {
             if (autoFocus) {
@@ -463,7 +449,6 @@ public class LiveCameraConnection extends CameraConnection {
             if (res.startsWith("rPC")) {
                 lastKnown.pan(panOffset);
                 lastKnown.tilt(tiltOffset);
-
                 return true;
             }
 
@@ -492,5 +477,54 @@ public class LiveCameraConnection extends CameraConnection {
     @Override
     protected boolean relFocus(int offset) {
         return absFocus(getCurrentFocus() + offset);
+    }
+    
+    @Override
+    protected boolean panTiltStart(int panSpeed, int tiltSpeed) {
+        if (panSpeed == 50 && tiltSpeed == 50) {
+            return panTiltStop();
+        }
+        
+        panSpeed = roundToBounds(panSpeed, 1, 99);
+        tiltSpeed = roundToBounds(tiltSpeed, 1, 99);
+        
+        try {
+            String res = sendRequest(buildPanTiltHeadControlURL("%23PTS" 
+                            + String.format("%02d", panSpeed) 
+                            + String.format("%02d", tiltSpeed))
+                         );
+            if (res.startsWith("pTS")) {
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+    
+    @Override
+    protected boolean panTiltStop() {
+        try {
+            String res = sendRequest(buildPanTiltHeadControlURL("%23PTS5050"));
+            if (res.equals("pTS5050")) {
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Enforces that a number is between the given bounds. If not, then it will be
+     * rounded to the closest bound.
+     * 
+     * @param number The number to check
+     * @param boundLow The lower bound
+     * @param boundHigh The upper bound
+     * @return The number, within the specified bounds.
+     */
+    private int roundToBounds(int number, int boundLow, int boundHigh) {
+        return number < boundLow ? boundLow : number > boundHigh ? boundHigh : number;
     }
 }
