@@ -221,15 +221,14 @@ public class Script implements Iterator<Shot> {
      * Calls the updateOldCam() method after a short delay.
      * This is to give the post-production some extra footage to work with.
      */
-    public synchronized void updateOldCamCaller(Camera cam) {
+    public synchronized void updateOldCamCaller(Shot old) {
         timer.cancel();
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!cam.toString().equals("None")) {
-                    System.out.println(cam + "     " + shots.get(current));
-                    Shot old = shots.get(current);
+                if (!old.equals(DUMMY)) {
+                    Camera cam = old.getCamera();
                     timelines.get(cam.getNumber()).nextPreset(old);
                 }
             }
@@ -301,7 +300,7 @@ public class Script implements Iterator<Shot> {
      */
     public Shot next(boolean load) {
         if (load) {
-            updateOldCamCaller(getCurrentShot().getCamera());
+            updateOldCamCaller(getCurrentShot());
         } 
         
         current++;
