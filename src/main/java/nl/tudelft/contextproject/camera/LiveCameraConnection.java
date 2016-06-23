@@ -72,6 +72,22 @@ public class LiveCameraConnection extends CameraConnection {
     protected CameraSettings getLastKnownSettings() {
         return lastKnown;
     }
+    
+    protected void setLastKnownSettings(CameraSettings settings) {
+        this.lastKnown = settings;
+    }
+    
+    protected void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+    
+    /**
+     * Returns the address of this connection.
+     * @return the address of this connection.
+     */
+    public String getAddress() {
+        return address;
+    }
 
     @Override
     public boolean setUpConnection() {
@@ -149,7 +165,7 @@ public class LiveCameraConnection extends CameraConnection {
      * @throws IOException when something goes wrong in opening the
      *      the connection or reading the response from the server.
      */
-    private String sendRequest(URL url) throws IOException {
+    protected String sendRequest(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         try {
