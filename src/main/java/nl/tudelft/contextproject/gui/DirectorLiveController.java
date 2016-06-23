@@ -95,6 +95,8 @@ public class DirectorLiveController {
         setFactories();
         
         if (!script.isEmpty()) {
+            tableShots.getSelectionModel().select(0);
+            
             if (script.getCurrent() > -1) {
                 btnNext.fire();
             } else {
@@ -145,8 +147,10 @@ public class DirectorLiveController {
         });
 
         btnConfirm.setOnAction((event) -> {
-            changeShot();
-            tableShots.refresh();
+            if (tableShots.getSelectionModel().getSelectedItem() != null) {
+                changeShot();
+                tableShots.refresh();
+            }
         });
     }
 

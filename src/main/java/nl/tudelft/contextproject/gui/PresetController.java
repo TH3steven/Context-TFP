@@ -18,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -348,10 +349,6 @@ public class PresetController {
                 id,
                 description.getText());
         String loc = "src/main/resources/snapShots/cam" + cam.getNumber() + "preset" + newPreset.getId() + ".png";
-        System.out.println(cam.getSettings().getPan());
-        System.out.println(cam.getSettings().getTilt());
-        System.out.println(cam.getSettings().getZoom());
-        System.out.println(cam.getSettings().getFocus());
         
         if (streamHandler != null) {
             streamHandler.snapShot(loc);
