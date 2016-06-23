@@ -295,7 +295,9 @@ public class DirectorLiveController {
         cameraSelecter.setValue(shot.getCamera());
         fieldSubject.setText(shot.getDescription());
         actionArea.setText(shot.getAction());
-
+        
+        System.out.println(shot.getPreset().getImage());
+        
         if (shot.getPreset() != null) {
             presetSelecter.setValue(Integer.toString(shot.getPreset().getId()));
             thumbnail.setImage(loadImage("snapShots/cam" 
