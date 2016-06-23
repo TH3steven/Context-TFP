@@ -146,7 +146,9 @@ public class Script implements Iterator<Shot> {
      */
     public void loadNextPresets() {
         for (Timeline t : timelines.values()) {
-            t.instantNextPreset();
+            if (!t.getCamera().equals(getCurrentShot().getCamera())) {
+                t.instantNextPreset();
+            }
         }
     }
 

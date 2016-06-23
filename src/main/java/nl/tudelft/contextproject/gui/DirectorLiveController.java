@@ -157,6 +157,7 @@ public class DirectorLiveController {
         
         btnManualLoad.setOnAction(event -> {
             script.loadNextPresets();
+            System.out.println("dkdkddk");
         });
     }
 
