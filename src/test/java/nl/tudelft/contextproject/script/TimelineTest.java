@@ -110,10 +110,6 @@ public class TimelineTest {
         cam0.tilt(20);
         assertEquals(timeline1.getCurrent(), 0);
         timeline1.instantNextPreset();
-        System.out.println(cam0.getSettings().getPan() + " " + cam0.getSettings().getTilt() + " "
-                + cam0.getSettings().getZoom() + " " + cam0.getSettings().getFocus());
-        System.out.println(pres.getToSet().getPan() + " " + pres.getToSet().getTilt() + " "
-                + pres.getToSet().getZoom() + " " + pres.getToSet().getFocus());
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
 
     }
