@@ -205,6 +205,8 @@ public class PresetController {
             if (streamHandler != null) {
                 streamHandler.stop();
             }
+            
+            removeArrowKeyBinds();
 
             if (toCameramanView) {
                 Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {

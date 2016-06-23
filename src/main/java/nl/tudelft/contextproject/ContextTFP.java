@@ -26,10 +26,6 @@ import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -63,14 +59,11 @@ public class ContextTFP extends Application {
         script = new Script(new ArrayList<Shot>());
 
         // Statically initialize ApplicationSettings class.
-        Path path = Paths.get("scr/main/resources/snapShot");
-        if(Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
-            ApplicationSettings.getInstance();
-        } else {
-            File dir = new File("src/main/resources/snapShot");
+        File dir = new File("src/main/resources/snapShots");
+        if (!dir.exists()) {
             dir.mkdir();
-            ApplicationSettings.getInstance();
         }
+        ApplicationSettings.getInstance();
 
         initRootLayout();
 
