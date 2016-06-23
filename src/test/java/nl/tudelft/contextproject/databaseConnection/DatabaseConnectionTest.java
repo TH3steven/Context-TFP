@@ -36,7 +36,7 @@ public class DatabaseConnectionTest {
         }
         ApplicationSettings.getInstance().setDatabaseInfo("159.253.0.125", 3306, 
                 "thomaaj84_test", "thomaaj84_test", new String(pass));
-        ApplicationSettings.getInstance().setDatabaseName("thomaaj84_test");
+        
         connection = DatabaseConnection.getInstance();
     }
     

@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -14,6 +15,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -25,7 +27,9 @@ import nl.tudelft.contextproject.presets.Preset;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is a control class for the preset creation screen. It
@@ -40,11 +44,14 @@ public class PresetController {
     private static boolean toCameramanView = false;
 
     @FXML private CheckBox overwrite;
+    @FXML private CheckBox arrowControl;
+
     @FXML private ChoiceBox<Integer> cameraSelector;
 
     @FXML private Button btnBack;
     @FXML private Button btnSave;
     @FXML private Button btnRemove;
+    @FXML private Button btnGotoPreset;
 
     @FXML private TableView<Preset> tableView;
     @FXML private TableColumn<Preset, Integer> presetColumn;
@@ -155,7 +162,23 @@ public class PresetController {
 
         initSaveButton();
         initBackButton();
+        initGotoPresetButton();
         setCameraSelector();
+        setArrowControl();
+    }
+    
+    /**
+     * Adds the listener to the goto preset button.
+     */
+    private void initGotoPresetButton() {
+        btnGotoPreset.setOnAction(event -> {
+            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex >= 0) {
+                Preset selected = tableView.getItems().get(selectedIndex);
+                Camera cam = Camera.getCamera(cameraSelector.getValue() - 1);
+                selected.applyTo(cam);
+            }
+        });
     }
 
     /**
@@ -215,7 +238,80 @@ public class PresetController {
             }
         });
     }
+    
+    /**
+     * Sets the action for the arrow key control checkbox.
+     */
+    private void setArrowControl() {
+        arrowControl.setOnAction(event -> {
+            if (arrowControl.isSelected()) {
+                setArrowKeyBinds();
+            } else {
+                removeArrowKeyBinds();
+            }
+        });
+    }
+    
+    /**
+     * Sets the actions to allow arrow key operated control of the camera.
+     */
+    private void setArrowKeyBinds() {
+        Scene scene = arrowControl.getScene();
+        Set<KeyCode> pressedKeys = new HashSet<KeyCode>();
 
+        scene.setOnKeyPressed(event -> {
+            if (!pressedKeys.contains(event.getCode()) && cameraSelector.getValue() != null) {
+                pressedKeys.add(event.getCode());
+                Camera currentCam = Camera.getCamera(cameraSelector.getValue() - 1);
+                
+                switch (event.getCode()) {
+                    case LEFT:
+                        currentCam.panTiltStart(1, 50);
+                        break;
+                    case RIGHT:
+                        currentCam.panTiltStart(99, 50);
+                        break;
+                    case UP:
+                        currentCam.panTiltStart(50, 99);
+                        break;
+                    case DOWN:
+                        currentCam.panTiltStart(50, 1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            event.consume();
+        });
+        scene.setOnKeyReleased(event -> {
+            if (cameraSelector.getValue() != null) {
+                pressedKeys.remove(event.getCode());
+                Camera currentCam = Camera.getCamera(cameraSelector.getValue() - 1);
+
+                switch (event.getCode()) {
+                    case LEFT:
+                    case RIGHT:
+                    case UP:
+                    case DOWN:
+                        currentCam.panTiltStop();
+                        break;
+                    default:
+                        break;
+                }
+                event.consume();
+            }
+        });
+    }
+
+    /**
+     * Removes the actions to disable arrow key operated control of a camera.
+     */
+    private void removeArrowKeyBinds() {
+        Scene scene = arrowControl.getScene();
+        scene.setOnKeyPressed(null);
+        scene.setOnKeyReleased(null);
+    }
+    
     /**
      * Resizes the ImageView.
      * 
@@ -250,14 +346,13 @@ public class PresetController {
                 cam.getSettings(),
                 id,
                 description.getText());
-        String loc = String.format("CameraId%dPresetId%d", cam.getNumber(), newPreset.getId());
+        String loc = "src/main/resources/snapShots/cam" + cam.getNumber() + "preset" + newPreset.getId() + ".png";
         
         if (cam.getConnection() != null) {
             cam.getConnection().snapShot(loc);
+            newPreset.setImageLocation(loc);
         }
         
-        newPreset.setImageLocation(loc);
-
         if (overwrite.isSelected()) {
             cam.overwritePreset(newPreset);
             int newId = newPreset.getId();

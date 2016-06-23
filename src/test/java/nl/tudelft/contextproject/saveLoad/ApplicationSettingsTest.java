@@ -3,13 +3,14 @@ package nl.tudelft.contextproject.saveLoad;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-
 import nl.tudelft.contextproject.camera.Camera;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -37,6 +38,18 @@ import java.util.Scanner;
 @PowerMockIgnore("javax.crypto.*")
 public class ApplicationSettingsTest {
     
+    private ApplicationSettings settings;
+    
+    /**
+     * Sets up the settings variable to provide a clean testing environment.
+     */
+    @Before
+    public void setUp() {
+        settings = spy(ApplicationSettings.getInstance());
+        settings.reset();
+        doNothing().when(settings).initCameraConnections();
+    }
+    
     /**
      * Asserts that the specified settings are the default settings.
      * 
@@ -60,10 +73,10 @@ public class ApplicationSettingsTest {
      */
     @Test
     public void testIsLoaded() throws Exception {
-        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
         File invalidFile = new File("src/test/resources/settingsLoadInvalidTest.txt");
         File validFile = new File("src/test/resources/settingsLoadTest.txt");
         whenNew(File.class).withAnyArguments().thenReturn(invalidFile, validFile);
+        
         assertFalse(settings.load());
         assertFalse(settings.isLoaded());
         //First file has invalid settings, second file has valid settings.
@@ -73,11 +86,10 @@ public class ApplicationSettingsTest {
     
     /**
      * Tests {@link ApplicationSettings#reset()}.
+     * No call to this method needed here, since this is done in @Before.
      */
     @Test
     public void testReset() {
-        ApplicationSettings settings = ApplicationSettings.getInstance();
-        settings.reset();
         assertDefaultSettings(settings);
     }
 
@@ -89,7 +101,6 @@ public class ApplicationSettingsTest {
      */
     @Test
     public void testLoadNoFile() throws Exception {
-        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
         settings.setRenderResolution(0, 0);
         doThrow(new FileNotFoundException()).when(settings, "getScanner");
         assertFalse(settings.load());
@@ -107,14 +118,14 @@ public class ApplicationSettingsTest {
     @Test
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     public void testLoadFull() throws Exception {
-        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
-        settings.reset();
         File file = new File("src/test/resources/settingsLoadTest.txt");
         whenNew(File.class).withAnyArguments().thenReturn(file);
         settings.load();
+        
         HashMap<Integer, String> expectedIPs = new HashMap<Integer, String>();
         expectedIPs.put(0, "65.65.65.65");
         expectedIPs.put(1, "420.420.420.420");
+        
         assertEquals(1965, settings.getRenderResX());
         assertEquals(420, settings.getRenderResY());
         assertEquals("D:\\program files", settings.getVlcLocation());
@@ -140,18 +151,19 @@ public class ApplicationSettingsTest {
     @Test
     @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", "resource" })
     public void testSave() throws Exception {
-        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
-        settings.reset();
         File actual = new File("src/test/resources/settingsSaveActual.txt");
         File expected = new File("src/test/resources/settingsSaveExpected.txt");
         doReturn(new PrintWriter(new FileWriter(actual))).when(settings, "getWriter");
+        
         settings.setRenderResolution(420, 65);
         settings.setVlcLocation("C:\\Test");
         settings.addCameraIP(new Camera().getNumber(), "420.420.420.420");
         settings.addCameraIP(new Camera().getNumber(), "65.65.65.65");
         settings.setDatabaseInfo("url", 1337, "pieter", "pjejnis", "password");
         settings.save();
+        
         assertTrue(actual.exists());
+        
         String eof = "\\A";
         Scanner sc = new Scanner(actual);
         Scanner sc2 = new Scanner(expected);
@@ -169,12 +181,10 @@ public class ApplicationSettingsTest {
     @Test
     @SuppressWarnings("resource")
     public void testSaveLoad() throws Exception {
-        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
-        settings.reset();
         File file = new File("src/test/resources/settingsSaveLoad.txt");
         doReturn(new PrintWriter(new FileWriter(file))).when(settings, "getWriter");
         doReturn(new Scanner(file)).when(settings, "getScanner");
-        settings.reset();
+        
         settings.setVlcLocation("This is not a path ");
         settings.setDatabaseInfo("", 3306, "SwekJeweled", "", "pass");
         settings.addCameraIP(new Camera().getNumber(), "420.420.420.420");
