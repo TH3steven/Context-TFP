@@ -57,8 +57,8 @@ public class CameraFeedsController {
         initChoiceBoxes();
         addStreamListeners();
 
-        viewOne.setImage(loadImage("black.png"));
-        viewTwo.setImage(loadImage("black.png"));
+        viewOne.setImage(loadImage("error-x.png"));
+        viewTwo.setImage(loadImage("error-x.png"));
 
         fitImageView(viewOne, streamBoxOne);
         fitImageView(viewTwo, streamBoxTwo);
@@ -111,8 +111,6 @@ public class CameraFeedsController {
             } else {
                 blackView(oldStream, streamHandler);
             }
-            
-
         });
     }
 
@@ -193,7 +191,7 @@ public class CameraFeedsController {
             streamHandler.stop();
         }
 
-        imgView.setImage(loadImage("black.png"));
+        imgView.setImage(loadImage("error-q.png"));
     }
 
     /**
@@ -246,7 +244,7 @@ public class CameraFeedsController {
         try {
             return new Image(path);
         } catch (IllegalArgumentException e) {
-            return new Image("error.jpg");
+            return new Image("error-x.jpg");
         }
     }
 

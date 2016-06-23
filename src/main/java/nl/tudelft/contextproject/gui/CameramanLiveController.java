@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -39,7 +40,6 @@ public class CameramanLiveController {
     @FXML private Button btnBack;
     @FXML private Button btnHideAll;
     @FXML private Button btnPresets;
-    @FXML private Button btnNext;
     @FXML private Button btnShowAll;
 
     @FXML private TableView<Shot> tableShots;
@@ -71,6 +71,11 @@ public class CameramanLiveController {
 
         tableShots.getItems().addAll(script.getShots());
         tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Changes the "No content in table" label.
+        tableShots.setPlaceholder(new Label("The script is empty. "
+                + "Create a new script in the Create script screen, "
+                + "or load one in the menu."));
     }
 
     private void initCameraSelector() {
@@ -99,14 +104,6 @@ public class CameramanLiveController {
     private void initButtons() {
         btnBack.setOnAction(event -> {
             MenuController.show();
-        });
-
-        //TODO remove temp button
-        //Button is here to allow for easy demo-ing of
-        //the current shot highlight.
-        btnNext.setOnAction(event -> {
-            ContextTFP.getScript().next();
-            tableShots.refresh();
         });
 
         btnShowAll.setOnAction(event -> {
