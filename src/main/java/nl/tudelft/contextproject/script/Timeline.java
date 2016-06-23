@@ -93,8 +93,10 @@ public class Timeline {
 
         if (oldIndex + 1 < shots.size()) {
             Shot nextShot = shots.get(oldIndex + 1);
-            nextShot.getPreset().applyTo(camera);
-            current = oldIndex + 1;
+            if (nextShot.hasPreset()) {
+                nextShot.getPreset().applyTo(camera);
+                current = oldIndex + 1;
+            }
         }
     }
     
