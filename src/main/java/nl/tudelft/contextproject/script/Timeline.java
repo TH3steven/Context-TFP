@@ -124,8 +124,19 @@ public class Timeline {
         return null;
     }
     
+    /**
+     * Gives the index of the the current shot.
+     * @return The index
+     */
     public int getCurrent() {
         return current;
+    }
+    
+    /**
+     * Increses the index of the current shot.
+     */
+    public void incCurrent() {
+        current++;
     }
 
     /**

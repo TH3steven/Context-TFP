@@ -303,7 +303,9 @@ public class Script implements Iterator<Shot> {
     public Shot next(boolean load) {
         if (load) {
             updateOldCamCaller(getCurrentShot());
-        } 
+        } else {
+            timelines.get(getCurrentShot().getCamera().getNumber()).incCurrent();
+        }
         
         current++;
         Shot next = shots.get(current);
