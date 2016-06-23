@@ -1,13 +1,8 @@
 package nl.tudelft.contextproject.camera;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.imageio.ImageIO;
 
 /**
  * Class to represent a mocked camera. It mimics or mocks the behavior of a specific camera
@@ -137,18 +132,6 @@ public class MockedCameraConnection extends CameraConnection {
 
         if (arg instanceof CameraSettings) {
             camSet = (CameraSettings) arg;
-        }
-    }
-
-    @Override
-    public void snapShot(String imageLocation) {
-        File output = new File("src/main/resources/error-q.png");
-
-        try {
-            BufferedImage image = ImageIO.read(output);
-            ImageIO.write(image, "png", new File(imageLocation));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

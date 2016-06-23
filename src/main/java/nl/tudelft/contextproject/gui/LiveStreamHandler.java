@@ -5,20 +5,24 @@ import com.sun.jna.Memory;
 import javafx.application.Platform;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleFloatProperty;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
-
 import nl.tudelft.contextproject.ContextTFP;
-
 import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 /**
  * Handler for streaming media into the GUI through VLC.
@@ -136,5 +140,24 @@ public class LiveStreamHandler {
      */
     public String getStreamLink() {
         return this.streamLink;
+    }
+    
+    /**
+     * Takes a snapshot of the image present on a camera and stores the image
+     * at a chosen location.
+     *
+     * @param imageLocation The location to which the captured image is stored.
+     */
+    public void snapShot(String imageLocation) {
+        if (imageView != null) {
+            WritableImage image = imageView.snapshot(new SnapshotParameters(), null);
+            File output = new File(imageLocation);
+
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", output);
+            } catch ( IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

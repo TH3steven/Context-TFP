@@ -219,22 +219,6 @@ public class LiveCameraConnection extends CameraConnection {
     }
 
     @Override
-    public void snapShot(String imageLocation) {
-        if (isConnected()) {
-            LiveStreamHandler liveStreamHandler = new LiveStreamHandler();
-            ImageView imageView = liveStreamHandler.createImageView(getStreamLink(), 640, 360);
-            WritableImage image = imageView.snapshot(new SnapshotParameters(), null);
-            File output = new File(imageLocation);
-
-            try {
-                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", output);
-            } catch ( IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
     public void update(Observable o, Object arg) {
         if (!(o instanceof Camera)) {
             return;

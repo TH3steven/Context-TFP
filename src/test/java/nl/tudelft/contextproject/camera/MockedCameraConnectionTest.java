@@ -7,9 +7,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
 
 /**
@@ -219,23 +216,6 @@ public class MockedCameraConnectionTest {
         panTilt = new int[]{60, 60};
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
         Arrays.equals(panTilt, mockedCam.getCurrentPanTilt());
-    }
-
-    /**
-     * Tests the snapShot method. Checks if the error image has indeed been made.
-     * 
-     * @throws IOException Because of file deletion in test.
-     */
-    @Test
-    public void testSnapShot() throws IOException {
-        cam1.setConnection(mockedCam);
-        String imageLocation = "src/test/resources/error.png";
-        File imageFile = new File(imageLocation);
-        Files.deleteIfExists(imageFile.toPath());
-        
-        mockedCam.snapShot(imageLocation);
-
-        assertTrue(imageFile.exists());
     }
 }
 

@@ -348,8 +348,8 @@ public class PresetController {
                 description.getText());
         String loc = "src/main/resources/snapShots/cam" + cam.getNumber() + "preset" + newPreset.getId() + ".png";
         
-        if (cam.getConnection() != null) {
-            cam.getConnection().snapShot(loc);
+        if (streamHandler != null) {
+            streamHandler.snapShot(loc);
             newPreset.setImageLocation(loc);
         }
         
