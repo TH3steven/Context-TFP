@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 
@@ -20,46 +21,49 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Controller for the window that can display camera feeds.
+ * Controller for the window that can display camera feeds. This
+ * class is responsible for handling the two steams that can be
+ * displayed in a pop-up window.
+ * 
+ * <p>The view section is defined under view/CameraFeedsView.fxml
  * 
  * @since 0.8
  */
 public class CameraFeedsController {
-    
+
     private static LiveStreamHandler leftStreamHandler;
     private static LiveStreamHandler rightStreamHandler;
-    
+
     @FXML private ChoiceBox<Camera> camChoiceOne;
     @FXML private ChoiceBox<Camera> camChoiceTwo;
-    
+
     @FXML private ImageView viewOne;
     @FXML private ImageView viewTwo;
-    
+
     @FXML private VBox streamBoxOne;
     @FXML private VBox streamBoxTwo;
-    
+
     private Collection<Camera> cameras;
-    
+
     /**
      * Initialize method used by JavaFX.
      */
     @FXML private void initialize() {
         cameras = Camera.getAllCameras();
-        
+
         leftStreamHandler = new LiveStreamHandler();
         rightStreamHandler = new LiveStreamHandler();
-        
-        initChoiceBoxes();
 
+        initChoiceBoxes();
         addStreamListeners();
-        
+
         viewOne.setImage(loadImage("black.png"));
         viewTwo.setImage(loadImage("black.png"));
-        
+
         fitImageView(viewOne, streamBoxOne);
         fitImageView(viewTwo, streamBoxTwo);
     }
-    
+
     /**
      * Initializes the choice boxes.
      * Allows the user to choose his camera feed for each view.
@@ -68,51 +72,50 @@ public class CameraFeedsController {
         ObservableList<Camera> choices = FXCollections.observableArrayList();
         choices.add(Camera.DUMMY);
         Iterator<Camera> it = cameras.iterator();
+
         while (it.hasNext()) {
             choices.add(it.next());
         }
 
         camChoiceOne.setItems(choices);
         camChoiceTwo.setItems(choices);
-        
+
         camChoiceOne.setValue(Camera.DUMMY);
         camChoiceTwo.setValue(Camera.DUMMY);
-        
+
         addChoiceListener(camChoiceOne);
         addChoiceListener(camChoiceTwo);
     }
-    
+
     /**
      * Add a ChangeListener to the ChoiceBox.
-     * 
      * @param cb the ChoiceBox to add the listener to.
      */
     private void addChoiceListener(ChoiceBox<Camera> cb) {
         cb.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-            
+
             LiveStreamHandler streamHandler;
-            
+
             if (cb.equals(camChoiceOne)) {
                 streamHandler = leftStreamHandler;
             } else {
                 streamHandler = rightStreamHandler;
             }
-            
-            VBox outerBox = (VBox) cb.getParent();
+
+            VBox outerBox = (VBox) cb.getParent().getParent();
             VBox innerBox = (VBox) outerBox.getChildren().get(1);
             ImageView oldStream = (ImageView) innerBox.getChildren().get(0);
             
-            if (newV.toString().equals("None")) {
+            if (newV.hasConnection()) {
+                updateStream(newV.getConnection().getStreamLink(), oldStream, streamHandler);   
+            } else {
                 blackView(oldStream, streamHandler);
-                return;
             }
-           
-            String newStream = newV.getConnection().getStreamLink();           
             
-            updateStream(newStream, oldStream, streamHandler);
+
         });
     }
-    
+
     /**
      * Adds listeners to the width and height properties of the stream containers
      * for scaling.
@@ -122,7 +125,7 @@ public class CameraFeedsController {
             if (leftStreamHandler != null) {
                 fitImageViewSize(newValue.floatValue(), 
                         (float) streamBoxOne.getHeight(), 
-                            (ImageView) streamBoxOne.getChildren().get(0), leftStreamHandler);
+                        (ImageView) streamBoxOne.getChildren().get(0), leftStreamHandler);
             }
         });
 
@@ -130,35 +133,34 @@ public class CameraFeedsController {
             if (rightStreamHandler != null) {
                 fitImageViewSize(newValue.floatValue(), 
                         (float) streamBoxTwo.getHeight(), 
-                            (ImageView) streamBoxTwo.getChildren().get(0), rightStreamHandler);
+                        (ImageView) streamBoxTwo.getChildren().get(0), rightStreamHandler);
             }
         });
-        
+
         streamBoxOne.heightProperty().addListener((observable, oldValue, newValue) -> {
             if (leftStreamHandler != null) {
                 fitImageViewSize((float) streamBoxOne.getWidth(), 
                         newValue.floatValue(), 
-                            (ImageView) streamBoxOne.getChildren().get(0), leftStreamHandler);
+                        (ImageView) streamBoxOne.getChildren().get(0), leftStreamHandler);
             }
         });
-        
+
         streamBoxTwo.heightProperty().addListener((observable, oldValue, newValue) -> {
             if (rightStreamHandler != null) {
                 fitImageViewSize((float) streamBoxTwo.getWidth(), 
                         newValue.floatValue(), 
-                            (ImageView) streamBoxTwo.getChildren().get(0), rightStreamHandler);
+                        (ImageView) streamBoxTwo.getChildren().get(0), rightStreamHandler);
             }
         });
     }
-    
+
     /**
      * Updates the camera stream to the stream referenced by the specified link.
-     * 
      * @param streamLink the link to the video stream to be played next.
      */
     private void updateStream(String streamLink, ImageView imageView, LiveStreamHandler streamHandler) {
         VBox vBox = (VBox) imageView.getParent();
-        
+
         if (streamHandler != null) {
             streamHandler.stop();
 
@@ -175,11 +177,11 @@ public class CameraFeedsController {
             if (!ContextTFP.hasVLC()) {
                 fitImageView(newView, vBox);
             }
-            
+
             streamHandler.start();
         }
     }
-    
+
     /**
      * Loads a black image instead of a stream.
      * 
@@ -190,9 +192,10 @@ public class CameraFeedsController {
         if (streamHandler != null) {
             streamHandler.stop();
         }
+
         imgView.setImage(loadImage("black.png"));
     }
-    
+
     /**
      * Resizes the ImageView.
      * 
@@ -206,7 +209,7 @@ public class CameraFeedsController {
                 && streamHandler.isPlaying()) {
             FloatProperty videoSourceRatioProperty = streamHandler.getRatio();
             float fitHeight = videoSourceRatioProperty.get() * width;
-            
+
             if (fitHeight > height) {
                 imageView.setFitHeight(height);
                 double fitWidth = height / videoSourceRatioProperty.get();
@@ -221,7 +224,7 @@ public class CameraFeedsController {
             } 
         }
     }
-    
+
     /**
      * Fit ImageView to its VBox container.
      * 
@@ -232,7 +235,7 @@ public class CameraFeedsController {
         imgView.fitWidthProperty().bind(vBox.widthProperty());
         imgView.fitHeightProperty().bind(vBox.heightProperty());
     }
-    
+
     /**
      * Loads an image. Loads an error image if path is null or invalid.
      * 
@@ -246,7 +249,7 @@ public class CameraFeedsController {
             return new Image("error.jpg");
         }
     }
-    
+
     /**
      * Close the streams.
      */
@@ -254,12 +257,12 @@ public class CameraFeedsController {
         if (leftStreamHandler != null) {
             leftStreamHandler.stop();
         }
-        
+
         if (rightStreamHandler != null) {
             rightStreamHandler.stop();
         }
     }
-    
+
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.

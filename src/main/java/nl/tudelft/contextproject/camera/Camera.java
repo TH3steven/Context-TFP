@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class represents a camera. Every camera has its 
@@ -20,8 +21,8 @@ public class Camera extends Observable {
      * Dummy camera with camId -1.
      */
     public static final Camera DUMMY;
-    
-    private static final HashMap<Integer, Camera> CAMERAS = new HashMap<Integer, Camera>();
+
+    private static final ConcurrentHashMap<Integer, Camera> CAMERAS = new ConcurrentHashMap<Integer, Camera>();
     private static int numCams = 0;
 
     private CameraConnection connection;
@@ -29,7 +30,7 @@ public class Camera extends Observable {
     private HashMap<Integer, Preset> presets;
 
     private int camId;
-    
+
     static {
         DUMMY = new Camera();
         DUMMY.camId = -1;
@@ -101,6 +102,9 @@ public class Camera extends Observable {
      * @return Camera settings.
      */
     public CameraSettings getSettings() {
+        if (hasConnection()) {
+            camSet = connection.getCurrentCameraSettings();
+        }
         return camSet;
     }
 
@@ -109,7 +113,7 @@ public class Camera extends Observable {
      * @param settings Camera settings to set.
      */
     public void setSettings(CameraSettings settings) {
-        if (hasConnection() && connection.isConnected()) {
+        if (hasConnection()) {
             camSet = settings;
             setChanged();
             notifyObservers(settings);
@@ -334,6 +338,37 @@ public class Camera extends Observable {
         setChanged();
         notifyObservers();
     }
+    
+    /**
+     * Makes the camera start panning and tilting in the specified direction
+     * 
+     * @param panSpeed Should be between -100 and 100, where 0 is stop, 
+     *      -100 is maximum speed towards the left and 100 is maximum speed 
+     *      towards the right.
+     * @param tiltSpeed Should be between -100 and 100, where 0 is stop, 
+     *      -100 is maximum speed downwards and 100 is maximum speed upwards.
+     */
+    public void panTiltStart(int panSpeed, int tiltSpeed) {
+        if (hasConnection()) {
+            connection.panTiltStart(panSpeed, tiltSpeed);
+        }
+        
+        setChanged();
+        notifyObservers();
+    }
+    
+    /**
+     * Makes the camera stop panning and tilting in the specified direction.
+     */
+    public void panTiltStop() {
+        if (hasConnection()) {
+            connection.panTiltStop();
+        }
+        camSet = getSettings();
+        
+        setChanged();
+        notifyObservers();
+    }
 
     /**
      * Adds a preset to the camera, if there is not already
@@ -422,7 +457,7 @@ public class Camera extends Observable {
     public Collection<Preset> getAllPresets() {
         return presets.values();
     }
-    
+
     @Override
     public String toString() {
         return this.equals(DUMMY) ? "None" : String.valueOf(camId + 1);

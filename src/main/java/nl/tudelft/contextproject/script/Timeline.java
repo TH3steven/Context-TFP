@@ -70,7 +70,7 @@ public class Timeline {
      * Loads the initial preset of the timeline, if shots is not empty.
      */
     public void initPreset() {
-        if (!shots.isEmpty()) {
+        if (!shots.isEmpty() && shots.get(0).hasPreset()) {
             shots.get(0).getPreset().applyTo(camera);  
         }
     }
@@ -84,7 +84,9 @@ public class Timeline {
 
         if (oldIndex + 1 < shots.size()) {
             Shot nextShot = shots.get(oldIndex + 1);
-            nextShot.getPreset().applyTo(camera);
+            if (nextShot.getPreset() != null) {
+                nextShot.getPreset().applyTo(camera); //TODO: Add null check for preset.
+            }
         }
     }
     
