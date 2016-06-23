@@ -40,7 +40,6 @@ public class InstantPreset extends Preset {
      */
     @Override
     public void applyTo(Camera cam) {
-        System.out.println("Apply preset " + getId() + " to camera " + (cam.getNumber()+1));
         cam.setSettings(getToSet());
     }
 }

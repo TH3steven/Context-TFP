@@ -135,6 +135,7 @@ public class ScriptTest {
      */
     @Test
     public void testInitPresetLoading() {
+        script1.initPresetLoading();
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
     }
 

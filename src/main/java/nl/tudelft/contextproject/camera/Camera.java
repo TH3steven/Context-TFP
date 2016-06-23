@@ -121,8 +121,6 @@ public class Camera extends Observable {
             
             setChanged();
             notifyObservers(camSet);
-            System.out.println(settings.getPan() + " " + settings.getTilt() + " "
-                    + settings.getZoom() + " " + settings.getFocus());
         }
     }
 
