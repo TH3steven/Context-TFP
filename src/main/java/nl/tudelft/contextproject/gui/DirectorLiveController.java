@@ -44,6 +44,7 @@ public class DirectorLiveController {
 
     @FXML private Button btnBack;
     @FXML private Button btnConfirm;
+    @FXML private Button btnManualLoad;
     @FXML private Button btnNext;
     @FXML private Button btnUndo;
 
@@ -79,14 +80,9 @@ public class DirectorLiveController {
         script = ContextTFP.getScript();
         Shot current = getCurrentShot();
 
-        if (!script.isEmpty()) {
-            if (script.getCurrent() == -1) {
-                script.next();
-            }
-        }
-
         initializeButtons();
         if (script.getShots().size() > 0) {
+            initializeScriptButtons();
             initializeEditButtons();
             initializeCheckbox();
             initializeChoiceBoxes();
@@ -103,7 +99,14 @@ public class DirectorLiveController {
         }
         setFactories();
         
-        // Allows for highlighting of the current shot
+        if (!script.isEmpty()) {
+            if (script.getCurrent() > -1) {
+                btnNext.fire();
+            } else {
+                script.initPresetLoading();
+            }
+        }
+
         LiveScript.setRowFactory(tableShots);
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
@@ -118,10 +121,23 @@ public class DirectorLiveController {
         btnBack.setOnAction(event -> {
             MenuController.show();
         });
-
+    }
+    
+    /**
+     * Initializes script navigation buttons and preset loading buttons.
+     */
+    private void initializeScriptButtons() {      
         btnNext.setOnAction(event -> {
+            if (script.getCurrent() == -1) {
+                script.next();
+            }
+            tableShots.refresh();
             initializeLive();
             btnNext.setText("Next shot");
+        });
+        
+        btnManualLoad.setOnAction(event -> {
+            script.loadNextPresets();
         });
     }
 
