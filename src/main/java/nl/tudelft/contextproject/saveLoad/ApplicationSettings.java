@@ -327,13 +327,13 @@ public final class ApplicationSettings {
                     CameraConnection connect = new LiveCameraConnection(camIp);
                     if (connect.setUpConnection()) {
                         cam.setConnection(connect);
-                        break;
+                        continue;
                     }
                     
                     connect = new LiveCameraConnectionAWHE40(camIp);
                     if (connect.setUpConnection()) {
                         cam.setConnection(connect);
-                        break;
+                        continue;
                     }
                 }
 
