@@ -288,7 +288,7 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        return next(false);
+        return next(true);
     }
     
     /**

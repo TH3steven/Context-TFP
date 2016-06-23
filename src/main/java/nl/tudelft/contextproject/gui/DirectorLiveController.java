@@ -146,6 +146,10 @@ public class DirectorLiveController {
      */
     private void initializeScriptButtons() {      
         btnNext.setOnAction(event -> {
+            if (script.getCurrent() == -1) {
+                script.next();
+            }
+            tableShots.refresh();
             initializeLive();
             live = true;
             btnNext.setText("Next shot");
