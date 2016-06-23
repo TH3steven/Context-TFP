@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class represents a camera. Every camera has its 
@@ -21,7 +22,7 @@ public class Camera extends Observable {
      */
     public static final Camera DUMMY;
 
-    private static final HashMap<Integer, Camera> CAMERAS = new HashMap<Integer, Camera>();
+    private static final ConcurrentHashMap<Integer, Camera> CAMERAS = new ConcurrentHashMap<Integer, Camera>();
     private static int numCams = 0;
 
     private CameraConnection connection;

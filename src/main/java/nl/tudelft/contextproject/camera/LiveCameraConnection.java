@@ -44,7 +44,7 @@ public class LiveCameraConnection extends CameraConnection {
     public static final int FOCUS_LIMIT_LOW = 1365;
     public static final int FOCUS_LIMIT_HIGH = 4095;
 
-    private static final int READ_TIMEOUT = 3000;
+    private static final int READ_TIMEOUT = 1000;
 
     private final String errorString = "Wrong response from camera: ";
 

@@ -102,6 +102,7 @@ public final class LoadScript {
                 }
             }
             
+            ApplicationSettings.getInstance().initCameraConnections();
             return new Script(shots);
         }
     }
