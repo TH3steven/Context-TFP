@@ -161,7 +161,7 @@ public class DirectorLiveController {
     private void initializeLive() {
         btnNext.setOnAction(event -> {
             if (!endReached()) {
-                script.next(automaticCheck.isSelected());
+                script.directorNext(automaticCheck.isSelected());
                 tableShots.refresh();
             } else {
                 actionTxt.setText("End of script reached");

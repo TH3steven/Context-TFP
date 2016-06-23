@@ -348,10 +348,6 @@ public class PresetController {
                 id,
                 description.getText());
         String loc = "src/main/resources/snapShots/cam" + cam.getNumber() + "preset" + newPreset.getId() + ".png";
-        System.out.println(cam.getSettings().getPan());
-        System.out.println(cam.getSettings().getTilt());
-        System.out.println(cam.getSettings().getZoom());
-        System.out.println(cam.getSettings().getFocus());
         
         if (streamHandler != null) {
             streamHandler.snapShot(loc);

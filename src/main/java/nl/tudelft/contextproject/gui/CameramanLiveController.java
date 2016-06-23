@@ -73,10 +73,18 @@ public class CameramanLiveController {
         tableShots.getItems().addAll(script.getShots());
         tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         
+        initSynchronization();
+    }
+    
+    /**
+     * Initializes the listener used for synchronization with the MySQL database.
+     */
+    private void initSynchronization() {
         DatabaseConnection.getInstance().addObserver( (Observable obj, Object arg) -> {
             int liveCount = (int) arg;
             int current = ContextTFP.getScript().getCurrent();
-            if (liveCount > current) {
+
+            if (liveCount > current && liveCount < ContextTFP.getScript().getShots().size()) {
                 for (int i = 0; i < (liveCount - current); i++) {
                     ContextTFP.getScript().next();
                 }

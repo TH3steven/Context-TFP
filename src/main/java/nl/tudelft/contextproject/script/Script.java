@@ -312,12 +312,23 @@ public class Script implements Iterator<Shot> {
         current++;
         Shot next = shots.get(current);
         
+        return next;
+    }
+    
+    /**
+     * Go to the next shot and upload the database counter.
+     * 
+     * @param load Determines whether cameras should be adjusted.
+     * @return The next shot
+     */
+    public Shot directorNext(boolean load) {
         try {
             DatabaseConnection.getInstance().updateCounter();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        return next;
+        return next(load);
     }
+    
 }
