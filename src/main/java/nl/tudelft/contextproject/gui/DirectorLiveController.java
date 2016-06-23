@@ -108,6 +108,11 @@ public class DirectorLiveController {
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
         tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Changes the "No content in table" label.
+        tableShots.setPlaceholder(new Label("The script is empty. "
+                + "Create a new script in the Create script screen, "
+                + "or load one in the menu."));
     }
 
     /**
