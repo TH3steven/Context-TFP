@@ -149,7 +149,6 @@ public class DirectorLiveController {
             initializeLive();
             live = true;
             btnNext.setText("Next shot");
-            script.next(automaticCheck.isSelected());
         });
         
         btnManualLoad.setOnAction(event -> {

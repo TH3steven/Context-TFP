@@ -107,7 +107,9 @@ public class Timeline {
             nextPreset(null);
         } else if (current < shots.size()) {
             Shot restoreShot = shots.get(current);
-            restoreShot.getPreset().applyTo(camera);
+            if (restoreShot.hasPreset()) {
+                restoreShot.getPreset().applyTo(camera);
+            }
         }
     }
     

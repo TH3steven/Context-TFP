@@ -64,8 +64,7 @@ public class Script implements Iterator<Shot> {
         timer = new Timer();
         timelines = new HashMap<Integer, Timeline>();
         
-        initTimelines();
-        initPresetLoading();       
+        initTimelines();     
     }
 
     /**
