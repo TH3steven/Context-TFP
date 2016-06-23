@@ -111,7 +111,6 @@ public class TimelineTest {
         assertEquals(timeline1.getCurrent(), 0);
         timeline1.instantNextPreset();
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
-
     }
     
     /**

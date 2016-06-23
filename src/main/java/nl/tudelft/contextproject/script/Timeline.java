@@ -82,14 +82,7 @@ public class Timeline {
      * @param oldShot The shot that just finished.
      */
     public void nextPreset(Shot oldShot) {
-        
-        int oldIndex;
-        
-        if (oldShot == null) {
-            oldIndex = -1;
-        } else {
-            oldIndex = shots.indexOf(oldShot);
-        }
+        int oldIndex = oldShot == null ? -1 : shots.indexOf(oldShot);
 
         if (oldIndex + 1 < shots.size()) {
             Shot nextShot = shots.get(oldIndex + 1);
