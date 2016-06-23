@@ -299,7 +299,7 @@ public class DirectorLiveController {
         if (shot.getPreset() != null) {
             presetSelecter.setValue(Integer.toString(shot.getPreset().getId()));
             thumbnail.setImage(loadImage("snapShots/cam" 
-                    + shot.getCamera().getNumber() + "preset" + shot.getPreset().getId()));
+                    + shot.getCamera().getNumber() + "preset" + shot.getPreset().getId() + ".png"));
         } else {
             presetSelecter.setValue("None");
             thumbnail.setImage(loadImage("error-q.png"));
