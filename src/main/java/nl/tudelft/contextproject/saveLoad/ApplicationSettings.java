@@ -3,6 +3,7 @@ package nl.tudelft.contextproject.saveLoad;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraConnection;
 import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.LiveCameraConnectionAWHE40;
 import nl.tudelft.contextproject.camera.MockedCameraConnection;
 
 import java.io.BufferedWriter;
@@ -324,7 +325,12 @@ public final class ApplicationSettings {
                 String camIp = getCameraIP(cam.getNumber());
                 if (camIp != null && !camIp.equals("")) {
                     CameraConnection connect = new LiveCameraConnection(camIp);
-
+                    if (connect.setUpConnection()) {
+                        cam.setConnection(connect);
+                        break;
+                    }
+                    
+                    connect = new LiveCameraConnectionAWHE40(camIp);
                     if (connect.setUpConnection()) {
                         cam.setConnection(connect);
                         break;
