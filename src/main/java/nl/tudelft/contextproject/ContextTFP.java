@@ -15,13 +15,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.gui.AlertDialog;
 import nl.tudelft.contextproject.gui.MenuController;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
-
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 import java.io.File;
@@ -91,6 +90,11 @@ public class ContextTFP extends Application {
                     ex.printStackTrace();
                 }
 
+                try {
+                    DatabaseConnection.getInstance().resetCounter();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 Platform.exit(); 
                 System.exit(0);
             });
