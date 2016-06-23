@@ -107,9 +107,6 @@ public class DirectorLiveController {
             }
         }
 
-        //bindImageToBox(thumbnail, thumbnailBox);
-        
-        // Allows for highlighting of the current shot
         LiveScript.setRowFactory(tableShots);
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
