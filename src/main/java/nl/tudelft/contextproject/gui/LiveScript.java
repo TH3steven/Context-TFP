@@ -10,7 +10,7 @@ import nl.tudelft.contextproject.script.Shot;
 
 /**
  * Class that handles the live script. For now just enables the table
- * to highlight the current shot. Put in a seperate class
+ * to highlight the current shot. Put in a separate class
  * to prevent code duplication.
  * 
  * @since 0.9

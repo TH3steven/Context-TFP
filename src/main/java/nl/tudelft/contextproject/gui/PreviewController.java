@@ -397,7 +397,7 @@ public class PreviewController {
         try {
             return new Image(shots.get(i).getPreset().getImage());
         } catch (IndexOutOfBoundsException e) {
-            return new Image("gray.jpg");
+            return new Image("error-q.png");
         }
     }
 

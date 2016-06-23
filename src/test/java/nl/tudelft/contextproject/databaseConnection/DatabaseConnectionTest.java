@@ -2,7 +2,6 @@ package nl.tudelft.contextproject.databaseConnection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -35,9 +34,9 @@ public class DatabaseConnectionTest {
         for (int i = 1; i < pass.length - 1; i++) {
             pass[i] += 3;
         }
-        ApplicationSettings.getInstance().setDatabaseInfo("46.21.172.161", 3306, 
-                "pmacjhdy_test", "pmacjhdy_test", new String(pass));
-        ApplicationSettings.getInstance().setDatabaseName("pmacjhdy_test");
+        ApplicationSettings.getInstance().setDatabaseInfo("159.253.0.125", 3306, 
+                "thomaaj84_test", "thomaaj84_test", new String(pass));
+        
         connection = DatabaseConnection.getInstance();
     }
     

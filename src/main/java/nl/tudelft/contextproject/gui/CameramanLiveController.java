@@ -70,6 +70,7 @@ public class CameramanLiveController {
         LiveScript.setRowFactory(tableShots);
 
         tableShots.getItems().addAll(script.getShots());
+        tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     private void initCameraSelector() {
@@ -168,7 +169,7 @@ public class CameramanLiveController {
                 return new ReadOnlyObjectWrapper<>();
             } else {
                 return new ReadOnlyObjectWrapper<>(
-                    Integer.toString(cellData.getValue().getPreset().getId() + 1));
+                    Integer.toString(cellData.getValue().getPreset().getId()));
             }
         });
 

@@ -22,8 +22,8 @@
           <TableColumn fx:id="columnShot" maxWidth="70.0" minWidth="70.0" prefWidth="-1.0" resizable="false" sortable="false" text="Shot" />
             <TableColumn fx:id="columnCamera" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Camera" />
             <TableColumn fx:id="columnPreset" maxWidth="50.0" minWidth="50.0" prefWidth="-1.0" resizable="false" sortable="false" text="Preset" />
-            <TableColumn fx:id="columnSubject" maxWidth="279.0" minWidth="150.0" prefWidth="278.0" resizable="false" sortable="false" text="Subject" />
-            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="65.0" prefWidth="286.0" sortable="false" text="Action" />
+            <TableColumn fx:id="columnSubject" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" resizable="false" sortable="false" text="Subject" />
+            <TableColumn fx:id="columnAction" maxWidth="10000.0" minWidth="200.0" prefWidth="-1.0" sortable="false" text="Action" />
         </columns>
       </TableView>
       <VBox fx:id="thumbnailBox" alignment="TOP_CENTER" layoutX="393.0" layoutY="271.0" minHeight="173.0" minWidth="258.0" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="393.0" AnchorPane.rightAnchor="15.0">
@@ -31,9 +31,15 @@
             <ImageView fx:id="thumbnail" fitHeight="238.0" fitWidth="392.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </VBox>
+<<<<<<< HEAD
       <Label fx:id="actionTxt" layoutX="182.0" layoutY="283.0" prefHeight="14.0" prefWidth="0.0" />
       <Button fx:id="btnNext" contentDisplay="CENTER" layoutX="558.0" layoutY="529.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" prefWidth="84.0" text="Go live" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="158.0" />
       <CheckBox fx:id="automaticCheck" layoutX="348.0" layoutY="534.0" mnemonicParsing="false" selected="true" text="Automatic preset loading" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="256.0" />
+=======
+      <Label fx:id="actionTxt" layoutX="203.0" layoutY="263.0" prefHeight="17.0" prefWidth="190.0" textFill="RED" AnchorPane.bottomAnchor="295.0" AnchorPane.leftAnchor="203.0" />
+      <Button fx:id="btnNext" contentDisplay="CENTER" layoutX="701.0" layoutY="532.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" prefWidth="84.0" text="Go live" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <CheckBox fx:id="automaticCheck" layoutX="553.0" layoutY="536.0" mnemonicParsing="false" selected="true" text="Automatic loading" AnchorPane.bottomAnchor="22.0" AnchorPane.rightAnchor="128.0" />
+>>>>>>> fixez
       <Separator layoutX="15.0" layoutY="516.0" prefHeight="10.0" prefWidth="770.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
       <Separator layoutX="15.0" layoutY="256.0" prefHeight="10.0" prefWidth="770.0" AnchorPane.bottomAnchor="309.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
       <Label layoutX="15.0" layoutY="345.0" text="Camera:" AnchorPane.bottomAnchor="213.0" AnchorPane.leftAnchor="15.0" />

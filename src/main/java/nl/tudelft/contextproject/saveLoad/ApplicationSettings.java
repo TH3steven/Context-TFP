@@ -1,6 +1,9 @@
 package nl.tudelft.contextproject.saveLoad;
 
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraConnection;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -305,6 +308,33 @@ public final class ApplicationSettings {
     public void clearAllCameraIPs() {
         cameraIPs.clear();
     }
+    
+    /**
+     * (Re)sets the CameraConnection for every camera currently in the list of cameras.
+     * If an IP was loaded for a camera, then it will check if it can make a connection 
+     * to this camera. If it can, it will set its connection to a LiveCameraConnection. 
+     * If it cannot, it sets a MockedCameraConnection. 
+     * 
+     * <p>This will run in a separate thread, because setting up a connection may
+     * take a while to time out in case of failure.
+     */
+    public void initCameraConnections() {
+        new Thread(() -> {
+            for (Camera cam : Camera.getAllCameras()) {
+                String camIp = getCameraIP(cam.getNumber());
+                if (camIp != null && !camIp.equals("")) {
+                    CameraConnection connect = new LiveCameraConnection(camIp);
+
+                    if (connect.setUpConnection()) {
+                        cam.setConnection(connect);
+                        break;
+                    }
+                }
+
+                cam.setConnection(new MockedCameraConnection());
+            }
+        }).start();
+    }
 
     /**
      * Encrypts a password.
@@ -439,6 +469,7 @@ public final class ApplicationSettings {
             }
             sc.close();
 
+            initCameraConnections();
             return isLoaded();
         } catch (FileNotFoundException e) {
             return false;
@@ -455,7 +486,7 @@ public final class ApplicationSettings {
     private void loadCameraIPs(Scanner sc) {
         while (sc.hasNextInt()) {
             int camId = sc.nextInt();
-            Camera cam = new Camera();
+            Camera cam = Camera.getCamera(camId - 1) == null ? new Camera() : Camera.getCamera(camId - 1);
 
             if (sc.hasNextLine() && camId - 1 == cam.getNumber()) {
                 cameraIPs.put(camId - 1, sc.nextLine().trim());
