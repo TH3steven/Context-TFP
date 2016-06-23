@@ -70,6 +70,7 @@ public class CameramanLiveController {
         LiveScript.setRowFactory(tableShots);
 
         tableShots.getItems().addAll(script.getShots());
+        tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     private void initCameraSelector() {
@@ -118,7 +119,6 @@ public class CameramanLiveController {
 
         btnPresets.setOnAction(event -> {
             PresetController.setToCameramanView(true);
-            
 
             Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
                 PresetController.show();

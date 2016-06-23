@@ -107,6 +107,7 @@ public class DirectorLiveController {
         LiveScript.setRowFactory(tableShots);
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
+        tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     /**
