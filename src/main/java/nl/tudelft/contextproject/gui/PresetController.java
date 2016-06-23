@@ -379,7 +379,6 @@ public class PresetController {
     private void addToTable(Preset p) {
         data.add(p);
         sort();
-        System.out.println("sorting!");
     }
 
     /**
