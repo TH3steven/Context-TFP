@@ -169,16 +169,15 @@ public class DatabaseConnectionTest {
      */
     @Test 
     public void observerTest() throws SQLException, InterruptedException {
-        connection.resetCounter();
+        connection.updateCounter();
         counter = -1;
         connection.addObserver( (Observable obj, Object arg) -> {
             counter = (int) arg;
         });
-        
-        connection.updateCounter();
-        connection.updateCounter();
+        connection.resetCounter();
+
         Thread.sleep(800);
-        assertEquals(2, counter);
+        assertEquals(0, counter);
         connection.deleteObservers();
     }
 }
