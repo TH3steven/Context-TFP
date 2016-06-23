@@ -72,9 +72,6 @@ public class DirectorLiveController {
 
     @FXML private VBox thumbnailBox;
 
-    // Will be used soon.
-    private boolean live;
-
     /**
      * Initialize method used by JavaFX.
      */
@@ -86,9 +83,6 @@ public class DirectorLiveController {
             if (script.getCurrent() == -1) {
                 script.next();
             }
-            live = true;
-        } else {
-            live = false;
         }
 
         initializeButtons();
@@ -121,13 +115,11 @@ public class DirectorLiveController {
     private void initializeButtons() {
         btnBack.toFront();
         btnBack.setOnAction(event -> {
-            live = false;
             MenuController.show();
         });
 
         btnNext.setOnAction(event -> {
             initializeLive();
-            live = true;
             btnNext.setText("Next shot");
         });
     }
@@ -182,7 +174,7 @@ public class DirectorLiveController {
         updatePresetChoice(current);
         
         if (getCurrentShot().hasPreset()) {
-            presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId() + 1));
+            presetSelecter.setValue(Integer.toString(getCurrentShot().getPreset().getId()));
         }
     }
 
@@ -213,7 +205,7 @@ public class DirectorLiveController {
                 if (newV.equals("None")) {
                     thumbnail.setImage(loadImage("black.png"));
                 } else {
-                    thumbnail.setImage(loadImage(current.getPreset(Integer.valueOf(newV) - 1).getImage()));
+                    thumbnail.setImage(loadImage(current.getPreset(Integer.valueOf(newV)).getImage()));
                 }
             }
         });
@@ -229,7 +221,7 @@ public class DirectorLiveController {
         presetList.add("None");
 
         for (int i = 0; i < cam.getPresetAmount(); ++i) {
-            presetList.add(Integer.toString(i + 1));
+            presetList.add(Integer.toString(i));
         }
 
         presetSelecter.setItems(FXCollections.observableArrayList(presetList));
@@ -291,11 +283,11 @@ public class DirectorLiveController {
         actionArea.setText(shot.getAction());
 
         if (shot.getPreset() != null) {
-            presetSelecter.setValue(Integer.toString(shot.getPreset().getId() + 1));
+            presetSelecter.setValue(Integer.toString(shot.getPreset().getId()));
             thumbnail.setImage(loadImage(shot.getPreset().getImage()));
         } else {
             presetSelecter.setValue("None");
-            thumbnail.setImage(loadImage("black.png"));
+            thumbnail.setImage(loadImage("error-q.png"));
         }
     }
 
@@ -309,7 +301,7 @@ public class DirectorLiveController {
         try {
             return new Image(path);
         } catch (IllegalArgumentException e) {
-            return new Image("error.jpg");
+            return new Image("error-q.png");
         }
     }
 
@@ -331,7 +323,7 @@ public class DirectorLiveController {
 
         String shotID = fieldShot.getText();
         Camera cam = cameraSelecter.getValue();        
-        int presNum = Integer.valueOf(presetSelecter.getValue()) - 1;
+        int presNum = Integer.valueOf(presetSelecter.getValue());
         Preset preset = cam.getPreset(presNum);
         String description = fieldSubject.getText();
 

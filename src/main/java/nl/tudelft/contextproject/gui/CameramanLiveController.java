@@ -118,6 +118,7 @@ public class CameramanLiveController {
 
         btnPresets.setOnAction(event -> {
             PresetController.setToCameramanView(true);
+            
 
             Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
                 PresetController.show();

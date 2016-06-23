@@ -1,8 +1,6 @@
 package nl.tudelft.contextproject.gui;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.FloatProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,15 +18,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
-
-
-
-
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +45,8 @@ public class PresetController {
 
     @FXML private CheckBox overwrite;
     @FXML private CheckBox arrowControl;
-    @FXML private ChoiceBox<Integer> cameraSelecter;
+
+    @FXML private ChoiceBox<Integer> cameraSelector;
 
     @FXML private Button btnBack;
     @FXML private Button btnSave;
@@ -80,11 +75,19 @@ public class PresetController {
             cameraList.add(i + 1);
         }
 
-        cameraSelecter.setItems(FXCollections.observableArrayList(cameraList));
+        if (toCameramanView) {
+            btnBack.setText("Return to cameraman view");
+        } else {
+            btnBack.setText("Return to menu");
+        }
+
+        cameraSelector.setItems(FXCollections.observableArrayList(cameraList));
 
         applySettings();
         setFactories();
         setActions();
+
+        cameraSelector.getSelectionModel().select(0);
 
         sort();
     }
@@ -138,7 +141,7 @@ public class PresetController {
             int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
             if (selectedIndex >= 0) {
                 Preset selected = tableView.getItems().get(selectedIndex);
-                Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                Camera cam = Camera.getCamera(cameraSelector.getValue() - 1);
                 cam.removePreset(selected);
                 data.remove(selected);
             }
@@ -156,8 +159,8 @@ public class PresetController {
             }
         });
 
-        setSaveButton();
-        setBackButton();
+        initSaveButton();
+        initBackButton();
         setCameraSelector();
         setArrowControl();
     }
@@ -165,7 +168,7 @@ public class PresetController {
     /**
      * Sets the onAction for the save button.
      */
-    private void setSaveButton() {
+    private void initSaveButton() {
         btnSave.setOnAction(event -> {
             int id = -1;
 
@@ -182,7 +185,7 @@ public class PresetController {
     /**
      * Sets the onAction for the back button.
      */
-    private void setBackButton() {
+    private void initBackButton() {
         btnBack.setOnAction(event -> {
             if (streamHandler != null) {
                 streamHandler.stop();
@@ -203,8 +206,8 @@ public class PresetController {
      * Sets the onAction for the camera selection choicebox.
      */
     private void setCameraSelector() {
-        cameraSelecter.setOnAction(event -> {
-            Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+        cameraSelector.setOnAction(event -> {
+            Camera cam = Camera.getCamera(cameraSelector.getValue() - 1);
             HashMap<Integer, Preset> presets = cam.getPresets();
             data.clear();
 
@@ -215,7 +218,7 @@ public class PresetController {
             if (cam.hasConnection()) {
                 updateStream(cam.getConnection().getStreamLink());
             } else {
-                updateStream("http://www.formisimo.com/blog/wp-content/uploads/2014/04/error-mesage.png");
+                updateStream("http://i.imgur.com/2aM3seb.png");
             }
         });
     }
@@ -241,9 +244,9 @@ public class PresetController {
         Set<KeyCode> pressedKeys = new HashSet<KeyCode>();
 
         scene.setOnKeyPressed(event -> {
-            if (!pressedKeys.contains(event.getCode()) && cameraSelecter.getValue() != null) {
+            if (!pressedKeys.contains(event.getCode()) && cameraSelector.getValue() != null) {
                 pressedKeys.add(event.getCode());
-                Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                Camera currentCam = Camera.getCamera(cameraSelector.getValue() - 1);
                 
                 switch (event.getCode()) {
                     case LEFT:
@@ -265,9 +268,9 @@ public class PresetController {
             event.consume();
         });
         scene.setOnKeyReleased(event -> {
-            if (cameraSelecter.getValue() != null) {
+            if (cameraSelector.getValue() != null) {
                 pressedKeys.remove(event.getCode());
-                Camera currentCam = Camera.getCamera(cameraSelecter.getValue() - 1);
+                Camera currentCam = Camera.getCamera(cameraSelector.getValue() - 1);
 
                 switch (event.getCode()) {
                     case LEFT:
@@ -322,7 +325,7 @@ public class PresetController {
      * @param id The id of the preset to add.
      */
     private void addPreset(int id) {
-        Camera cam = Camera.getCamera(cameraSelecter.getValue() - 1);
+        Camera cam = Camera.getCamera(cameraSelector.getValue() - 1);
         Preset newPreset = new InstantPreset(
                 cam.getSettings(),
                 id,
