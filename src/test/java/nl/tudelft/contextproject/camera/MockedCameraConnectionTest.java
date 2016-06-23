@@ -58,7 +58,7 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testGetStreamLink() {
-        String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
+        String streamLink = "src\\main\\resources\\error-q.png";
         assertTrue(mockedCam.getStreamLink().equals(streamLink));
     }
 

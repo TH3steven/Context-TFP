@@ -37,8 +37,6 @@ public final class ScriptApp {
             sc.nextLine();
             Shot s = script.next();
             CameraSettings cs = s.getCamera().getSettings();
-            System.out.println("Camera " + s.getCamera().getNumber() + " set to preset: " + cs.getPan() 
-                    + ", " + cs.getTilt() + ", " + cs.getZoom());
         }
         sc.close();
     }

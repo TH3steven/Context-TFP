@@ -40,6 +40,10 @@ import java.util.List;
  * <p>The view section is defined under view/ScriptPreview.fxml
  * 
  * @since 0.2
+ * @deprecated This class will not be optimized, and will thus not be
+ *      ready for release. Since this class needs major rewriting to be 
+ *      useful, even if the intended functionality will be implemented,
+ *      it is more efficient to make a new class.
  */
 public class PreviewController {
 

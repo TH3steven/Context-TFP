@@ -1,14 +1,6 @@
 package nl.tudelft.contextproject.camera;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-
-import nl.tudelft.contextproject.gui.LiveStreamHandler;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,7 +8,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Observable;
-import javax.imageio.ImageIO;
 
 /**
  * Class to represent a live connection with a camera. It is

@@ -26,6 +26,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraConnection;
@@ -115,7 +116,7 @@ public class MenuController {
             setScriptLabel(name);
         }
 
-        setVersionLabel("0.8");
+        setVersionLabel("1.0");
 
         preNodes = new ArrayList<Node>();
         liveNodes = new ArrayList<Node>();

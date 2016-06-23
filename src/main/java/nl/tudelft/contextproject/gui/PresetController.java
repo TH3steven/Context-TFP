@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -18,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.InstantPreset;
@@ -90,6 +92,10 @@ public class PresetController {
         cameraSelector.getSelectionModel().select(0);
 
         sort();
+        
+        // Changes the "No content in table" label.
+        tableView.setPlaceholder(new Label("There are no presets yet. "
+                + "Add one on the left."));
     }
 
     /**
@@ -235,7 +241,7 @@ public class PresetController {
             if (cam.hasConnection()) {
                 updateStream(cam.getConnection().getStreamLink());
             } else {
-                updateStream("http://i.imgur.com/2aM3seb.png");
+                updateStream("http://i.imgur.com/4YeD8Ti.png");
             }
         });
     }
@@ -284,6 +290,7 @@ public class PresetController {
             }
             event.consume();
         });
+        
         scene.setOnKeyReleased(event -> {
             if (cameraSelector.getValue() != null) {
                 pressedKeys.remove(event.getCode());

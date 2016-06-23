@@ -95,6 +95,8 @@ public class DirectorLiveController {
         setFactories();
         
         if (!script.isEmpty()) {
+            tableShots.getSelectionModel().select(0);
+            
             if (script.getCurrent() > -1) {
                 btnNext.fire();
             } else {
@@ -106,6 +108,11 @@ public class DirectorLiveController {
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
         tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Changes the "No content in table" label.
+        tableShots.setPlaceholder(new Label("The script is empty. "
+                + "Create a new script in the Create script screen, "
+                + "or load one in the menu."));
     }
 
     /**
@@ -150,8 +157,10 @@ public class DirectorLiveController {
         });
 
         btnConfirm.setOnAction((event) -> {
-            changeShot();
-            tableShots.refresh();
+            if (tableShots.getSelectionModel().getSelectedItem() != null) {
+                changeShot();
+                tableShots.refresh();
+            }
         });
     }
 
