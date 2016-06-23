@@ -2,6 +2,8 @@ package nl.tudelft.contextproject.saveLoad;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doNothing;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
@@ -12,25 +14,40 @@ import nl.tudelft.contextproject.script.Shot;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ApplicationSettings.class)
+@PowerMockIgnore("javax.crypto.*")
 public class LoadScriptTest {
     
     private final String saveFileLocation = "src/test/resources/loadScriptTest.xml";
     
+    /**
+     * Cleans up the cameras after the test.
+     */
     @After
     public void cleanUp() {
         Camera.clearAllCameras();
     }
     
+    /**
+     * Clears the environment for testing.
+     */
     @Before
     public void setUp() {
         Camera.clearAllCameras();
-        ApplicationSettings.getInstance().reset();
+        ApplicationSettings settings = spy(ApplicationSettings.getInstance());
+        settings.reset();
+        doNothing().when(settings).initCameraConnections();
     }
 
     @Test
