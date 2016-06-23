@@ -88,12 +88,7 @@ public class DirectorLiveController {
             initializeChoiceBoxes();
             updateShotInfo(current);
             initializeTableListener();
-            
-            if (hasCurrentPreset()) {
-                thumbnail.setImage(loadImage(current.getPreset().getImage()));
-            } else {
-                thumbnail.setImage(loadImage("black.png"));
-            }
+
         } else {
             emptyInitialization();
         }
@@ -218,11 +213,13 @@ public class DirectorLiveController {
         updatePresetChoice(current);
 
         presetSelecter.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            Camera cam = cameraSelecter.getValue();
             if (newV != null) {
                 if (newV.equals("None")) {
                     thumbnail.setImage(loadImage("black.png"));
                 } else {
-                    thumbnail.setImage(loadImage(current.getPreset(Integer.valueOf(newV)).getImage()));
+                    thumbnail.setImage(loadImage("snapShots/cam" 
+                            + cam.getNumber() + "preset" + cam.getPreset(Integer.valueOf(newV)).getId()));
                 }
             }
         });
@@ -301,7 +298,8 @@ public class DirectorLiveController {
 
         if (shot.getPreset() != null) {
             presetSelecter.setValue(Integer.toString(shot.getPreset().getId()));
-            thumbnail.setImage(loadImage(shot.getPreset().getImage()));
+            thumbnail.setImage(loadImage("snapShots/cam" 
+                    + shot.getCamera().getNumber() + "preset" + shot.getPreset().getId()));
         } else {
             presetSelecter.setValue("None");
             thumbnail.setImage(loadImage("error-q.png"));
