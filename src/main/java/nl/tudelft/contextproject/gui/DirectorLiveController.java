@@ -152,6 +152,13 @@ public class DirectorLiveController {
 
             if (result.get() == ButtonType.OK) {
                 script.reset(automaticCheck.isSelected());
+                
+                try {
+                    DatabaseConnection.getInstance().resetCounter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
                 initializeLiveButton();
                 actionTxt.setText("");
                 tableShots.refresh();
