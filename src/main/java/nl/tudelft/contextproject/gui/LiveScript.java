@@ -5,7 +5,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import nl.tudelft.contextproject.ContextTFP;
-import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 /**

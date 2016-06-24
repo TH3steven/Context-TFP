@@ -67,7 +67,6 @@ public class MenuController {
     @FXML private Button btnEditScript;
     @FXML private Button btnPre;
     @FXML private Button btnPresets;
-    @FXML private Button btnPreview;
     @FXML private Button btnLive;
     @FXML private Button btnLoadScript;
     @FXML private Button btnChangeVlcLoc;
@@ -121,7 +120,7 @@ public class MenuController {
         preNodes = new ArrayList<Node>();
         liveNodes = new ArrayList<Node>();
         preNodes.addAll(Arrays.asList(lblPre, btnCreateScript, 
-                btnEditScript, btnPresets, btnPreview, btnLoadScript));
+                btnEditScript, btnPresets, btnLoadScript));
         liveNodes.addAll(Arrays.asList(lblLive, btnCameraman, btnDirector));
 
         settingsIpTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -235,13 +234,6 @@ public class MenuController {
         btnCreateScript.setOnAction(event -> {
             Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
                 CreateScriptController.show();
-                Animation.animNodeIn(ContextTFP.getRootLayout());
-            });
-        });
-
-        btnPreview.setOnAction(event -> {
-            Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
-                PreviewController.show();
                 Animation.animNodeIn(ContextTFP.getRootLayout());
             });
         });

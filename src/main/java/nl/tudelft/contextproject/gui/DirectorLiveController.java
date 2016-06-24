@@ -99,11 +99,9 @@ public class DirectorLiveController {
         setFactories();
         
         if (!script.isEmpty()) {          
-            Platform.runLater(new Runnable()
-            {
+            Platform.runLater(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     tableShots.requestFocus();
                     tableShots.getSelectionModel().select(0);
                     tableShots.getFocusModel().focus(0);
