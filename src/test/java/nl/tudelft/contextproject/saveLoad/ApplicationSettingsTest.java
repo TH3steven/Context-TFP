@@ -150,7 +150,7 @@ public class ApplicationSettingsTest {
      * @throws Exception Due to PowerMockito's when method.
      */
     @Test
-    @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", "resource" })
+    @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     public void testSave() throws Exception {
         File actual = new File("src/test/resources/settingsSaveActual.txt");
         File expected = new File("src/test/resources/settingsSaveExpected.txt");
@@ -180,7 +180,6 @@ public class ApplicationSettingsTest {
      * @throws Exception Due to PowerMockito's when method.
      */
     @Test
-    @SuppressWarnings("resource")
     public void testSaveLoad() throws Exception {
         File file = new File("src/test/resources/settingsSaveLoad.txt");
         doReturn(new PrintWriter(new FileWriter(file))).when(settings, "getWriter");
@@ -197,5 +196,4 @@ public class ApplicationSettingsTest {
         assertEquals(3306, settings.getDatabasePort());
         assertEquals("pass", settings.getDatabasePassword());
     }
-
 }

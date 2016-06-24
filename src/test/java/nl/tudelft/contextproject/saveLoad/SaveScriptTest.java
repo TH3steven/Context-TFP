@@ -45,5 +45,4 @@ public class SaveScriptTest {
             fail("Some XML thing went wrong");
         }
     }
-
 }

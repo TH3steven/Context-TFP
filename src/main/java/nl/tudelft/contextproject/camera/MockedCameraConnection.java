@@ -29,7 +29,6 @@ public class MockedCameraConnection extends CameraConnection {
 
     @Override
     public String getStreamLink() {
-        System.out.println(streamLink);
         return streamLink;
     }
 

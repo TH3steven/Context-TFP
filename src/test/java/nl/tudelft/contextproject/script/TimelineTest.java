@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to test the Timeline Class. Test cases will be expanded
- * with time.
+ * Class to test the Timeline Class.
+ * 
  * @since 0.2
  */
 public class TimelineTest {

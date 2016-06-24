@@ -71,5 +71,4 @@ public class LoadScriptTest {
             fail("Some XML thing went wrong");
         }
     }
-
 }
