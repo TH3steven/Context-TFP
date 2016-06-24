@@ -305,4 +305,18 @@ public final class AlertDialog {
 
         return result.get() == ButtonType.OK;
     }
+    
+    /**
+     * Shows a confirmation message when the user clicks the reset script button.
+     * @return The confirmation to return to the user
+     */
+    public static Alert confirmResetScript() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Resetting script");
+        alert.setContentText("Are you sure you want to reset the script?\n"
+                + "The script will no longer be live.");
+        
+        return alert;
+    }
 }

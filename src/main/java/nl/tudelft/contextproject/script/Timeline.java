@@ -138,6 +138,13 @@ public class Timeline {
     public void incCurrent() {
         current++;
     }
+    
+    /**
+     * Resets the timeline.
+     */
+    public void reset() {
+        current = -1;
+    }
 
     /**
      * This method is responsible for the execution of the shots present on our script.

@@ -259,6 +259,16 @@ public class Script implements Iterator<Shot> {
             }
         }
     }
+    
+    /**
+     * Resets the script.
+     */
+    public void reset() {
+        current = -1;
+        for (Timeline t : timelines.values()) {
+            t.reset();
+        }
+    }
 
     /**
      * Returns true if there is a next shot, the +1 is used because we initialize with -1.
