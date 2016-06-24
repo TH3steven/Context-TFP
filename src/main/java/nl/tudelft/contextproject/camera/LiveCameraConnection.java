@@ -84,7 +84,6 @@ public class LiveCameraConnection extends CameraConnection {
     public boolean setUpConnection() {
         try {
             String cameraModel = sendRequest(buildCamControlURL("QID"));
-            System.out.println(cameraModel);
             if (cameraModel.equals("OID:" + CAMERA_MODEL)) {
                 connected = true;
                 lastKnown = new CameraSettings();
@@ -158,7 +157,6 @@ public class LiveCameraConnection extends CameraConnection {
      */
     protected String sendRequest(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        System.out.println(url);
         try {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(READ_TIMEOUT);

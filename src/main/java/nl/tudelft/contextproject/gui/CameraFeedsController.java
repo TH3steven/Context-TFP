@@ -244,7 +244,7 @@ public class CameraFeedsController {
         try {
             return new Image(path);
         } catch (IllegalArgumentException e) {
-            return new Image("error-x.jpg");
+            return new Image("error-x.png");
         }
     }
 

@@ -12,9 +12,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -22,6 +22,7 @@ import nl.tudelft.contextproject.script.Shot;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * This class controls the screen that shows the view for a cameraman.
@@ -76,6 +77,25 @@ public class CameramanLiveController {
         tableShots.setPlaceholder(new Label("The script is empty. "
                 + "Create a new script in the Create script screen, "
                 + "or load one in the menu."));
+        
+        initSynchronization();
+    }
+    
+    /**
+     * Initializes the listener used for synchronization with the MySQL database.
+     */
+    private void initSynchronization() {
+        DatabaseConnection.getInstance().addObserver( (Observable obj, Object arg) -> {
+            int liveCount = (int) arg;
+            int current = ContextTFP.getScript().getCurrent();
+
+            if (liveCount > current && liveCount < ContextTFP.getScript().getShots().size()) {
+                for (int i = 0; i < (liveCount - current); i++) {
+                    ContextTFP.getScript().next();
+                }
+                tableShots.refresh();
+            }
+        });
     }
 
     private void initCameraSelector() {

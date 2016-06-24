@@ -2,8 +2,10 @@ package nl.tudelft.contextproject.script;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -312,4 +314,21 @@ public class Script implements Iterator<Shot> {
         
         return next;
     }
+    
+    /**
+     * Go to the next shot and upload the database counter.
+     * 
+     * @param load Determines whether cameras should be adjusted.
+     * @return The next shot
+     */
+    public Shot directorNext(boolean load) {
+        try {
+            DatabaseConnection.getInstance().updateCounter();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return next(load);
+    }
+    
 }

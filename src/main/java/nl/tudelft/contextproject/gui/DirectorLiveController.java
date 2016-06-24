@@ -17,9 +17,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -132,6 +132,11 @@ public class DirectorLiveController {
         btnNext.setOnAction(event -> {
             if (script.getCurrent() == -1) {
                 script.next();
+                try {
+                    DatabaseConnection.getInstance().resetCounter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             tableShots.refresh();
             initializeLive();
@@ -165,7 +170,7 @@ public class DirectorLiveController {
     private void initializeLive() {
         btnNext.setOnAction(event -> {
             if (!endReached()) {
-                script.next(automaticCheck.isSelected());
+                script.directorNext(automaticCheck.isSelected());
                 tableShots.refresh();
             } else {
                 actionTxt.setText("End of script reached");
