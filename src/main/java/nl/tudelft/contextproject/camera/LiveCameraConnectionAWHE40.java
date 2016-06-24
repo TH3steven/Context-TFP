@@ -14,8 +14,6 @@ public class LiveCameraConnectionAWHE40 extends LiveCameraConnection {
     public boolean setUpConnection() {
         try {
             String cameraModel = sendRequest(buildCamControlURL("QID"));
-            
-            System.out.println(cameraModel);
 
             if (cameraModel.equals("OID:" + CAMERA_MODEL)) {
                 setConnected(true);

@@ -110,7 +110,7 @@ public final class DatabaseConnection extends Observable {
                         e.printStackTrace();
                     }
                 }
-            }, 200);            
+            }, 0, 200);            
         }
         super.addObserver(o);
     }

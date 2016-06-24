@@ -22,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -192,7 +193,7 @@ public class DirectorLiveController {
         btnNext.setText("Next shot");
         btnNext.setOnAction(event -> {
             if (!endReached()) {
-                script.next(automaticCheck.isSelected());
+                script.directorNext(automaticCheck.isSelected());
                 tableShots.refresh();
             } else {
                 actionTxt.setText("End of script reached");
