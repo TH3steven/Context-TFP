@@ -275,7 +275,7 @@ public class CameraTest {
         presetCollection.put(1, p);
         presetCollection.put(2, p2);
         assertTrue(cam.getAllPresets().containsAll(presetCollection.values()));
-        assertTrue(cam.getAllPresets().size() == presetCollection.values().size());
+        assertEquals(cam.getAllPresets().size(), presetCollection.values().size());
         assertEquals(cam.getPresetAmount(), 2);
     }
 
