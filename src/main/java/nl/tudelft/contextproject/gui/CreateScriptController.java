@@ -36,6 +36,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
+
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.presets.Preset;
@@ -129,7 +130,7 @@ public class CreateScriptController {
         // Allows the user to press ENTER to add a shot.
         btnAdd.setDefaultButton(true);
 
-        // Removes the "No content in table" label.
+        // Changes the "No content in table" label.
         tableEvents.setPlaceholder(new Label("The script is empty. "
                 + "Add some shots below"));
 

@@ -13,7 +13,7 @@ import java.util.TimerTask;
 public class MockedCameraConnection extends CameraConnection {
 
     private CameraSettings camSet = new CameraSettings(30, 30, 30, 1365);
-    private String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
+    private String streamLink = "src\\main\\resources\\error-q.png";
     
     private Timer timer;
 
@@ -29,6 +29,7 @@ public class MockedCameraConnection extends CameraConnection {
 
     @Override
     public String getStreamLink() {
+        System.out.println(streamLink);
         return streamLink;
     }
 

@@ -1,5 +1,6 @@
 package nl.tudelft.contextproject.gui;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -97,8 +98,17 @@ public class DirectorLiveController {
         }
         setFactories();
         
-        if (!script.isEmpty()) {
-            tableShots.getSelectionModel().select(0);
+        if (!script.isEmpty()) {          
+            Platform.runLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    tableShots.requestFocus();
+                    tableShots.getSelectionModel().select(0);
+                    tableShots.getFocusModel().focus(0);
+                }
+            });
             
             if (script.getCurrent() > -1) {
                 initializeNextButton();
@@ -112,6 +122,11 @@ public class DirectorLiveController {
 
         tableShots.setItems(FXCollections.observableArrayList(script.getShots()));
         tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Changes the "No content in table" label.
+        tableShots.setPlaceholder(new Label("The script is empty. "
+                + "Create a new script in the Create script screen, "
+                + "or load one in the menu."));
     }
 
     /**
