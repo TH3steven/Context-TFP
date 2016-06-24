@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -14,13 +15,16 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Class to test the Camera class. More tests should be
- * added.
+ * Class to test the Camera class. Tests the setting up
+ * of multiple cameras and tests if the settings of a camera are
+ * applied correctly.
+ * 
  * @since 0.4
  */
 public class CameraTest {
+
     private LiveCameraConnection connection;
-    
+
     @After
     public void cleanUp() {
         Camera.clearAllCameras();
@@ -271,7 +275,7 @@ public class CameraTest {
         presetCollection.put(1, p);
         presetCollection.put(2, p2);
         assertTrue(cam.getAllPresets().containsAll(presetCollection.values()));
-        assertTrue(cam.getAllPresets().size() == presetCollection.values().size());
+        assertEquals(cam.getAllPresets().size(), presetCollection.values().size());
         assertEquals(cam.getPresetAmount(), 2);
     }
 
@@ -296,7 +300,7 @@ public class CameraTest {
         public void update(Observable o, Object arg) {
             called = true;
         }
-    
+
         public boolean wasCalled() {
             return called;
         }

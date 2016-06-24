@@ -70,6 +70,7 @@ public class LiveCameraConnectionTest {
             URL focusURL = connection.buildPanTiltHeadControlURL("%23GF");
             URL autoFocusOffURL = connection.buildPanTiltHeadControlURL("%23D10");
             URL autoFocusOnURL = connection.buildPanTiltHeadControlURL("%23D11");
+
             doReturn("OID:AW-HE130").when(connection, "sendRequest", cameraModelURL);
             doReturn("d11").when(connection, "sendRequest", autoFocusURL);
             doReturn("aPC80008000").when(connection, "sendRequest", absPanTiltURL);
@@ -91,6 +92,7 @@ public class LiveCameraConnectionTest {
             connection.setUpConnection();
             assertEquals(new CameraSettings(32768, 32768, 1365, -1), connection.getLastKnownSettings());
         }
+
         assertTrue(connection.isConnected());
         assertTrue(connection.hasAutoFocus());
     }
@@ -118,10 +120,12 @@ public class LiveCameraConnectionTest {
             doReturn("aPS750D71251D2").when(connection, "sendRequest", absPanTiltURL);
             doReturn("aPC750D7125").when(connection, "sendRequest", curPanTiltURL);
         }
+
         assertTrue(connection.absPanTilt(29965, 28965));
         if (testLive) {
             Thread.sleep(4000);
         }
+
         int[] curSet = connection.getCurrentPanTilt();
         assertWithinMaxOffset(29965, curSet[0]);
         assertWithinMaxOffset(28965, curSet[1]);
@@ -140,10 +144,12 @@ public class LiveCameraConnectionTest {
             doReturn("aPS").when(connection, "sendRequest", absPanTiltURL);
             doReturn("aPC7CDD8000").when(connection, "sendRequest", getPanTiltURL);
         }
+
         assertTrue(connection.absPan(31965));
         if (testLive) {
             Thread.sleep(4000);
         }
+
         int[] after = connection.getCurrentPanTilt();
         assertWithinMaxOffset(before[1], after[1]);
         assertWithinMaxOffset(31965, after[0]);
@@ -162,10 +168,12 @@ public class LiveCameraConnectionTest {
             doReturn("aPS").when(connection, "sendRequest", absPanTiltURL);
             doReturn("aPC80007CDD").when(connection, "sendRequest", getPanTiltURL);
         }
+
         assertTrue(connection.absTilt(31965));
         if (testLive) {
             Thread.sleep(4000);
         }
+
         int[] after = connection.getCurrentPanTilt();
         assertWithinMaxOffset(before[0], after[0]);
         assertWithinMaxOffset(31965, after[1]);
@@ -183,10 +191,12 @@ public class LiveCameraConnectionTest {
             doReturn("axz7AD").when(connection, "sendRequest", zoomURL);
             doReturn("gz7AD").when(connection, "sendRequest", getZoomURL);
         }
+
         assertTrue(connection.absZoom(1965));
         if (testLive) {
             Thread.sleep(2000);
         }
+
         int newZoom = connection.getCurrentZoom();
         assertWithinMaxOffset(1965, newZoom);
     }
@@ -206,6 +216,7 @@ public class LiveCameraConnectionTest {
             doReturn("axf7AD").when(connection, "sendRequest", focusURL);
             doReturn("gf7AD").when(connection, "sendRequest", getFocusURL);
         }
+
         assertTrue(connection.setAutoFocus(false));
         assertTrue(connection.absFocus(1965));
         int newFocus = connection.getCurrentFocus();
@@ -237,10 +248,12 @@ public class LiveCameraConnectionTest {
             doReturn("rPC7E5C81A4").when(connection, "sendRequest", relPanTiltURL);
             doReturn("aPC7E5C81A4").when(connection, "sendRequest", getPanTiltURL);
         }
+
         assertTrue(connection.relPanTilt(-420, 420));
         if (!testLive) {
             Thread.sleep(2000);
         }
+
         int[] after = connection.getCurrentPanTilt();
         assertWithinMaxOffset(before[0] - 420, after[0]);
         assertWithinMaxOffset(before[1] + 420, after[1]);
@@ -307,6 +320,7 @@ public class LiveCameraConnectionTest {
             URL autoFocusURL = connection.buildPanTiltHeadControlURL("%23D1");
             doReturn("d1" + (currentAutoFocus ? 0 : 1)).when(connection, "sendRequest", autoFocusURL);
         }
+
         connection.setAutoFocus(!currentAutoFocus);
         assertEquals(!currentAutoFocus, connection.hasAutoFocus());
     }
@@ -410,5 +424,4 @@ public class LiveCameraConnectionTest {
             fail("Expected between <" + low + "> and <" + high + "> but was <" + actual + ">");
         }
     }
-
 }

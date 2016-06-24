@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 

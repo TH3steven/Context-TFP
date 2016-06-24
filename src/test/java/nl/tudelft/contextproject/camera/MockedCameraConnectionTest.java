@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 /**
  * Class to test the behavior of a mocked camera connection.
+ * 
  * @since 0.4
  */
 public class MockedCameraConnectionTest {
@@ -218,4 +219,3 @@ public class MockedCameraConnectionTest {
         Arrays.equals(panTilt, mockedCam.getCurrentPanTilt());
     }
 }
-

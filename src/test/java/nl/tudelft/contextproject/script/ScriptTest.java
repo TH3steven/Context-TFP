@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Class to test Script class. Test suite will be expanded
- * with time.
+ * Class to test Script class.
  *
  * @since 0.2
  */

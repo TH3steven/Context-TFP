@@ -157,6 +157,7 @@ public class LiveCameraConnection extends CameraConnection {
      */
     protected String sendRequest(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
         try {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(READ_TIMEOUT);

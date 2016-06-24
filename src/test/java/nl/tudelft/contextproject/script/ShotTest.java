@@ -14,7 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Class to test Shot Class. Test will be expanded with time.
+ * Class to test Shot Class.
+ * 
  * @since 0.2
  */
 public class ShotTest {
