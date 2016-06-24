@@ -40,9 +40,9 @@
       <Label fx:id="labelID" layoutX="70.0" layoutY="283.0" text="test" AnchorPane.bottomAnchor="275.0" AnchorPane.leftAnchor="70.0" />
       <Label layoutX="15.0" layoutY="311.0" text="Shot:" AnchorPane.bottomAnchor="247.0" AnchorPane.leftAnchor="15.0" />
       <TextField fx:id="fieldShot" layoutX="70.0" layoutY="307.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="243.0" AnchorPane.leftAnchor="70.0" />
-      <ChoiceBox fx:id="cameraSelecter" layoutX="70.0" layoutY="341.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="209.0" AnchorPane.leftAnchor="70.0" />
+      <ChoiceBox fx:id="cameraSelector" layoutX="70.0" layoutY="341.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="209.0" AnchorPane.leftAnchor="70.0" />
       <Label layoutX="15.0" layoutY="377.0" text="Preset:" AnchorPane.bottomAnchor="181.0" AnchorPane.leftAnchor="15.0" />
-      <ChoiceBox fx:id="presetSelecter" layoutX="70.0" layoutY="373.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="70.0" />
+      <ChoiceBox fx:id="presetSelector" layoutX="70.0" layoutY="373.0" prefHeight="25.0" prefWidth="84.0" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="70.0" />
       <Label layoutX="15.0" layoutY="410.0" text="Subject:" AnchorPane.bottomAnchor="148.0" AnchorPane.leftAnchor="15.0" />
       <TextField fx:id="fieldSubject" layoutX="70.0" layoutY="406.0" prefHeight="25.0" prefWidth="206.0" AnchorPane.bottomAnchor="144.0" AnchorPane.leftAnchor="70.0" />
       <Label layoutX="15.0" layoutY="451.0" text="Action:" AnchorPane.bottomAnchor="107.0" AnchorPane.leftAnchor="15.0" />
@@ -50,6 +50,7 @@
       <Button fx:id="btnUndo" layoutX="183.0" layoutY="484.0" mnemonicParsing="false" text="Undo changes" AnchorPane.bottomAnchor="66.0" />
       <Button fx:id="btnConfirm" layoutX="12.0" layoutY="484.0" mnemonicParsing="false" text="Confirm changes" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="15.0" />
       <Label layoutX="23.0" layoutY="263.0" text="Edit the selected shot:" AnchorPane.bottomAnchor="295.0" AnchorPane.leftAnchor="15.0" />
+      <Button fx:id="btnReset" layoutX="219.0" layoutY="529.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" text="Reset script" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="484.0" />
       <Button fx:id="btnManualLoad" layoutX="578.0" layoutY="529.0" mnemonicParsing="false" prefHeight="31.0" text="Load next presets" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="112.0" />
       <Button fx:id="btnNext" contentDisplay="CENTER" layoutX="710.0" layoutY="530.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="31.0" prefWidth="84.0" text="Go live" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
    </children>

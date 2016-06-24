@@ -5,7 +5,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import nl.tudelft.contextproject.ContextTFP;
-import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
 
 /**
@@ -17,14 +16,12 @@ import nl.tudelft.contextproject.script.Shot;
  */
 public final class LiveScript {
 
-    static final Script script = ContextTFP.getScript();
-
     /**
      * Constructor should not be called, so defining
      * it as private.
      */
     private LiveScript() { }
-
+    
     /**
      * Sets the rowFactory for the given table, to allow it to highlight the
      * current shot by applying a CSS {@link PseudoClass}.
@@ -40,7 +37,7 @@ public final class LiveScript {
             protected void updateItem(Shot s, boolean b) {
                 super.updateItem(s, b);
                 if (s != null) {
-                    boolean current = s.equals(script.getCurrentShot());
+                    boolean current = s.equals(ContextTFP.getScript().getCurrentShot());
                     pseudoClassStateChanged(currentPseudoClass, current);
                     tableShots.refresh();
                 }
