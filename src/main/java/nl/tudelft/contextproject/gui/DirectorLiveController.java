@@ -150,7 +150,7 @@ public class DirectorLiveController {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.get() == ButtonType.OK) {
-                script.reset();
+                script.reset(automaticCheck.isSelected());
                 initializeLiveButton();
                 actionTxt.setText("");
                 tableShots.refresh();
