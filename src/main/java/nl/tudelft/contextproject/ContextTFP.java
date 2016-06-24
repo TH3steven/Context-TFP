@@ -93,7 +93,7 @@ public class ContextTFP extends Application {
                 try {
                     DatabaseConnection.getInstance().resetCounter();
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    //If we can't reset the counter, just ignore it.
                 }
                 Platform.exit(); 
                 System.exit(0);

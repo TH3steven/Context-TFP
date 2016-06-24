@@ -78,6 +78,8 @@ public class DirectorLiveController {
 
     @FXML private VBox thumbnailBox;
 
+    private boolean validDatabase = false; 
+    
     /**
      * Initialize method used by JavaFX.
      */
@@ -116,6 +118,13 @@ public class DirectorLiveController {
                 script.initPresetLoading();
             }
         }
+        
+        try {
+            DatabaseConnection.getInstance().isValid(200);
+            validDatabase = true;
+        } catch (Exception e) {
+            AlertDialog.noConnection();
+        }
 
         LiveScript.setRowFactory(tableShots);
 
@@ -153,10 +162,12 @@ public class DirectorLiveController {
             if (result.get() == ButtonType.OK) {
                 script.reset(automaticCheck.isSelected());
                 
-                try {
-                    DatabaseConnection.getInstance().resetCounter();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (validDatabase) {
+                    try {
+                        DatabaseConnection.getInstance().resetCounter();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 
                 initializeLiveButton();

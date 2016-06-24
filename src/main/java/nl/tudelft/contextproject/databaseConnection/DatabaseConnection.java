@@ -2,6 +2,7 @@ package nl.tudelft.contextproject.databaseConnection;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.gui.AlertDialog;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
@@ -20,6 +21,8 @@ import java.util.Observer;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javafx.application.Platform;
 
 /**
  * Class to create a database connection. 
@@ -107,7 +110,10 @@ public final class DatabaseConnection extends Observable {
                             notifyObservers(actualCounter);
                         }
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        Platform.runLater(() -> {
+                            AlertDialog.noConnection();
+                        });
+                        timer.cancel();
                     }
                 }
             }, 0, 200);            

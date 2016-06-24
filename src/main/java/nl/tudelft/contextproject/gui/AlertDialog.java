@@ -153,6 +153,17 @@ public final class AlertDialog {
                 + e.getCause());
         alert.showAndWait();
     }
+    
+    /**
+     * Displays an error which tells the user no database connection can be made.
+     */
+    public static void noConnection() {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Database connection failed!");
+        alert.setHeaderText("Error when trying to connect to the database.");
+        alert.setContentText("An error occurred when trying to connect to the database.");
+        alert.showAndWait();
+    }
 
     /**
      * Shows a dialog when exiting a screen without saving, thus

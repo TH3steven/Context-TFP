@@ -338,7 +338,7 @@ public class Script implements Iterator<Shot> {
         try {
             DatabaseConnection.getInstance().updateCounter();
         } catch (SQLException e) {
-            e.printStackTrace();
+            //When no connection, we just ignore updating the counter.
         }
         
         return next(load);
