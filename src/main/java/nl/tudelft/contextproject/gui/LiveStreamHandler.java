@@ -5,20 +5,24 @@ import com.sun.jna.Memory;
 import javafx.application.Platform;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleFloatProperty;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
-
 import nl.tudelft.contextproject.ContextTFP;
-
 import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 /**
  * Handler for streaming media into the GUI through VLC.
@@ -30,21 +34,21 @@ import java.nio.ByteBuffer;
  * @since 0.6
  */
 public class LiveStreamHandler {
-    
+
     private PixelWriter pixelWriter;
     private WritablePixelFormat<ByteBuffer> pixelFormat;
     private DirectMediaPlayerComponent mediaPlayer;
     private String streamLink;
     private ImageView imageView;
     private FloatProperty videoSourceRatioProperty;
-    
+
     /**
      * Creates a LiveStreamHandler object.
      */
     public LiveStreamHandler() {
         videoSourceRatioProperty = new SimpleFloatProperty(0.5625f);
     }
-    
+
     /**
      * Starts playing the media.
      */
@@ -53,7 +57,7 @@ public class LiveStreamHandler {
             mediaPlayer.getMediaPlayer().playMedia(streamLink);
         }
     }
-    
+
     /**
      * Stops playing the media and release associated resources.
      */
@@ -64,9 +68,10 @@ public class LiveStreamHandler {
             mediaPlayer = null;
         }
     }
-    
+
     /**
      * Returns an ImageView object that can be put into the JavaFX framework.
+     * 
      * @param streamLink link to media stream.
      * @param width Width of the ImageView.
      * @param height Height of the ImageView.
@@ -76,11 +81,13 @@ public class LiveStreamHandler {
         if (!ContextTFP.hasVLC()) {
             return createErrorImageView();
         }
+
         WritableImage writableImage = new WritableImage((int) width, (int) height);
         imageView = new ImageView(writableImage);
         this.streamLink = streamLink;
         this.pixelWriter = writableImage.getPixelWriter();
         this.pixelFormat = PixelFormat.getByteBgraPreInstance();
+
         this.mediaPlayer = new DirectMediaPlayerComponent((sourceWidth, sourceHeight) -> {
             Platform.runLater( () -> {
                 videoSourceRatioProperty.set((float) sourceHeight / (float) sourceWidth);
@@ -99,9 +106,10 @@ public class LiveStreamHandler {
                 }
             }
         };
+
         return imageView;
     }
-    
+
     /**
      * Returns true if there is an active MediaPlayer.
      * @return True if there is an active MediaPlayer, otherwise false.
@@ -109,15 +117,15 @@ public class LiveStreamHandler {
     public boolean isPlaying() {
         return this.mediaPlayer != null;
     }
-    
+
     /**
      * Returns an ImageView displaying an error symbol.
      * @return The created ImageView.
      */
     public ImageView createErrorImageView() {
-        return new ImageView("error.jpg");
+        return new ImageView("error-x.png");
     }
-    
+
     /**
      * Returns the ratio of the media currently playing.
      * @return Ratio of the media currently playing.
@@ -125,12 +133,31 @@ public class LiveStreamHandler {
     public FloatProperty getRatio() {
         return this.videoSourceRatioProperty;
     }
-    
+
     /**
      * Returns the URL of the stream that is currently played.
      * @return The URL of the stream that is currently played.
      */
     public String getStreamLink() {
         return this.streamLink;
+    }
+    
+    /**
+     * Takes a snapshot of the image present on a camera and stores the image
+     * at a chosen location.
+     *
+     * @param imageLocation The location to which the captured image is stored.
+     */
+    public void snapShot(String imageLocation) {
+        if (imageView != null) {
+            WritableImage image = imageView.snapshot(new SnapshotParameters(), null);
+            File output = new File(imageLocation);
+
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", output);
+            } catch ( IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

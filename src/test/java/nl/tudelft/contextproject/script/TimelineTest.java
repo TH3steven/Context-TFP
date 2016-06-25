@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to test the Timeline Class. Test cases will be expanded
- * with time.
+ * Class to test the Timeline Class.
+ * 
  * @since 0.2
  */
 public class TimelineTest {
@@ -52,7 +52,7 @@ public class TimelineTest {
         cam2.setConnection(new MockedCameraConnection());
         
         pres = new InstantPreset(new CameraSettings(1, 1, 1, 2), 1);
-        pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 1);
+        pres1 = new InstantPreset(new CameraSettings(1, 1, 1, 3), 2);
         shot1 = new Shot(1, cam0, pres);
         shot2 = new Shot(2, cam0, pres1);
         shot3 = new Shot(2, cam1, pres);
@@ -91,12 +91,26 @@ public class TimelineTest {
     }
     
     /**
-     * Tests the method to load the next preset.
+     * Tests the method to load the next preset from a given shot in the timeline.
      */
     @Test
     public void testNextPreset() {
         timeline1.nextPreset(shot1);
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 3));
+    }
+    
+    /**
+     * Tests the method to load the next preset of the camera of the timeline.
+     */
+    @Test
+    public void testInstantNextPreset() {
+        timeline1.instantNextPreset();
+        assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
+        assertEquals(timeline1.getCurrent(), 0);
+        cam0.tilt(20);
+        assertEquals(timeline1.getCurrent(), 0);
+        timeline1.instantNextPreset();
+        assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
     }
     
     /**

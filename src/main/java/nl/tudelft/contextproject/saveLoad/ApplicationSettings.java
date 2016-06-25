@@ -1,6 +1,10 @@
 package nl.tudelft.contextproject.saveLoad;
 
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.camera.CameraConnection;
+import nl.tudelft.contextproject.camera.LiveCameraConnection;
+import nl.tudelft.contextproject.camera.LiveCameraConnectionAWHE40;
+import nl.tudelft.contextproject.camera.MockedCameraConnection;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,68 +34,68 @@ import javax.crypto.spec.PBEParameterSpec;
  * @since 0.7
  */
 public final class ApplicationSettings {
-    
+
     public static final int DEFAULT_RESX = 1920;
     public static final int DEFAULT_RESY = 1080;
     public static final int DEFAULT_DB_PORT = 3306;
     public static final String DEFAULT_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final String DEFAULT_VLC_LOC = "";
-    
+
     private static final byte[] KEY = "a0@!a650".getBytes(StandardCharsets.UTF_8);
 
     private static final ApplicationSettings INSTANCE = new ApplicationSettings();
     private static final String PATH = "settings.tfp";
-    
+
     /**
      * Resolution in X direction with which VLC will render.
      */
     private int resX;
-    
+
     /**
      * Resolution in Y direction with which VLC will render.
      */
     private int resY;
-    
+
     /**
      * Location of the VLC installation if this is non-default.
      */
     private String vlcLocation;
-    
+
     /**
      * URL of the database used for synchronisation.
      */
     private String databaseUrl;
-    
+
     /**
      * Port of used for the database connection.
      */
     private int databasePort;
-    
+
     /**
      * Name of the database.
      */
     private String databaseName;
-    
+
     /**
      * Username of the database.
      */
     private String databaseUsername;
-    
+
     /**
      * Password of the database.
      */
     private String databasePassword;
-    
+
     /**
      * Location of the JDBC driver used for the database connection.
      */
     private String jdbcDriver;
-    
+
     /**
      * Map that maps camera IDs to known camera IPs.
      */
     private HashMap<Integer, String> cameraIPs;
-    
+
     /**
      * Constructs a new ApplicationSettings object. Tries to load from 
      * the settings file first, but if this is not present, it will load
@@ -102,7 +106,7 @@ public final class ApplicationSettings {
         reset();
         load();
     }
-    
+
     /**
      * Resets the settings to their default values.
      */
@@ -119,7 +123,7 @@ public final class ApplicationSettings {
         cameraIPs = new HashMap<Integer, String>();
         Camera.clearAllCameras();
     }
-    
+
     /**
      * Returns the singleton instance of this class.
      * @return the singleton instance of this class.
@@ -127,7 +131,7 @@ public final class ApplicationSettings {
     public static ApplicationSettings getInstance() {
         return INSTANCE;
     }
-    
+
     /**
      * Returns {@link #resX}.
      * @return {@link #resX}
@@ -135,7 +139,7 @@ public final class ApplicationSettings {
     public int getRenderResX() {
         return resX;
     }
-    
+
     /**
      * Returns {@link #resY}.
      * @return {@link #resY}
@@ -143,7 +147,7 @@ public final class ApplicationSettings {
     public int getRenderResY() {
         return resY;
     }
-    
+
     /**
      * Sets the render resolution setting with which VLC will will render 
      * live camera views to the specified settings.
@@ -155,7 +159,7 @@ public final class ApplicationSettings {
         this.resX = resX;
         this.resY = resY;
     }
-    
+
     /**
      * Returns {@link #databasePort}.
      * @return {@link #databasePort}
@@ -163,7 +167,7 @@ public final class ApplicationSettings {
     public int getDatabasePort() {
         return databasePort;
     }
-    
+
     /**
      * Sets {@link #databasePort}.
      * @param port See {@link #databasePort}
@@ -171,7 +175,7 @@ public final class ApplicationSettings {
     public void setDatabasePort(int port) {
         this.databasePort = port;
     }
-    
+
     /**
      * Return {@link #databaseUrl}.
      * @return {@link #databaseUrl}
@@ -179,7 +183,7 @@ public final class ApplicationSettings {
     public String getDatabaseUrl() {
         return databaseUrl;
     }
-    
+
     /**
      * Sets {@link #databaseUrl}.
      * @param url See {@link #databaseUrl}
@@ -195,7 +199,7 @@ public final class ApplicationSettings {
     public String getDatabaseUsername() {
         return databaseUsername;
     }
-    
+
     /**
      * Return {@link #databasePassword}.
      * @return {@link #databasePassword}
@@ -211,7 +215,7 @@ public final class ApplicationSettings {
     public String getDatabaseName() {
         return databaseName;
     }
-    
+
     /**
      * Sets {@link #databaseName}.
      * @param name See {@link #databaseName}
@@ -219,7 +223,7 @@ public final class ApplicationSettings {
     public void setDatabaseName(String name) {
         this.databaseName = name;
     }
-    
+
     /**
      * Return {@link #jdbcDriver}.
      * @return {@link #jdbcDriver}
@@ -227,7 +231,7 @@ public final class ApplicationSettings {
     public String getJdbcDriver() {
         return jdbcDriver;
     }
-    
+
     /**
      * Sets {@link #jdbcDriver}.
      * @param driver See {@link #jdbcDriver}
@@ -235,7 +239,7 @@ public final class ApplicationSettings {
     public void setJdbcDriver(String driver) {
         this.jdbcDriver = driver;
     }
-    
+
     /**
      * Updates the information required for a database connection.
      * 
@@ -252,7 +256,7 @@ public final class ApplicationSettings {
         this.databaseUsername = username;
         this.databasePassword = password;
     }
-    
+
     /**
      * Returns {@link #vlcLocation}.
      * @return {@link #vlcLocation}
@@ -260,7 +264,7 @@ public final class ApplicationSettings {
     public String getVlcLocation() {
         return vlcLocation;
     }
-    
+
     /**
      * Sets {@link #vlcLocation}.
      * @param loc New {@link #vlcLocation}
@@ -268,26 +272,28 @@ public final class ApplicationSettings {
     public void setVlcLocation(String loc) {
         vlcLocation = loc;
     }
-    
+
     /**
      * Returns the IP of the camera with camera id camId
      * or null if unknown.
+     * 
      * @return the IP of the camera with camera id camId
      *      or null if unknown.
      */
     public String getCameraIP(int camId) {
         return cameraIPs.get(camId);
     }
-    
+
     /**
      * Returns a HashMap containing all currently specified IPs for
      * a given camera number.
+     * 
      * @return a HashMap that maps a camera number to an IP address.
      */
     protected HashMap<Integer, String> getAllCameraIPs() {
         return cameraIPs;
     }
-    
+
     /**
      * Adds a camera IP to a camera number.
      * @param camId Id of camera
@@ -296,7 +302,7 @@ public final class ApplicationSettings {
     public void addCameraIP(int camId, String ip) {
         cameraIPs.put(camId, ip);
     }
-    
+
     /**
      * Clears all camera IPs.
      */
@@ -304,6 +310,38 @@ public final class ApplicationSettings {
         cameraIPs.clear();
     }
     
+    /**
+     * (Re)sets the CameraConnection for every camera currently in the list of cameras.
+     * If an IP was loaded for a camera, then it will check if it can make a connection 
+     * to this camera. If it can, it will set its connection to a LiveCameraConnection. 
+     * If it cannot, it sets a MockedCameraConnection. 
+     * 
+     * <p>This will run in a separate thread, because setting up a connection may
+     * take a while to time out in case of failure.
+     */
+    public void initCameraConnections() {
+        new Thread(() -> {
+            for (Camera cam : Camera.getAllCameras()) {
+                String camIp = getCameraIP(cam.getNumber());
+                if (camIp != null && !camIp.equals("")) {
+                    CameraConnection connect = new LiveCameraConnection(camIp);
+                    if (connect.setUpConnection()) {
+                        cam.setConnection(connect);
+                        continue;
+                    }
+                    
+                    connect = new LiveCameraConnectionAWHE40(camIp);
+                    if (connect.setUpConnection()) {
+                        cam.setConnection(connect);
+                        continue;
+                    }
+                }
+
+                cam.setConnection(new MockedCameraConnection());
+            }
+        }).start();
+    }
+
     /**
      * Encrypts a password.
      * 
@@ -315,9 +353,11 @@ public final class ApplicationSettings {
             final String meth = "PBEWithMD5AndDES";
             char[] spec = new char[]{'!', '6', 'j', '9', 'n', 'R', 'b', 'S', 'n', '%'};
             Cipher pbeCipher = Cipher.getInstance(meth);
+
             for (int i = 0; i < spec.length; i++) {
                 spec[i / 2 + 3] += 2;
             }
+
             pbeCipher.init(Cipher.ENCRYPT_MODE, 
                     SecretKeyFactory.getInstance(meth)
                     .generateSecret(new PBEKeySpec(spec)),
@@ -328,7 +368,7 @@ public final class ApplicationSettings {
             return null;
         }
     }
-    
+
     /**
      * Decrypts a password.
      * 
@@ -340,9 +380,11 @@ public final class ApplicationSettings {
             final String meth = "PBEWithMD5AndDES";
             char[] ciph = new char[]{'!', '6', 'j', '9', 'n', 'R', 'b', 'S', 'n', '%'};
             Cipher pbeCipher = Cipher.getInstance(meth);
+
             for (int i = 0; i < ciph.length; i++) {
                 ciph[i / 2 + 3] += 2;
             }
+
             pbeCipher.init(Cipher.DECRYPT_MODE, 
                     SecretKeyFactory.getInstance(meth)
                     .generateSecret(new PBEKeySpec(ciph)),
@@ -353,7 +395,7 @@ public final class ApplicationSettings {
             return null;
         }
     }
-    
+
     /**
      * Constructs a Scanner object to read the settings file.
      * @return a Scanner object with the settings file as input.
@@ -362,7 +404,7 @@ public final class ApplicationSettings {
     private Scanner getScanner() throws FileNotFoundException {
         return new Scanner(new File(PATH));
     }
-    
+
     /**
      * Constructs a PrintWriter object to write to the settings file.
      * @return a PrintWriter object with the settings file as output.
@@ -372,7 +414,7 @@ public final class ApplicationSettings {
     private PrintWriter getWriter() throws IOException {
         return new PrintWriter(new BufferedWriter(new FileWriter(PATH, false)));
     }
-    
+
     /**
      * Returns true iff the current settings are valid, that is iff:
      * <blockquote>{@link #resX} != 0
@@ -385,7 +427,7 @@ public final class ApplicationSettings {
     public boolean isLoaded() {
         return resX != 0 && resY != 0 && vlcLocation != null && cameraIPs != null;
     }
-    
+
     /**
      * Loads settings from the settings file, returns
      * true was successful, returns false iff not.
@@ -432,30 +474,35 @@ public final class ApplicationSettings {
                 }
             }
             sc.close();
+
+            initCameraConnections();
             return isLoaded();
         } catch (FileNotFoundException e) {
             return false;
         }
     }
-    
+
     /**
      * Loads the camera IP addresses in the cameraIPs section
      * of the settings file.
+     * 
      * @param sc Scanner at the position after reading the
      *      cameraIPs section header.
      */
     private void loadCameraIPs(Scanner sc) {
         while (sc.hasNextInt()) {
             int camId = sc.nextInt();
-            Camera cam = new Camera();
+            Camera cam = Camera.getCamera(camId - 1) == null ? new Camera() : Camera.getCamera(camId - 1);
+
             if (sc.hasNextLine() && camId - 1 == cam.getNumber()) {
                 cameraIPs.put(camId - 1, sc.nextLine().trim());
             }
         }
     }
-    
+
     /**
      * Saves the settings to the settings file.
+     * 
      * @throws IOException in the case that the name of
      *      the settings file is a directory rather than
      *      a file, or cannot be opened for some other
@@ -465,20 +512,23 @@ public final class ApplicationSettings {
         PrintWriter writer = getWriter();
         writer.println("resX " + resX);
         writer.println("resY " + resY);
+
         if (!vlcLocation.equals("")) {
             writer.println("vlcLocation " + vlcLocation);
         }
+
         writer.println("cameraIPs");
         for (Camera cam : Camera.getAllCameras()) {
             int key = cam.getNumber();
             String ip = cameraIPs.get(key) == null ? "" : cameraIPs.get(key);
             writer.println((key + 1) + " " + ip);
         }
+
         saveDatabaseInformation(writer);
         writer.flush();
         writer.close();
     }
-    
+
     /**
      * Saves the database information to a file using a writer.
      * @param writer The writer that should be used for saving.

@@ -2,8 +2,10 @@ package nl.tudelft.contextproject.script;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.presets.InstantPreset;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -64,8 +66,7 @@ public class Script implements Iterator<Shot> {
         timer = new Timer();
         timelines = new HashMap<Integer, Timeline>();
         
-        initTimelines();
-        initPresetLoading();       
+        initTimelines();     
     }
 
     /**
@@ -135,9 +136,21 @@ public class Script implements Iterator<Shot> {
     /**
      * Loads the first presets of all the cameras.
      */
-    private void initPresetLoading() {
+    public void initPresetLoading() {
         for (Timeline t : timelines.values()) {
             t.initPreset();
+        }
+    }
+    
+    /**
+     * Loads the next preset for each camera depending 
+     * on the current script position.
+     */
+    public void loadNextPresets() {
+        for (Timeline t : timelines.values()) {
+            if (!t.getCamera().equals(getCurrentShot().getCamera())) {
+                t.instantNextPreset();
+            }
         }
     }
 
@@ -163,7 +176,7 @@ public class Script implements Iterator<Shot> {
     
     /**
      * Returns the "current" variable of this class.
-     * @return current
+     * @return The index of the current shot in the script.
      */
     public int getCurrent() {
         return current;
@@ -212,15 +225,15 @@ public class Script implements Iterator<Shot> {
      * Calls the updateOldCam() method after a short delay.
      * This is to give the post-production some extra footage to work with.
      */
-    public synchronized void updateOldCamCaller() {
+    public synchronized void updateOldCamCaller(Shot old) {
         timer.cancel();
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (current > -1) {
-                    Shot old = shots.get(current);
-                    timelines.get(old.getCamera().getNumber()).nextPreset(old);
+                if (!old.equals(DUMMY)) {
+                    Camera cam = old.getCamera();
+                    timelines.get(cam.getNumber()).nextPreset(old);
                 }
             }
         }, 1000);
@@ -246,6 +259,19 @@ public class Script implements Iterator<Shot> {
             if (cameras.size() == 1) {
                 break;
             }
+        }
+    }
+    
+    /**
+     * Resets the script.
+     */
+    public void reset(boolean load) {
+        current = -1;
+        for (Timeline t : timelines.values()) {
+            t.reset();
+        }
+        if (load) {
+            initPresetLoading();
         }
     }
 
@@ -279,24 +305,43 @@ public class Script implements Iterator<Shot> {
      */
     @Override
     public Shot next() {
-        return next(false);
+        return next(true);
     }
     
     /**
      * Go to the next shot.
      * Depending on boolean skip, cameras are adjusted or not.
      * 
-     * @param skip Determines whether cameras should be adjusted.
+     * @param load Determines whether cameras should be adjusted.
      * @return The next shot
      */
-    public Shot next(boolean skip) {
-        if (!skip) {
-            updateOldCamCaller();
-        } 
+    public Shot next(boolean load) {
+        if (load) {
+            updateOldCamCaller(getCurrentShot());
+        } else {
+            timelines.get(getCurrentShot().getCamera().getNumber()).incCurrent();
+        }
         
         current++;
         Shot next = shots.get(current);
         
         return next;
     }
+    
+    /**
+     * Go to the next shot and upload the database counter.
+     * 
+     * @param load Determines whether cameras should be adjusted.
+     * @return The next shot
+     */
+    public Shot directorNext(boolean load) {
+        try {
+            DatabaseConnection.getInstance().updateCounter();
+        } catch (SQLException e) {
+            //When no connection, we just ignore updating the counter.
+        }
+        
+        return next(load);
+    }
+    
 }

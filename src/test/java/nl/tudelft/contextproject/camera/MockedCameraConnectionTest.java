@@ -6,19 +6,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
 
 /**
- * Class to test the behavior of a mimiced or mocked camera.
+ * Class to test the behavior of a mocked camera connection.
+ * 
  * @since 0.4
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MockedCameraConnection.class)
 public class MockedCameraConnectionTest {
     private MockedCameraConnection mockedCam;
     private CameraSettings camSet;
@@ -64,7 +59,7 @@ public class MockedCameraConnectionTest {
      */
     @Test
     public void testGetStreamLink() {
-        String streamLink = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
+        String streamLink = "src\\main\\resources\\error-q.png";
         assertTrue(mockedCam.getStreamLink().equals(streamLink));
     }
 
@@ -223,21 +218,4 @@ public class MockedCameraConnectionTest {
         assertEquals(mockedCam.getCurrentCameraSettings(), camSet2);
         Arrays.equals(panTilt, mockedCam.getCurrentPanTilt());
     }
-
-    /**
-     * Tests the snapShot method. PowerMock is
-     * used here to verify the behavior of this method.
-     */
-    @Test
-    public void testSnapShot() {
-        PowerMockito.spy(MockedCameraConnection.class);
-        cam1.setConnection(mockedCam);
-        String imageLocation = "error.jpg";
-
-        mockedCam.snapShot(imageLocation);
-
-        PowerMockito.verifyStatic();
-        mockedCam.snapShot(imageLocation);
-    }
 }
-

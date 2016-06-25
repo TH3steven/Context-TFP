@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.MenuController">
+<AnchorPane prefHeight="575.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.tudelft.contextproject.gui.MenuController">
    <children>
       <VBox alignment="BOTTOM_LEFT" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0">
          <children>
@@ -58,10 +58,9 @@
                   <Button fx:id="btnDirector" layoutX="162.0" layoutY="352.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as director" visible="false" />
                   <Button fx:id="btnCameraman" layoutX="163.0" layoutY="406.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" text="View as cameraman" visible="false" />
                   <Button fx:id="btnPresets" layoutX="288.0" layoutY="351.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit presets" visible="false" />
-                  <Button fx:id="btnPreview" layoutX="288.0" layoutY="406.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Preview shots" visible="false" />
                   <Button fx:id="btnCreateScript" layoutX="93.0" layoutY="351.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Create new script" visible="false" />
                   <Button fx:id="btnEditScript" layoutX="93.0" layoutY="406.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Edit current script" visible="false" />
-                  <Button fx:id="btnLoadScript" layoutX="93.0" layoutY="460.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" visible="false" />
+                  <Button fx:id="btnLoadScript" layoutX="288.0" layoutY="406.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="120.0" text="Load script" visible="false" />
                   <ImageView fitHeight="226.0" fitWidth="420.0" layoutX="41.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="logo-TFP.png" />
@@ -71,6 +70,7 @@
                   <Button fx:id="btnLive" layoutX="288.0" layoutY="352.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="175.0" styleClass="subButton" text="Live-production ↧" />
                   <Label fx:id="lblPre" layoutX="193.0" layoutY="329.0" text="Pre-production menu" visible="false" />
                   <Label fx:id="lblLive" layoutX="191.0" layoutY="329.0" text="Live-production menu" visible="false" />
+                  <Button fx:id="btnCameras" layoutX="206.0" layoutY="538.0" mnemonicParsing="false" text="Camera views" />
                </children>
             </Pane>
          </children>
@@ -149,6 +149,5 @@
             <Image url="settings.png" />
          </image>
       </ImageView>
-      <Button fx:id="btnCameras" layoutX="350.0" layoutY="530.0" mnemonicParsing="false" text="Camera views" />
    </children>
 </AnchorPane>
