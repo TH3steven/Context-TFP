@@ -2,6 +2,7 @@ package nl.tudelft.contextproject.databaseConnection;
 
 import nl.tudelft.contextproject.camera.Camera;
 import nl.tudelft.contextproject.camera.CameraSettings;
+import nl.tudelft.contextproject.gui.AlertDialog;
 import nl.tudelft.contextproject.presets.InstantPreset;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.saveLoad.ApplicationSettings;
@@ -15,6 +16,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javafx.application.Platform;
 
 /**
  * Class to create a database connection. 
@@ -22,30 +29,34 @@ import java.util.Iterator;
  * 
  * @since 0.8
  */
-public final class DatabaseConnection {
-    
+
+public final class DatabaseConnection extends Observable {
+
     private static final String COUNTER_TABLE = "counter";
     private static final String SCRIPT_TABLE = "script";
     private static final String PRESET_TABLE = "preset";
     private static final DatabaseConnection INSTANCE = new DatabaseConnection();
     
+    private int counter;
     private Connection conn = null;
     private ApplicationSettings settings; 
-    
+    private Timer timer;
+
     /**
      * Initializes a database connection object. 
      * Private constructor since this is a singeleton class.
      */
     private DatabaseConnection() {
         settings = ApplicationSettings.getInstance();
-        
+        counter = -1;
+
         try {
             Class.forName(settings.getJdbcDriver());   
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Returns the singleton instance of this class.
      * @return the singleton instance of this class.
@@ -53,7 +64,7 @@ public final class DatabaseConnection {
     public static DatabaseConnection getInstance() {
         return INSTANCE;
     }
-    
+
     /**
      * Creates a MySQL database connection with the properties specified in the settings.
      * @throws SQLException When no connection can be made, a SQLException will be thrown.
@@ -63,17 +74,64 @@ public final class DatabaseConnection {
                 + settings.getDatabasePort() + "/" + settings.getDatabaseName();
         conn = DriverManager.getConnection(url, settings.getDatabaseUsername(), settings.getDatabasePassword());
     }
-    
+
     /**
      * Apply the (changed) settings to the connection.
      * @throws SQLException When the settings are invalid, an SQLException will be thrown.
      */
     public void updateSettings() throws SQLException {
         settings = ApplicationSettings.getInstance();
+
         if (conn != null) {
             conn.close();
         }
+
         connect();
+    }
+
+    /**
+     * Add an observer for the current counter. 
+     * This will start the timer that will update the counter every 200 ms.
+     */
+    @Override
+    public void addObserver(Observer o) {
+        if (countObservers() == 0) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        int actualCounter = getCounter();
+                        
+                        if (actualCounter != counter) {
+                            counter = actualCounter;
+                            setChanged();
+                            notifyObservers(actualCounter);
+                        }
+                    } catch (SQLException e) {
+                        Platform.runLater(() -> {
+                            AlertDialog.noConnection();
+                        });
+                        timer.cancel();
+                    }
+                }
+            }, 0, 200);            
+        }
+        super.addObserver(o);
+    }
+    
+    @Override
+    public void deleteObserver(Observer o) {
+        super.deleteObserver(o);
+        if (countObservers() == 0) {
+            timer.cancel();
+        }
+    }
+    
+    @Override
+    public void deleteObservers() {
+        super.deleteObservers();
+        timer.cancel();
     }
     
     /**
@@ -86,14 +144,14 @@ public final class DatabaseConnection {
         if (conn == null) {
             return false;
         }
-        
+
         try {
             return conn.isValid(timeout);
         } catch (SQLException e) {
             return false;
         } 
     }
-    
+
     /**
      * If there is no valid connection, reconnect.
      * @throws SQLException When no connection can be made, this exception will be thrown.
@@ -103,7 +161,7 @@ public final class DatabaseConnection {
             connect();
         }
     }
-    
+
     /**
      * Updates the counter by adding 1 to it.
      * @throws SQLException When no connection can be made, this exception will be thrown.
@@ -112,7 +170,7 @@ public final class DatabaseConnection {
         revalidate();
         setCounter(getCounter() + 1);
     }
-    
+
     /**
      * Sets the counter to 0.
      * @throws SQLException When no connection can be made, this exception will be thrown.
@@ -121,7 +179,7 @@ public final class DatabaseConnection {
         revalidate();
         setCounter(0);    
     }
-    
+
     /**
      * Set the counter in the database.
      * 
@@ -130,13 +188,13 @@ public final class DatabaseConnection {
      */
     private void setCounter(int number) throws SQLException {
         revalidate();
-        
+
         Statement stmt = conn.createStatement();
         String query = "UPDATE " + COUNTER_TABLE + " set number='" + number + "'";
         stmt.executeUpdate(query);
         stmt.close();
     }
-    
+
     /**
      * Returns the current value of the counter in the database.
      * 
@@ -145,18 +203,20 @@ public final class DatabaseConnection {
      */
     public int getCounter() throws SQLException {
         revalidate();
-        
+
         Statement stmt = conn.createStatement();
         String query = "SELECT number FROM " + COUNTER_TABLE;
         ResultSet rs = stmt.executeQuery(query);
         rs.next();
-        int id = rs.getInt("number");
-        
+
+        int res = rs.getInt("number");
+
         rs.close();
         stmt.close();
-        return id;
+
+        return res;
     }
-    
+
     /**
      * Clears the script in the database and uploads a new script.
      * 
@@ -170,9 +230,10 @@ public final class DatabaseConnection {
     public void uploadScript(Script script) throws SQLException {
         revalidate();
         clearScript();
-        
+
         Statement stmt = conn.createStatement();
         Iterator<Shot> iterator = script.getShots().iterator();
+
         while (iterator.hasNext()) {
             Shot shot = iterator.next();
             StringBuilder sBuilder = new StringBuilder(50);
@@ -185,9 +246,10 @@ public final class DatabaseConnection {
                 .append("'" + shot.getAction() + "');");
             stmt.executeUpdate(sBuilder.toString());
         }
+
         stmt.close();
     }
-    
+
     /**
      * Clears the script table in the database.
      * @throws SQLException When no connection can be made, this exception will be thrown.
@@ -198,7 +260,7 @@ public final class DatabaseConnection {
         stmt.executeUpdate(query);
         stmt.close();
     }
-    
+
     /**
      * Returns the script currently stored in the database.
      * 
@@ -209,29 +271,31 @@ public final class DatabaseConnection {
         Script script = new Script(new ArrayList<Shot>());
         revalidate();
         Statement stmt = conn.createStatement();
-        
+
         String query = "SELECT * FROM " + SCRIPT_TABLE;
         ResultSet rs = stmt.executeQuery(query);
-        
+
         while (rs.next()) {
             int number = rs.getInt("number");
-            String shotId = rs.getString("shotId");
             int cameraId = rs.getInt("camera");
             int presetId = rs.getInt("preset");
+
+            String shotId = rs.getString("shotId");
             String description = rs.getString("description");
             String action = rs.getString("action");
-            
+
             Camera cam = Camera.getCamera(cameraId);
             Preset preset = cam.getPreset(presetId);
             Shot shot = new Shot(number, shotId, cam, preset, description, action);
             script.addShot(shot);
         }
-        
+
         rs.close();
         stmt.close();
+
         return script;
     }
-    
+
     /**
      * Clears all preset currently in the Database.
      * 
@@ -239,13 +303,13 @@ public final class DatabaseConnection {
      */
     public void clearPresets() throws SQLException {
         revalidate();
-        
+
         Statement stmt = conn.createStatement();
         String query = "DELETE FROM " + PRESET_TABLE;
         stmt.executeUpdate(query);
         stmt.close();
     }
-    
+
     /**
      * Upload a preset to the database.
      * 
@@ -255,22 +319,22 @@ public final class DatabaseConnection {
      */
     public void uploadPreset(Preset preset, Camera camera) throws SQLException {
         revalidate();
-        
+
         Statement stmt = conn.createStatement();
         String query = "SELECT * FROM " + PRESET_TABLE + " WHERE id='" + preset.getId() 
-                + "' AND camera='" + camera.getNumber() + "';";
+            + "' AND camera='" + camera.getNumber() + "';";
         ResultSet rs = stmt.executeQuery(query);
-                
+
         if (!rs.next()) {
             stmt.executeUpdate(insertPreset(preset, camera));
         } else {
             stmt.executeUpdate(updatePreset(preset, camera));
         }
-        
+
         rs.close();
         stmt.close();
     }
-    
+
     /**
      * Creates the query to insert a preset in the database.
      * 
@@ -284,10 +348,11 @@ public final class DatabaseConnection {
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private String insertPreset(Preset preset, Camera camera) {
         String type = "";
+
         if (preset instanceof InstantPreset) {
             type = "InstantPreset";
         }
-        
+
         StringBuilder sBuilder = new StringBuilder(50);
         sBuilder.append("INSERT INTO " + PRESET_TABLE + " VALUES (")
             .append("'" + preset.getId() + "',")
@@ -299,9 +364,10 @@ public final class DatabaseConnection {
             .append("'" + preset.getToSet().getTilt() + "',")
             .append("'" + preset.getToSet().getZoom() + "',")
             .append("'" + preset.getToSet().getFocus() + "');");
+
         return sBuilder.toString();
     }
-    
+
     /**
      * Creates the query to update (overwrite) an already existing preset in the database.
      * 
@@ -315,10 +381,11 @@ public final class DatabaseConnection {
     @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private String updatePreset(Preset preset, Camera camera) {
         String type = "";
+
         if (preset instanceof InstantPreset) {
             type = "InstantPreset";
         }
-        
+
         StringBuilder sBuilder = new StringBuilder(130);
         sBuilder
             .append("UPDATE " + PRESET_TABLE + " SET ")
@@ -332,9 +399,10 @@ public final class DatabaseConnection {
             .append("zoom='" + preset.getToSet().getZoom() + "',")
             .append("focus='" + preset.getToSet().getFocus() + "' ")
             .append("WHERE id='" + preset.getId() + "' AND camera='" + camera.getNumber() + "';");
+
         return sBuilder.toString();
     }
-    
+
     /**
      * Updates the presets by getting them from the database and adding them to the cameras.
      * 
@@ -344,21 +412,22 @@ public final class DatabaseConnection {
     public void updatePresets(boolean overwrite) throws SQLException {
         revalidate();
         Statement stmt = conn.createStatement();
-        
+
         String query = "SELECT * FROM " + PRESET_TABLE;
         ResultSet rs = stmt.executeQuery(query);
-        
+
         while (rs.next()) {
             int presetId = rs.getInt("id");
             int cameraId = rs.getInt("camera");
-            String desc = rs.getString("description");
-            String imageLoc = rs.getString("imageLocation");
             int pan = rs.getInt("pan");
             int tilt = rs.getInt("tilt");
             int zoom = rs.getInt("zoom");
             int focus = rs.getInt("focus");
+
+            String desc = rs.getString("description");
+            String imageLoc = rs.getString("imageLocation");
             String type = rs.getString("type");
-            
+
             if (type.equals("InstantPreset")) {
                 Preset preset = new InstantPreset(new CameraSettings(pan, tilt, zoom, focus), presetId);
                 preset.setDescription(desc);
@@ -371,7 +440,7 @@ public final class DatabaseConnection {
                 }
             }
         }
-        
+
         rs.close();
         stmt.close(); 
     }

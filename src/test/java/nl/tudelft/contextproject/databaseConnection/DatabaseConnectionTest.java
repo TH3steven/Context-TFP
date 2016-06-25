@@ -20,10 +20,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Observable;
 
 public class DatabaseConnectionTest {
     
     private static DatabaseConnection connection;
+    private int counter;
 
     /**
      * Set up the settings for the database.
@@ -35,9 +37,9 @@ public class DatabaseConnectionTest {
         for (int i = 1; i < pass.length - 1; i++) {
             pass[i] += 3;
         }
-        ApplicationSettings.getInstance().setDatabaseInfo("46.21.172.161", 3306, 
-                "pmacjhdy_test", "pmacjhdy_test", new String(pass));
-        ApplicationSettings.getInstance().setDatabaseName("pmacjhdy_test");
+        
+        ApplicationSettings.getInstance().setDatabaseInfo("159.253.0.125", 3306, 
+                "thomaaj84_test", "thomaaj84_test", new String(pass));
         connection = DatabaseConnection.getInstance();
     }
     
@@ -100,6 +102,10 @@ public class DatabaseConnectionTest {
         assertEquals(script, connection.getScript());
     }
     
+    /**
+     * Tests the uploading of presets.
+     * @throws SQLException Throws an exception when no connection can be made.
+     */
     @Test
     public void testPreset() throws SQLException {
         Camera cam0 = new Camera();
@@ -126,6 +132,10 @@ public class DatabaseConnectionTest {
         assertEquals(expected1, cam1.getAllPresets());
     }
     
+    /**
+     * Tests if presets are succesfully overwritten.
+     * @throws SQLException Throws an exception when no connection can be made.
+     */
     @Test
     public void testPresetOverwrite() throws SQLException {
         Camera cam0 = new Camera();
@@ -150,5 +160,25 @@ public class DatabaseConnectionTest {
         connection.uploadPreset(presOverwrite, cam0);
         connection.updatePresets(true);
         assertTrue(cam0.getAllPresets().contains(presOverwrite));
+    }
+    
+    /**
+     * Tests if the implemention of the observable class is correct.
+     * 
+     * @throws SQLException Throws an exception when no connection can be made.
+     * @throws InterruptedException Thrown when the thread cannot be stopped.
+     */
+    @Test 
+    public void observerTest() throws SQLException, InterruptedException {
+        connection.updateCounter();
+        counter = -1;
+        connection.addObserver( (Observable obj, Object arg) -> {
+            counter = (int) arg;
+        });
+        connection.resetCounter();
+
+        Thread.sleep(800);
+        assertEquals(0, counter);
+        connection.deleteObservers();
     }
 }

@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Class to test Script class. Test suite will be expanded
- * with time.
+ * Class to test Script class.
  *
  * @since 0.2
  */
@@ -135,6 +134,7 @@ public class ScriptTest {
      */
     @Test
     public void testInitPresetLoading() {
+        script1.initPresetLoading();
         assertEquals(cam0.getSettings(), new CameraSettings(1, 1, 1, 2));
     }
 

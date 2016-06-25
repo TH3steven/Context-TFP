@@ -144,10 +144,21 @@ public abstract class CameraConnection implements Observer {
     protected abstract boolean relFocus(int offset);
 
     /**
-     * Takes a snapshot of the image present on a camera and stores the image
-     * at a chosen location.
-     *
-     * @param imageLocation The location to which the captured image is stored.
+     * Makes the camera start panning and tilting in the specified direction
+     * 
+     * @param panSpeed Should be between 1 and 99, where 50 is stop, 
+     *      1 is maximum speed towards the left and 99 is maximum speed 
+     *      towards the right.
+     * @param tiltSpeed Should be between 1 and 99, where 50 is stop, 
+     *      1 is maximum speed downwards and 99 is maximum speed upwards.
+     * @return True iff the operation was performed successfully
      */
-    public abstract void snapShot(String imageLocation);
+    protected abstract boolean panTiltStart(int panSpeed, int tiltSpeed);
+    
+    /**
+     * Makes the camera stop panning and tilting in the specified direction
+     * 
+     * @return True iff the command was sent and received successfully.
+     */
+    protected abstract boolean panTiltStop();
 }

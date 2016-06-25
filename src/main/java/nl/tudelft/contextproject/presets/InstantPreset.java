@@ -41,5 +41,6 @@ public class InstantPreset extends Preset {
     @Override
     public void applyTo(Camera cam) {
         cam.setSettings(getToSet());
+        cam.setSettings(getToSet());
     }
 }

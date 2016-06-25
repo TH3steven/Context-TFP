@@ -159,6 +159,10 @@ public class Shot {
     public void setPreset(Preset preset) {
         this.preset = preset;
     }
+    
+    public boolean hasPreset() {
+        return (preset == null) ? false : true;
+    }
 
     /**
      * Returns the subject of this shot.

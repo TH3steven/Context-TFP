@@ -1,21 +1,20 @@
 package nl.tudelft.contextproject.gui;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-
 import nl.tudelft.contextproject.ContextTFP;
 import nl.tudelft.contextproject.camera.Camera;
+import nl.tudelft.contextproject.databaseConnection.DatabaseConnection;
 import nl.tudelft.contextproject.presets.Preset;
 import nl.tudelft.contextproject.script.Script;
 import nl.tudelft.contextproject.script.Shot;
@@ -23,6 +22,7 @@ import nl.tudelft.contextproject.script.Shot;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * This class controls the screen that shows the view for a cameraman.
@@ -37,13 +37,12 @@ import java.util.List;
 public class CameramanLiveController {
 
     private static List<CheckBox> cameras;
-    
+
     @FXML private Button btnBack;
     @FXML private Button btnHideAll;
     @FXML private Button btnPresets;
-    @FXML private Button btnNext;
     @FXML private Button btnShowAll;
-    
+
     @FXML private TableView<Shot> tableShots;
     @FXML private TableColumn<Shot, String> columnAction;
     @FXML private TableColumn<Shot, Number> columnCamera;
@@ -51,9 +50,9 @@ public class CameramanLiveController {
     @FXML private TableColumn<Shot, String> columnPreset;
     @FXML private TableColumn<Shot, String> columnShot;
     @FXML private TableColumn<Shot, String> columnSubject;
-    
+
     @FXML private VBox vbox;
-    
+
     private Script script;
 
     /**
@@ -66,16 +65,43 @@ public class CameramanLiveController {
 
         initCameraSelector();
         initButtons();
-        initRowFactory();
         setFactories();
+        
+        // Allows for highlighting of the current shot
+        LiveScript.setRowFactory(tableShots);
 
         tableShots.getItems().addAll(script.getShots());
         tableShots.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Changes the "No content in table" label.
+        tableShots.setPlaceholder(new Label("The script is empty. "
+                + "Create a new script in the Create script screen, "
+                + "or load one in the menu."));
+        
+        initSynchronization();
+    }
+    
+    /**
+     * Initializes the listener used for synchronization with the MySQL database.
+     */
+    private void initSynchronization() {
+        DatabaseConnection.getInstance().addObserver( (Observable obj, Object arg) -> {
+            int liveCount = (int) arg;
+            int current = ContextTFP.getScript().getCurrent();
+
+            if (liveCount > current && liveCount < ContextTFP.getScript().getShots().size()) {
+                for (int i = 0; i < (liveCount - current); i++) {
+                    ContextTFP.getScript().next();
+                }
+                tableShots.refresh();
+            }
+        });
     }
 
     private void initCameraSelector() {
         for (Camera c : Camera.getAllCameras()) {
             final CheckBox check = new CheckBox();
+
             check.setText("Camera: " + (c.getNumber() + 1));
             check.setContentDisplay(ContentDisplay.LEFT);
             check.fire();
@@ -99,33 +125,25 @@ public class CameramanLiveController {
         btnBack.setOnAction(event -> {
             MenuController.show();
         });
-        
-        //TODO remove temp button
-        //Button is here to allow for easy demo-ing of
-        //the current shot highlight.
-        btnNext.setOnAction(event -> {
-            ContextTFP.getScript().next();
-            tableShots.refresh();
-        });
-        
+
         btnShowAll.setOnAction(event -> {
             toggleCameras(true);
         });
-        
+
         btnHideAll.setOnAction(event -> {
             toggleCameras(false);
         });
-        
+
         btnPresets.setOnAction(event -> {
             PresetController.setToCameramanView(true);
-            
+
             Animation.animNodeOut(ContextTFP.getRootLayout(), false).setOnFinished(f -> {
                 PresetController.show();
                 Animation.animNodeIn(ContextTFP.getRootLayout());
             });
         });
     }
-    
+
     /**
      * Toggles the cameras shown in the table.
      * @param show True if show, false if hide.
@@ -142,38 +160,17 @@ public class CameramanLiveController {
      */
     private List<Shot> fillListOfShots() {
         final List<Shot> listShots = new ArrayList<Shot>();
-        
+
         for (Shot s : script.getShots()) {
             int shotCamNum = s.getCamera().getNumber();
-            
+
             if (s.equals(script.getCurrentShot())
                     || cameras.get(shotCamNum).isSelected()) {
                 listShots.add(s);
             }
         }
-        
-        return listShots;
-    }
-    
-    /**
-     * Sets the row factory of the table, enabling the 
-     * indication of the current shot.
-     */
-    private void initRowFactory() {
-        final PseudoClass currentPseudoClass = PseudoClass.getPseudoClass("current");
 
-        tableShots.setRowFactory(table -> new TableRow<Shot>() {
-            
-            @Override
-            protected void updateItem(Shot s, boolean b) {
-                super.updateItem(s, b);
-                if (s != null) {
-                    boolean current = s.equals(script.getCurrentShot());
-                    pseudoClassStateChanged(currentPseudoClass, current);
-                    tableShots.refresh();
-                }
-            }
-        });
+        return listShots;
     }
 
     /**
@@ -189,7 +186,7 @@ public class CameramanLiveController {
                 return new ReadOnlyObjectWrapper<>();
             } else {
                 return new ReadOnlyObjectWrapper<>(
-                    Integer.toString(cellData.getValue().getPreset().getId() + 1));
+                    Integer.toString(cellData.getValue().getPreset().getId()));
             }
         });
 
@@ -197,10 +194,10 @@ public class CameramanLiveController {
 
         columnCamera.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(
             cellData.getValue().getCamera().getNumber() + 1));
-        
+
         columnSubject.setCellValueFactory(new PropertyValueFactory<Shot, String>("description"));
     }
-    
+
     /**
      * Calling this method shows this view in the middle of the rootLayout,
      * forcing the current view to disappear.
